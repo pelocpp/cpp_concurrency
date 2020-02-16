@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Futures\Futures.png" />
+    <Image Include="Futures\tasks_data_channel.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

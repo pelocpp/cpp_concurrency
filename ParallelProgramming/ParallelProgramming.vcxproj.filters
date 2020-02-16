@@ -76,5 +76,8 @@
     <Image Include="Futures\Futures.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Futures\tasks_data_channel.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
