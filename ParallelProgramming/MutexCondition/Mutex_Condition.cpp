@@ -54,7 +54,7 @@ namespace MutexDemo {
     }
 }
 
-int main()
+int main_cond()
 {
     using namespace MutexDemo;
     test();

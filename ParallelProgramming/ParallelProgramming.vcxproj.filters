@@ -36,6 +36,9 @@
     <ClCompile Include="ProducerConsumer01\Producer_Consumer_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Futures01\Future_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md">
@@ -56,6 +59,7 @@
     <None Include="SimpleThreading\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Futures01\Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger\Logger.h">

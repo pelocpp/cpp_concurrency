@@ -1,6 +1,6 @@
 #include <iostream>
 #include <thread> 
-// #include <atomic>
+ #include <atomic>
 #include <stack>
 
 #include "../Logger/Logger.h"
@@ -69,3 +69,4 @@ int main_concurrency()
     Logger::log(std::cout, "Done.");
     return 1;
 }
+
