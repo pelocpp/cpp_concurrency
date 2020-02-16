@@ -60,9 +60,9 @@ namespace Futures {
     }
 }
 
-int main()
-{
-    using namespace Futures;
-    test();
-    return 1;
-}
+//int main()
+//{
+//    using namespace Futures;
+//    test();
+//    return 1;
+//}

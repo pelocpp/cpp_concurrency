@@ -42,6 +42,12 @@
     <ClCompile Include="Futures\Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Futures\Async_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\Async_02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md">

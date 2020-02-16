@@ -11,6 +11,4 @@ Die Thread-Prozedur erhält zum Ausführungszeitpunkt einen `std::promise<>`-Zeige
 
 Daran können mit Hilfe der `set_value`-Methode Resultate vom Thread zum Thread-Erzeuger transferiert werden.
 
-![](tasks_data_channel.png =250x)
-
-<img src="tasks_data_channel.png" alt="drawing" style="width:200px;"/>
+<img src="tasks_data_channel.png" style="width:200px;"/>
