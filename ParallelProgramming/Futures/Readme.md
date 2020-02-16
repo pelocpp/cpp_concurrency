@@ -13,3 +13,4 @@ Daran können mit Hilfe der `set_value`-Methode Resultate vom Thread zum Thread-E
 
 ![](tasks_data_channel.png =250x)
 
+<img src="tasks_data_channel.png" alt="drawing" style="width:200px;"/>
