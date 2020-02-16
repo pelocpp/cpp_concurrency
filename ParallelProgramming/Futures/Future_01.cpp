@@ -52,8 +52,8 @@ namespace Futures {
         std::thread divThread(div, std::move(divPromise), a, b);
 
         // get the result
-        std::cout << "20*10= " << prodResult.get() << std::endl;
-        std::cout << "20/10= " << divResult.get() << std::endl;
+        std::cout << "20 * 10 = " << prodResult.get() << std::endl;
+        std::cout << "20 / 10 = " << divResult.get() << std::endl;
 
         prodThread.join();
         divThread.join();

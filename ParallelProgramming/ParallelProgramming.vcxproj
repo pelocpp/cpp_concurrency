@@ -139,7 +139,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Concurrency\Concurrency.cpp" />
-    <ClCompile Include="Futures01\Future_01.cpp" />
+    <ClCompile Include="Futures\Future_01.cpp" />
+    <ClCompile Include="Futures\Future_02.cpp" />
     <ClCompile Include="IncrementDecrement\IncrementDecrement.cpp" />
     <ClCompile Include="Logger\Logger.cpp" />
     <ClCompile Include="MutexCondition\Mutex_Condition.cpp" />
@@ -149,7 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md" />
-    <None Include="Futures01\Readme.md" />
+    <None Include="Futures\Readme.md" />
     <None Include="IncrementDecrement\Readme.md" />
     <None Include="MutexCondition\Readme.md" />
     <None Include="ProducerConsumer01\Readme.md" />
@@ -161,6 +162,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Futures\Futures.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -36,7 +36,10 @@
     <ClCompile Include="ProducerConsumer01\Producer_Consumer_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures01\Future_01.cpp">
+    <ClCompile Include="Futures\Future_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,7 +62,7 @@
     <None Include="SimpleThreading\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Futures01\Readme.md" />
+    <None Include="Futures\Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger\Logger.h">
@@ -68,5 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Futures\Futures.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
