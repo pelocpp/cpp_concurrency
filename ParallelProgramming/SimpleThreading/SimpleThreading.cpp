@@ -16,9 +16,11 @@ namespace SimpleThreading {
             Logger::log2(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
+
+        Logger::log(std::cout, "Done Thread.");
     }
 
-    void test() {
+    void test_01() {
         Logger::log(std::cout, "Begin");
 
         std::thread::id mainTID = std::this_thread::get_id();
@@ -32,11 +34,32 @@ namespace SimpleThreading {
 
         Logger::log(std::cout, "Done.");
     }
+
+    void test_02() {
+        Logger::log(std::cout, "Begin");
+
+        std::thread::id mainTID = std::this_thread::get_id();
+        Logger::log(std::cout, "main: ", mainTID);
+
+        std::thread t1(function, 1);
+        std::thread t2(function, 2);
+
+        t1.detach();
+        t2.detach();
+
+        Logger::log(std::cout, "Done.");
+
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(6s);
+
+        Logger::log(std::cout, "Done Again.");
+    }
 }
 
-int main_simple()
-{
-    using namespace SimpleThreading;
-    test();
-    return 1;
-}
+//int main()
+//{
+//    using namespace SimpleThreading;
+//    test_01();
+//    test_02();
+//    return 1;
+//}

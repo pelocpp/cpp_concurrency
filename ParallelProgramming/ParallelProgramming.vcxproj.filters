@@ -36,16 +36,22 @@
     <ClCompile Include="ProducerConsumer01\Producer_Consumer_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Future_01.cpp">
+    <ClCompile Include="Futures\Async_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\Async_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Futures\Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Async_01.cpp">
+    <ClCompile Include="Futures\Future_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Async_02.cpp">
+    <ClCompile Include="PackagedTask01\PackagedTask_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,15 +74,17 @@
     <None Include="SimpleThreading\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Futures\Readme.md" />
+    <None Include="PackagedTask01\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Futures\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger\Logger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Futures\Futures.png">
@@ -85,5 +93,10 @@
     <Image Include="Futures\tasks_data_channel.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Readme.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

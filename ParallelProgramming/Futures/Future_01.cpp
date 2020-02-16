@@ -1,68 +1,68 @@
 #include <iostream>
-#include <mutex>
 #include <thread>
 #include <future>
 
-#include "../Logger/Logger.h"
+namespace SimplePromises {
 
-namespace Futures {
-
-    // global function
-    void product(std::promise<int>&& intPromise, int a, int b) {
-
-        std::thread::id tid = std::this_thread::get_id();
-        Logger::log(std::cout, "tid:  ", tid);
+    void doWorkVersion01(std::promise<int>* promise)
+    {
+        std::cout << "Inside Thread (doWork - 01)" << std::endl;
 
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(3s);
 
-        intPromise.set_value(a * b);
+        promise->set_value(35);
     }
 
-    // functor notation
-    struct Div {
-        void operator() (std::promise<int>&& intPromise, int a, int b) const {
+    void testVersion01() {
 
-            std::thread::id tid = std::this_thread::get_id();
-            Logger::log(std::cout, "tid:  ", tid);
+        std::promise<int> promiseObj;
 
-            using namespace std::chrono_literals;
-            std::this_thread::sleep_for(5s);
-            intPromise.set_value(a / b);
-        }
-    };
+        std::future<int> futureObj = promiseObj.get_future();
 
-    void test() {
+        std::thread t (doWorkVersion01, &promiseObj);
 
-        int a = 20;
-        int b = 10;
+        std::cout << "Waiting for Result - 01: " << std::endl;
+        int result = futureObj.get();
 
-        // define the promises
-        std::promise<int> prodPromise;
-        std::promise<int> divPromise;
+        std::cout << "Result: " << result << std::endl;
 
-        // get the futures
-        std::future<int> prodResult = prodPromise.get_future();
-        std::future<int> divResult = divPromise.get_future();
+        t.join();
+    }
 
-        // calculate results in a separat thread
-        std::thread prodThread(product, std::move(prodPromise), a, b);
+    void doWorkVersion02(std::promise<int>&& promise)
+    {
+        std::cout << "Inside Thread (doWork - 02)" << std::endl;
 
-        Div div;
-        std::thread divThread(div, std::move(divPromise), a, b);
+        using namespace std::chrono_literals;
+        std::this_thread::sleep_for(3s);
 
-        // get the result
-        std::cout << "20 * 10 = " << prodResult.get() << std::endl;
-        std::cout << "20 / 10 = " << divResult.get() << std::endl;
+        promise.set_value(35);
+    }
 
-        prodThread.join();
-        divThread.join();
+    void testVersion02() {
+
+        std::promise<int> promiseObj;
+
+        std::future<int> futureObj = promiseObj.get_future();
+
+        std::thread t(doWorkVersion02, std::move (promiseObj));
+
+        std::cout << "Waiting for Result - 02: " << std::endl;
+        int result = futureObj.get();
+
+        std::cout << "Result: " << result << std::endl;
+
+        t.join();
     }
 }
 
 //int main()
 //{
-//    using namespace Futures;
-//    test();
-//    return 1;
+//    using namespace SimplePromises;
+//    testVersion01();
+//    testVersion02();
+//
+//    return 0;
 //}
+

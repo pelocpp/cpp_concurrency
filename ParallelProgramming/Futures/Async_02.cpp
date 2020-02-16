@@ -32,9 +32,9 @@ namespace EagerVsLazyASync {
     }
 }
 
-int main(){
-
-    using namespace EagerVsLazyASync;
-    test_01();
-    return 1;
-}
+//int main(){
+//
+//    using namespace EagerVsLazyASync;
+//    test_01();
+//    return 1;
+//}
