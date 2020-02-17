@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread> 
 #include <chrono>
+
 #include "../Logger/Logger.h"
 
 namespace SimpleThreading {
@@ -17,7 +18,7 @@ namespace SimpleThreading {
         Logger::log(std::cout, "tid:  ", tid);
 
         for (int i = 0; i < NumIterations; ++i) {
-            Logger::log2(std::cout, "in thread ", value);
+            Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
@@ -60,13 +61,13 @@ namespace SimpleThreading {
     }
 }
 
-//int main()
-//{
-//    using namespace SimpleThreading;
-//    test_01();
-//    test_02();
-//    return 1;
-//}
+int main()
+{
+    using namespace SimpleThreading;
+    test_01();
+    test_02();
+    return 1;
+}
 
 // ===========================================================================
 // End-of-File

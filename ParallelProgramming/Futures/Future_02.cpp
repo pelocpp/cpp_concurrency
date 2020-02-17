@@ -6,6 +6,7 @@
 #include <mutex>
 #include <thread>
 #include <future>
+
 #include "../Logger/Logger.h"
 
 namespace Futures {

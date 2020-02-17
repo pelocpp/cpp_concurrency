@@ -8,33 +8,11 @@
 
 class Logger {
 public:
-
-    // TODO: Folding print function !!!
-    static void log(std::ostream& os, std::string s, std::thread::id tid) {
+    template<typename ...Args>
+    static void log(std::ostream& os, Args ...args) {
         std::stringstream ss;
-        ss << s << tid << std::endl;
-        std::cout << ss.str();
-
-    }
-
-    static void log(std::ostream& os, std::string s) {
-        std::stringstream ss;
-        ss << s << std::endl;
-        std::cout << ss.str();
-    }
-
-    static void log(std::ostream& os, std::string s, long l) {
-        std::stringstream ss;
-        ss << s << l << std::endl;
-        std::cout << ss.str();
-    }
-
-    // ODER
-
-    static void log2(std::ostream& os, std::string s, long l) {
-        display_mutex.lock();
-        os << s << l << std::endl;
-        display_mutex.unlock();
+        (ss << ... << args) << std::endl;
+        os << ss.str();
     }
 
     static void startWatch() {
@@ -58,5 +36,4 @@ public:
 
 private:
     static std::chrono::steady_clock::time_point begin;
-    static std::mutex display_mutex;
 };

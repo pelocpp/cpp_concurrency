@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-int main()
+int main_main()
 {
     std::cout 
         << "Collection of miscellaneous C++ Multithreading Programs" 

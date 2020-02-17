@@ -32,7 +32,7 @@ namespace IncrementDecrement {
         }
 
         void runAtomic() {
-            Logger::log(std::cout, "Counter: ", m_counterAtomic);
+            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
 
             // spawning two threads - calling increment() rsp. decrement()
             std::thread t1(&IncDec::incrementAtomic, this);
@@ -42,7 +42,7 @@ namespace IncrementDecrement {
             t1.join();  // pauses until t1 finishes
             t2.join();  // pauses until t2 finishes
 
-            Logger::log(std::cout, "Counter: ", m_counterAtomic);
+            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
         }
 
     private:
