@@ -30,9 +30,6 @@
     <ClCompile Include="ProducerConsumer02\Producer_Consumer_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleThreading\SimpleThreading.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ProducerConsumer01\Producer_Consumer_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,6 +49,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleThreading\SimpleThreading_02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SimpleThreading\SimpleThreading_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

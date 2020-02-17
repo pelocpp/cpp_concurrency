@@ -152,7 +152,8 @@
     <ClCompile Include="ProducerConsumer01\Producer_Consumer_01.cpp" />
     <ClCompile Include="ProducerConsumer02\Producer_Consumer_02.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="SimpleThreading\SimpleThreading.cpp" />
+    <ClCompile Include="SimpleThreading\SimpleThreading_02.cpp" />
+    <ClCompile Include="SimpleThreading\SimpleThreading_01.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md" />

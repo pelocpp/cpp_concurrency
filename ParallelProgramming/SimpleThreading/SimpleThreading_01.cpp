@@ -1,5 +1,5 @@
 // ===========================================================================
-// Simple Threading Demo
+// Simple Threading Demo (std::thread basics)
 // ===========================================================================
 
 #include <iostream>
@@ -61,13 +61,13 @@ namespace SimpleThreading {
     }
 }
 
-int main()
-{
-    using namespace SimpleThreading;
-    test_01();
-    test_02();
-    return 1;
-}
+//int main()
+//{
+//    using namespace SimpleThreading;
+//    test_01();
+//    test_02();
+//    return 1;
+//}
 
 // ===========================================================================
 // End-of-File
