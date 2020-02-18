@@ -38,14 +38,23 @@ namespace SimpleAsync {
     void test_01() {
 
         // future with function
-        auto futureFunction = std::async(helloFunction, "function");
+        auto futureFunction = std::async(
+            std::launch::async, 
+            helloFunction, 
+            "function");
 
         // future with functor
         HelloFunctor HelloFunctor;
-        auto futureFunctionObject = std::async(HelloFunctor, "functor");
+        auto futureFunctionObject = std::async(
+            std::launch::async,
+            HelloFunctor, 
+            "functor");
 
         // future with lambda function
-        auto futureLambda = std::async(helloLambda, "lambda");
+        auto futureLambda = std::async(
+            std::launch::async,
+            helloLambda,
+            "lambda");
 
         std::cout 
             << futureFunction.get() << std::endl
