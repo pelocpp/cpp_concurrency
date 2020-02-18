@@ -83,6 +83,9 @@
     <None Include="Futures\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Bank_Spezifikation.pdf">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger\Logger.h">

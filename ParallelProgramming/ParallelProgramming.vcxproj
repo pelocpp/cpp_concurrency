@@ -156,6 +156,7 @@
     <ClCompile Include="SimpleThreading\SimpleThreading_01.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Bank_Spezifikation.pdf" />
     <None Include="Concurrency\Readme.md" />
     <None Include="Futures\Readme.md" />
     <None Include="IncrementDecrement\Readme.md" />
