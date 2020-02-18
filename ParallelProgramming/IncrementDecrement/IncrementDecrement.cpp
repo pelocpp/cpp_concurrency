@@ -173,30 +173,30 @@ namespace IncrementDecrement {
     }
 }
 
-int main()
-{
-    using namespace IncrementDecrement;
-    Logger::log(std::cout, "Begin");
-
-    Logger::startWatch();
-    test_regular();
-    Logger::stopWatchMilli();
-
-    Logger::startWatch();
-    test_atomic();
-    Logger::stopWatchMilli();
-
-    Logger::startWatch();
-    test_mutex();
-    Logger::stopWatchMilli();
-
-    Logger::startWatch();
-    test_mutexRAII();
-    Logger::stopWatchMilli();
-
-    Logger::log(std::cout, "Done.");
-    return 1;
-}
+//int main()
+//{
+//    using namespace IncrementDecrement;
+//    Logger::log(std::cout, "Begin");
+//
+//    Logger::startWatch();
+//    test_regular();
+//    Logger::stopWatchMilli();
+//
+//    Logger::startWatch();
+//    test_atomic();
+//    Logger::stopWatchMilli();
+//
+//    Logger::startWatch();
+//    test_mutex();
+//    Logger::stopWatchMilli();
+//
+//    Logger::startWatch();
+//    test_mutexRAII();
+//    Logger::stopWatchMilli();
+//
+//    Logger::log(std::cout, "Done.");
+//    return 1;
+//}
 
 // ===========================================================================
 // End-of-File

@@ -11,59 +11,82 @@
 
 #include "../Logger/Logger.h"
 
-std::queue<int> dataQueue;
-std::mutex queueMutex;
+namespace ConsumerProducer {
 
-void producerFunction() {
-    // This function will keep generating data forever
-    int newNumber;
-    while (true) {
-        // Wait from 1 to 3 seconds before generating data
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+    class ConsumerProducer {
 
-        // Add a number to the queue
-        newNumber = rand() % 100 + 1; // Random number from 1 to 100
+    private:
+        std::queue<int> m_data;
+        std::mutex m_mutex;
 
-        std::cout << "PRODUCER - vor" << std::endl;
-        std::lock_guard<std::mutex> g(queueMutex);
-        std::cout << "PRODUCER - nach" << std::endl;
+        void produce() {
+            int nextNumber = 0;
+            while (true) {
 
-        dataQueue.push(newNumber);
+                // sleep 2 seconds
+                std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        std::cout << "Added number to queue: " << newNumber << std::endl;
-    }
-}
+                nextNumber++;
 
-void consumerFunction() {
-    // This function will consume data forever
-    while (true) {
-        int numberToProcess = 0;
+                {
+                    // RAII idiom
+                    Logger::log(std::cout, "> Producer");
+                    std::lock_guard<std::mutex>  lock (m_mutex);
+                    Logger::log(std::cout, "< Producer");
 
-        // We only need to lock the mutex for the time it takes us to pop an item
-        // out. Adding this scope releases the lock right after we poped the item
-        {
-            std::cout << "consumer - vor" << std::endl;
-            std::lock_guard<std::mutex> g(queueMutex);
-            std::cout << "consumer - nach" << std::endl;
-            if (!dataQueue.empty()) {
-                numberToProcess = dataQueue.front();
-                dataQueue.pop();
+                    m_data.push(nextNumber);
+                }
+
+                Logger::log(std::cout, "Added ", nextNumber, " to queue.");
             }
         }
 
-        // Only process if there are numbers
-        if (numberToProcess) {
-            std::cout << "Processing number: " << numberToProcess << std::endl;
+        void consume() {
+            int number;
+            while (true) {
+
+                number = 0;
+
+                {
+                    // RAII idiom
+                    Logger::log(std::cout, "> Consumer");
+                    std::lock_guard<std::mutex> lock (m_mutex);
+                    Logger::log(std::cout, "< Consumer");
+
+                    if (!m_data.empty()) {
+                        number = m_data.front();
+                        m_data.pop();
+                    }
+                }
+
+                if (number > 0) {
+                    Logger::log(std::cout, "Popped ", number, '.');
+                }
+                else {
+                    Logger::log(std::cout, "Stack empty.");
+                }
+            }
         }
+
+    public:
+        void run() {
+            std::thread t1(&ConsumerProducer::produce, this);
+            std::thread t2(&ConsumerProducer::consume, this);
+            t1.join();
+            t2.join();
+        }
+    };
+
+    void test() {
+        ConsumerProducer cp;
+        cp.run();
     }
 }
 
 //int main() {
-//    std::thread producer(producerFunction);
-//    std::thread consumer1(consumerFunction);
-//
-//    producer.join();
-//    consumer1.join();
+//    using namespace ConsumerProducer;
+//    test();
+//    return 1;
 //}
 
 // ===========================================================================

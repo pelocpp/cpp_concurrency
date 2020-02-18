@@ -2,105 +2,99 @@
 // Producer Consumer Problem
 // ===========================================================================
 
-#include <condition_variable>
 #include <iostream>
+#include <condition_variable>
 #include <mutex>
 #include <queue>
 #include <chrono>
 #include <thread>
+#include <functional>
 
 #include "../Logger/Logger.h"
 
 namespace ProducerConsumer {
 
-    void test() {
+    class ProducerConsumer {
+    public:
+        ProducerConsumer() : m_stopped(false) {}
+    private:
+        std::queue<int> m_queue;
+        bool m_stopped;
+        std::condition_variable m_condition;
+        std::mutex m_mutex;
 
-        std::condition_variable cond;
-        std::mutex mutex;
-
-        std::queue<int> intQueue;
-        bool stopped = false;
-
-        std::thread producer{ [&]()
-        {
-            std::size_t count = 5;
-            while (count--)
-            {
-                using namespace std::chrono_literals;
-                {
-                    // Always lock before changing state
-                    // guarded by a mutex and condition_variable
-                    std::lock_guard<std::mutex> lock{ mutex };
-
-                    intQueue.push(count);
-                    std::cout << "Producer pushed: " << count << std::endl;
-
-                    // Tell the consumer it has an int
-                    cond.notify_one();
-                }
-
-                std::cout << "Sleeping ... " << count << std::endl;
-                std::this_thread::sleep_for(2s);
-            }
-
-            // All done.
-            // Acquire the lock, set the stopped flag,
-            // then inform the consumer.
-            std::lock_guard<std::mutex> L{ mutex };
-
-            std::cout << "Producer is done!" << std::endl;
-
-            stopped = true;
-            cond.notify_one();
-        } 
-        };
-
-        std::thread consumer{ [&]()
-        {
+        std::function<void()> consumer = [&]() {
             do {
-                std::unique_lock<std::mutex> lock { mutex };
+                // RAII idiom
+                std::unique_lock<std::mutex> lock(m_mutex);
 
-                cond.wait(lock ,[&]()
-                {
-                    // Acquire the lock only if we've stopped
-                    // or the queue isn't empty
-                    bool condition = stopped || !intQueue.empty();
-
-                    // return false if waiting should be continued ...
-                    std::cout << "Waking up ... [" << condition  << "]" << std::endl;
-
+                m_condition.wait(lock, [&]() {
+                    // returns 'false' if waiting should be continued
+                    bool condition = m_stopped || !m_queue.empty();
+                    Logger::log(std::cout, "wait -> ", condition, '\n');
                     return condition;
-                });
+                    }
+                );
 
+                // we own the mutex here; pop the queue until it is empty
                 std::cout << "testing rest ...." << std::endl;
 
-                // We own the mutex here; pop the queue
-                // until it empties out.
-
-                while (!intQueue.empty())
+                while (!m_queue.empty())
                 {
-                    const auto val = intQueue.front();
-                    intQueue.pop();
-
-                    std::cout << "Consumer popped: " << val << std::endl;
+                    int elem = m_queue.front();
+                    m_queue.pop();
+                    Logger::log(std::cout, "Consumer popped: ", elem);
                 }
 
-                if (stopped) {
-                    // producer has signaled a stop
-                    std::cout << "Consumer is done!" << std::endl;
+                if (m_stopped) {
+                    Logger::log(std::cout, "Consumer is done!");
                     break;
                 }
 
             } while (true);
-        } 
+
         };
 
-        consumer.join();
-        producer.join();
+        std::function<void()> producer = [&]() {
 
-        std::cout << "Example Completed!" << std::endl;
+            int count = 5;
+            while (count--)
+            {
+                {
+                    // RAII idiom
+                    std::lock_guard<std::mutex> lock{ m_mutex };
+                    m_queue.push(count);
+                    Logger::log(std::cout, "producer pushed: ", count);
+
+                    // wakeup consumer
+                    m_condition.notify_one();
+                }
+
+                Logger::log(std::cout, "sleeping ... ", count);
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
+
+            // All done - acquire the lock, set the stopped flag,
+            // finally inform the consumer.
+            std::lock_guard<std::mutex> lock{ m_mutex };
+            m_stopped = true;
+            m_condition.notify_one();
+            Logger::log(std::cout, "< Producer");
+        };
+
+    public:
+        void run() {
+            std::thread t1(producer);
+            std::thread t2(consumer);
+            t1.join();
+            t2.join();
+        }
+    };
+
+    void test() {
+        ProducerConsumer cp;
+        cp.run();
     }
-
 }
 
 //int main()
