@@ -31,7 +31,7 @@ namespace ConsumerProducer {
                 {
                     // RAII idiom
                     Logger::log(std::cout, "> Producer");
-                    std::lock_guard<std::mutex>  lock (m_mutex);
+                    std::scoped_lock<std::mutex>  lock (m_mutex);
                     Logger::log(std::cout, "< Producer");
 
                     m_data.push(nextNumber);
@@ -50,7 +50,7 @@ namespace ConsumerProducer {
                 {
                     // RAII idiom
                     Logger::log(std::cout, "> Consumer");
-                    std::lock_guard<std::mutex> lock (m_mutex);
+                    std::scoped_lock<std::mutex> lock (m_mutex);
                     Logger::log(std::cout, "< Consumer");
 
                     if (!m_data.empty()) {
