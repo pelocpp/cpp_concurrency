@@ -80,9 +80,6 @@
     <None Include="Futures\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Bank_Spezifikation.pdf">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="ProducerConsumer\Readme.md">
       <Filter>Source Files</Filter>
     </None>
