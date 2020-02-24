@@ -60,6 +60,12 @@
     <ClCompile Include="ProducerConsumer\Producer_Consumer_03.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SpringerProblem\KnightProblem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DiningPhilosophers\Dining_Philosophers.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md">
@@ -80,8 +86,14 @@
     <None Include="Futures\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="DiningPhilosophers\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="SpringerProblem\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
     <None Include="ProducerConsumer\Readme.md">
-      <Filter>Source Files</Filter>
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

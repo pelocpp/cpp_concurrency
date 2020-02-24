@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Concurrency\Concurrency.cpp" />
+    <ClCompile Include="DiningPhilosophers\Dining_Philosophers.cpp" />
     <ClCompile Include="Futures\Async_01.cpp" />
     <ClCompile Include="Futures\Async_02.cpp" />
     <ClCompile Include="Futures\Future_02.cpp" />
@@ -155,15 +156,18 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="SimpleThreading\SimpleThreading_02.cpp" />
     <ClCompile Include="SimpleThreading\SimpleThreading_01.cpp" />
+    <ClCompile Include="SpringerProblem\KnightProblem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Concurrency\Readme.md" />
+    <None Include="DiningPhilosophers\Readme.md" />
     <None Include="Futures\Readme.md" />
     <None Include="IncrementDecrement\Readme.md" />
     <None Include="MutexCondition\Readme.md" />
     <None Include="PackagedTask01\Readme.md" />
     <None Include="ProducerConsumer\Readme.md" />
     <None Include="SimpleThreading\Readme.md" />
+    <None Include="SpringerProblem\Readme.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Logger\Logger.h" />
