@@ -11,6 +11,7 @@
 
 class BigData {
 public:
+
     BigData () : m_index(-1), m_counter(1) {}
 
 private:
@@ -35,7 +36,8 @@ private:
         while (true) {
 
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(sleepTimeProducer));
+                std::chrono::milliseconds(sleepTimeProducer)
+            );
 
             m_counter++;
 

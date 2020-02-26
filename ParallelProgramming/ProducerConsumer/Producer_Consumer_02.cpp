@@ -15,15 +15,45 @@
 namespace ProducerConsumer {
 
     class ProducerConsumer {
+
     public:
         ProducerConsumer() : m_stopped(false) {}
+
     private:
         std::queue<int> m_queue;
         bool m_stopped;
         std::condition_variable m_condition;
         std::mutex m_mutex;
 
+        std::function<void()> producer = [&]() {
+
+            int count = 5;
+            while (count--)
+            {
+                {
+                    // RAII idiom
+                    std::scoped_lock<std::mutex> lock{ m_mutex };
+                    m_queue.push(count);
+                    Logger::log(std::cout, "producer pushed: ", count);
+
+                    // wakeup consumer
+                    m_condition.notify_one();
+                }
+
+                Logger::log(std::cout, "sleeping ... ", count);
+                std::this_thread::sleep_for(std::chrono::seconds(2));
+            }
+
+            // all done - acquire the lock, set the stopped flag,
+            // finally inform the consumer.
+            std::scoped_lock<std::mutex> lock{ m_mutex };
+            m_stopped = true;
+            m_condition.notify_one();
+            Logger::log(std::cout, "< Producer");
+        };
+
         std::function<void()> consumer = [&]() {
+
             do {
                 // RAII idiom
                 std::unique_lock<std::mutex> lock(m_mutex);
@@ -53,33 +83,6 @@ namespace ProducerConsumer {
 
             } while (true);
 
-        };
-
-        std::function<void()> producer = [&]() {
-
-            int count = 5;
-            while (count--)
-            {
-                {
-                    // RAII idiom
-                    std::lock_guard<std::mutex> lock{ m_mutex };
-                    m_queue.push(count);
-                    Logger::log(std::cout, "producer pushed: ", count);
-
-                    // wakeup consumer
-                    m_condition.notify_one();
-                }
-
-                Logger::log(std::cout, "sleeping ... ", count);
-                std::this_thread::sleep_for(std::chrono::seconds(2));
-            }
-
-            // All done - acquire the lock, set the stopped flag,
-            // finally inform the consumer.
-            std::lock_guard<std::mutex> lock{ m_mutex };
-            m_stopped = true;
-            m_condition.notify_one();
-            Logger::log(std::cout, "< Producer");
         };
 
     public:

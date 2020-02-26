@@ -23,7 +23,7 @@ namespace ConsumerProducer {
             int nextNumber = 0;
             while (true) {
 
-                // sleep 2 seconds
+                // sleep some seconds
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
                 nextNumber++;
@@ -31,7 +31,7 @@ namespace ConsumerProducer {
                 {
                     // RAII idiom
                     Logger::log(std::cout, "> Producer");
-                    std::scoped_lock<std::mutex>  lock (m_mutex);
+                    std::scoped_lock<std::mutex> lock (m_mutex);
                     Logger::log(std::cout, "< Producer");
 
                     m_data.push(nextNumber);

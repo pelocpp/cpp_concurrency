@@ -25,7 +25,7 @@ namespace PackagedTask {
         // define a task
         std::packaged_task<int(int, int)> task(calcSum);
 
-        // get the futurem for this task
+        // get the future object for this task
         std::future<int> future = task.get_future();
 
         std::thread t{ std::move(task), 123, 456 };

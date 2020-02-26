@@ -13,7 +13,7 @@ namespace MutexDemo {
 
     constexpr long NumIterations = 5;
 
-    std::mutex m;
+    std::mutex mutex;
     std::condition_variable cv;
 
     void function(int value) {
@@ -21,7 +21,7 @@ namespace MutexDemo {
         std::thread::id tid = std::this_thread::get_id();
         Logger::log(std::cout, "tid:  ", tid);
 
-        std::unique_lock<std::mutex> lock{ m };
+        std::unique_lock<std::mutex> lock{ mutex };
         cv.wait(lock, [&]()
             {
                 std::cout << "Waking up ..." << std::endl;
@@ -41,7 +41,7 @@ namespace MutexDemo {
         std::thread t2;
 
         {
-            std::lock_guard<std::mutex> lock(m);
+            std::scoped_lock<std::mutex> lock(mutex);
 
             t1 = std::thread (function, 1);
             t2 = std::thread (function, 2);
