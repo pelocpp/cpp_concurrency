@@ -22,11 +22,11 @@ namespace MutexDemo {
         Logger::log(std::cout, "tid:  ", tid);
 
         std::unique_lock<std::mutex> lock{ mutex };
-        cv.wait(lock, [&]()
-            {
+        cv.wait(lock, []() {
                 std::cout << "Waking up ..." << std::endl;
                 return true;
-            });
+            }
+        );
 
         Logger::log(std::cout, "Done Thread");
     }

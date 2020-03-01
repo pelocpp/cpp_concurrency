@@ -32,6 +32,7 @@ namespace PackagedTask {
         t.detach();
 
         // do some arbitrary work ......
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
         // get the result
         int sum = future.get();
@@ -41,43 +42,52 @@ namespace PackagedTask {
 
     void test_02() {
 
-        // define the tasks
-        std::packaged_task<int(int, int)> sumTask1(calcSumRange);
-        std::packaged_task<int(int, int)> sumTask2(calcSumRange);
-        std::packaged_task<int(int, int)> sumTask3(calcSumRange);
-        std::packaged_task<int(int, int)> sumTask4(calcSumRange);
+        constexpr int MaxTasks = 4;
 
-        // get the futures
-        std::future<int> sumResult1 = sumTask1.get_future();
-        std::future<int> sumResult2 = sumTask2.get_future();
-        std::future<int> sumResult3 = sumTask3.get_future();
-        std::future<int> sumResult4 = sumTask4.get_future();
+        std::deque<std::packaged_task<int(int, int)>> tasks;
+        std::deque<std::future<int>> futures;
 
-        // push the tasks on the container
-        std::deque<std::packaged_task<int(int, int)>> allTasks;
-        allTasks.push_back(std::move(sumTask1));
-        allTasks.push_back(std::move(sumTask2));
-        allTasks.push_back(std::move(sumTask3));
-        allTasks.push_back(std::move(sumTask4));
+        // define tasks, store corresponding futures
+        for (size_t i = 0; i < MaxTasks; i++) {
 
-        int begin{ 1 };
-        int increment{ 1000 };
+            std::packaged_task<int(int, int)> task(calcSumRange);
+
+            std::future<int> future = task.get_future();
+
+            tasks.push_back(std::move(task));
+
+            futures.push_back(std::move(future));
+        }
+
+        int begin{ 0 };
+        int increment{ 100 };
         int end = begin + increment;
 
         // execute each task in a separate thread
-        while (! allTasks.empty()) {
-            std::packaged_task<int(int, int)> myTask = std::move(allTasks.front());
-            allTasks.pop_front();
-            std::thread t(std::move(myTask), begin, end);
+        for (size_t i = 0; i < MaxTasks; i++) {
+
+            std::packaged_task<int(int, int)> task = std::move(tasks.front());
+            tasks.pop_front();
+
+            std::thread t(std::move(task), begin, end);
+            t.detach();
+
             begin = end;
             end += increment;
-            t.detach();
         }
 
         // get the results
-        int sum = sumResult1.get() + sumResult2.get() + sumResult3.get() + sumResult4.get();
+        int sum{};
+        for (size_t i = 0; i < MaxTasks; i++) {
 
-        std::cout << "Sum of 0 .. 10000 = " << sum << std::endl;
+            std::future<int> future = std::move(futures.front());
+            futures.pop_front();
+
+            int partialSum = future.get();
+            sum += partialSum;
+        }
+
+        std::cout << "Sum of 0 " << " .. " << (end-increment-1) << " = " << sum << std::endl;
     }
 }
 
