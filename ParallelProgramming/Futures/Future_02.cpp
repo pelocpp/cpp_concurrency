@@ -1,77 +1,100 @@
 // ===========================================================================
-// Promises and Futures
+// Simple Promises
 // ===========================================================================
 
 #include <iostream>
-#include <mutex>
 #include <thread>
 #include <future>
 
-#include "../Logger/Logger.h"
+namespace SimplePromises
+{
+    /*
+     * propagating exception from std::async invocation  
+     */
+    int doSomeWorkWithException()
+    {
+        std::cout << "Inside thread  ... working hard ..." << std::endl;
 
-namespace Futures {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
 
-    // global function
-    void product(std::promise<int>&& intPromise, int a, int b) {
+        throw std::out_of_range("bad index");
 
-        std::thread::id tid = std::this_thread::get_id();
-        Logger::log(std::cout, "tid:  ", tid);
-
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(3s);
-
-        intPromise.set_value(a * b);
+        return 123;
     }
 
-    // functor notation
-    struct Div {
-        void operator() (std::promise<int>&& intPromise, int a, int b) const {
+    void test_01() {
 
-            std::thread::id tid = std::this_thread::get_id();
-            Logger::log(std::cout, "tid:  ", tid);
+        std::future<int> futureFunction = std::async(
+            std::launch::async,
+            doSomeWorkWithException
+        );
 
-            using namespace std::chrono_literals;
-            std::this_thread::sleep_for(5s);
-            intPromise.set_value(a / b);
+        try
+        {
+            std::cout << "Waiting for Result ... " << std::endl;
+            int result = futureFunction.get();
         }
-    };
+        catch (std::out_of_range ex) {
+            std::cout << "Main Thread: got exception [" << ex.what() << "]" << std::endl;
+        }
 
-    void test() {
+        std::cout << "Main Thread: Done." << std::endl;
+    }
 
-        int a = 20;
-        int b = 10;
+    /*
+     * propagating exception from std::thread invocation
+     */
 
-        // define the promises
-        std::promise<int> prodPromise;
-        std::promise<int> divPromise;
+    std::exception_ptr g_ep = nullptr;
 
-        // get the futures
-        std::future<int> prodResult = prodPromise.get_future();
-        std::future<int> divResult = divPromise.get_future();
+    int doAnotherWorkWithException()
+    {
+        std::cout << "Inside another thread  ... working hard ..." << std::endl;
 
-        // calculate results in a separat thread
-        std::thread prodThread(product, std::move(prodPromise), a, b);
+        try
+        {
+            std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        Div div;
-        std::thread divThread(div, std::move(divPromise), a, b);
+            throw std::runtime_error("==> to be passed between threads");
 
-        // get the result
-        std::cout << "20 * 10 = " << prodResult.get() << std::endl;
-        std::cout << "20 / 10 = " << divResult.get() << std::endl;
+            return 123;
+        }
+        catch (...)
+        {
+            g_ep = std::current_exception();
+        }
 
-        prodThread.join();
-        divThread.join();
+        return -1;
+    }
+
+    void test_02() {
+
+        std::thread t = std::thread(doAnotherWorkWithException);
+        t.join();
+
+        if (g_ep != nullptr) {
+            try {
+                std::rethrow_exception(g_ep);
+            }
+            catch (const std::exception & ex)
+            {
+                std::cerr << "Thread exited with exception: " << ex.what() << "\n";
+            }
+        }
+
+        std::cout << "Main Thread: Done." << std::endl;
     }
 }
 
 //int main()
 //{
-//    using namespace Futures;
-//    test();
-//    return 1;
+//    using namespace SimplePromises;
+//    test_01();
+//    test_02();
+//
+//    return 0;
 //}
 
 // ===========================================================================
 // End-of-File
 // ===========================================================================
-

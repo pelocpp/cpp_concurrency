@@ -33,9 +33,6 @@
     <ClCompile Include="Futures\Async_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Future_02.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Futures\Future_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -64,6 +61,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PackagedTask01\PackagedTask.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\Future_03.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Futures\Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

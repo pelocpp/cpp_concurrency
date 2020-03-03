@@ -145,6 +145,7 @@
     <ClCompile Include="Futures\Async_01.cpp" />
     <ClCompile Include="Futures\Async_02.cpp" />
     <ClCompile Include="Futures\Future_02.cpp" />
+    <ClCompile Include="Futures\Future_03.cpp" />
     <ClCompile Include="Futures\Future_01.cpp" />
     <ClCompile Include="IncrementDecrement\IncrementDecrement.cpp" />
     <ClCompile Include="Logger\Logger.cpp" />
