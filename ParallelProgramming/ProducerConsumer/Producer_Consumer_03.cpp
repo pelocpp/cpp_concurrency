@@ -9,109 +9,113 @@
 #include <mutex>
 #include <chrono>
 
-class BigData {
-public:
+namespace ConsumerProducerThree {
 
-    BigData () : m_index(-1), m_counter(1) {}
+    class ConsumerProducer {
+    public:
 
-private:
-    // array - considered as stack
-    std::array<int, 10> m_data;  // shared object
-    int m_index ;
+        ConsumerProducer() : m_index(-1), m_counter(1) {}
 
-    // take care of concurrent stack access
-    std::mutex m_mutex;  
+    private:
+        // array - considered as stack
+        std::array<int, 10> m_data;  // shared object
+        int m_index;
 
-    // monitor concept (Dijkstra)
-    std::condition_variable m_conditionIsEmpty;
-    std::condition_variable m_conditionIsFull;
+        // take care of concurrent stack access
+        std::mutex m_mutex;
 
-    int sleepTimeProducer = 100;  // milli seconds
-    int sleepTimeConsumer = 200;  // milli seconds
+        // monitor concept (Dijkstra)
+        std::condition_variable m_conditionIsEmpty;
+        std::condition_variable m_conditionIsFull;
 
-    int m_counter;
+        int sleepTimeProducer = 100;  // milli seconds
+        int sleepTimeConsumer = 200;  // milli seconds
 
-    void produce() {
+        int m_counter;
 
-        while (true) {
+        void produce() {
 
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(sleepTimeProducer)
-            );
+            while (true) {
 
-            m_counter++;
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(sleepTimeProducer)
+                );
 
-            // RAII
-            std::unique_lock guard(m_mutex);
+                m_counter++;
 
-            // is stack full?
-            m_conditionIsFull.wait(
-                guard,
-                [&]() { return m_index < 9; }
-            );
-
-            // "Lost Wakeup and Spurious Wakeup"
-            if (m_index < 9) {
-
-                m_index++;
-                m_data.at(m_index) = m_counter;
-                std::cout
-                    << "pushed " << m_counter << " at index " 
-                    << m_index << std::endl;
-
-                // wakeup any sleeping consuments
-                m_conditionIsEmpty.notify_all();  
-            }
-        }
-    }
-
-    void consume() {
-
-        while (true) {
-
-            std::this_thread::sleep_for(
-                std::chrono::milliseconds(sleepTimeConsumer));
-
-            int gotNumber = 0;
-            {
                 // RAII
-                std::unique_lock guard(m_mutex);  // Dijkstra Monitor
+                std::unique_lock guard(m_mutex);
 
-                // is stack empty?
-                m_conditionIsEmpty.wait(
+                // is stack full?
+                m_conditionIsFull.wait(
                     guard,
-                    [&] ()  { return m_index >= 0; }
+                    [&]() { return m_index < 9; }
                 );
 
                 // "Lost Wakeup and Spurious Wakeup"
-                if (m_index >= 0) {
+                if (m_index < 9) {
 
-                    int value = m_data.at(m_index);
-                    m_index--;
-                    std::cout 
-                        << "popped " << value << " at index "
-                        << (m_index + 1) << std::endl;
+                    m_index++;
+                    m_data.at(m_index) = m_counter;
+                    std::cout
+                        << "pushed " << m_counter << " at index "
+                        << m_index << std::endl;
 
-                    // wakeup any sleeping producers
-                    m_conditionIsFull.notify_all(); 
+                    // wakeup any sleeping consuments
+                    m_conditionIsEmpty.notify_all();
                 }
             }
         }
-    }
 
-public:
-    void run() {
-        std::thread producer (&BigData::produce, this);
-        std::thread consumer (&BigData::consume, this);
-        producer.join();
-        consumer.join();
-    }
-};
+        void consume() {
+
+            while (true) {
+
+                std::this_thread::sleep_for(
+                    std::chrono::milliseconds(sleepTimeConsumer));
+
+                int gotNumber = 0;
+                {
+                    // RAII
+                    std::unique_lock guard(m_mutex);  // Dijkstra Monitor
+
+                    // is stack empty?
+                    m_conditionIsEmpty.wait(
+                        guard,
+                        [&]() { return m_index >= 0; }
+                    );
+
+                    // "Lost Wakeup and Spurious Wakeup"
+                    if (m_index >= 0) {
+
+                        int value = m_data.at(m_index);
+                        m_index--;
+                        std::cout
+                            << "popped " << value << " at index "
+                            << (m_index + 1) << std::endl;
+
+                        // wakeup any sleeping producers
+                        m_conditionIsFull.notify_all();
+                    }
+                }
+            }
+        }
+
+    public:
+        void run() {
+            std::thread producer(&ConsumerProducer::produce, this);
+            std::thread consumer(&ConsumerProducer::consume, this);
+            producer.join();
+            consumer.join();
+        }
+    };
+}
 
 //int main()
 //{
-//    BigData bigData;
-//    bigData.run();
+//    using namespace ConsumerProducerThree;
+//    ConsumerProducer ConsumerProducer;
+//    ConsumerProducer.run();
 //}
 
 // ===========================================================================

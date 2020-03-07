@@ -11,7 +11,7 @@
 
 #include "../Logger/Logger.h"
 
-namespace ConsumerProducer {
+namespace ConsumerProducerOne {
 
     class ConsumerProducer {
 
@@ -84,7 +84,7 @@ namespace ConsumerProducer {
 }
 
 //int main() {
-//    using namespace ConsumerProducer;
+//    using namespace ConsumerProducerOne;
 //    test();
 //    return 1;
 //}
