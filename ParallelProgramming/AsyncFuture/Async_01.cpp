@@ -10,9 +10,7 @@ namespace SimpleAsync {
 
     std::string helloFunction(const std::string& s) {
 
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(1s);
-
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         return "Hello ASync from " + s + ".";
     }
 
@@ -20,38 +18,34 @@ namespace SimpleAsync {
     public:
         std::string operator()(const std::string& s) const {
 
-            using namespace std::chrono_literals;
-            std::this_thread::sleep_for(2s);
-
+            std::this_thread::sleep_for(std::chrono::seconds(2));
             return "Hello ASync from " + s + ".";
         }
     };
 
     auto helloLambda = [](const std::string& s) {
 
-        using namespace std::chrono_literals;
-        std::this_thread::sleep_for(3s);
-
+        std::this_thread::sleep_for(std::chrono::seconds(2));
         return "Hello ASync from " + s + "."; 
     };
 
     void test_01() {
 
-        // future with function
-        auto futureFunction = std::async(
-            std::launch::async, 
-            helloFunction, 
+        // std::async with function
+        std::future<std::string> futureFunction = std::async(
+            std::launch::async,
+            helloFunction,
             "function");
 
-        // future with functor
+        // std::async with functor
         HelloFunctor HelloFunctor;
-        auto futureFunctionObject = std::async(
+        std::future<std::string> futureFunctionObject = std::async(
             std::launch::async,
             HelloFunctor, 
             "functor");
 
-        // future with lambda function
-        auto futureLambda = std::async(
+        // std::async with lambda function
+        std::future<std::string> futureLambda = std::async(
             std::launch::async,
             helloLambda,
             "lambda");

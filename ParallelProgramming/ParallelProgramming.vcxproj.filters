@@ -27,15 +27,6 @@
     <ClCompile Include="MutexCondition\Mutex_Condition.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Async_01.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Futures\Async_02.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Futures\Future_01.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -54,19 +45,22 @@
     <ClCompile Include="ProducerConsumer\Producer_Consumer_03.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SpringerProblem\KnightProblem.cpp">
+    <ClCompile Include="PackagedTask\PackagedTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DiningPhilosophers\Dining_Philosophers.cpp">
+    <ClCompile Include="Exception\Exception.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PackagedTask01\PackagedTask.cpp">
+    <ClCompile Include="AsyncFuture\Async_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Future_03.cpp">
+    <ClCompile Include="AsyncFuture\Async_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Futures\Future_02.cpp">
+    <ClCompile Include="FuturesPromises\Future_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FuturesPromises\Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,19 +77,19 @@
     <None Include="SimpleThreading\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="PackagedTask01\Readme.md">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="Futures\Readme.md">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="DiningPhilosophers\Readme.md">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="SpringerProblem\Readme.md">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="ProducerConsumer\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="PackagedTask\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Exception\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="AsyncFuture\Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="FuturesPromises\Readme.md">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
@@ -105,16 +99,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Futures\Futures.png">
+    <Image Include="FuturesPromises\Futures.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Futures\tasks_data_channel.png">
+    <Image Include="FuturesPromises\tasks_data_channel.png">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
   </ItemGroup>
 </Project>
