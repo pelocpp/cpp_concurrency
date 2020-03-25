@@ -38,10 +38,10 @@ namespace SimpleAsync {
             "function");
 
         // std::async with functor
-        HelloFunctor HelloFunctor;
+        HelloFunctor helloFunctor;
         std::future<std::string> futureFunctionObject = std::async(
             std::launch::async,
-            HelloFunctor, 
+            helloFunctor, 
             "functor");
 
         // std::async with lambda function
