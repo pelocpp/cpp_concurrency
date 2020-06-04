@@ -1,12 +1,12 @@
 // ===========================================================================
-// Simple Promises
+// Exception Handling
 // ===========================================================================
 
 #include <iostream>
 #include <thread>
 #include <future>
 
-namespace SimplePromises
+namespace ExceptionHandling
 {
     /*
      * propagating exception from std::async invocation  
@@ -88,7 +88,7 @@ namespace SimplePromises
 
 //int main()
 //{
-//    using namespace SimplePromises;
+//    using namespace ExceptionHandling;
 //    test_01();
 //    test_02();
 //
