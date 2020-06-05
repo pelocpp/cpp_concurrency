@@ -32,7 +32,7 @@ namespace PackagedTask {
         t.detach();
 
         // do some arbitrary work ......
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
 
         // get the result
         int sum = future.get();

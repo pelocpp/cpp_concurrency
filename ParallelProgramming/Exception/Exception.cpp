@@ -15,9 +15,9 @@ namespace ExceptionHandling
     {
         std::cout << "Inside thread  ... working hard ..." << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        throw std::out_of_range("bad index");
+        throw std::out_of_range("==> to be passed between threads");
 
         return 123;
     }
@@ -53,7 +53,7 @@ namespace ExceptionHandling
 
         try
         {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(3));
 
             throw std::runtime_error("==> to be passed between threads");
 
@@ -69,7 +69,7 @@ namespace ExceptionHandling
 
     void test_02() {
 
-        std::thread t = std::thread(doAnotherWorkWithException);
+        std::thread t (doAnotherWorkWithException);
         t.join();
 
         if (g_ep != nullptr) {

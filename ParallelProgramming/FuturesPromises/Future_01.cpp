@@ -31,7 +31,7 @@ namespace SimplePromises {
 
         std::cout << "Result: " << result << std::endl;
 
-        t.join();
+        t.detach();
     }
 
     void doWorkVersion02(std::promise<int>&& promise)
@@ -39,7 +39,7 @@ namespace SimplePromises {
         std::cout << "Inside Thread (doWork - 02)" << std::endl;
 
         using namespace std::chrono_literals;
-        std::this_thread::sleep_for(3s);
+        std::this_thread::sleep_for(5s);
 
         promise.set_value(35);
     }
@@ -57,7 +57,7 @@ namespace SimplePromises {
 
         std::cout << "Result: " << result << std::endl;
 
-        t.join();
+        t.detach();
     }
 }
 

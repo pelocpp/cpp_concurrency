@@ -32,7 +32,7 @@ namespace SimpleThreading02 {
     void test_01() {
         std::thread t(function, 1, NumIterations);
         t.join();
-        Logger::log(std::cout, "Done Version 2.");
+        Logger::log(std::cout, "Done Version 1.");
     }
 
     class Runnable {
