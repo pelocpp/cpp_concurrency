@@ -7,7 +7,7 @@
 #include <atomic>
 #include <mutex>
 
-#include "../Logger/Logger.h"
+#include "../../../Logger/Logger.h"
 
 namespace IncrementDecrement {
 
@@ -173,30 +173,29 @@ namespace IncrementDecrement {
     }
 }
 
-//int main()
-//{
-//    using namespace IncrementDecrement;
-//    Logger::log(std::cout, "Begin");
-//
-//    Logger::startWatch();
-//    test_regular();
-//    Logger::stopWatchMilli();
-//
-//    Logger::startWatch();
-//    test_atomic();
-//    Logger::stopWatchMilli();
-//
-//    Logger::startWatch();
-//    test_mutex();
-//    Logger::stopWatchMilli();
-//
-//    Logger::startWatch();
-//    test_mutexRAII();
-//    Logger::stopWatchMilli();
-//
-//    Logger::log(std::cout, "Done.");
-//    return 1;
-//}
+void test_01()
+{
+    using namespace IncrementDecrement;
+    Logger::log(std::cout, "Begin");
+
+    Logger::startWatch();
+    test_regular();
+    Logger::stopWatchMilli();
+
+    Logger::startWatch();
+    test_atomic();
+    Logger::stopWatchMilli();
+
+    Logger::startWatch();
+    test_mutex();
+    Logger::stopWatchMilli();
+
+    Logger::startWatch();
+    test_mutexRAII();
+    Logger::stopWatchMilli();
+
+    Logger::log(std::cout, "Done.");
+}
 
 // ===========================================================================
 // End-of-File

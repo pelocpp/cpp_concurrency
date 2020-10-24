@@ -6,7 +6,7 @@
 #include <thread> 
 #include <chrono>
 
-#include "../Logger/Logger.h"
+#include "../../../Logger/Logger.h"
 
 /*
  *  4 ways to create a thread:
@@ -106,15 +106,14 @@ namespace SimpleThreading02 {
     }
 }
 
-//int main()
-//{
-//    using namespace SimpleThreading02;
-//    test_01();
-//    test_02();
-//    test_03();
-//    test_04();
-//    return 1;
-//}
+void test_simple_threading_02()
+{
+    using namespace SimpleThreading02;
+    test_01();
+    test_02();
+    test_03();
+    test_04();
+}
 
 // ===========================================================================
 // End-of-File

@@ -6,7 +6,7 @@
 #include <thread> 
 #include <chrono>
 
-#include "../Logger/Logger.h"
+#include "../../../Logger/Logger.h"
 
 namespace SimpleThreading {
 
@@ -61,13 +61,12 @@ namespace SimpleThreading {
     }
 }
 
-//int main()
-//{
-//    using namespace SimpleThreading;
-//    test_01();
-//    test_02();
-//    return 1;
-//}
+void test_simple_threading_01()
+{
+    using namespace SimpleThreading;
+    test_01();
+    test_02();
+}
 
 // ===========================================================================
 // End-of-File
