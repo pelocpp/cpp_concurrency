@@ -9,3 +9,9 @@ Die `std::async`-Methode besitzt im Wesentlichen drei Überladungen:
   * `std::async` mit Funktor-Objekt.
   * `std::async` mit Lambda-Funktion.
 
+
+---
+
+[Zurück](../../Readme.md)
+
+---

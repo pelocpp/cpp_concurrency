@@ -5,3 +5,10 @@ an den Erzeugerthread propagiert werden:
 
   * Propagating Exception from `std::async` invocation
   * Propagating Exception from `std::thread` invocation
+
+
+---
+
+[Zurück](../../Readme.md)
+
+---
