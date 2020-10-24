@@ -1,19 +1,12 @@
 // ===========================================================================
-// peterloos.de
+// Packaged Task
 // ===========================================================================
 
-#include <iostream>
+void test_packaged_task();
 
 int main()
 {
-    std::cout 
-        << "Collection of miscellaneous C++ Multithreading Programs" 
-        << std::endl;
-
-    std::cout 
-        << "Have a look at the corresponding Subdirectory!" 
-        << std::endl;
-
+    test_packaged_task();
     return 0;
 }
 

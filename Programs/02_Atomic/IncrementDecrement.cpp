@@ -7,7 +7,7 @@
 #include <atomic>
 #include <mutex>
 
-#include "../../../Logger/Logger.h"
+#include "../Logger/Logger.h"
 
 namespace IncrementDecrement {
 

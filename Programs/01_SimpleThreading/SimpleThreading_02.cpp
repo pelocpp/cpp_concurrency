@@ -6,7 +6,7 @@
 #include <thread> 
 #include <chrono>
 
-#include "../../../Logger/Logger.h"
+#include "../Logger/Logger.h"
 
 /*
  *  4 ways to create a thread:
