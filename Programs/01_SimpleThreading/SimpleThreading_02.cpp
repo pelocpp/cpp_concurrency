@@ -35,6 +35,8 @@ namespace SimpleThreading02 {
         Logger::log(std::cout, "Done Version 1.");
     }
 
+    // --------------------------------------------
+
     class Runnable {
     private:
         int m_value;
@@ -67,9 +69,12 @@ namespace SimpleThreading02 {
         Logger::log(std::cout, "Done Version 2.");
     }
 
+    // --------------------------------------------
+
     void test_03() {
         int value = 3;
         int iterations = 5;
+
         std::thread t([value, iterations] () {
             for (int i = 0; i < iterations; ++i) {
                 Logger::log(std::cout, "in thread ", value);
@@ -80,6 +85,8 @@ namespace SimpleThreading02 {
         t.join();
         Logger::log(std::cout, "Done Version 3.");
     }
+
+    // --------------------------------------------
 
     class AnotherRunnable {
     private:

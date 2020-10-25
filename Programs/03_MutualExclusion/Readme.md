@@ -2,6 +2,48 @@
 
 [Zurück](../../Readme.md)
 
+Aus *Wikipedia*:
+
+"Der Begriff "**gegenseitiger Ausschluss**" bzw. *Mutex* (Abk. für engl. *Mutual Exclusion*) bezeichnet eine Gruppe von Verfahren,
+mit denen das Problem des kritischen Abschnitts gelöst wird.
+Mutex-Verfahren verhindern, dass nebenläufige Prozesse bzw. Threads gleichzeitig oder zeitlich verschränkt
+gemeinsam genutzte Datenstrukturen unkoordiniert verändern, wodurch die Datenstrukturen in einen inkonsistenten Zustand geraten können,
+auch wenn die Aktionen jedes einzelnen Prozesses oder Threads für sich betrachtet konsistenzerhaltend sind.
+
+Mutex-Verfahren koordinieren den zeitlichen Ablauf nebenläufiger Prozesse/Threads derart,
+dass andere Prozesse/Threads von der Ausführung kritischer Abschnitte ausgeschlossen sind,
+wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Datenstruktur verändert)."
+
+---
+
+In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
+gibt es eine ausführliche Beschreibung zum Thema *Mutual Exclusion*, das dort
+die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere
+Programmiersprachen übertragen, wie zum Beispiel C++.
+
+---
+
+#### Quellcode:
+
+  * Elementare Demonstration des `std::mutex` Objekts:</br>
+    [Beispiel einer Klasse `Counter`](Simple_Mutex.cpp).
+
+  * Elementare Demonstration des `std::condition_variable` Objekts:</br>
+    [Beispiel](Simple_Condition_Variable.cpp).
+
+  * Demonstration des klassischen Konsumenten/Verbraucher-Problems:</br>
+    [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).</br>
+    [Beispiel einer Klasse `ConsumerProducerTwo::ConsumerProducer`](Producer_Consumer_02.cpp).</br>
+    [Beispiel einer Klasse `ConsumerProducerThree::ConsumerProducer`](Producer_Consumer_03.cpp).</br>
+
+---
+
+**Beachte**:
+
+Siehe das Thema
+
+[Do I have to acquire lock before calling std::condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
+
 ---
 
 ## Konkurrierender Zugriff auf Objekte 

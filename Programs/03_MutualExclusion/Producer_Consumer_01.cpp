@@ -11,8 +11,8 @@
 
 #include "../Logger/Logger.h"
 
-namespace ConsumerProducerOne {
-
+namespace ConsumerProducerOne
+{
     class ConsumerProducer {
 
     private:

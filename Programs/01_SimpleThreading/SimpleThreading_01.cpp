@@ -8,7 +8,7 @@
 
 #include "../Logger/Logger.h"
 
-namespace SimpleThreading {
+namespace SimpleThreading01 {
 
     constexpr long NumIterations = 5;
 
@@ -63,7 +63,7 @@ namespace SimpleThreading {
 
 void test_simple_threading_01()
 {
-    using namespace SimpleThreading;
+    using namespace SimpleThreading01;
     test_01();
     test_02();
 }

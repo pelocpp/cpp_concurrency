@@ -42,6 +42,34 @@ struct atomic<std::weak_ptr<U>>;
 
 ---
 
+Es gibt in der Datei `<atomic>` eine Reihe vordefinierter atomarer Datentypen,
+vorzugsweise für die elementaren Standarddatentypen:
+
+| Vordefinierter atomarer Datentyp | Äquivalenter `std::atomic` Datentyp |
+|:- | - |
+| `std::atomic_bool`   | `std::atomic<bool>` |
+| `std::atomic_char`   | `std::atomic<char>` |
+| `std::atomic_schar`  | `std::atomic<signed char>` |
+| `std::atomic_uchar`  | `std::atomic<unsigned char>` |
+| `std::atomic_short`  | `std::atomic<short>` |
+| `std::atomic_ushort` | `std::atomic<unsigned short>` |
+| `std::atomic_int`    | `std::atomic<int>` |
+| `std::atomic_uint`   | `std::atomic<unsigned int>` |
+| `std::atomic_long`   | `std::atomic<long>` |
+| `std::atomic_ulong`  | `std::atomic<unsigned long>` |
+| `std::atomic_llong`  | `std::atomic<long long>` |
+| `std::atomic_ullong` | `std::atomic<unsigned long long>` |
+
+Tabelle 1: Vordefinierte atomare Datentypen.
+
+---
+
+#### Quellcode:
+
+[Siehe hier](IncrementDecrement.cpp).
+
+---
+
 In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
 gibt es eine ausführliche Beschreibung zum Thema *atomare Operationen*, das dort
 die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere

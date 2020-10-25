@@ -9,9 +9,10 @@
 #include <mutex>
 #include <chrono>
 
-namespace ConsumerProducerThree {
-
-    class ConsumerProducer {
+namespace ConsumerProducerThree
+{
+    class ConsumerProducer
+    {
     public:
 
         ConsumerProducer() : m_index(-1), m_counter(1) {}

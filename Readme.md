@@ -14,3 +14,5 @@
 
 ## [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
+## [STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+

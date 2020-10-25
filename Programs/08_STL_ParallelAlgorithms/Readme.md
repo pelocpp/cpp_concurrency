@@ -1,5 +1,9 @@
 # STL und parallele Algorithmen
 
+[Zurück](../../Readme.md)
+
+---
+
 Die Standard Template Library (STL) enthält sehr viele Algorithmen für das Suchen, Zählen, Manipulieren von STL-Containern.
 Mit C++17 wurden viele dieser Algorithmen überladen und neue Algorithmen hinzugefügt.
 Diese überladenen und neuen Algorithmen können mit einer sogenannte *Execution Policy* aufgerufen werden.
