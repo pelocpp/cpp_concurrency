@@ -152,6 +152,16 @@
   <ItemGroup>
     <None Include="Readme.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Dijkstra_2.png" />
+    <Image Include="Monitor_01.png" />
+    <Image Include="Monitor_02.png" />
+    <Image Include="Monitor_03.png" />
+    <Image Include="Monitor_04.png" />
+    <Image Include="Sync_Study_01.png" />
+    <Image Include="Sync_Study_02.png" />
+    <Image Include="Sync_Study_03.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

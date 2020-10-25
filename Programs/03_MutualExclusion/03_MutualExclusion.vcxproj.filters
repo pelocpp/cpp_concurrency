@@ -42,4 +42,30 @@
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Dijkstra_2.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Monitor_01.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Monitor_02.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Monitor_03.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Monitor_04.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Sync_Study_01.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Sync_Study_02.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Sync_Study_03.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

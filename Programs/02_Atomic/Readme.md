@@ -286,12 +286,12 @@ Ich helfe Ihnen zur Veranschaulichung des Sachverhalts mit einer kleinen Bilders
 die in Zeile 18 von
 *Listing 3*
 einen Threadwechsel zu Grunde legt (also zwischen dem ``add``-und dem ``stfld``-Opcode).
-Wir steigen in unsere Sequenz mit den Annahmen ein, dass Thread T<subscript>1</subscript> augenblicklich aktiv ist und
+Wir steigen in unsere Sequenz mit den Annahmen ein, dass Thread T<sub>1</sub> augenblicklich aktiv ist und
 in ``number``
 der Wert 17 abgelegt ist.
 *Abbildung* 2 achtet ferner darauf, dass jedem Thread sein eigener Auswertungsstapel zugeordnet ist.
 Noch zur Vollständigkeit halber:
-Der konkurrierende Thread T<subscript>2</subscript> bearbeitet in der ``Decrement``-Methode die Opcode-Sequenz:
+Der konkurrierende Thread T<sub>2</sub> bearbeitet in der ``Decrement``-Methode die Opcode-Sequenz:
 
       
 ```
@@ -304,12 +304,12 @@ IL_000f:  stfld      int64 Number::number
 
 Nun zu *Abbildung* 2,
 die Ausführung des ``ldfld``-Opcodes legt hier gerade
-den aktuellen Wert von ``number`` auf dem T<subscript>1</subscript>-spezifischen Auswertungsstapel ab:
+den aktuellen Wert von ``number`` auf dem T<sub>1</sub>-spezifischen Auswertungsstapel ab:
       
 
 <img src="Atomar_Study_01.png" width="440">
 
-*Abbildung* 2: Ausführung des ``ldfld``-Opcodes im Kontext von Thread T<subscript>1</subscript>.
+*Abbildung* 2: Ausführung des ``ldfld``-Opcodes im Kontext von Thread T<sub>1</sub>.
 
 Es schließen sich die zwei Opcodes ``ldc`` und ``conv`` an, danach sieht der Auswertungsstapel wie
 in *Abbildung* 3 gezeigt aus:
@@ -317,18 +317,18 @@ in *Abbildung* 3 gezeigt aus:
 
 <img src="Atomar_Study_02.png" width="440">
 
-*Abbildung* 3: Ausführung der ``ldc``- und ``conv``-Opcodes im Kontext von Thread T<subscript>1</subscript>.
+*Abbildung* 3: Ausführung der ``ldc``- und ``conv``-Opcodes im Kontext von Thread T<sub>1</sub>.
 
 
-Wir nehmen nun an, dass mit ``add`` der letzte Opcode im Kontext von T<subscript>1</subscript> ausgeführt wird,
-danach verlassen wir T<subscript>1</subscript> mit folgender Situation
+Wir nehmen nun an, dass mit ``add`` der letzte Opcode im Kontext von T<sub>1</sub> ausgeführt wird,
+danach verlassen wir T<sub>1</sub> mit folgender Situation
 (*Abbildung* 4):
       
 <img src="Atomar_Study_03.png" width="440">
 
-*Abbildung* 4: Ausführung des ``add``-Opcodes im Kontext von Thread T<subscript>1</subscript>.
+*Abbildung* 4: Ausführung des ``add``-Opcodes im Kontext von Thread T<sub>1</sub>.
 
-Für Thread T<subscript>2</subscript> unterstellen wir der Einfachheit halber, dass dieser "nur" drei Mal den betrachten Codeabschnitt
+Für Thread T<sub>2</sub> unterstellen wir der Einfachheit halber, dass dieser "nur" drei Mal den betrachten Codeabschnitt
 der ``Decrement``-Methode durchläuft.
 Insbesondere müssen wir für diesen Thread keinen Threadwechsel innerhalb des betrachteten Abschnitts zu Grunde legen.
 Nach drei Durchläufen haben wir im Laufzeitsystem folgendes Bild vorliegen:
@@ -337,29 +337,29 @@ Nach drei Durchläufen haben wir im Laufzeitsystem folgendes Bild vorliegen:
 
 *Abbildung* 5: Dreimaliges Dekrementieren der Variablen ``number``.
    
-Nach dreimaligem Dekrementieren (im Kontext von Thread T<subscript>2</subscript>) besitzt
+Nach dreimaligem Dekrementieren (im Kontext von Thread T<sub>2</sub>) besitzt
 die Variable ``number`` den Wert 14.
 Nun kommen wir in die entscheidende Phase unserer Fallstudie:
-Thread T<subscript>1</subscript> erlangt wieder die Zuteilung der Programmausführung.
-Es erfolgt ein Umschalten auf den Auswertungsstapel von T<subscript>1</subscript>, der nächste auszuführende Opcode ist ``stfld``,
+Thread T<sub>1</sub> erlangt wieder die Zuteilung der Programmausführung.
+Es erfolgt ein Umschalten auf den Auswertungsstapel von T<sub>1</sub>, der nächste auszuführende Opcode ist ``stfld``,
 die Situation nach der Ausführung dieses Befehls ist in
 *Abbildung* 6 dargestellt:
       
 
 <img src="Atomar_Study_05.png" width="440">
 
-*Abbildung* 6: Erneute Zuteilung der Programmausführung an Thread T<subscript>1</subscript>.
+*Abbildung* 6: Erneute Zuteilung der Programmausführung an Thread T<sub>1</sub>.
     
-Die erneute Zuteilung der Programmausführung an Thread T<subscript>1</subscript>
+Die erneute Zuteilung der Programmausführung an Thread T<sub>1</sub>
 zieht einen unerwünschten Effekt nach sich:
 Die Variable ``number`` wird mit dem Wert 18 überschrieben.
-*Abbildung* 6 bringt das Problem ans Tageslicht: Das Wiederaufsetzen von Thread T<subscript>1</subscript>
+*Abbildung* 6 bringt das Problem ans Tageslicht: Das Wiederaufsetzen von Thread T<sub>1</sub>
 hat zur Folge, dass zunächst der Auswertungsstapel in den Zustand gebracht wurde,
-wie ihn T<subscript>1</subscript> beim Threadwechsel hinterlassen hat.
+wie ihn T<sub>1</sub> beim Threadwechsel hinterlassen hat.
 Insbesondere bedeutet dies, dass nach dem Austauschen des Auswertungsstapels der fast schon in Vergessenheit geratene Wert 18
 auf dem Stapel zum Vorschein kommt und bei der folgenden ``stfld``-Anweisung in die Variable
 ``number`` geschrieben wird.
-Die Folge ist, dass die drei ausgeführten Dekrement-Anweisungen von Thread T<subscript>2</subscript>
+Die Folge ist, dass die drei ausgeführten Dekrement-Anweisungen von Thread T<sub>2</sub>
 unter den Tisch fallen, was natürlich im Widerspruch zur erwarteten Ausführung des Programms steht -
 in unserer Fallstudie gerät
 die Balance zwischen den inkrementierenden und dekrementierenden Anweisungen aus dem Gleichgewicht,
