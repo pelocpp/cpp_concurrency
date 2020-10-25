@@ -1,5 +1,4 @@
-# Producer Consumer Problem
-
+# Der gegenseitige Ausschluss (Mutual Exclusion)
 
 ---
 
@@ -91,14 +90,14 @@ zu einem Belastungstest "gegeneinander" antreten
 03:     public static void FillStack (Object o)
 04:     {
 05:         Stack s = (Stack) o;
-06:         for (int i = 0; i &lt; Int32.MaxValue; i ++)
+06:         for (int i = 0; i < Int32.MaxValue; i ++)
 07:             s.Push (i);
 08:     }
 09: 
 10:     public static void EmptyStack (Object o)
 11:     {
 12:         Stack s = (Stack) o;
-13:         for (int i = 0; i &lt; Int32.MaxValue; i ++)
+13:         for (int i = 0; i < Int32.MaxValue; i ++)
 14:             s.Pop ();
 15:     }
 16: }
@@ -226,14 +225,14 @@ dem Wunsch nach dem *gegenseitigen Ausschluss* (engl. *mutual exclusion*) zweier
 
 Um den .NET-Entwickler bei solch grundlegenden Problemen nicht im Regen stehen zu lassen, gibt es ab dem .NET-Framework einen neuen
 Namensraum `System.Collections.Concurrent`,
-der unter anderem eine thread-sichere Stapelklasse `ConcurrentStack&lt;&gt;` enthält.
+der unter anderem eine thread-sichere Stapelklasse `ConcurrentStack<>` enthält.
 
 Mit ihrem Einsatz können wir die mit viel Mühe konzipierte Klasse `Stack` aus
 *Listing* 3 getrost zur Seite legen.
 
 Sollten Sie noch nicht das endgültige Vertrauen in die Thread-Sicherheit dieser Klasse haben,
 können Sie ja den Testrahmen aus *Listing* 4
-anpassen und stattdessen ein `ConcurrentStack&lt;&gt;`-Objekt testen:
+anpassen und stattdessen ein `ConcurrentStack<>`-Objekt testen:
       
 
 ```cpp
@@ -241,16 +240,16 @@ anpassen und stattdessen ein `ConcurrentStack&lt;&gt;`-Objekt testen:
 02: {
 03:     public static void FillStack (Object o)
 04:     {
-05:         ConcurrentStack&lt;int&gt; s = (ConcurrentStack&lt;int&gt;)o;
-06:         for (int i = 0; i &lt; Int32.MaxValue; i ++)
+05:         ConcurrentStack<int> s = (ConcurrentStack<int>)o;
+06:         for (int i = 0; i < Int32.MaxValue; i ++)
 07:             s.Push (i);
 08:     }
 09: 
 10:     public static void EmptyStack (Object o)
 11:     {
-12:         ConcurrentStack&lt;int&gt; s = (ConcurrentStack&lt;int&gt;)o;
+12:         ConcurrentStack<int> s = (ConcurrentStack<int>)o;
 13:         int data;
-14:         for (int i = 0; i &lt; Int32.MaxValue; i++)
+14:         for (int i = 0; i < Int32.MaxValue; i++)
 15:             s.TryPop(out data);
 16:     }
 17: }
@@ -267,7 +266,7 @@ anpassen und stattdessen ein `ConcurrentStack&lt;&gt;`-Objekt testen:
 28:         Thread t0 = new Thread(ps1);
 29:         Thread t1 = new Thread(ps2);
 30: 
-31:         ConcurrentStack&lt;int&gt; s = new ConcurrentStack&lt;int&gt;();
+31:         ConcurrentStack<int> s = new ConcurrentStack<int>();
 32: 
 33:         t0.Start(s);
 34:         t1.Start(s);
@@ -278,7 +277,7 @@ anpassen und stattdessen ein `ConcurrentStack&lt;&gt;`-Objekt testen:
 39: }
 ```
 
-###### Listing 4: Die thread-sichere Klasse `ConcurrentStack&lt;&gt;`
+###### Listing 4: Die thread-sichere Klasse `ConcurrentStack<>`
 
 
 ### Kritische Abschnitte und das Monitorprinzip
@@ -316,7 +315,7 @@ Dieses Zimmer ist für die Zusammenarbeit von mehreren Threads von Bedeutung, auf
 zu sprechen kommen.
       
 
-<img src="Monitor_01.png" width="400">
+<img src="Monitor_01.png" width="600">
 
 *Abbildung* 5: Anschauliche Darstellung eines Monitors: Ein Gebäude mit drei Räumen, in dem sich beliebig viele Threads nach bestimmten Spielregeln bewegen dürfen..
 
@@ -359,7 +358,7 @@ Nun obliegt es der Verwaltung des Monitors, einem der wartenden Threads aus der 
 die Belegung des Monitors zu gewähren.
     
 
-<img src="Monitor_02.png" width="400">
+<img src="Monitor_02.png" width="600">
 
 *Abbildung* 6: Erste Veranschaulichung eines Monitors: Aspekt des gegenseitigen Ausschlusses..
 
@@ -383,67 +382,16 @@ Gibt der Besitzer den Monitor frei, wird dieser durch Öffnung Nummer 3 verlassen
 Monitore werden im .NET Framework durch die Klasse `Monitor` aus dem
 Namensraum `System.Threading` zur Verfügung gestellt.
 Die beiden Methoden zum Betreten und Verlassen des Monitors wurden mit den Bezeichnungen
-`Enter` und `Exit` versehen, siehe
-<xref  linkend="table.monitor_definition_01" />:
-    
+`Enter` und `Exit` versehen, siehe *Tabelle* 1:
 
-    <table id="table.monitor_definition_01">
-      <title>`Enter`- und `Exit`-Methode der Klasse `Monitor`.</title>
-      <tgroup cols="2">
 
-      <colspec colwidth="15%"/>
-      <colspec colwidth="85%"/>
 
-      <thead>
-        <row>
-          <?dbhtml bgcolor="#909090"?>
-          <entry valign="top">
-            Methode
-          </entry>
-          <entry valign="top">
-            Beschreibung
-          </entry>
-        </row>
-      </thead>
+| Methode | Beschreibung |
+|:-------------- |----|
+| Methode ``Enter`` | ```public static void Enter (Object obj);```<br/> Betritt und belegt das durch `obj` spezifizierte Monitorobjekt. Durch das Belegen des Monitors wird insbesondere ein kritischer Abschnitt eingeleitet, der verhindert, dass andere Monitoroperationen zur Ausführung gelangen können. |
+| Methode ``Exit`` | ```public static void Exit (Object obj);```<br/> Freigabe und Verlassen des durch `obj` spezifizierten Monitorobjekts. Insbesondere ist der kritische Abschnitt der aktuellen Monitoroperation beendet und andere Threads können nun den Monitor belegen. |
 
-      <tbody>
-
-        <row>
-          <entry>
-            `Enter`
-            
-          </entry>
-          <entry>
-            
-              <programlisting>
-public static void Enter (Object obj);</programlisting>
-            
-            Betritt und belegt das durch `obj` spezifizierte Monitorobjekt.
-               Durch das Belegen des Monitors wird insbesondere ein kritischer Abschnitt eingeleitet,
-               der verhindert, dass andere Monitoroperationen zur Ausführung gelangen können.
-          </entry>
-        </row>
-
-        <row>
-          <entry>
-            `Exit`
-            
-          </entry>
-          <entry>
-            
-              <programlisting>
-public static void Exit (Object obj);</programlisting>
-            
-            Freigabe und Verlassen des durch `obj` spezifizierten Monitorobjekts.
-               Insbesondere ist der kritische Abschnitt der aktuellen Monitoroperation
-               beendet und andere Threads können nun den Monitor belegen.
-          </entry>
-        </row>
-
-      </tbody>
-      </tgroup>
-    </table>
-
+*Tabelle* 1: `Enter`- und `Exit`-Methode der Klasse `Monitor`.
 
 Unter Einbeziehung der `Monitor`-Klasse sieht eine thread-sichere Implementierung von `Push` oder `Pop` nun so aus:
       
@@ -717,80 +665,17 @@ die für den Monitor deterministisch erscheinen mögen, aber eben von außen nicht 
 ### Benachrichtigungen über Zustandsänderungen eines Monitorobjekts
 
 Zur Koordination von Threads stehen in der `Monitor`-Klasse die drei Methoden
-`Pulse`-, `PulseAll`- und `Wait`-Methode zur Verfügung
-(<xref linkend="table.monitor_definition_02" xrefstyle="template:Tabelle %n"   />).
+`Pulse`-, `PulseAll`- und `Wait`-Methode zur Verfügung (*Tabelle* 2).
 Mit `Wait` versetzt sich ein Thread solange in einen inaktiven Zustand,
 bis im Monitorobjekt eine geeignete Zustandsänderung eingetreten ist.
 Zur Reaktivierung wartender Threads gibt es die beiden Methoden `Pulse` und `PulseAll`:
-      
 
-      <table id="table.monitor_definition_02">
-        <title>Die `Pulse`-, `PulseAll`- und `Wait`-Methode der Klasse `Monitor`.</title>
-        <tgroup cols="2">
+| Methode | Beschreibung |
+|:-------------- |----|
+| Methode ``Wait`` | ```public static bool Wait (Object obj);```<br/>Gibt das durch `obj` spezifizierte Monitorobjekt frei, so dass andere Threads dieses belegen können. Der aktuelle Thread geht in einen blockierten Zustand über. Mit Hilfe von `Pulse`-Methodenaufrufen aus dem Kontext anderer Threads kann ein Wechsel im Zustand des aktuellen Objekts signalisiert werden und der zuletzt aktive Thread wieder reaktiviert werden. |
+| Methode ``Pulse`` | ```public static void Pulse (Object obj);```<br/>Sendet ein Signal an einen (`Pulse`) oder alle (`PulseAll`) blockierten Threads des durch `obj` spezifizierten Monitorobjekts. Mit diesem Signal ist zusätzlich ein Wechsel im Zustand des zu schützenden Objekts verbunden. In der Regel gibt der aktuelle Inhaber des Monitors diesen in Kürze frei, da das *Pulse*-Signal als Aufforderung für andere Threads zu verstehen ist, ihre Arbeit fortzusetzen. |
 
-        <colspec colwidth="20%"/>
-        <colspec colwidth="80%"/>
-
-        <thead>
-          <row>
-            <?dbhtml bgcolor="#909090"?>
-            <entry valign="top">
-              Methode
-            </entry>
-            <entry valign="top">
-              Beschreibung
-            </entry>
-          </row>
-        </thead>
-
-        <tbody>
-
-          <row>
-            <entry>
-              `Wait`
-              
-            </entry>
-            <entry>
-              
-                <programlisting>
-public static bool Wait (Object obj);
-public static bool Wait (
-   Object obj,
-   int millisecondsTimeout
-);</programlisting>
-              
-              Gibt das durch `obj` spezifizierte Monitorobjekt frei, so dass andere Threads dieses belegen können.
-                 Der aktuelle Thread geht in einen blockierten Zustand über. Mit Hilfe von `Pulse`-Methodenaufrufen
-                 aus dem Kontext anderer Threads kann ein Wechsel im Zustand des aktuellen Objekts signalisiert werden
-                 und der zuletzt aktive Thread wieder reaktiviert werden.
-            </entry>
-          </row>
-
-          <row>
-            <entry>
-              `Pulse`
-              
-              `PulseAll`
-              
-            </entry>
-            <entry>
-              
-                <programlisting>
-public static void Pulse (Object obj);
-public static void PulseAll (Object obj);</programlisting>
-              
-              Sendet ein Signal an einen (`Pulse`) oder alle (`PulseAll`) blockierten Threads
-                 des durch `obj` spezifizierten Monitorobjekts.
-                 Mit diesem Signal ist zusätzlich ein Wechsel im Zustand des zu schützenden Objekts verbunden.
-                 In der Regel gibt der aktuelle Inhaber des Monitors diesen in Kürze frei, da das *Pulse*-Signal
-                 als Aufforderung für andere Threads zu verstehen ist, ihre Arbeit fortzusetzen.
-               
-            </entry>
-          </row>
-
-        </tbody>
-        </tgroup>
-      </table>
+*Tabelle* 2: Die `Pulse`-, `PulseAll`- und `Wait`-Methode der Klasse `Monitor`.
 
 Damit kommen wir zur den Formulierungen einer Monitoroperation in C#.
 Die Überprüfung des Datenzustandes können wir uns mit einer Bedingungsvariablen `condition` vom
