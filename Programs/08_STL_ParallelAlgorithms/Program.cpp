@@ -1,12 +1,12 @@
 // ===========================================================================
-// Exception Handling
+// STL and Parallel Algorithms
 // ===========================================================================
 
-void test_exception_handling();
+void test_STL_Parallel_Algorithms();
 
 int main()
 {
-    test_exception_handling();
+    test_STL_Parallel_Algorithms();
     return 0;
 }
 

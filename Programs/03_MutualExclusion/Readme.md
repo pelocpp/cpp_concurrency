@@ -1,7 +1,5 @@
 # Der gegenseitige Ausschluss (Mutual Exclusion)
 
----
-
 [Zurück](../../Readme.md)
 
 ---
@@ -738,3 +736,9 @@ einer exemplarischen `ChangeCondition`-Methode so aus (*Listing* 8):
 Wir weisen noch einmal auf die wichtigste Passage im Codefragment der `DoWhenCondition`-Methode hin:
 Die Überprüfung des Datenzustandes ist in einer `while`-Anweisung platziert, da nach
 jeder Wiederbelebung eines blockierten Threads der tatsächliche Zustand der Daten zu betrachten ist.
+
+---
+
+[Zurück](../../Readme.md)
+
+---

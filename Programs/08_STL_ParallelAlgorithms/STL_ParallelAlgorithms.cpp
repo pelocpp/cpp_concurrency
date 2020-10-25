@@ -1,99 +1,89 @@
 // ===========================================================================
-// Exception Handling
+// STL and Parallel Algorithms
 // ===========================================================================
 
 #include <iostream>
-#include <thread>
-#include <future>
+#include <algorithm>
+#include <chrono>
+#include <random>
+#include <ratio>
+#include <vector>
+#include <execution>
 
-// https://devblogs.microsoft.com/cppblog/using-c17-parallel-algorithms-for-better-performance/
-
-// https://www.modernescpp.com/index.php/parallel-algorithm-of-the-standard-template-library
-
-namespace ExceptionHandling
+namespace STL_Parallel_Algorithms
 {
-    /*
-     * propagating exception from std::async invocation  
-     */
-    int doSomeWorkWithException()
+    const size_t testSize = 1'000'000;
+    const int iterationCount = 5;
+
+    void print_results_02 (
+        std::string tag, 
+        const std::vector<double>& sorted,
+        std::chrono::high_resolution_clock::time_point startTime,
+        std::chrono::high_resolution_clock::time_point endTime) 
     {
-        std::cout << "Inside thread  ... working hard ..." << std::endl;
-
-        std::this_thread::sleep_for(std::chrono::seconds(3));
-
-        throw std::out_of_range("==> to be passed between threads");
-
-        return 123;
+        std::cout 
+            << tag 
+            << 
+            ": Lowest: "
+            << sorted.front() 
+            << ", Highest: "
+            << sorted.back() 
+            << ", Time: "
+            << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count()
+            << std::endl;
     }
 
-    void test_01() {
-
-        std::future<int> futureFunction = std::async(
-            std::launch::async,
-            doSomeWorkWithException
-        );
-
-        try
-        {
-            std::cout << "Waiting for Result ... " << std::endl;
-            int result = futureFunction.get();
-        }
-        catch (std::out_of_range ex) {
-            std::cout << "Main Thread: got exception [" << ex.what() << "]" << std::endl;
-        }
-
-        std::cout << "Main Thread: Done." << std::endl;
-    }
-
-    /*
-     * propagating exception from std::thread invocation
-     */
-
-    std::exception_ptr g_ep = nullptr;
-
-    int doAnotherWorkWithException()
+    void test_01() 
     {
-        std::cout << "Inside another thread  ... working hard ..." << std::endl;
+        std::random_device rd;
 
-        try
-        {
-            std::this_thread::sleep_for(std::chrono::seconds(3));
-
-            throw std::runtime_error("==> to be passed between threads");
-
-            return 123;
-        }
-        catch (...)
-        {
-            g_ep = std::current_exception();
+        // generate some random doubles:
+        std::cout << "Testing with " << testSize << " doubles..." << std::endl;
+        std::vector<double> doubles(testSize);
+        for (auto& d : doubles) {
+            d = static_cast<double>(rd());
         }
 
-        return -1;
+        // time how long it takes to sort them:
+        for (int i = 0; i < iterationCount; ++i)
+        {
+            std::vector<double> sorted(doubles);
+            const auto startTime = std::chrono::high_resolution_clock::now();
+            std::sort(sorted.begin(), sorted.end());
+            const auto endTime = std::chrono::high_resolution_clock::now();
+            print_results_02("Serial", sorted, startTime, endTime);
+        }
     }
 
-    void test_02() {
+    void test_02()
+    {
+        std::random_device rd;
 
-        std::thread t (doAnotherWorkWithException);
-        t.join();
-
-        if (g_ep != nullptr) {
-            try {
-                std::rethrow_exception(g_ep);
-            }
-            catch (const std::exception & ex)
-            {
-                std::cerr << "Thread exited with exception: " << ex.what() << "\n";
-            }
+        // generate some random doubles:
+        std::cout << "Testing with " << testSize << " doubles..." << std::endl;
+        std::vector<double> doubles(testSize);
+        for (auto& d : doubles) {
+            d = static_cast<double>(rd());
         }
 
-        std::cout << "Main Thread: Done." << std::endl;
+        // time how long it takes to sort them:
+        for (int i = 0; i < iterationCount; ++i)
+        {
+            std::vector<double> sorted(doubles);
+            const auto startTime = std::chrono::high_resolution_clock::now();
+            // same sort call as above, but with 'par_unseq':
+            std::sort(std::execution::par_unseq, sorted.begin(), sorted.end());
+            const auto endTime = std::chrono::high_resolution_clock::now();
+            print_results_02("Parallel", sorted, startTime, endTime);
+        }
     }
 }
 
-void test_exception_handling()
+void test_STL_Parallel_Algorithms()
 {
-    using namespace ExceptionHandling;
+    using namespace STL_Parallel_Algorithms;
     test_01();
+    std::cout << std::endl;
     test_02();
 }
 
