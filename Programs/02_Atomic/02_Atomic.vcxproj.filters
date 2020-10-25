@@ -30,4 +30,27 @@
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Atomar_01.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Atomar_Study_01.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Atomar_Study_02.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Atomar_Study_03.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Atomar_Study_04.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Atomar_Study_05.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="MultiCoreMemory.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

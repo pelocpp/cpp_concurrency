@@ -148,6 +148,15 @@
   <ItemGroup>
     <None Include="Readme.md" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Atomar_01.png" />
+    <Image Include="Atomar_Study_01.png" />
+    <Image Include="Atomar_Study_02.png" />
+    <Image Include="Atomar_Study_03.png" />
+    <Image Include="Atomar_Study_04.png" />
+    <Image Include="Atomar_Study_05.png" />
+    <Image Include="MultiCoreMemory.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
