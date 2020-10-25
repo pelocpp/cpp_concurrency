@@ -1,5 +1,9 @@
 ﻿# Atomare Operationen
 
+[Zurück](../../Readme.md)
+
+---
+
 Aus *Wikipedia*:
 
 "In der Informatik bezeichnet eine **atomare Operation** (von griechisch άτομο átomo ‚unteilbar‘
@@ -38,13 +42,10 @@ struct atomic<std::weak_ptr<U>>;
 
 ---
 
-[Zurück](../../Readme.md)
-
----
-
 In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
 gibt es eine ausführliche Beschreibung zum Thema *atomare Operationen*, das dort
-die Programmiersprache C# zugrunde legt.
+die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere
+Programmiersprachen übertragen, wie zum Beispiel C++.
 
 ---
 
@@ -453,7 +454,7 @@ Die Moral dieser Überlegungen ist einfach, dass der Zugriff auf gemeinsame Date
 zum anderen mit Bedacht einzusetzen ist,
 da die Ausführung des Programms mit Sicherheit nicht schneller wird.
       
-*Abschließender Hinweis*:
+##### *Abschließender Hinweis*:
 
 Interessieren Sie sich vielleicht für die interne Funktionsweise der Methoden aus der ``Interlocked``-Klasse?
 
