@@ -1,4 +1,4 @@
-# Simple Threading
+# Einfache Beispiele zur Klasse `std::thread`
 
 Es werden an einfachen Beispielen folgende Grundlagen des C++ Multithreading betrachtet:
 

@@ -1,4 +1,4 @@
-# Future
+# Futures und Promises
 
 Das nachfolgende Diagramm skizziert den Ablauf eines Multithreading-Szenarios 
 mit `Future`- und `Promise`-Objekt:

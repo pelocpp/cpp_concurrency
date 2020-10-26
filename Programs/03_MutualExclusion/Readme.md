@@ -1,4 +1,4 @@
-# Der gegenseitige Ausschluss (Mutual Exclusion)
+# Mutual Exclusion / Gegenseitiger Ausschluss
 
 [Zurück](../../Readme.md)
 
@@ -13,13 +13,6 @@ auch wenn die Aktionen jedes einzelnen Prozesses oder Threads für sich betrachte
 Mutex-Verfahren koordinieren den zeitlichen Ablauf nebenläufiger Prozesse/Threads derart,
 dass andere Prozesse/Threads von der Ausführung kritischer Abschnitte ausgeschlossen sind,
 wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Datenstruktur verändert)."
-
----
-
-In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
-gibt es eine ausführliche Beschreibung zum Thema *Mutual Exclusion*, das dort
-die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere
-Programmiersprachen übertragen, wie zum Beispiel C++.
 
 ---
 
@@ -43,6 +36,13 @@ Programmiersprachen übertragen, wie zum Beispiel C++.
 Siehe das Thema
 
 [Do I have to acquire lock before calling std::condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
+
+---
+
+In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
+gibt es eine ausführliche Beschreibung zum Thema *Mutual Exclusion*, das dort
+die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere
+Programmiersprachen übertragen, wie zum Beispiel C++.
 
 ---
 

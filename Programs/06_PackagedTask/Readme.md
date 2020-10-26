@@ -1,5 +1,4 @@
-# Packaged Task
-
+# Die Klasse `PackagedTask`
 
 ---
 

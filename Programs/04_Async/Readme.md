@@ -1,4 +1,4 @@
-# `std::async`
+# Die Funktionsschablone `std::async`
 
 Das Zusammenspiel zwischen der Methode `std::async` und Objekten
 des Typs `std::future` wird gezeigt.
