@@ -57,8 +57,8 @@ namespace SimpleAsync {
     }
 }
 
-void test_async_01() {
-
+void test_async_01() 
+{
     using namespace SimpleAsync;
     test_01();
 }

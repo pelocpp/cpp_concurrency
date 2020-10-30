@@ -8,8 +8,8 @@ void test_async_03();
 
 int main()
 {
-    //test_async_01();
-    //test_async_02();
+    test_async_01();
+    test_async_02();
     test_async_03();
     return 0;
 }

@@ -49,7 +49,7 @@ namespace SomeAsyncScenarios {
 
     void test_03()
     {
-        std::cout << "Preparing calculcations ..." << std::endl;
+        std::cout << "Preparing calculations ..." << std::endl;
         std::vector<std::future<long>> fibonaccis;
 
         for (int n = 0; n < 50; ++n)
@@ -62,13 +62,14 @@ namespace SomeAsyncScenarios {
         std::cout << "Retrieve single result of fib(42):" << std::endl;
         std::cout << "fib(42): " << fibonaccis[42].get() << std::endl;   // output: fib(42): 267914296
 
+        std::cout << "Done." << std::endl;
+
     }   // end of other calculations is awaited in the d'tor of the corresponding std::future:
         // depends on launch policy !!!
 
-
     void test_04()
     {
-        std::cout << "Calculcation with wait:" << std::endl;
+        std::cout << "Calculation with wait:" << std::endl;
 
         std::future<long> f40 = std::async(fib, 40);
 
