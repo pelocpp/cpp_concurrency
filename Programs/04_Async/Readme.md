@@ -45,7 +45,7 @@ asyncEager evaluated after: 0.0006665 seconds.
 
 ## 4 Szenarien mit `std::async`
 
-Es werden vier Vertiefungen der Klasse `std::async` studiert:
+Es werden vier Vertiefungen der Funktionsschablone `std::async` studiert:
 
   * Parallele Ausführung mehrerer Threads - das Resultat wird mit `get` abgeholt.
   * Parallele Ausführung mehrerer Threads - es wird nur ein Resultat (mit `get` abgeholt). Welche Rolle spielt der Destruktor der beteiligten `Future`-Objekte?
