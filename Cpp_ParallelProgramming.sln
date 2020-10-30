@@ -24,6 +24,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07_ExceptionHandling", "Pro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "08_STL_ParallelAlgorithms", "Programs\08_STL_ParallelAlgorithms\08_STL_ParallelAlgorithms.vcxproj", "{CD25B597-EB3D-4937-8BF1-8B94FC8872A0}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Logger", "Logger", "{3E15D78E-8B4F-4D0D-B7CF-D4A6D69E9308}"
+	ProjectSection(SolutionItems) = preProject
+		Programs\Logger\Logger.cpp = Programs\Logger\Logger.cpp
+		Programs\Logger\Logger.h = Programs\Logger\Logger.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
