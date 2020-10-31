@@ -21,6 +21,42 @@ Abbildung 2: Datenkanal zwischen `std::promise` und `std::future` Objekt.
 
 ---
 
+## Ein einfaches Beispiel
+
+Ein einfaches Beispiel skizziert den Ablauf eines Multithreading-Szenarios mit `Future`- und `Promise`-Objekt.
+
+Beachten Sie dabei: Ein `Promise`-Objekt kann nicht *per value* an eine andere Funktion übergeben werden.
+Klassische Zeiger oder rvalue-Referenzen sind ein gangbarer Weg.
+
+
+#### Quellcode:
+
+[Siehe hier](Future_01.cpp).
+
+---
+
+## `std::shared_future<>`
+
+Ein `std::shared_future` Objekt dient dazu, mehrere Threads zurselben Zeit aufzuwecken (*signal*).
+
+Das Beispiel aus dem Repository definiert zwei Lambda-Methoden, die für eine parallele Ausführung gedacht sind.
+Am Anfang der jeweiligen Lambda-Methode kommt ein Aufruf von `set_value` zum Einsatz, um dem Haupthread zu signalisieren,
+dass die Sekundärthreads mit ihrer Ausführung begonnen haben.
+
+Danach kommt ein Aufruf von `get` zum Zuge, dieser wird an einem `Future`-Objekt ausgeführt.
+
+Bei der Zugriffsklausel der Lambda-Methoden beachte man:
+
+  * Auf das `std::promise<void>` Objekt wird via Referenz zugegriffen.
+  * Das `std::shared_future<int>` Objekt wird an die Lambda-Funktion als Kopie übergeben.
+
+
+#### Quellcode:
+
+[Siehe hier](Future_02.cpp).
+
+---
+
 [Zurück](../../Readme.md)
 
 ---

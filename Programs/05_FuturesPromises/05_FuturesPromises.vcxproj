@@ -142,8 +142,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Future_01.cpp" />
-    <ClCompile Include="Future_02.cpp" />
+    <ClCompile Include="Future_03.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Future_02.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Futures.png" />

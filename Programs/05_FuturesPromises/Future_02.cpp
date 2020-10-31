@@ -3,64 +3,81 @@
 // ===========================================================================
 
 #include <iostream>
-#include <mutex>
-#include <thread>
 #include <future>
 
 #include "../Logger/Logger.h"
 
 namespace PromisesAndFutures02 {
 
-    using namespace std::chrono_literals;
+    void test()
+    {
+        Logger::log(std::cout, "Main: Start ...");
 
-    // global function
-    void product(std::promise<int>&& intPromise, int a, int b) {
+        std::promise<void> thread1Started;
+        std::promise<void> thread2Started;
 
-        std::thread::id tid = std::this_thread::get_id();
-        Logger::log(std::cout, "tid:  ", tid);
+        std::promise<int> signalPromise;
 
-        std::this_thread::sleep_for(3s);
+        std::shared_future<int> signalFuture = signalPromise.get_future().share();
 
-        intPromise.set_value(a * b);
-    }
+        auto function1 = [&thread1Started, signalFuture] {
+            Logger::log(std::cout, "Lambda 01:");
 
-    // functor notation
-    struct Div {
-        void operator() (std::promise<int>&& intPromise, int a, int b) const {
+            thread1Started.set_value();
 
-            std::thread::id tid = std::this_thread::get_id();
-            Logger::log(std::cout, "tid:  ", tid);
+            std::this_thread::sleep_for(std::chrono::seconds(2));
 
-            std::this_thread::sleep_for(5s);
-            intPromise.set_value(a / b);
-        }
-    };
+            // wait until parameter is set
+            int parameter = signalFuture.get();
+            Logger::log(std::cout, "Lambda 01 - get returned ", parameter);
 
-    void test () {
+            // ... now thread starts to work ...
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            Logger::log(std::cout, "End of Lambda 01.");
+        };
 
-        int a = 20;
-        int b = 10;
+        auto function2 = [&thread2Started, signalFuture] {
+            Logger::log(std::cout, "Lambda 02: ");
 
-        // define the promises
-        std::promise<int> prodPromise;
-        std::promise<int> divPromise;
+            thread2Started.set_value();
 
-        // get the futures
-        std::future<int> prodResult = prodPromise.get_future();
-        std::future<int> divResult = divPromise.get_future();
+            std::this_thread::sleep_for(std::chrono::seconds(4));
 
-        // calculate results in a separat thread
-        std::thread prodThread(product, std::move(prodPromise), a, b);
+            // wait until parameter is set
+            int parameter = signalFuture.get();
+            Logger::log(std::cout, "Lambda 02 - get returned ", parameter);
 
-        Div div;
-        std::thread divThread(div, std::move(divPromise), a, b);
+            // ... now thread starts to work ...
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+            Logger::log(std::cout, "End of Lambda 02.");
+        };
 
-        // get the result
-        std::cout << "20 * 10 = " << prodResult.get() << std::endl;
-        std::cout << "20 / 10 = " << divResult.get() << std::endl;
+        Logger::log(std::cout, "Main: (1) ...");
 
-        prodThread.join();
-        divThread.join();
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        // Run both lambda expressions asynchronously.
+        // Remember to capture the future returned by async()!
+        auto result1 = std::async(std::launch::async, function1);
+        auto result2 = std::async(std::launch::async, function2);
+
+        Logger::log(std::cout, "Main: (2) ...");
+
+        std::this_thread::sleep_for(std::chrono::seconds(3));
+
+        Logger::log(std::cout, "Main: vor get_future().wait() ...");
+
+        // wait until both threads have started.
+        thread1Started.get_future().wait();
+        thread2Started.get_future().wait();
+
+        // Both threads are now waiting for the parameter.
+        // Set the parameter to wake up both of them.
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        Logger::log(std::cout, "Main: vor set_value ...");
+        signalPromise.set_value(42);
+
+        Logger::log(std::cout, "End of Main");
     }
 }
 
@@ -73,4 +90,3 @@ void test_future_promise_02()
 // ===========================================================================
 // End-of-File
 // ===========================================================================
-
