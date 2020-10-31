@@ -63,7 +63,7 @@ namespace PackagedTask {
             futures.push_back(std::move(future));
         }
 
-        int begin{ 0 };
+        int begin{ 1 };
         int increment{ 100 };
         int end = begin + increment;
 
@@ -91,7 +91,7 @@ namespace PackagedTask {
             sum += partialSum;
         }
 
-        // use gauss to verify: n * (n+1) / 2
+        // use gauss to verify: n * (n+1) / 2 ==> 80200
         std::cout << "Sum of 0 " << " .. " << (end-increment-1) << " = " << sum << std::endl;
     }
 }
