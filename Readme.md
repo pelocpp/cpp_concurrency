@@ -10,7 +10,7 @@
 
 ## [Futures und Promises](Programs/05_FuturesPromises/Readme.md)
 
-## [Die Klasse `PackagedTask`](Programs/06_PackagedTask/Readme.md)
+## [Die Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
 
 ## [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 

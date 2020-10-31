@@ -12,11 +12,15 @@
 
 namespace PackagedTask {
 
-    int calcSum(int a, int b) { return a + b; }
+    int calcSum(int a, int b) { 
+        return a + b;
+    }
 
     int calcSumRange(int a, int b) {
         int sum{ 0 };
-        for (int i = a; i < b; ++i) sum += i;
+        for (int i = a; i < b; ++i) {
+            sum += i;
+        }
         return sum;
     }
 
@@ -32,7 +36,7 @@ namespace PackagedTask {
         t.detach();
 
         // do some arbitrary work ......
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
         // get the result
         int sum = future.get();
@@ -87,6 +91,7 @@ namespace PackagedTask {
             sum += partialSum;
         }
 
+        // use gauss to verify: n * (n+1) / 2
         std::cout << "Sum of 0 " << " .. " << (end-increment-1) << " = " << sum << std::endl;
     }
 }
