@@ -1,18 +1,19 @@
 // ===========================================================================
-// Simple Promises
+// Promises and Futures
 // ===========================================================================
 
 #include <iostream>
 #include <thread>
 #include <future>
 
-namespace SimplePromises {
+namespace PromisesAndFutures01 {
+
+    using namespace std::chrono_literals;
 
     void doWorkVersion01(std::promise<int>* promise)
     {
         std::cout << "Inside Thread (doWork - 01)" << std::endl;
 
-        using namespace std::chrono_literals;
         std::this_thread::sleep_for(3s);
 
         promise->set_value(35);
@@ -38,7 +39,6 @@ namespace SimplePromises {
     {
         std::cout << "Inside Thread (doWork - 02)" << std::endl;
 
-        using namespace std::chrono_literals;
         std::this_thread::sleep_for(5s);
 
         promise.set_value(35);
@@ -63,7 +63,7 @@ namespace SimplePromises {
 
 void test_future_promise_01()
 {
-    using namespace SimplePromises;
+    using namespace PromisesAndFutures01;
     testVersion01();
     testVersion02();
 }

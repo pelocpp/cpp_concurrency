@@ -150,6 +150,8 @@
     <Image Include="tasks_data_channel.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cpp_parallel_programming_future_promise_01.svg" />
+    <None Include="cpp_parallel_programming_future_promise_02.svg" />
     <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

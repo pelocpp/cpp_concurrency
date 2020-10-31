@@ -37,5 +37,11 @@
     <None Include="Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="cpp_parallel_programming_future_promise_01.svg">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="cpp_parallel_programming_future_promise_02.svg">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

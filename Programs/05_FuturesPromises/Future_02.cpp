@@ -9,7 +9,9 @@
 
 #include "../Logger/Logger.h"
 
-namespace Futures {
+namespace PromisesAndFutures02 {
+
+    using namespace std::chrono_literals;
 
     // global function
     void product(std::promise<int>&& intPromise, int a, int b) {
@@ -17,7 +19,6 @@ namespace Futures {
         std::thread::id tid = std::this_thread::get_id();
         Logger::log(std::cout, "tid:  ", tid);
 
-        using namespace std::chrono_literals;
         std::this_thread::sleep_for(3s);
 
         intPromise.set_value(a * b);
@@ -30,7 +31,6 @@ namespace Futures {
             std::thread::id tid = std::this_thread::get_id();
             Logger::log(std::cout, "tid:  ", tid);
 
-            using namespace std::chrono_literals;
             std::this_thread::sleep_for(5s);
             intPromise.set_value(a / b);
         }
@@ -66,7 +66,7 @@ namespace Futures {
 
 void test_future_promise_02()
 {
-    using namespace Futures;
+    using namespace PromisesAndFutures02;
     test();
 }
 
