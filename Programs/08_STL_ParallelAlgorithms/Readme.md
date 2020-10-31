@@ -21,7 +21,7 @@ Im Detail ist der *Execution Policy* Parameter wie folgt definiert:
 
 Es gibt von den drei Klassennamen `std::execution::sequenced_policy`,`std::execution::parallel_policy`
 und `std::execution::parallel_unsequenced_policy` Abkürzungen.
-Damit kann man den Sachverhalt einfacher zu formulieren:
+Damit kann man den Sachverhalt einfacher formulieren:
 
   * Verwenden Sie `std::execution::seq`, um einen Algorithmus sequentiell auszuführen.
   * Verwenden Sie `std::execution::par`, um einen Algorithmus parallel auszuführen (normalerweise mit einer Thread-Pool-Implementierung).
