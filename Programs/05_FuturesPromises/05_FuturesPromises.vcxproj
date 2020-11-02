@@ -143,6 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Future_01.cpp" />
     <ClCompile Include="Future_03.cpp" />
     <ClCompile Include="Program.cpp" />

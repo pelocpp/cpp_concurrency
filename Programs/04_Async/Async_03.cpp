@@ -95,7 +95,7 @@ namespace SomeAsyncScenarios {
     }
 }
 
-std::chrono::steady_clock::time_point Logger::begin;
+std::chrono::steady_clock::time_point Logger::s_begin;
 
 void test_async_03() {
 
