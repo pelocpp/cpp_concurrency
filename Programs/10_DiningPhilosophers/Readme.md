@@ -24,7 +24,7 @@ Folgende Klassen kommen in der vorgestellten Lösung zum Einsatz:
 
 ---
 
-Das Problem ist das folgende: In einem Kloster gibt es fünf Mönche, die sich der Philosophie widmen.
+Das Problem ist das Folgende: In einem Kloster gibt es fünf Mönche, die sich der Philosophie widmen.
 Jeder Philosoph wäre glücklich, wenn er nur denken könnte, aber gelegentlich ist auch der menschliche Trieb des Essens zu beachten.
 Somit kennt jeder Philosoph drei Beschäftigungen:
 
@@ -40,7 +40,7 @@ Ist einer seiner benachbarten Glaubensbrüder gerade beim Essen, muss er warten.
 Sind beide Gabeln frei, kann er mit dem Essen beginnen. Nachdem er satt ist, legt er beide Gabeln zurück und denkt wieder.
 Die drei Zustände *denken*, *hungrig sein* und *essen* werden folglich ständig in dieser Reihenfolge durchlaufen.
 
-<img src="DiningPhilosophers.png" width="350">
+<img src="DiningPhilosophers.png" width="320">
 
 Abbildung 1: Die dinierenden Philosophen.
 
@@ -143,9 +143,8 @@ Die Nummer in den eckigen Klammern steht für eine Thread Id.
 *Anmerkung*:
 
 Wenn Sie den Quellcode gut studieren, werden Sie feststellen, dass für den konfliktfreien Zugriff auf die Gabeln
-genau ein `std::mutex`-Objekt verwendert wird. Dies bedeutet, dass also die Gabeln 0 und 1 als auch 2 und 3 
+genau ein `std::mutex`-Objekt verwendet wird. Dies bedeutet, dass also die Gabeln 0 und 1 als auch 2 und 3 
 nicht echt-parallel aufgenommen werden können, obwohl dies zulässig wäre.
-
 Einen Ansatz, der dies berücksichtigt, finden Sie in Marius Bancila's Blog unter 
 
 [Dining Philosophers in C++11/](https://mariusbancila.ro/blog/2017/01/16/dining-philosophers-in-cpp11/)
