@@ -17,3 +17,7 @@
 ## [STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
 ---
+
+## [Das Problem der dinierenden Philosophen](Programs/10_DiningPhilosophers/Readme.md)
+ 
+---
