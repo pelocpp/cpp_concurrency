@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include <array>
+#include <future>
 #include "../Logger/Logger.h"
 #include "Table.h"
 
@@ -12,6 +13,8 @@ Table::Table()
     for (size_t i = 0; i < NumPhilosophers; i++) {
         m_forks[i] = false;
     }
+
+    Logger::logAbs(std::cout, forksToString());
 }
 
 bool& Table::operator[] (int index)
@@ -20,9 +23,9 @@ bool& Table::operator[] (int index)
     return m_forks[seat];
 }
 
-void Table::DemandForks(int seat) 
+void Table::demandForks(int seat) 
 {
-    Logger::log(std::cout, "demand forks at seat ", std::to_string(seat));
+    Logger::log(std::cout, "demand forks at seat ", seat);
 
     std::string forksDisplay;
 
@@ -39,19 +42,19 @@ void Table::DemandForks(int seat)
         (*this)[seat] = true;
         (*this)[seat + 1] = true;
 
-        Logger::log(std::cout, "got forks at seat ", std::to_string(seat));
+        Logger::log(std::cout, "got forks at seat ", seat);
 
         // create current display string of forks thread-safe
         forksDisplay = forksToString();
     }
 
-    // output latest forks display string - not necessary within critical section
+    // output latest forks display string - not necessarily to be done within critical section
     Logger::logAbs(std::cout, forksDisplay);
 }
 
-void Table::ReleaseForks(int seat)
+void Table::releaseForks(int seat)
 {
-    Logger::log(std::cout, "release forks at seat ", std::to_string(seat));
+    Logger::log(std::cout, "release forks at seat ", seat);
 
     std::string forksDisplay;
 
@@ -63,7 +66,7 @@ void Table::ReleaseForks(int seat)
         (*this)[seat] = false;
         (*this)[seat + 1] = false;
 
-        Logger::log(std::cout, "released forks at seat ", std::to_string(seat));
+        Logger::log(std::cout, "released forks at seat ", seat);
 
         // create current display string of forks thread-safe
         forksDisplay = forksToString();
@@ -72,7 +75,7 @@ void Table::ReleaseForks(int seat)
         m_condition.notify_all();
     }
 
-    // output latest forks display string - not necessary within critical section
+    // output latest forks display string - not necessarily to be done within critical section
     Logger::logAbs(std::cout, forksDisplay);
 }
 

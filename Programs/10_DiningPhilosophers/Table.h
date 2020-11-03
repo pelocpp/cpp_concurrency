@@ -9,23 +9,22 @@ public:
     static const int NumPhilosophers = 5;  // number of dining philosophers
 
 private:
+    std::array<bool, NumPhilosophers> m_forks;
+
     std::mutex m_mutex;
     std::condition_variable m_condition;
 
-    // bool m_forks[NumPhilosophers];
-    std::array<bool, NumPhilosophers> m_forks;
-
 public:
+    // c'tor
     Table();
 
-    // pubic interface
-    void DemandForks(int seat);
-    void ReleaseForks(int seat);
+    // public interface
+    void demandForks(int seat);
+    void releaseForks(int seat);
 
-    // test interface
+private:
+    // private helper methods / operators
     std::string forksToString() const;
-
-    // index operator
     bool& operator[] (int index);
 };
 

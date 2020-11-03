@@ -11,9 +11,10 @@ public:
 
 private:
     // dining philosophers utilities
-    Table& m_table;   // TODO: Shared Pointer oder sonst was ?!?!?
+    Table& m_table;
     int m_seat;
     PhilosopherState m_state;
+    int m_activities;
 
     // random utilities
     static std::random_device device;
@@ -21,22 +22,24 @@ private:
     static std::uniform_int_distribution<int> distribution;
 
     // threading utils
-    std::thread m_thread;
+    std::future<void> m_future;
     bool m_running;
 
 public:
+    // c'tor
     Philosopher(Table& table, int seat);
 
-    void Start();
-    void Detach();
-    void Run();
-    void Stop();
+    // public interface
+    void start();
+    void stop();
 
 private:
-    void Thinking();
-    void Hungry();
-    void Eating();
-    void EatingDone();
+    // private helper methods
+    void run();
+    void thinking();
+    void hungry();
+    void eating();
+    void eatingDone();
 };
 
 // ===========================================================================

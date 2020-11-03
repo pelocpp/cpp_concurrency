@@ -24,34 +24,15 @@ public:
         return s_loggingEnabled;
     }
 
-    //template<typename ...Args>
-    //static void log(std::ostream& os, Args ...args) {
-    //    if (!isLoggingEnabled())
-    //        return;
-
-    //    std::stringstream ss;
-    //    (ss << ... << args) << std::endl;
-    //    os << ss.str();
-    //}
-
     template<typename ...Args>
     static void logInternal(std::ostream& os, Args ...args)
     {
-        //if (!isLoggingEnabled())
-        //    return;
-
         std::stringstream ss;
-
         std::thread::id currentThreadId = std::this_thread::get_id();
         size_t tid = readableTID(currentThreadId);
         std::string prefix = "[" + std::to_string(tid) + "]: ";
-        //const std::lock_guard<std::mutex> lock(m_mutexOutput);
-        //m_os << prefix << ": " << s;
-
         ss << prefix;
-        //m_os.put('\n');
 
-//        std::stringstream ss;
         (ss << ... << args) << std::endl;
         os << ss.str();
     }
@@ -72,11 +53,6 @@ public:
     {
         logInternal(os, std::forward<Args>(args)...);
     }
-
-
-
-
-
 
     static size_t readableTID(const std::thread::id id)
     {
@@ -106,9 +82,8 @@ public:
     }
 
 private:
-    static bool s_loggingEnabled;
     static std::chrono::steady_clock::time_point s_begin;
-
+    static bool s_loggingEnabled;
     static std::mutex s_mutexIds;
     static std::map<std::thread::id, std::size_t> s_mapIds;
     static std::size_t s_nextIndex;

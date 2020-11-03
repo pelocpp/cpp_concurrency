@@ -4,75 +4,85 @@
 
 #include <random>
 #include <array>
+#include <future>
 #include "../Logger/Logger.h"
 #include "PhilosopherState.h"
 #include "Table.h"
 #include "Philosopher.h"
 
-Philosopher::Philosopher(Table& table, int seat) : m_table(table), m_seat(seat)
+Philosopher::Philosopher(Table& table, int seat)
+    : m_table(table), m_seat(seat), m_activities(0)
 {
     m_state = PhilosopherState::None;
     m_running = false;
 }
 
-void Philosopher::Start()
+void Philosopher::start()
 {
     m_running = true;
-    m_thread = std::thread([this] { Run(); });
+
+    m_future = std::async(
+        std::launch::async,
+        [this]() {
+            run();
+        }
+    );
 }
 
-void Philosopher::Stop() 
+void Philosopher::stop()
 {
     m_running = false;
+    m_future.get();
+
+    Logger::logAbs(std::cout, "philosopher ", m_seat, " done: ", m_activities, " activities completed.");
 }
 
-void Philosopher::Detach()
+void Philosopher::thinking()
 {
-    m_thread.detach();
-}
-
-void Philosopher::Thinking()
-{
-    Logger::log(std::cout, "thinking at seat ", std::to_string(m_seat));
+    m_activities++;
+    Logger::log(std::cout, "thinking at seat ", m_seat);
     m_state = PhilosopherState::Thinking;
     int milliSecondsSleeping = distribution(generator);
     std::this_thread::sleep_for(std::chrono::milliseconds(milliSecondsSleeping));
 }
 
-void Philosopher::Hungry() 
+void Philosopher::hungry() 
 {
-    Logger::log(std::cout, "hungry at seat ", std::to_string(m_seat));
+    m_activities++;
+    Logger::log(std::cout, "hungry at seat ", m_seat);
     m_state = PhilosopherState::Hungry;
-    m_table.DemandForks(m_seat);
+    m_table.demandForks(m_seat);
 }
 
-void Philosopher::Eating()
+void Philosopher::eating()
 {
-    Logger::log(std::cout, "eating at seat ", std::to_string(m_seat));
+    m_activities++;
+    Logger::log(std::cout, "eating at seat ", m_seat);
     m_state = PhilosopherState::Eating;
     int milliSecondsEating = distribution(generator);
     std::this_thread::sleep_for(std::chrono::milliseconds(milliSecondsEating));
 }
 
-void Philosopher::EatingDone() 
+void Philosopher::eatingDone() 
 {
-    Logger::log(std::cout, "eating done at seat ", std::to_string(m_seat));
-    m_table.ReleaseForks(m_seat);
+    m_activities++;
+    Logger::log(std::cout, "eating done at seat ", m_seat);
+    m_table.releaseForks(m_seat);
 }
 
-void Philosopher::Run()
+void Philosopher::run()
 {
     std::thread::id philosopherThreadId = std::this_thread::get_id();
     Logger::logAbs(std::cout, "philosopher enters room");
 
     while (m_running) {
-        Thinking();
-        Hungry();
-        Eating();
-        EatingDone();
+        thinking();
+        hungry();
+        eating();
+        eatingDone();
     }
 
-    Logger::logAbs(std::cout, "philosopher at seat ", std::to_string(m_seat), " quits.");
+    Logger::logAbs(std::cout, "philosopher at seat ", m_seat, " quits.");
     m_state = PhilosopherState::None;
 }
 
