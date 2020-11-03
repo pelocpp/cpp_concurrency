@@ -147,7 +147,7 @@ genau ein `std::mutex`-Objekt verwendet wird. Dies bedeutet, dass also die Gabel
 nicht echt-parallel aufgenommen werden können, obwohl dies zulässig wäre.
 Einen Ansatz, der dies berücksichtigt, finden Sie in Marius Bancila's Blog unter 
 
-[Dining Philosophers in C++11/](https://mariusbancila.ro/blog/2017/01/16/dining-philosophers-in-cpp11/)
+[Dining Philosophers in C++ 11](https://mariusbancila.ro/blog/2017/01/16/dining-philosophers-in-cpp11/)
 
 vor. 
 
