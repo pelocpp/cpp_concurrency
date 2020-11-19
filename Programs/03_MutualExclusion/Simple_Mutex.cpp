@@ -12,10 +12,10 @@ namespace SimpleMutexDemo
     class Counter
     {
     private:
-        int m_id;
-
         static const long s_NumIterations = 100000;
         static std::mutex s_Mutex;
+
+        int m_id;
 
     public:
         Counter(int id, int numIterations) : m_id{ id } {}

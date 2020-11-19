@@ -16,10 +16,49 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 ---
 
+#### Mehrere XX-Klassen:
+
+  * Klasse `std::lock_guard`:<br/>
+    Die Klasse `std::lock_guard` ist seit C++ 11 verfügbar. Sie wurde überarbeitet,
+    was allerdings zu einer neuen Klasse `std::scoped_lock` führte.
+    In neuem Quellcode sollte die Klasse `std::lock_guard` nicht mehr zum Einsatz kommen,
+    sie wird nur noch aus Kompatibilitätsgründen unterstützt.
+
+  * Klasse `std::scoped_lock`:<br/>
+    Die Klasse `std::scoped_lock` kann man als eine strikte Obermenge der Klasse
+    `std::lock_guard` ansehen.
+    Der einzige und wesentliche Unterschied besteht darin,
+    dass `std::scoped_lock` einen variadischen Konstruktor hat,
+    der mehr als einen Mutex aufnehmen kann.
+    Damit lässt sich eine gleichzeitige Sperre von mehreren Mutex-Objekten durchführen.
+    Die Klasse `std::scoped_lock` unterstützt keine *Move*-Semantik.
+
+```cpp
+{
+    std::scoped_lock<std::mutex, std::mutex> lock(mutex1, mutex2);  
+    ...   
+}
+```
+
+
+  * Klasse `std::unique_lock`:<br/>
+    Die Klasse `std::unique_lock` bietet eine Reihe von Funktionalitäten,
+    von denen einige besonders beim gleichzeitigen Sperren mehrerer Mutexe anwendbar sind.
+    Dazu zählen zum Beispiel das "*Deferred Locking*"  und "*Timeout Locks*".
+    Auch unterstützt die Klasse `std::unique_lock` die *Move*-Semantik.
+
+  * Klasse `std::shared_lock`:<br/>
+    Ein `std::shared_lock`-Objekt kann im Zusammenspiel mit einem oder mehreren
+    `std::unique_lock`-Objekten verwendet werden,
+    um mehrere *Leser* (Konsument) und einen exklusiven *Schreiber* (Produzent) zuzulassen.
+
+---
+
 #### Quellcode:
 
   * Elementare Demonstration des `std::mutex` Objekts:</br>
-    [Beispiel einer Klasse `Counter`](Simple_Mutex.cpp).
+    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.
+    [Beispiel](Simple_Mutex.cpp).
 
   * Elementare Demonstration des `std::condition_variable` Objekts:</br>
     [Beispiel](Simple_Condition_Variable.cpp).
