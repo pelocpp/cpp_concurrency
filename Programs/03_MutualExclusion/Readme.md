@@ -16,7 +16,7 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 ---
 
-#### Mehrere XX-Klassen:
+#### Mehrere *Lock*-Klassen:
 
   * Klasse `std::lock_guard`:<br/>
     Die Klasse `std::lock_guard` ist seit C++ 11 verfügbar. Sie wurde überarbeitet,
