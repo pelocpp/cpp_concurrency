@@ -8,7 +8,7 @@
 #include "Logger.h"
 
 std::chrono::steady_clock::time_point Logger::s_begin;
-bool Logger::s_loggingEnabled = false;
+bool Logger::s_loggingEnabled = true;
 std::size_t Logger::s_nextIndex = 0;
 std::mutex Logger::s_mutexIds;
 std::map<std::thread::id, std::size_t> Logger::s_mapIds;

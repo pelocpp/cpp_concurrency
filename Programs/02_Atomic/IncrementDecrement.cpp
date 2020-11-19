@@ -14,20 +14,26 @@ namespace IncrementDecrement {
     constexpr long NumIterations = 100000000;
 
     class IncDec {
+
+    private:
+        long m_counter = 0;
+        std::atomic<long> m_counterAtomic;
+        std::mutex m_mutex;
+
     public:
         // c'tors
-        IncDec() : m_counter(0), m_counterAtomic(0) {}
+        IncDec() : m_counter{ 0 }, m_counterAtomic{0 } {}
 
         void run() {
             Logger::log(std::cout, "Counter: ", m_counter);
 
             // spawning two threads - calling increment() rsp. decrement()
-            std::thread t1(&IncDec::increment, this);
-            std::thread t2(&IncDec::decrement, this);
+            std::thread t1(&IncDec::incrementSimple, this);
+            std::thread t2(&IncDec::decrementSimple, this);
 
             // wait for end of both threads
-            t1.join();  // pauses until t1 finishes
-            t2.join();  // pauses until t2 finishes
+            t1.join();  // blocks until t1 finishes
+            t2.join();  // blocks until t2 finishes
 
             Logger::log(std::cout, "Counter: ", m_counter);
         }
@@ -40,8 +46,8 @@ namespace IncrementDecrement {
             std::thread t2(&IncDec::decrementAtomic, this);
 
             // wait for end of both threads
-            t1.join();  // pauses until t1 finishes
-            t2.join();  // pauses until t2 finishes
+            t1.join();  // blocks until t1 finishes
+            t2.join();  // blocks until t2 finishes
 
             Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
         }
@@ -54,8 +60,8 @@ namespace IncrementDecrement {
             std::thread t2(&IncDec::decrementMutex, this);
 
             // wait for end of both threads
-            t1.join();  // pauses until t1 finishes
-            t2.join();  // pauses until t2 finishes
+            t1.join();  // blocks until t1 finishes
+            t2.join();  // blocks until t2 finishes
 
             Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
         }
@@ -68,33 +74,28 @@ namespace IncrementDecrement {
             std::thread t2(&IncDec::decrementMutexRAII, this);
 
             // wait for end of both threads
-            t1.join();  // pauses until t1 finishes
-            t2.join();  // pauses until t2 finishes
+            t1.join();  // blocks until t1 finishes
+            t2.join();  // blocks until t2 finishes
 
             Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
         }
 
     private:
-        long m_counter = 0;
-        std::atomic<long> m_counterAtomic;
-        std::mutex m_mutex;
-
-    private:
         // private helper methods
-        void increment() {
-            Logger::log(std::cout, "> increment");
+        void incrementSimple() {
+            Logger::log(std::cout, "> incrementSimple");
             for (long n = 0; n < NumIterations; ++n) {
                 ++m_counter;
             }
-            Logger::log(std::cout, "< increment");
+            Logger::log(std::cout, "< incrementSimple");
         }
 
-        void decrement() {
-            Logger::log(std::cout, "> decrement");
+        void decrementSimple() {
+            Logger::log(std::cout, "> decrementSimple");
             for (long n = 0; n < NumIterations; ++n) {
                 --m_counter;
             }
-            Logger::log(std::cout, "< decrement");
+            Logger::log(std::cout, "< decrementSimple");
         }
 
         void incrementAtomic() {
@@ -152,6 +153,7 @@ namespace IncrementDecrement {
         }
     };
 
+    // helper testing methods
     void test_regular() {
         IncDec inc_dec;
         inc_dec.run();
