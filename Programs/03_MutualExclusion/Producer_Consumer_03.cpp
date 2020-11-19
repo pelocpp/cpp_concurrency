@@ -9,13 +9,14 @@
 #include <mutex>
 #include <chrono>
 
+#include "../Logger/Logger.h"
+
 namespace ConsumerProducerThree
 {
     class ConsumerProducer
     {
     public:
-
-        ConsumerProducer() : m_index(-1), m_counter(1) {}
+        ConsumerProducer() : m_index{ -1 }, m_counter{ 1 } {}
 
     private:
         // array - considered as stack
@@ -29,8 +30,8 @@ namespace ConsumerProducerThree
         std::condition_variable m_conditionIsEmpty;
         std::condition_variable m_conditionIsFull;
 
-        int sleepTimeProducer = 100;  // milli seconds
-        int sleepTimeConsumer = 200;  // milli seconds
+        int sleepTimeProducer = 2000;  // milli seconds
+        int sleepTimeConsumer = 2000;  // milli seconds
 
         int m_counter;
 
@@ -58,9 +59,7 @@ namespace ConsumerProducerThree
 
                     m_index++;
                     m_data.at(m_index) = m_counter;
-                    std::cout
-                        << "pushed " << m_counter << " at index "
-                        << m_index << std::endl;
+                    Logger::log(std::cout, "pushed ", m_counter, " at index ", m_index);
 
                     // wakeup any sleeping consuments
                     m_conditionIsEmpty.notify_all();
@@ -76,6 +75,7 @@ namespace ConsumerProducerThree
                     std::chrono::milliseconds(sleepTimeConsumer));
 
                 int gotNumber = 0;
+
                 {
                     // RAII
                     std::unique_lock guard(m_mutex);  // Dijkstra Monitor
@@ -91,9 +91,7 @@ namespace ConsumerProducerThree
 
                         int value = m_data.at(m_index);
                         m_index--;
-                        std::cout
-                            << "popped " << value << " at index "
-                            << (m_index + 1) << std::endl;
+                        Logger::log(std::cout, "popped ", (m_index + 1), " at index ", m_index);
 
                         // wakeup any sleeping producers
                         m_conditionIsFull.notify_all();

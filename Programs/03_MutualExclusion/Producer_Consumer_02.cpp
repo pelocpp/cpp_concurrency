@@ -22,7 +22,7 @@ namespace ConsumerProducerTwo
         bool m_dataAvailable;
 
     public:
-        ConsumerProducer() : m_dataAvailable(false) {}
+        ConsumerProducer() : m_dataAvailable{ false } {}
 
         void produce() {
 
@@ -34,18 +34,14 @@ namespace ConsumerProducerTwo
 
                 nextNumber++;
 
+                // RAII idiom
+                Logger::log(std::cout, "> Producer");
                 {
-                    // RAII idiom
-                    Logger::log(std::cout, "> Producer");
                     std::scoped_lock<std::mutex> lock(m_mutex);
-                    Logger::log(std::cout, "< Producer");
 
                     m_data.push(nextNumber);
-
                     m_dataAvailable = true;
-
-                    // wakeup consumer
-                    m_condition.notify_one();
+                    m_condition.notify_one();  // wakeup consumer, if any
                 }
 
                 Logger::log(std::cout, "Added ", nextNumber, " to queue.");
@@ -54,18 +50,18 @@ namespace ConsumerProducerTwo
 
         void consume() {
             int number;
+
             while (true) {
 
                 number = 0;
 
+                // RAII idiom
+                Logger::log(std::cout, "> Consumer");
                 {
-                    // RAII idiom
-                    Logger::log(std::cout, "> Consumer");
                     std::unique_lock<std::mutex> lock(m_mutex);
-                    Logger::log(std::cout, "< Consumer");
 
                     m_condition.wait(lock, [&]() {
-                        // returns 'false' if waiting should be continued
+                        // return 'false' if waiting should be continued
                         bool condition = m_dataAvailable == true;
                         Logger::log(std::cout, "wait -> ", condition, '\n');
                         return condition;
@@ -75,7 +71,6 @@ namespace ConsumerProducerTwo
                     if (!m_data.empty()) {
                         number = m_data.front();
                         m_data.pop();
-
                         m_dataAvailable = false;
                     }
                 }

@@ -28,12 +28,10 @@ namespace ConsumerProducerOne
 
                 nextNumber++;
 
+                // RAII idiom
+                Logger::log(std::cout, "> Producer");
                 {
-                    // RAII idiom
-                    Logger::log(std::cout, "> Producer");
                     std::scoped_lock<std::mutex> lock (m_mutex);
-                    Logger::log(std::cout, "< Producer");
-
                     m_data.push(nextNumber);
                 }
 
@@ -47,12 +45,10 @@ namespace ConsumerProducerOne
 
                 number = 0;
 
+                // RAII idiom
+                Logger::log(std::cout, "> Consumer");
                 {
-                    // RAII idiom
-                    Logger::log(std::cout, "> Consumer");
                     std::scoped_lock<std::mutex> lock (m_mutex);
-                    Logger::log(std::cout, "< Consumer");
-
                     if (!m_data.empty()) {
                         number = m_data.front();
                         m_data.pop();

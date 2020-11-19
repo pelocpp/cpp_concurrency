@@ -7,8 +7,6 @@
 #include <mutex> 
 #include <chrono>
 
-#include "../Logger/Logger.h"
-
 namespace SimpleMutexDemo
 {
     class Counter
@@ -20,14 +18,21 @@ namespace SimpleMutexDemo
         static std::mutex s_Mutex;
 
     public:
-        Counter(int id, int numIterations) : m_id(id) {}
+        Counter(int id, int numIterations) : m_id{ id } {}
 
         void operator()() const
         {
-            for (int i = 0; i < s_NumIterations; ++i) {
-                std::lock_guard<std::mutex> lock(s_Mutex);   // <== put this line into comment
-                // std::lock_guard lock(s_Mutex);  // C++ 17 (automatic type deduction)
-                std::cout << "Counter " << m_id << " has value " << i << "\n";
+            for (int i = 0; i < s_NumIterations; ++i) 
+            {
+                {
+                    // <== put next line into comment to demonstrate scattered output
+                    // std::lock_guard<std::mutex> lock(s_Mutex);
+                    // std::lock_guard lock(s_Mutex);  // C++ 17 (automatic type deduction)
+                    std::cout << "Counter " << m_id << " has value " << i << "\n";
+                }
+
+                // just to force rescheduling the execution of the threads
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
     };
