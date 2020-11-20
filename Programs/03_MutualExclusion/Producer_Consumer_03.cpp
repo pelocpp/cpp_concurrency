@@ -51,7 +51,7 @@ namespace ConsumerProducerThree
                 // is stack full?
                 m_conditionIsFull.wait(
                     guard,
-                    [&]() { return m_index < 9; }
+                    [&]() -> bool { return m_index < 9; }
                 );
 
                 // "Lost Wakeup and Spurious Wakeup"
@@ -83,7 +83,7 @@ namespace ConsumerProducerThree
                     // is stack empty?
                     m_conditionIsEmpty.wait(
                         guard,
-                        [&]() { return m_index >= 0; }
+                        [&]() -> bool { return m_index >= 0; }
                     );
 
                     // "Lost Wakeup and Spurious Wakeup"

@@ -40,7 +40,6 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 }
 ```
 
-
   * Klasse `std::unique_lock`:<br/>
     Die Klasse `std::unique_lock` bietet eine Reihe von Funktionalitäten,
     von denen einige besonders beim gleichzeitigen Sperren mehrerer Mutexe anwendbar sind.
@@ -54,10 +53,30 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 ---
 
+#### Das Monitor-Konzept von Djikstra:
+
+<img src="Dijkstra_2.png" width="150">
+
+*Abbildung* 1: Edsger W. Dijkstra, 2002.
+
+<img src="Monitor_01.png" width="600">
+
+*Abbildung* 2: Anschauliche Darstellung eines Monitors: Ein Gebäude mit drei Räumen, in dem sich beliebig viele Threads nach bestimmten Spielregeln bewegen dürfen..
+
+<img src="Monitor_02.png" width="600">
+
+*Abbildung* 3: Erste Veranschaulichung eines Monitors: Aspekt des gegenseitigen Ausschlusses.
+
+<img src="Monitor_03.png" width="600">
+
+*Abbildung* 4: Zweite, vollständige Veranschaulichung eines Monitors: Aspekt der Koordination von Threads.
+
+---
+
 #### Quellcode:
 
   * Elementare Demonstration des `std::mutex` Objekts:</br>
-    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.
+    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.</br>
     [Beispiel](Simple_Mutex.cpp).
 
   * Elementare Demonstration des `std::condition_variable` Objekts:</br>
@@ -439,7 +458,7 @@ die Belegung des Monitors zu gewähren.
 
 <img src="Monitor_02.png" width="600">
 
-*Abbildung* 6: Erste Veranschaulichung eines Monitors: Aspekt des gegenseitigen Ausschlusses..
+*Abbildung* 6: Erste Veranschaulichung eines Monitors: Aspekt des gegenseitigen Ausschlusses.
 
 In 
 *Abbildung* 6

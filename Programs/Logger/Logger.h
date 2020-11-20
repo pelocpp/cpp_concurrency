@@ -56,7 +56,7 @@ public:
 
     static size_t readableTID(const std::thread::id id)
     {
-        std::lock_guard<std::mutex> lock(s_mutexIds);
+        std::scoped_lock<std::mutex> lock(s_mutexIds);
         if (s_mapIds.find(id) == s_mapIds.end()) {
             s_nextIndex++;
             s_mapIds[id] = s_nextIndex;

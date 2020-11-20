@@ -25,9 +25,9 @@ namespace SimpleMutexDemo
             for (int i = 0; i < s_NumIterations; ++i) 
             {
                 {
-                    // <== put next line into comment to demonstrate scattered output
-                    // std::lock_guard<std::mutex> lock(s_Mutex);
-                    // std::lock_guard lock(s_Mutex);  // C++ 17 (automatic type deduction)
+                    // <== remove comment from next line to demonstrate scattered output
+                    // std::scoped_lock<std::mutex> lock(s_Mutex);
+                    // std::scoped_lock lock(s_Mutex);  // C++ 17 (automatic type deduction)
                     std::cout << "Counter " << m_id << " has value " << i << "\n";
                 }
 
