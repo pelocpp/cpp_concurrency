@@ -113,8 +113,8 @@ namespace ConsumerProducerThree
 void test_mutual_exclusion_03()
 {
     using namespace ConsumerProducerThree;
-    ConsumerProducer ConsumerProducer;
-    ConsumerProducer.run();
+    ConsumerProducer cp;
+    cp.run();
 }
 
 // ===========================================================================

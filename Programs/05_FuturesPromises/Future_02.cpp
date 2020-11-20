@@ -56,7 +56,7 @@ namespace PromisesAndFutures02 {
 
         std::this_thread::sleep_for(std::chrono::seconds(3));
 
-        // Run both lambda expressions asynchronously.
+        // run both lambda expressions asynchronously.
         // Remember to capture the future returned by async()!
         auto result1 = std::async(std::launch::async, function1);
         auto result2 = std::async(std::launch::async, function2);

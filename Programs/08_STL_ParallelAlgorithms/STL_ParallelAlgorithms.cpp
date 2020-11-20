@@ -3,25 +3,29 @@
 // ===========================================================================
 
 #include <iostream>
+#include <iomanip>
 #include <algorithm>
 #include <chrono>
 #include <random>
-#include <ratio>
 #include <vector>
 #include <execution>
 
 namespace STL_Parallel_Algorithms
 {
     const size_t testSize = 1'000'000;
-    const int iterationCount = 5;
 
-    void print_results_02 (
+    const int iterationCount = 4;
+
+    template <typename T>
+    void printResults (
         std::string tag, 
-        const std::vector<double>& sorted,
+        const std::vector<T>& sorted,
         std::chrono::high_resolution_clock::time_point startTime,
         std::chrono::high_resolution_clock::time_point endTime) 
     {
         std::cout 
+            << std::fixed
+            << std::setprecision(1)
             << tag 
             << 
             ": Lowest: "
@@ -33,48 +37,39 @@ namespace STL_Parallel_Algorithms
             << std::endl;
     }
 
-    void test_01() 
+    template <typename T>
+    void fillTestVector(std::vector<T>& numbers)
     {
-        std::random_device rd;
-
-        // generate some random doubles:
-        std::cout << "Testing with " << testSize << " doubles..." << std::endl;
-        std::vector<double> doubles(testSize);
-        for (auto& d : doubles) {
-            d = static_cast<double>(rd());
-        }
-
-        // time how long it takes to sort them:
-        for (int i = 0; i < iterationCount; ++i)
-        {
-            std::vector<double> sorted(doubles);
-            const auto startTime = std::chrono::high_resolution_clock::now();
-            std::sort(sorted.begin(), sorted.end());
-            const auto endTime = std::chrono::high_resolution_clock::now();
-            print_results_02("Serial", sorted, startTime, endTime);
+        std::random_device device;
+        for (auto& number : numbers) {
+            number = static_cast<T>(device());
         }
     }
 
-    void test_02()
+    template <typename T>
+    void testSeq(std::vector<T> numbers)
     {
-        std::random_device rd;
-
-        // generate some random doubles:
-        std::cout << "Testing with " << testSize << " doubles..." << std::endl;
-        std::vector<double> doubles(testSize);
-        for (auto& d : doubles) {
-            d = static_cast<double>(rd());
-        }
-
-        // time how long it takes to sort them:
         for (int i = 0; i < iterationCount; ++i)
         {
-            std::vector<double> sorted(doubles);
+            std::vector<T> copyToSort(numbers);
             const auto startTime = std::chrono::high_resolution_clock::now();
-            // same sort call as above, but with 'par_unseq':
-            std::sort(std::execution::par_unseq, sorted.begin(), sorted.end());
+            std::sort(copyToSort.begin(), copyToSort.end());
             const auto endTime = std::chrono::high_resolution_clock::now();
-            print_results_02("Parallel", sorted, startTime, endTime);
+            printResults("Serial", copyToSort, startTime, endTime);
+        }
+    }
+
+    template <typename T>
+    void testPar(std::vector<T> numbers)
+    {
+        for (int i = 0; i < iterationCount; ++i)
+        {
+            std::vector<T> copyToSort(numbers);
+            const auto startTime = std::chrono::high_resolution_clock::now();
+            // same sort call as above, but with 'par_unseq' or 'par':
+            std::sort(std::execution::par_unseq, copyToSort.begin(), copyToSort.end());
+            const auto endTime = std::chrono::high_resolution_clock::now();
+            printResults("Parallel", copyToSort, startTime, endTime);
         }
     }
 }
@@ -82,9 +77,14 @@ namespace STL_Parallel_Algorithms
 void test_STL_Parallel_Algorithms()
 {
     using namespace STL_Parallel_Algorithms;
-    test_01();
+
+    std::cout << "Testing with " << testSize << " doubles ..." << std::endl;
+    std::vector<double> numbers(testSize);
+    fillTestVector(numbers);
+
+    testSeq(numbers);
     std::cout << std::endl;
-    test_02();
+    testPar(numbers);
 }
 
 // ===========================================================================

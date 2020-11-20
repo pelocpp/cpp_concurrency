@@ -20,7 +20,9 @@ namespace ConsumerProducerOne
         std::mutex m_mutex;
 
         void produce() {
+
             int nextNumber = 0;
+
             while (true) {
 
                 // sleep some seconds
@@ -40,7 +42,9 @@ namespace ConsumerProducerOne
         }
 
         void consume() {
+
             int number;
+
             while (true) {
 
                 number = 0;
@@ -72,16 +76,12 @@ namespace ConsumerProducerOne
             t2.join();
         }
     };
-
-    void test() {
-        ConsumerProducer cp;
-        cp.run();
-    }
 }
 
 void test_mutual_exclusion_01() {
     using namespace ConsumerProducerOne;
-    test();
+    ConsumerProducer cp;
+    cp.run();
 }
 
 // ===========================================================================

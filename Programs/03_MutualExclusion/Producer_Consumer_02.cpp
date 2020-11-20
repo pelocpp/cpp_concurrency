@@ -19,28 +19,26 @@ namespace ConsumerProducerTwo
         std::queue<int> m_data;
         std::mutex m_mutex;
         std::condition_variable m_condition;
-        bool m_dataAvailable;
 
     public:
-        ConsumerProducer() : m_dataAvailable{ false } {}
+        ConsumerProducer() = default;
 
         void produce() {
 
             int nextNumber = 0;
+
             while (true) {
 
-                // sleep some seconds
+                // sleep a second
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
                 nextNumber++;
 
                 // RAII idiom
-                Logger::log(std::cout, "> Producer");
                 {
                     std::scoped_lock<std::mutex> lock(m_mutex);
 
                     m_data.push(nextNumber);
-                    m_dataAvailable = true;
                     m_condition.notify_one();  // wakeup consumer, if any
                 }
 
@@ -56,14 +54,13 @@ namespace ConsumerProducerTwo
                 number = 0;
 
                 // RAII idiom
-                Logger::log(std::cout, "> Consumer");
                 {
                     std::unique_lock<std::mutex> lock(m_mutex);
 
                     m_condition.wait(lock, [&]() {
                         // return 'false' if waiting should be continued
-                        bool condition = m_dataAvailable == true;
-                        Logger::log(std::cout, "wait -> ", condition, '\n');
+                        bool condition = ! m_data.empty();
+                        Logger::log(std::cout, "Wait -> ", condition);
                         return condition;
                         }
                     );
@@ -71,7 +68,6 @@ namespace ConsumerProducerTwo
                     if (!m_data.empty()) {
                         number = m_data.front();
                         m_data.pop();
-                        m_dataAvailable = false;
                     }
                 }
 
@@ -92,16 +88,12 @@ namespace ConsumerProducerTwo
             t2.join();
         }
     };
-
-    void test() {
-        ConsumerProducer cp;
-        cp.run();
-    }
 }
 
 void test_mutual_exclusion_02() {
     using namespace ConsumerProducerTwo;
-    test();
+    ConsumerProducer cp;
+    cp.run();
 }
 
 // ===========================================================================
