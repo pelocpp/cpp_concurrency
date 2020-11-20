@@ -18,9 +18,9 @@ Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu e
 
 #### Quellcode:
 
-[Teil 1](SimpleThreading_01.cpp).
+[Teil 1: `std::thread` Basics](SimpleThreading_01.cpp).
 
-[Teil 2](SimpleThreading_01.cpp).
+[Teil 2: "*4 ways to create a thread*"](SimpleThreading_02.cpp).
 
 ---
 
