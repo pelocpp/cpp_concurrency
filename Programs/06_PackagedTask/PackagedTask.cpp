@@ -27,7 +27,7 @@ namespace PackagedTask {
     void test_01() {
 
         // define a task
-        std::packaged_task<int(int, int)> task(calcSum);
+        std::packaged_task<int(int, int)> task{ calcSum };
 
         // get the future object for this task
         std::future<int> future = task.get_future();
@@ -54,7 +54,7 @@ namespace PackagedTask {
         // define tasks, store corresponding futures
         for (size_t i = 0; i < MaxTasks; i++) {
 
-            std::packaged_task<int(int, int)> task(calcSumRange);
+            std::packaged_task<int(int, int)> task{ calcSumRange };
 
             std::future<int> future = task.get_future();
 
@@ -73,7 +73,7 @@ namespace PackagedTask {
             std::packaged_task<int(int, int)> task = std::move(tasks.front());
             tasks.pop_front();
 
-            std::thread t(std::move(task), begin, end);
+            std::thread t{ std::move(task), begin, end };
             t.detach();
 
             begin = end;

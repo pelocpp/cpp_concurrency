@@ -30,7 +30,7 @@ namespace SimpleThreading02 {
     }
 
     void test_01() {
-        std::thread t(function, 1, NumIterations);
+        std::thread t{ function, 1, NumIterations };
         t.join();
         Logger::log(std::cout, "Done Version 1.");
     }
@@ -43,8 +43,8 @@ namespace SimpleThreading02 {
         int m_iterations;
 
     public:
-        Runnable (int value, int iterations) 
-            : m_value(value), m_iterations(iterations) {}
+        Runnable (int value, int iterations)
+            : m_value{ value }, m_iterations{iterations } {}
 
         void operator () () const {
             for (int i = 0; i < m_iterations; ++i) {
@@ -59,11 +59,11 @@ namespace SimpleThreading02 {
         std::thread t { Runnable { 2, NumIterations } };  
 
         // named object
-        // Runnable runnable(2, NumIterations);
-        // std::thread t (runnable);
+        // Runnable runnable { 2, NumIterations };
+        // std::thread t { runnable };
         
         // temporary object
-        // std::thread t (Runnable (2, NumIterations));
+        // std::thread t(Runnable{ 2, NumIterations });
 
         t.join();
         Logger::log(std::cout, "Done Version 2.");
@@ -72,8 +72,9 @@ namespace SimpleThreading02 {
     // --------------------------------------------
 
     void test_03() {
-        int value = 3;
-        int iterations = 5;
+
+        int value{ 3 };
+        int iterations{ 5 };
 
         std::thread t([value, iterations] () {
             for (int i = 0; i < iterations; ++i) {
@@ -95,7 +96,7 @@ namespace SimpleThreading02 {
 
     public:
         AnotherRunnable(int value, int iterations)
-            : m_value(value), m_iterations(iterations) {}
+            : m_value{ value }, m_iterations{ iterations } {}
 
         void run() const {
             for (int i = 0; i < m_iterations; ++i) {
@@ -106,8 +107,8 @@ namespace SimpleThreading02 {
     };
 
     void test_04() {
-        AnotherRunnable runnable(4, NumIterations);
-        std::thread t (&AnotherRunnable::run, &runnable);
+        AnotherRunnable runnable{ 4, NumIterations };
+        std::thread t { &AnotherRunnable::run, &runnable };
         t.join();
         Logger::log(std::cout, "Done Version 4.");
     }

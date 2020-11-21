@@ -51,7 +51,7 @@ namespace STL_Parallel_Algorithms
     {
         for (int i = 0; i < iterationCount; ++i)
         {
-            std::vector<T> copyToSort(numbers);
+            std::vector<T> copyToSort{ numbers };
             const auto startTime = std::chrono::high_resolution_clock::now();
             std::sort(copyToSort.begin(), copyToSort.end());
             const auto endTime = std::chrono::high_resolution_clock::now();
@@ -64,7 +64,7 @@ namespace STL_Parallel_Algorithms
     {
         for (int i = 0; i < iterationCount; ++i)
         {
-            std::vector<T> copyToSort(numbers);
+            std::vector<T> copyToSort{ numbers };
             const auto startTime = std::chrono::high_resolution_clock::now();
             // same sort call as above, but with 'par_unseq' or 'par':
             std::sort(std::execution::par_unseq, copyToSort.begin(), copyToSort.end());
@@ -79,7 +79,7 @@ void test_STL_Parallel_Algorithms()
     using namespace STL_Parallel_Algorithms;
 
     std::cout << "Testing with " << testSize << " doubles ..." << std::endl;
-    std::vector<double> numbers(testSize);
+    std::vector<double> numbers{ testSize };
     fillTestVector(numbers);
 
     testSeq(numbers);

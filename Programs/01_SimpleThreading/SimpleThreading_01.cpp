@@ -31,8 +31,8 @@ namespace SimpleThreading01 {
         std::thread::id mainTID = std::this_thread::get_id();
         Logger::log(std::cout, "main: ", mainTID);
 
-        std::thread t1(function, 1);
-        std::thread t2(function, 2);
+        std::thread t1{ function, 1 };
+        std::thread t2{ function, 2 };
 
         t1.join();
         t2.join();
@@ -46,8 +46,8 @@ namespace SimpleThreading01 {
         std::thread::id mainTID = std::this_thread::get_id();
         Logger::log(std::cout, "main: ", mainTID);
 
-        std::thread t1(function, 1);
-        std::thread t2(function, 2);
+        std::thread t1{ function, 1 };
+        std::thread t2{ function, 2 };
 
         t1.detach();
         t2.detach();
