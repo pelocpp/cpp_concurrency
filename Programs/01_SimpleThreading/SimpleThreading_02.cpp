@@ -76,12 +76,14 @@ namespace SimpleThreading02 {
         int value{ 3 };
         int iterations{ 5 };
 
-        std::thread t([value, iterations] () {
-            for (int i = 0; i < iterations; ++i) {
-                Logger::log(std::cout, "in thread ", value);
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::thread t{
+            [value, iterations] () {
+                for (int i = 0; i < iterations; ++i) {
+                    Logger::log(std::cout, "in thread ", value);
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
             }
-        });
+        };
 
         t.join();
         Logger::log(std::cout, "Done Version 3.");
