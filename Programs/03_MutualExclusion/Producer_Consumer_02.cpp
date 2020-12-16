@@ -57,11 +57,13 @@ namespace ConsumerProducerTwo
                 {
                     std::unique_lock<std::mutex> lock(m_mutex);
 
-                    m_condition.wait(lock, [&]() -> bool {
-                        // return 'false' if waiting should be continued
-                        bool condition = ! m_data.empty();
-                        Logger::log(std::cout, "Wait -> ", condition);
-                        return condition;
+                    m_condition.wait(
+                        lock,
+                        [this]() -> bool {
+                            // return 'false' if waiting should be continued
+                            bool condition = ! m_data.empty();
+                            Logger::log(std::cout, "Wait -> ", condition);
+                            return condition;
                         }
                     );
 

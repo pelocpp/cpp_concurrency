@@ -15,22 +15,24 @@ namespace EagerVsLazyASync {
 
         std::chrono::system_clock::time_point begin = std::chrono::system_clock::now();
 
-        std::future<std::chrono::system_clock::time_point> asyncLazy
-            = std::async(std::launch::deferred, [] {
+        std::future<std::chrono::system_clock::time_point> asyncLazy = std::async(
+            std::launch::deferred, 
+            [] () {
                 std::cout << "launch::deferred thread done!" << std::endl;
                 return std::chrono::system_clock::now(); 
             }
         );
 
-        std::future<std::chrono::system_clock::time_point> asyncEager 
-            = std::async(std::launch::async, [] {
+        std::future<std::chrono::system_clock::time_point> asyncEager = std::async(
+            std::launch::async,
+            [] () {
                 std::cout << "launch::async thread done!" << std::endl;
                 return std::chrono::system_clock::now();
             }
         );
 
-        std::cout << "Now waiting for 4 seconds ..." << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(4));
+        std::cout << "Now waiting for 5 seconds ..." << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
 
         std::chrono::system_clock::duration lazyStart = asyncLazy.get() - begin;
         std::chrono::system_clock::duration eagerStart = asyncEager.get() - begin;

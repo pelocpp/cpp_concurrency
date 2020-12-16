@@ -37,11 +37,11 @@ namespace SimpleConditionVariableDemo
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
-
         condition.notify_one();     // demonstrate either this line
         // condition.notify_all();  // or this line
+
         std::this_thread::sleep_for(std::chrono::seconds(2));
-        condition.notify_one();
+        condition.notify_one();     // and this line
 
         t1.join();
         t2.join();

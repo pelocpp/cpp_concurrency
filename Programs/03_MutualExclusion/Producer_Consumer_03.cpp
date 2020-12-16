@@ -46,23 +46,25 @@ namespace ConsumerProducerThree
                 m_counter++;
 
                 // RAII
-                std::unique_lock guard(m_mutex);
+                {
+                    std::unique_lock lock(m_mutex);
 
-                // is stack full?
-                m_conditionIsFull.wait(
-                    guard,
-                    [&]() -> bool { return m_index < 9; }
-                );
+                    // is stack full?
+                    m_conditionIsFull.wait(
+                        lock,
+                        [this]() -> bool { return m_index < 9; }
+                    );
 
-                // "Lost Wakeup and Spurious Wakeup"
-                if (m_index < 9) {
+                    // "Lost Wakeup and Spurious Wakeup"
+                    if (m_index < 9) {
 
-                    m_index++;
-                    m_data.at(m_index) = m_counter;
-                    Logger::log(std::cout, "pushed ", m_counter, " at index ", m_index);
+                        m_index++;
+                        m_data.at(m_index) = m_counter;
+                        Logger::log(std::cout, "pushed ", m_counter, " at index ", m_index);
 
-                    // wakeup any sleeping consuments
-                    m_conditionIsEmpty.notify_all();
+                        // wakeup any sleeping consuments
+                        m_conditionIsEmpty.notify_all();
+                    }
                 }
             }
         }
@@ -78,12 +80,12 @@ namespace ConsumerProducerThree
 
                 {
                     // RAII
-                    std::unique_lock guard(m_mutex);  // Dijkstra Monitor
+                    std::unique_lock lock(m_mutex);  // Dijkstra Monitor
 
                     // is stack empty?
                     m_conditionIsEmpty.wait(
-                        guard,
-                        [&]() -> bool { return m_index >= 0; }
+                        lock,
+                        [this]() -> bool { return m_index >= 0; }
                     );
 
                     // "Lost Wakeup and Spurious Wakeup"

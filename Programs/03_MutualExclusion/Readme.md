@@ -97,6 +97,29 @@ Siehe das Thema
 
 ---
 
+**Beachte**:
+
+Die Funktionsweise der Methode `wait` der Klasse `std::condition_variable` ist wie folgt definiert:
+
+*Definition* von `wait`:
+
+```cpp
+template< class Predicate >
+void wait(std::unique_lock<std::mutex>& lock, Predicate pred);
+```
+
+*Ablauf*:
+
+```cpp
+while (!pred()) {
+    wait(lock);
+}
+```
+
+Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
+
+---
+
 In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
 gibt es eine ausführliche Beschreibung zum Thema *Mutual Exclusion*, das dort
 die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere
