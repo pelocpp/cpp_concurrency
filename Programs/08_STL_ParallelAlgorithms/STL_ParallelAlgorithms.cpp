@@ -79,7 +79,7 @@ void test_STL_Parallel_Algorithms()
     using namespace STL_Parallel_Algorithms;
 
     std::cout << "Testing with " << testSize << " doubles ..." << std::endl;
-    std::vector<double> numbers{ testSize };
+    std::vector<double> numbers(testSize);
     fillTestVector(numbers);
 
     testSeq(numbers);
