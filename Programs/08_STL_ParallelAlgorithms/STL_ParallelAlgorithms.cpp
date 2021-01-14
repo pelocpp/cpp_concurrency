@@ -16,24 +16,19 @@ namespace STL_Parallel_Algorithms
 
     const int iterationCount = 4;
 
-    template <typename T>
     void printResults (
         std::string tag, 
-        const std::vector<T>& sorted,
         std::chrono::high_resolution_clock::time_point startTime,
         std::chrono::high_resolution_clock::time_point endTime) 
     {
         std::cout 
+            << std::setw(10)
+            << std::left
+            << tag
             << std::fixed
-            << std::setprecision(1)
-            << tag 
-            << 
-            ": Lowest: "
-            << sorted.front() 
-            << ", Highest: "
-            << sorted.back() 
-            << ", Time: "
+            << std::setprecision(6)
             << std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count()
+            << " msecs."
             << std::endl;
     }
 
@@ -47,29 +42,29 @@ namespace STL_Parallel_Algorithms
     }
 
     template <typename T>
-    void testSeq(std::vector<T> numbers)
+    void testSeq(const std::vector<T>& numbers)
     {
         for (int i = 0; i < iterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime = std::chrono::high_resolution_clock::now();
-            std::sort(copyToSort.begin(), copyToSort.end());
+            std::sort(std::begin(copyToSort), std::end(copyToSort));
             const auto endTime = std::chrono::high_resolution_clock::now();
-            printResults("Serial", copyToSort, startTime, endTime);
+            printResults("Serial", startTime, endTime);
         }
     }
 
     template <typename T>
-    void testPar(std::vector<T> numbers)
+    void testPar(const std::vector<T>& numbers)
     {
         for (int i = 0; i < iterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime = std::chrono::high_resolution_clock::now();
             // same sort call as above, but with 'par_unseq' or 'par':
-            std::sort(std::execution::par_unseq, copyToSort.begin(), copyToSort.end());
+            std::sort(std::execution::par, std::begin(copyToSort), std::end(copyToSort));
             const auto endTime = std::chrono::high_resolution_clock::now();
-            printResults("Parallel", copyToSort, startTime, endTime);
+            printResults("Parallel", startTime, endTime);
         }
     }
 }
@@ -78,7 +73,10 @@ void test_STL_Parallel_Algorithms()
 {
     using namespace STL_Parallel_Algorithms;
 
-    std::cout << "Testing with " << testSize << " doubles ..." << std::endl;
+    std::cout 
+        << "Testing with " << testSize << " doubles ..." 
+        << std::endl << std::endl;
+
     std::vector<double> numbers(testSize);
     fillTestVector(numbers);
 
