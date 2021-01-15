@@ -7,18 +7,20 @@
 #include <string>
 #include <chrono>
 
+#include "../Logger/Logger.h"
+
 namespace EagerVsLazyASync {
 
     void test_01() {
 
-        std::cout << "Preparing calculations ..." << std::endl;
+        Logger::log(std::cout, "Preparing calculations ...");
 
         std::chrono::system_clock::time_point begin = std::chrono::system_clock::now();
 
         std::future<std::chrono::system_clock::time_point> asyncLazy = std::async(
             std::launch::deferred, 
             [] () {
-                std::cout << "launch::deferred thread done!" << std::endl;
+                Logger::log(std::cout, "launch::deferred thread done!");
                 return std::chrono::system_clock::now(); 
             }
         );
@@ -26,12 +28,12 @@ namespace EagerVsLazyASync {
         std::future<std::chrono::system_clock::time_point> asyncEager = std::async(
             std::launch::async,
             [] () {
-                std::cout << "launch::async thread done!" << std::endl;
+                Logger::log(std::cout, "launch::async thread done!");
                 return std::chrono::system_clock::now();
             }
         );
 
-        std::cout << "Now waiting for 5 seconds ..." << std::endl;
+        Logger::log(std::cout, "Now waiting for 5 seconds ...");
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
         std::chrono::system_clock::duration lazyStart = asyncLazy.get() - begin;
@@ -40,13 +42,8 @@ namespace EagerVsLazyASync {
         double lazyDuration = std::chrono::duration<double>(lazyStart).count();
         double eagerDuration = std::chrono::duration<double>(eagerStart).count();
 
-        std::cout
-            << "asyncLazy evaluated after : " << lazyDuration 
-            << " seconds." << std::endl;
-
-        std::cout
-            << "asyncEager evaluated after: " << eagerDuration 
-            << " seconds." << std::endl;
+        Logger::log(std::cout, "asyncLazy evaluated after : ", lazyDuration, " seconds.");
+        Logger::log(std::cout, "asyncEager evaluated after: ", eagerDuration, " seconds.");
     }
 }
 
