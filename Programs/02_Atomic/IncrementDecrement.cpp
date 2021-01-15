@@ -152,50 +152,49 @@ namespace IncrementDecrement {
             Logger::log(std::cout, "< decrementMutexRAII");
         }
     };
-
-    // helper testing methods
-    void test_regular() {
-        IncDec inc_dec;
-        inc_dec.run();
-    }
-
-    void test_atomic() {
-        IncDec inc_dec;
-        inc_dec.runAtomic();
-    }
-
-    void test_mutex() {
-        IncDec inc_dec;
-        inc_dec.runMutex();
-    }
-
-    void test_mutexRAII() {
-        IncDec inc_dec;
-        inc_dec.runMutexRAII();
-    }
 }
 
 void test_01()
 {
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
-
     Logger::startWatch();
-    test_regular();
+    IncDec inc_dec;
+    inc_dec.run();
     Logger::stopWatchMilli();
+    Logger::log(std::cout, "Done.");
+}
 
+void test_02()
+{
+    using namespace IncrementDecrement;
+    Logger::log(std::cout, "Begin");
     Logger::startWatch();
-    test_atomic();
+    IncDec inc_dec;
+    inc_dec.runAtomic();
     Logger::stopWatchMilli();
+    Logger::log(std::cout, "Done.");
+}
 
+void test_03()
+{
+    using namespace IncrementDecrement;
+    Logger::log(std::cout, "Begin");
     Logger::startWatch();
-    test_mutex();
+    IncDec inc_dec;
+    inc_dec.runMutex();
     Logger::stopWatchMilli();
+    Logger::log(std::cout, "Done.");
+}
 
+void test_04()
+{
+    using namespace IncrementDecrement;
+    Logger::log(std::cout, "Begin");
     Logger::startWatch();
-    test_mutexRAII();
+    IncDec inc_dec;
+    inc_dec.runMutexRAII();
     Logger::stopWatchMilli();
-
     Logger::log(std::cout, "Done.");
 }
 
