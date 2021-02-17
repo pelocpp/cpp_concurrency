@@ -9,7 +9,6 @@
 #include <latch>
 #include <array>
 #include <random>
-#include <barrier>
 #include <deque>
 
 #include "../Logger/Logger.h"
@@ -18,8 +17,6 @@ namespace Latches {
 
     constexpr size_t ThreadCount = 4;
     constexpr size_t MaxDelay = 3000;
-
-    void example_latches_01();
 
     size_t calcSumRange(size_t a, size_t b) {
         size_t sum{ 0 };
@@ -132,7 +129,7 @@ namespace Latches {
 void test_latches()
 {
     using namespace Latches;
-    // example_latches_01();
+    example_latches_01();
     example_latches_02();
 }
 

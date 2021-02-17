@@ -171,6 +171,29 @@ und mögliche Aufräumarbeiten (Freigabe von Ressourcen) zum richtigen Zeitpunkt d
 
 ## Beispiele zu `std::barrier`
 
+### Summenbildung von disjunkten Zahlenbereichen
+
+Dieses Beispiel ist sehr ähnlich zum entsprechenden Beispiel mit einem `std::latch`-Objekt.
+An Stelle des `std::latch`-Objekts kommt ein `std::barrier`-Objekt zum Einsatz.
+
+### Synchronisation von Master- und Slave-Threads
+
+WEITER !!!!!!!!!!!!!!!
+
+---
+
+## Literaturhinweise:
+
+Die Anregungen zu den Beispielen aus diesem Abschnitt finden sich teilkweise unter
+
+[Latches in C++ 20](https://www.heise.de/developer/artikel/Latches-in-C-20-5033716.html)<br>(abgerufen am 17.02.2021)
+
+und
+
+[Barrieren in C++ 20](https://www.heise.de/developer/artikel/Barrieren-und-atomare-Smart-Pointers-in-C-20-5041229.html)<br>(abgerufen am 17.02.2021)
+
+vor.
+
 ---
 
 [Zurück](../../Readme.md)

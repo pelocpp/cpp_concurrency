@@ -14,7 +14,9 @@
 
 ## [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
-## [STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+## [(C++ 20) STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+
+## [(C++ 20) Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
 
 ---
 
