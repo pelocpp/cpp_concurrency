@@ -6,6 +6,8 @@
 
 #### Quellcode:
 
+Eine Beschreibung der Beispiele folgt weiter unten:
+
 [Latches.cpp](Latches.cpp)<br/>
 [Barriers.cpp](Barriers.cpp)
 
@@ -88,6 +90,86 @@ bis diese alle den Synchronisationspunkt (*Barriere*) erreicht haben.
 Im Gegensatz zu `std::latch` sind Barrieren wiederverwendbar:
 Sobald die ankommenden Threads am Synchronisationspunkt einer Barriere ihre Blockade verlassen,
 kann dieselbe Barriere erneut verwendet werden.
+
+---
+
+## Beispiele zu `std::latch`
+
+### Summenbildung von disjunkten Zahlenbereichen
+
+Das erste Beispiel ist ähnlich zum Beispiel aus dem Projekt `std::packaged_task`.
+Es wird die Summation einer Reihe natürlicher Zahlen auf mehrere Threads (hier: `std::async`) aufgeteilt.
+Der Worker-Thread liefert zu Demonstrationszwecken das Ergebnis nicht über ein `std::future`-Objekt zurück,
+sondern legt es an einer bestimmten Position (Parameter `index`) in einem globalen `std::array`-Objekt ab.
+
+Auf diese Weise ist für den Initiator nicht ersichtlich, wann alle Teilergebnisse vorliegen.
+Dies erfolgt mit einem `std::latch`-Objekt, das pro Worker-Thread, wenn dieser fertig ist, mittels
+der `count_down`-Methode dekrementiert wird.
+
+Zentraler Warteplatz im Initiator ist ein Aufruf der `wait`-Methode am `std::latch`-Objekt.
+Kann dieses passiert werden, weiß der Initiator, dass das `std::array`-Objekt mit allen Ergebnissen
+vollständig belegt sein muss.
+
+*Ausgabe*:
+
+```cpp
+[2]: Calculating from 101 up to 201...
+[1]: Calculating from 1 up to 101...
+[3]: Calculating from 201 up to 301...
+[4]: Calculating from 301 up to 401...
+[5]: All calculations done :)
+[5]: Partial result: 5050
+[5]: Partial result: 15050
+[5]: Partial result: 25050
+[5]: Partial result: 35050
+[5]: Total: 80200
+```
+
+### Modelliering von Master- und Slave-Threads
+
+Im Prinzip ist dieses Beispiel ähnlich gelagert wie das Beispiel zuvor.
+Es wird eine Synchronisation von einem Master-Thread und mehreren Slave-Threads demonstriert.
+Dieses Mal findet die Synchronisation in beide Richtungen statt.
+
+Zunächst startet der Master-Thread seine Slave-Threads und wartet auf deren Beendigung.
+Dazu dekrementieren die Slave-Threads ein (erstes) `std::latch`-Objekt,
+der Master-Thread *wartet* an diesem `std::latch`-Objekt.
+
+Die Slave-Threads ihrerseits verlassen allerdings nach dem Ende ihrer Tätigkeit nicht die Thread-Prozedur,
+sondern blockieren an einem (zweiten) `std::latch`-Objekt.
+Wenn das erste `std::latch`-Objekt den Wert 0 hat und der Master-Thread seine Blockade verlässt,
+dekrementiert er das zweite `std::latch`-Objekt einmal &ndash; es wurde mit dem Wert 1 vorbelegt.
+Nun endet die Blockade aller wartenden Slave-Threads und diese verlassen ihre Thread-Prozedur
+zu einem kontrollierten Zeitpunkt.
+
+Das Beispiel demonstriert, wie beide Seiten ihren Ablauf synchronisieren können
+und mögliche Aufräumarbeiten (Freigabe von Ressourcen) zum richtigen Zeitpunkt durchführbar sind.
+
+*Ausgabe*:
+
+```cpp
+[1]: Working starts:
+[2]: Worker (1): Started working.
+[3]: Worker (2): Started working.
+[4]: Worker (3): Started working.
+[5]: Worker (4): Started working.
+[6]: Worker (5): Started working.
+[3]: Worker (2): Work done!
+[6]: Worker (5): Work done!
+[2]: Worker (1): Work done!
+[5]: Worker (4): Work done!
+[4]: Worker (3): Work done!
+[1]: Working done.
+[4]: Worker (3): Exit.
+[5]: Worker (4): Exit.
+[3]: Worker (2): Exit.
+[2]: Worker (1): Exit.
+[6]: Worker (5): Exit.
+```
+
+---
+
+## Beispiele zu `std::barrier`
 
 ---
 

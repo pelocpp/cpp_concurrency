@@ -2,11 +2,11 @@
 // Latches und Barriers
 // ===========================================================================
 
-void test_async_01();
+void test_latches();
 
 int main()
 {
-    test_async_01();
+    test_latches();
     return 0;
 }
 
