@@ -257,7 +257,7 @@ beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt
 
 ## Literaturhinweise:
 
-Die Anregungen zu den Beispielen aus diesem Abschnitt finden sich teilkweise unter
+Die Anregungen zu den Beispielen aus diesem Abschnitt finden sich teilweise unter
 
 [Latches in C++ 20](https://www.heise.de/developer/artikel/Latches-in-C-20-5033716.html)<br>(abgerufen am 17.02.2021)
 
