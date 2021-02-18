@@ -176,9 +176,82 @@ und mögliche Aufräumarbeiten (Freigabe von Ressourcen) zum richtigen Zeitpunkt d
 Dieses Beispiel ist sehr ähnlich zum entsprechenden Beispiel mit einem `std::latch`-Objekt.
 An Stelle des `std::latch`-Objekts kommt ein `std::barrier`-Objekt zum Einsatz.
 
-### Synchronisation von Master- und Slave-Threads
+### Synchronisation von Arbeitsabläufen
 
-WEITER !!!!!!!!!!!!!!!
+In diesem Beispiel betrachten wir Arbeitsabläufe, die von einem oder mehreren Threads (Prozeduren) abgearbeitet werden.
+Im Stile einer *Lastverteilung* (*Load Balancing*) kann ein Arbeitsablauf prinzipiell
+
+  * ganztags,
+  * nur vormittags oder
+  * nur nachmittags
+
+bearbeitet werden. In jedem Fall wird vor- und nachmittags gearbeitet.
+Alle Nachmittagsarbeiten können aber erst dann begonnen werden,
+wenn die Vormittagsarbeiten (sowohl Voll- also auch Teilzeitarbeiter) beendet sind.
+Wir stellen fest, dass es nach der Vormittagsarbeit einen Synchronisationspunkt gibt:
+Die Vollzeitarbeiter und die Vormittags-Teilzeitarbeiter (sofern es welche gibt) melden den Vollzug ihrer Vormittagsarbeit,
+erst dann kann am Nachmittag (Vollzeitarbeiter und die Nachmittags-Teilzeitarbeiter &ndash; sofern es welche gibt)
+weitergearbeitet werden. Im Ablauf des Programms soll diese Arbeitsweise durch geeignete Ausgaben visualisiert werden:
+
+  * Die Vollzeitarbeiter protokollieren, wann sie vormittags zu arbeiten beginnen, wann sie vormittags fertig sind, wann sie nachmittags zu arbeiten beginnen und wann sie schließlich nachmittags fertig sind.
+  * Die Teilzeitarbeiter protokollieren, wann sie entweder vormittags zu arbeiten beginnen und wann sie vormittags fertig sind oder wann sie nachmittags zu arbeiten beginnen und wann sie nachmittags fertig sind.
+
+Man betrachte beim Studieren des Quellcodes den Einsatz der
+beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt!
+
+1. *Beispiel*: Es arbeiten drei Vollzeit- und drei Vormittags-Teilzeitarbeiter:
+
+*Ausgabe*:
+
+```cpp
+[1]: Working starts [PartimeWorker & FulltimeWorker]:
+[2]: forenoonWorker (a): Forenoon work starting!
+[3]: forenoonWorker (b): Forenoon work starting!
+[4]: forenoonWorker (c): Forenoon work starting!
+[5]: fulltimeWorker (1): Forenoon work starting!
+[4]: forenoonWorker (c): Forenoon work done!
+[4]: fulltimeWorker (2): Forenoon work starting!
+[6]: fulltimeWorker (3): Forenoon work starting!
+[5]: fulltimeWorker (1): Forenoon work done!
+[2]: forenoonWorker (a): Forenoon work done!
+[6]: fulltimeWorker (3): Forenoon work done!
+[4]: fulltimeWorker (2): Forenoon work done!
+[3]: forenoonWorker (b): Forenoon work done!
+[4]: fulltimeWorker (2): Afternoon work starting!
+[5]: fulltimeWorker (1): Afternoon work starting!
+[6]: fulltimeWorker (3): Afternoon work starting!
+[5]: fulltimeWorker (1): Afternoon work done!
+[6]: fulltimeWorker (3): Afternoon work done!
+[4]: fulltimeWorker (2): Afternoon work done!
+[1]: Working ends starts [PartimeWorker & FulltimeWorker].
+```
+
+2. *Beispiel*: Es arbeiten drei Vollzeit- und drei Nachmittags-Teilzeitarbeiter:
+
+*Ausgabe*:
+
+```cpp
+[1]: Working starts [PartimeWorker & FulltimeWorker]:
+[2]: fulltimeWorker  (1): Forenoon work starting!
+[3]: fulltimeWorker  (2): Forenoon work starting!
+[4]: fulltimeWorker  (3): Forenoon work starting!
+[2]: fulltimeWorker  (1): Forenoon work done!
+[3]: fulltimeWorker  (2): Forenoon work done!
+[4]: fulltimeWorker  (3): Forenoon work done!
+[4]: fulltimeWorker  (3): Afternoon work starting!
+[3]: fulltimeWorker  (2): Afternoon work starting!
+[2]: fulltimeWorker  (1): Afternoon work starting!
+[5]: afternoonWorker (A): Afternoon work starting!
+[6]: afternoonWorker (B): Afternoon work starting!
+[7]: afternoonWorker (C): Afternoon work starting!
+[6]: afternoonWorker (B): Afternoon work done!
+[2]: fulltimeWorker  (1): Afternoon work done!
+[3]: fulltimeWorker  (2): Afternoon work done!
+[7]: afternoonWorker (C): Afternoon work done!
+[5]: afternoonWorker (A): Afternoon work done!
+[4]: fulltimeWorker  (3): Afternoon work done!
+[1]: Working ends starts [PartimeWorker & FulltimeWorker].
+```
 
 ---
 
