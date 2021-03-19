@@ -21,9 +21,9 @@ namespace PromisesAndFutures01 {
 
     void testVersion01() {
 
-        std::promise<int> promiseObj;
+        std::promise<int> promiseObj{};
 
-        std::future<int> futureObj = promiseObj.get_future();
+        std::future<int> futureObj{ promiseObj.get_future() };
 
         std::thread t {doWorkVersion01, &promiseObj };
 
@@ -46,9 +46,9 @@ namespace PromisesAndFutures01 {
 
     void testVersion02() {
 
-        std::promise<int> promiseObj;
+        std::promise<int> promiseObj{};
 
-        std::future<int> futureObj = promiseObj.get_future();
+        std::future<int> futureObj{ promiseObj.get_future() };
 
         std::thread t{ doWorkVersion02, std::move (promiseObj) };
 

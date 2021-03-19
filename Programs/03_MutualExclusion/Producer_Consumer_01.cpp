@@ -33,7 +33,7 @@ namespace ConsumerProducerOne
                 // RAII idiom
                 Logger::log(std::cout, "> Producer");
                 {
-                    std::scoped_lock<std::mutex> lock (m_mutex);
+                    std::scoped_lock<std::mutex> lock{ m_mutex };
                     m_data.push(nextNumber);
                 }
 
@@ -52,7 +52,7 @@ namespace ConsumerProducerOne
                 // RAII idiom
                 Logger::log(std::cout, "> Consumer");
                 {
-                    std::scoped_lock<std::mutex> lock (m_mutex);
+                    std::scoped_lock<std::mutex> lock{ m_mutex };
                     if (!m_data.empty()) {
                         number = m_data.front();
                         m_data.pop();
@@ -70,8 +70,8 @@ namespace ConsumerProducerOne
 
     public:
         void run() {
-            std::thread t1(&ConsumerProducer::produce, this);
-            std::thread t2(&ConsumerProducer::consume, this);
+            std::thread t1{ &ConsumerProducer::produce, this };
+            std::thread t2{ &ConsumerProducer::consume, this };
             t1.join();
             t2.join();
         }

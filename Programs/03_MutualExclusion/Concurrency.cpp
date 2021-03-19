@@ -90,7 +90,7 @@ namespace Concurrency {
 
     using namespace SimpleStackForTesting;
 
-    constexpr long NumIterations = 100000000;
+    constexpr long NumIterations{ 100000000 };
 
     class ConcurrencyTest {
 

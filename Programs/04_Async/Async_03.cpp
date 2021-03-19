@@ -16,10 +16,10 @@ namespace SomeAsyncScenarios {
 
     void test_01() 
     {
-        std::future<long> f40 = std::async(fib, 40);
-        std::future<long> f41 = std::async(fib, 41);
-        std::future<long> f42 = std::async(fib, 42);
-        std::future<long> f43 = std::async(fib, 43);
+        std::future<long> f40{ std::async(fib, 40) };
+        std::future<long> f41{ std::async(fib, 41) };
+        std::future<long> f42{ std::async(fib, 42) };
+        std::future<long> f43{ std::async(fib, 43) };
 
         std::cout << "Please wait ..." << std::endl;
 
@@ -35,10 +35,10 @@ namespace SomeAsyncScenarios {
 
     void test_02()
     {
-        std::future<long> f40 = std::async(fib, 40);
-        std::future<long> f41 = std::async(fib, 41);
-        std::future<long> f42 = std::async(fib, 42);
-        std::future<long> f43 = std::async(fib, 43);
+        std::future<long> f40{ std::async(fib, 40) };
+        std::future<long> f41{ std::async(fib, 41) };
+        std::future<long> f42{ std::async(fib, 42) };
+        std::future<long> f43{ std::async(fib, 43) };
 
         std::cout << "Please wait ..." << std::endl;
 
@@ -56,7 +56,7 @@ namespace SomeAsyncScenarios {
         std::cout << "Preparing calculations ..." << std::endl;
         std::vector<std::future<long>> fibonaccis;
 
-        for (int n = 0; n < 50; ++n)
+        for (size_t n = 0; n != 50; ++n)
         {
             std::future<long> fut = std::async(std::launch::deferred, fib, n);  // <==== std::launch::deferred with std::launch::async
             fibonaccis.push_back(std::move(fut));

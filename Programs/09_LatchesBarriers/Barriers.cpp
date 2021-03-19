@@ -15,8 +15,8 @@
 
 namespace Barriers {
 
-    constexpr size_t ThreadCount = 4;
-    constexpr size_t MaxDelay = 3000;
+    constexpr size_t ThreadCount{ 4 };
+    constexpr size_t MaxDelay{ 3000 };
 
     size_t calcSumRange(size_t a, size_t b) {
         size_t sum{ 0 };
@@ -93,7 +93,7 @@ namespace Barriers {
 
     // =======================================================================
 
-    constexpr size_t WorkersCount = 6;
+    constexpr size_t WorkersCount{ 6 };
     std::barrier workDoneBarrier(WorkersCount);
     std::random_device device;
 

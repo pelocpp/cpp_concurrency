@@ -36,7 +36,7 @@ namespace ConsumerProducerTwo
 
                 // RAII idiom
                 {
-                    std::scoped_lock<std::mutex> lock(m_mutex);
+                    std::scoped_lock<std::mutex> lock{ m_mutex };
 
                     m_data.push(nextNumber);
                     m_condition.notify_one();  // wakeup consumer, if any
@@ -55,7 +55,7 @@ namespace ConsumerProducerTwo
 
                 // RAII idiom
                 {
-                    std::unique_lock<std::mutex> lock(m_mutex);
+                    std::unique_lock<std::mutex> lock{ m_mutex };
 
                     m_condition.wait(
                         lock,
@@ -84,8 +84,8 @@ namespace ConsumerProducerTwo
 
     public:
         void run() {
-            std::thread t1(&ConsumerProducer::produce, this);
-            std::thread t2(&ConsumerProducer::consume, this);
+            std::thread t1{ &ConsumerProducer::produce, this };
+            std::thread t2{ &ConsumerProducer::consume, this };
             t1.join();
             t2.join();
         }

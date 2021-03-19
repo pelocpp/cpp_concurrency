@@ -13,41 +13,41 @@
 
 namespace ConsumerProducerThree
 {
+    constexpr std::chrono::milliseconds SleepTimeConsumer { 2000 };
+    constexpr std::chrono::milliseconds SleepTimeProducer { 2000 };
+
     class ConsumerProducer
     {
     public:
-        ConsumerProducer() : m_index{ -1 }, m_counter{ 1 } {}
+        ConsumerProducer() : m_index{ -1 } {}
 
     private:
         // array - considered as stack
-        std::array<int, 10> m_data;  // shared object
-        int m_index;
+        std::array<int, 10> m_data{ 0 };  // shared object
+        int m_index{};                    // shared index
 
         // take care of concurrent stack access
-        std::mutex m_mutex;
+        std::mutex m_mutex{};
 
         // monitor concept (Dijkstra)
-        std::condition_variable m_conditionIsEmpty;
-        std::condition_variable m_conditionIsFull;
-
-        int sleepTimeProducer = 2000;  // milli seconds
-        int sleepTimeConsumer = 2000;  // milli seconds
-
-        int m_counter;
+        std::condition_variable m_conditionIsEmpty{};
+        std::condition_variable m_conditionIsFull{};
 
         void produce() {
+
+            int counter{};
 
             while (true) {
 
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(sleepTimeProducer)
+                    std::chrono::milliseconds(SleepTimeProducer)
                 );
 
-                m_counter++;
+                counter++;
 
                 // RAII
                 {
-                    std::unique_lock lock(m_mutex);
+                    std::unique_lock lock{ m_mutex };
 
                     // is stack full?
                     m_conditionIsFull.wait(
@@ -59,8 +59,8 @@ namespace ConsumerProducerThree
                     if (m_index < 9) {
 
                         m_index++;
-                        m_data.at(m_index) = m_counter;
-                        Logger::log(std::cout, "pushed ", m_counter, " at index ", m_index);
+                        m_data.at(m_index) = counter;
+                        Logger::log(std::cout, "pushed ", counter, " at index ", m_index);
 
                         // wakeup any sleeping consuments
                         m_conditionIsEmpty.notify_all();
@@ -74,13 +74,14 @@ namespace ConsumerProducerThree
             while (true) {
 
                 std::this_thread::sleep_for(
-                    std::chrono::milliseconds(sleepTimeConsumer));
+                    std::chrono::milliseconds(SleepTimeConsumer)
+                );
 
                 int gotNumber = 0;
 
                 {
                     // RAII
-                    std::unique_lock lock(m_mutex);  // Dijkstra Monitor
+                    std::unique_lock lock{ m_mutex };  // Dijkstra Monitor
 
                     // is stack empty?
                     m_conditionIsEmpty.wait(
@@ -104,8 +105,8 @@ namespace ConsumerProducerThree
 
     public:
         void run() {
-            std::thread producer(&ConsumerProducer::produce, this);
-            std::thread consumer(&ConsumerProducer::consume, this);
+            std::thread producer{ &ConsumerProducer::produce, this };
+            std::thread consumer{ &ConsumerProducer::consume, this };
             producer.join();
             consumer.join();
         }

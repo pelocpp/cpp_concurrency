@@ -10,14 +10,14 @@
 
 namespace SimpleThreading01 {
 
-    constexpr long NumIterations = 5;
+    constexpr size_t NumIterations{ 5 };
 
     void function(int value) {
 
-        std::thread::id tid = std::this_thread::get_id();
+        std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "tid:  ", tid);
 
-        for (int i = 0; i < NumIterations; ++i) {
+        for (size_t i{}; i != NumIterations; ++i) {
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -28,7 +28,7 @@ namespace SimpleThreading01 {
     void test_01() {
         Logger::log(std::cout, "Begin");
 
-        std::thread::id mainTID = std::this_thread::get_id();
+        std::thread::id mainTID{ std::this_thread::get_id() };
         Logger::log(std::cout, "main: ", mainTID);
 
         std::thread t1{ function, 1 };
@@ -43,7 +43,7 @@ namespace SimpleThreading01 {
     void test_02() {
         Logger::log(std::cout, "Begin");
 
-        std::thread::id mainTID = std::this_thread::get_id();
+        std::thread::id mainTID{ std::this_thread::get_id() };
         Logger::log(std::cout, "main: ", mainTID);
 
         std::thread t1{ function, 1 };

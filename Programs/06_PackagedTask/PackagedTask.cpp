@@ -30,7 +30,7 @@ namespace PackagedTask {
         std::packaged_task<int(int, int)> task{ calcSum };
 
         // get the future object for this task
-        std::future<int> future = task.get_future();
+        std::future<int> future{ task.get_future() };
 
         std::thread t{ std::move(task), 123, 456 };
         t.detach();
@@ -46,20 +46,18 @@ namespace PackagedTask {
 
     void test_02() {
 
-        constexpr int MaxTasks = 4;
+        constexpr size_t MaxTasks{ 4 };
 
         std::deque<std::packaged_task<int(int, int)>> tasks;
         std::deque<std::future<int>> futures;
 
         // define tasks, store corresponding futures
-        for (size_t i = 0; i < MaxTasks; i++) {
+        for (size_t i = 0; i != MaxTasks; i++) {
 
             std::packaged_task<int(int, int)> task{ calcSumRange };
-
-            std::future<int> future = task.get_future();
+            std::future<int> future{ task.get_future() };
 
             tasks.push_back(std::move(task));
-
             futures.push_back(std::move(future));
         }
 
@@ -68,9 +66,9 @@ namespace PackagedTask {
         int end = begin + increment;
 
         // execute each task in a separate thread
-        for (size_t i = 0; i < MaxTasks; i++) {
+        for (size_t i = 0; i != MaxTasks; i++) {
 
-            std::packaged_task<int(int, int)> task = std::move(tasks.front());
+            std::packaged_task<int(int, int)> task{ std::move(tasks.front()) };
             tasks.pop_front();
 
             std::thread t{ std::move(task), begin, end };
@@ -82,9 +80,9 @@ namespace PackagedTask {
 
         // get the results
         int sum{};
-        for (size_t i = 0; i < MaxTasks; i++) {
+        for (size_t i = 0; i != MaxTasks; i++) {
 
-            std::future<int> future = std::move(futures.front());
+            std::future<int> future{ std::move(futures.front()) };
             futures.pop_front();
 
             int partialSum = future.get();

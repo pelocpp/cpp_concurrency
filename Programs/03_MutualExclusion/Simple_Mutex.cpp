@@ -12,23 +12,23 @@ namespace SimpleMutexDemo
     class Counter
     {
     private:
-        const long NumIterations = 100000;
+        const size_t NumIterations = 100000;
 
         static std::mutex s_mutex;
 
         int m_id;
 
     public:
-        Counter(int id, int numIterations) : m_id{ id } {}
+        Counter(int id) : m_id{ id } {}
 
         void operator()() const
         {
-            for (int i = 0; i < NumIterations; ++i)
+            for (size_t i = 0; i != NumIterations; ++i)
             {
                 {
                     // <== remove comment from next line to demonstrate scattered output
-                    // std::scoped_lock<std::mutex> lock(s_mutex);
-                    // std::scoped_lock lock(s_mutex);  // C++ 17 (automatic type deduction)
+                    //std::scoped_lock<std::mutex> lock{ s_mutex };
+                    //std::scoped_lock lock{ s_mutex };  // C++ 17 (automatic type deduction)
                     std::cout << "Counter " << m_id << " has value " << i << "\n";
                 }
 
@@ -38,17 +38,17 @@ namespace SimpleMutexDemo
         }
     };
 
-    std::mutex Counter::s_mutex;
+    std::mutex Counter::s_mutex{};
 }
 
 void test()
 {
     using namespace SimpleMutexDemo;
 
-    // using uniform initialization syntax
-    std::thread t1{ Counter{ 1, 20 } };
-    std::thread t2{ Counter{ 1, 20 } };
-    std::thread t3{ Counter{ 1, 20 } };
+    // run 3 threads ...
+    std::thread t1{ Counter{ 1 } };
+    std::thread t2{ Counter{ 2 } };
+    std::thread t3{ Counter{ 3 } };
 
     // wait for threads to finish
     t1.join();

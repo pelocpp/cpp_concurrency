@@ -36,11 +36,11 @@ namespace EagerVsLazyASync {
         Logger::log(std::cout, "Now waiting for 5 seconds ...");
         std::this_thread::sleep_for(std::chrono::seconds(5));
 
-        std::chrono::system_clock::duration lazyStart = asyncLazy.get() - begin;
-        std::chrono::system_clock::duration eagerStart = asyncEager.get() - begin;
+        std::chrono::system_clock::duration lazyStart{ asyncLazy.get() - begin };
+        std::chrono::system_clock::duration eagerStart{ asyncEager.get() - begin };
 
-        double lazyDuration = std::chrono::duration<double>(lazyStart).count();
-        double eagerDuration = std::chrono::duration<double>(eagerStart).count();
+        double lazyDuration{ std::chrono::duration<double>(lazyStart).count() };
+        double eagerDuration{ std::chrono::duration<double>(eagerStart).count() };
 
         Logger::log(std::cout, "asyncLazy evaluated after : ", lazyDuration, " seconds.");
         Logger::log(std::cout, "asyncEager evaluated after: ", eagerDuration, " seconds.");

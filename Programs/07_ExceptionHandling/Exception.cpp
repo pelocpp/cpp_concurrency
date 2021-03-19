@@ -24,15 +24,14 @@ namespace ExceptionHandling
 
     void test_01() {
 
-        std::future<int> futureFunction = std::async(
-            std::launch::async,
-            doSomeWorkWithException
-        );
+        std::future<int> futureFunction { 
+            std::async(std::launch::async, doSomeWorkWithException) 
+        };
 
         try
         {
             std::cout << "Waiting for Result ... " << std::endl;
-            int result = futureFunction.get();
+            int result{ futureFunction.get() };
         }
         catch (std::out_of_range ex) {
             std::cout << "Main Thread: got exception [" << ex.what() << "]" << std::endl;
@@ -45,7 +44,7 @@ namespace ExceptionHandling
      * propagating exception from std::thread invocation
      */
 
-    std::exception_ptr g_ep = nullptr;
+    std::exception_ptr g_ep{ nullptr };
 
     int doAnotherWorkWithException()
     {
@@ -69,7 +68,7 @@ namespace ExceptionHandling
 
     void test_02() {
 
-        std::thread t (doAnotherWorkWithException);
+        std::thread t{ doAnotherWorkWithException };
         t.join();
 
         if (g_ep != nullptr) {
@@ -78,7 +77,7 @@ namespace ExceptionHandling
             }
             catch (const std::exception & ex)
             {
-                std::cerr << "Thread exited with exception: " << ex.what() << "\n";
+                std::cerr << "Thread exited with exception: " << ex.what() << std::endl;
             }
         }
 

@@ -12,9 +12,9 @@
 
 namespace STL_Parallel_Algorithms
 {
-    const size_t testSize = 1'000'000;
+    constexpr size_t TestSize{ 1'000'000 };
 
-    const int iterationCount = 4;
+    constexpr size_t IterationCount{ 4 };
 
     void printResults (
         std::string tag, 
@@ -44,12 +44,12 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testSeq(const std::vector<T>& numbers)
     {
-        for (int i = 0; i < iterationCount; ++i)
+        for (size_t i = 0; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
-            const auto startTime = std::chrono::high_resolution_clock::now();
+            const auto startTime{ std::chrono::high_resolution_clock::now() };
             std::sort(std::begin(copyToSort), std::end(copyToSort));
-            const auto endTime = std::chrono::high_resolution_clock::now();
+            const auto endTime{ std::chrono::high_resolution_clock::now() };
             printResults("Serial", startTime, endTime);
         }
     }
@@ -57,13 +57,13 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testPar(const std::vector<T>& numbers)
     {
-        for (int i = 0; i < iterationCount; ++i)
+        for (size_t i = 0; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
-            const auto startTime = std::chrono::high_resolution_clock::now();
+            const auto startTime{ std::chrono::high_resolution_clock::now() };
             // same sort call as above, but with 'par_unseq' or 'par':
             std::sort(std::execution::par, std::begin(copyToSort), std::end(copyToSort));
-            const auto endTime = std::chrono::high_resolution_clock::now();
+            const auto endTime{ std::chrono::high_resolution_clock::now() };
             printResults("Parallel", startTime, endTime);
         }
     }
@@ -74,10 +74,10 @@ void test_STL_Parallel_Algorithms()
     using namespace STL_Parallel_Algorithms;
 
     std::cout 
-        << "Testing with " << testSize << " doubles ..." 
+        << "Testing with " << TestSize << " doubles ..." 
         << std::endl << std::endl;
 
-    std::vector<double> numbers(testSize);
+    std::vector<double> numbers(TestSize); // vector of length TestSize
     fillTestVector(numbers);
 
     testSeq(numbers);
