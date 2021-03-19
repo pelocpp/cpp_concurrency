@@ -4,11 +4,10 @@
 
 #pragma once
 
-class Philosopher {
-public:
-    static const int MinSleepingMSecs = 10;       // sleeping between 1 and ...
-    static const int MaxSleepingMSecs = 30;       // ... 3 seconds
+constexpr int MinSleepingMSecs{ 10 }; // sleeping between 1 and ...
+constexpr int MaxSleepingMSecs{ 30 }; // ... 3 seconds
 
+class Philosopher {
 private:
     // dining philosophers utilities
     Table& m_table;

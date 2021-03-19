@@ -28,9 +28,9 @@ public:
     static void logInternal(std::ostream& os, Args ...args)
     {
         std::stringstream ss;
-        std::thread::id currentThreadId = std::this_thread::get_id();
-        size_t tid = readableTID(currentThreadId);
-        std::string prefix = "[" + std::to_string(tid) + "]: ";
+        std::thread::id currentThreadId{ std::this_thread::get_id() };
+        size_t tid{ readableTID(currentThreadId) };
+        std::string prefix{ "[" + std::to_string(tid) + "]: " };
         ss << prefix;
 
         (ss << ... << args) << std::endl;
@@ -56,7 +56,7 @@ public:
 
     static size_t readableTID(const std::thread::id id)
     {
-        std::scoped_lock<std::mutex> lock(s_mutexIds);
+        std::scoped_lock<std::mutex> lock{ s_mutexIds };
         if (s_mapIds.find(id) == s_mapIds.end()) {
             s_nextIndex++;
             s_mapIds[id] = s_nextIndex;
@@ -70,14 +70,14 @@ public:
     }
 
     static void stopWatchMilli() {
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - s_begin).count();
+        std::chrono::steady_clock::time_point end{ std::chrono::steady_clock::now() };
+        auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end - s_begin).count() };
         std::cout << "Elapsed time in milliseconds = " << duration << " [milliseconds]" << std::endl;
     }
 
     static void stopWatchMicro() {
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - s_begin).count();
+        std::chrono::steady_clock::time_point end{ std::chrono::steady_clock::now() };
+        auto duration{ std::chrono::duration_cast<std::chrono::microseconds>(end - s_begin).count() };
         std::cout << "Elapsed time in milliseconds = " << duration << " [microseconds]" << std::endl;
     }
 

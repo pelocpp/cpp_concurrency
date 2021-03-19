@@ -39,7 +39,7 @@ namespace PackagedTask {
         std::this_thread::sleep_for(std::chrono::seconds(2));
 
         // get the result
-        int sum = future.get();
+        int sum{ future.get() };
 
         std::cout << "123 + 456 = " << sum << std::endl;
     }
@@ -63,7 +63,7 @@ namespace PackagedTask {
 
         int begin{ 1 };
         int increment{ 100 };
-        int end = begin + increment;
+        int end{ begin + increment };
 
         // execute each task in a separate thread
         for (size_t i = 0; i != MaxTasks; i++) {
@@ -85,12 +85,14 @@ namespace PackagedTask {
             std::future<int> future{ std::move(futures.front()) };
             futures.pop_front();
 
-            int partialSum = future.get();
+            int partialSum{ future.get() };
             sum += partialSum;
         }
 
         // use gauss to verify: n * (n+1) / 2 ==> 80200
-        std::cout << "Sum of 0 " << " .. " << (end-increment-1) << " = " << sum << std::endl;
+        std::cout
+            << "Sum of 0 " << " .. " << (end-increment-1) 
+            << " = " << sum << std::endl;
     }
 }
 

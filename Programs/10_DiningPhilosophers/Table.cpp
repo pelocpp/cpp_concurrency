@@ -10,28 +10,24 @@
 
 Table::Table() 
 {
-    for (size_t i = 0; i < NumPhilosophers; i++) {
-        m_forks[i] = false;
-    }
-
+    m_forks.fill(false);
     Logger::logAbs(std::cout, forksToString());
 }
 
-bool& Table::operator[] (int index)
+bool& Table::operator[] (size_t index)
 {
-    int seat = index % 5;
+    size_t seat{ index % 5 };
     return m_forks[seat];
 }
 
-void Table::demandForks(int seat) 
+void Table::demandForks(size_t seat)
 {
+    std::string forksDisplay{};
+
     Logger::log(std::cout, "demand forks at seat ", seat);
-
-    std::string forksDisplay;
-
     {
         // RAII idiom
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock{ m_mutex };
 
         m_condition.wait(lock, [&] {
             return (*this)[seat] == false && (*this)[seat + 1] == false;
@@ -52,15 +48,14 @@ void Table::demandForks(int seat)
     Logger::logAbs(std::cout, forksDisplay);
 }
 
-void Table::releaseForks(int seat)
+void Table::releaseForks(size_t seat)
 {
+    std::string forksDisplay{};
+
     Logger::log(std::cout, "release forks at seat ", seat);
-
-    std::string forksDisplay;
-
     {
         // RAII idiom
-        std::unique_lock<std::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock{ m_mutex };
 
         // now we own the lock, release the corresponding forks 
         (*this)[seat] = false;
@@ -82,7 +77,7 @@ void Table::releaseForks(int seat)
 std::string Table::forksToString() const
 {
     std::string sforks;
-    for (size_t i = 0; i < NumPhilosophers; i++) {
+    for (size_t i{}; i != NumPhilosophers; i++) {
         sforks.append(m_forks[i] ? "X" : "_");
     }
     assert(sforks != "XXXXX");

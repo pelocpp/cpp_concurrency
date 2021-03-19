@@ -12,7 +12,7 @@ namespace SimpleMutexDemo
     class Counter
     {
     private:
-        const size_t NumIterations = 100000;
+        const size_t NumIterations{ 100000 };
 
         static std::mutex s_mutex;
 
@@ -23,7 +23,7 @@ namespace SimpleMutexDemo
 
         void operator()() const
         {
-            for (size_t i = 0; i != NumIterations; ++i)
+            for (size_t i{}; i != NumIterations; ++i)
             {
                 {
                     // <== remove comment from next line to demonstrate scattered output

@@ -11,16 +11,12 @@
 #include "Philosopher.h"
 
 Philosopher::Philosopher(Table& table, int seat)
-    : m_table(table), m_seat(seat), m_activities(0)
-{
-    m_state = PhilosopherState::None;
-    m_running = false;
-}
+    : m_table{ table }, m_seat{ seat }, m_activities{ 0 },
+      m_state{ PhilosopherState::None }, m_running{ false } {}
 
 void Philosopher::start()
 {
     m_running = true;
-
     m_future = std::async(
         std::launch::async,
         [this]() {
@@ -59,7 +55,7 @@ void Philosopher::eating()
     m_activities++;
     Logger::log(std::cout, "eating at seat ", m_seat);
     m_state = PhilosopherState::Eating;
-    int milliSecondsEating = distribution(generator);
+    int milliSecondsEating{ distribution(generator) };
     std::this_thread::sleep_for(std::chrono::milliseconds(milliSecondsEating));
 }
 
@@ -72,7 +68,7 @@ void Philosopher::eatingDone()
 
 void Philosopher::run()
 {
-    std::thread::id philosopherThreadId = std::this_thread::get_id();
+    std::thread::id philosopherThreadId{ std::this_thread::get_id() };
     Logger::logAbs(std::cout, "philosopher enters room");
 
     while (m_running) {
@@ -89,7 +85,9 @@ void Philosopher::run()
 // initialize static class members
 std::random_device Philosopher::device;
 std::mt19937 Philosopher::generator(Philosopher::device());
-std::uniform_int_distribution<int> Philosopher::distribution(MinSleepingMSecs, MaxSleepingMSecs);
+std::uniform_int_distribution<int> Philosopher::distribution{ 
+    MinSleepingMSecs, MaxSleepingMSecs
+};
 
 // ===========================================================================
 // End-of-File

@@ -18,7 +18,7 @@ namespace PromisesAndFutures02 {
 
         std::promise<int> signalPromise;
 
-        std::shared_future<int> signalFuture = signalPromise.get_future().share();
+        std::shared_future<int> signalFuture{ signalPromise.get_future().share() };
 
         auto function1 = [&thread1Started, signalFuture] {
             Logger::log(std::cout, "Lambda 01:");
@@ -71,8 +71,8 @@ namespace PromisesAndFutures02 {
         thread1Started.get_future().wait();
         thread2Started.get_future().wait();
 
-        // Both threads are now waiting for the parameter.
-        // Set the parameter to wake up both of them.
+        // both threads are now waiting for the parameter,
+        // set the parameter to wake up both of them.
         std::this_thread::sleep_for(std::chrono::seconds(2));
         Logger::log(std::cout, "Main: vor set_value ...");
         signalPromise.set_value(42);

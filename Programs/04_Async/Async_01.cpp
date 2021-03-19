@@ -23,32 +23,33 @@ namespace SimpleAsync {
         }
     };
 
-    auto helloLambda = [](const std::string& s) {
-
+    auto helloLambda =
+        [](const std::string& s) {
         std::this_thread::sleep_for(std::chrono::seconds(3));
-        return "Hello ASync from " + s + "."; 
+        return "Hello ASync from " + s + ".";
     };
 
     void test_01() {
 
         // std::async with function
-        std::future<std::string> futureFunction = std::async(
+        std::future<std::string> futureFunction{ 
+            std::async(
             std::launch::async,
             helloFunction,
-            "function");
+            "function") };
 
         // std::async with functor
         HelloFunctor helloFunctor;
-        std::future<std::string> futureFunctionObject = std::async(
+        std::future<std::string> futureFunctionObject{ std::async(
             std::launch::async,
-            helloFunctor, 
-            "functor");
+            helloFunctor,
+            "functor") };
 
         // std::async with lambda function
-        std::future<std::string> futureLambda = std::async(
+        std::future<std::string> futureLambda{ std::async(
             std::launch::async,
             helloLambda,
-            "lambda");
+            "lambda") };
 
         std::cout 
             << futureFunction.get() << std::endl

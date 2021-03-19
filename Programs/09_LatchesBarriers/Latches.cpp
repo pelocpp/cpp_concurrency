@@ -51,7 +51,7 @@ namespace Latches_01 {
 
         int begin{ 1 };
         int increment{ 100 };
-        int end = begin + increment;
+        int end{ begin + increment };
 
         for (size_t i = 0; i != ThreadCount; ++i) {
 
@@ -139,7 +139,7 @@ void test_latches()
     using namespace Latches_01;
     using namespace Latches_02;
     example_latches_01();
-    // example_latches_02();
+    example_latches_02();
 }
 
 // ===========================================================================

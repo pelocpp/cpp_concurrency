@@ -77,7 +77,7 @@ namespace ConsumerProducerThree
                     std::chrono::milliseconds(SleepTimeConsumer)
                 );
 
-                int gotNumber = 0;
+                int gotNumber{ 0 };
 
                 {
                     // RAII
@@ -92,7 +92,7 @@ namespace ConsumerProducerThree
                     // "Lost Wakeup and Spurious Wakeup"
                     if (m_index >= 0) {
 
-                        int value = m_data.at(m_index);
+                        int value{ m_data.at(m_index) };
                         m_index--;
                         Logger::log(std::cout, "popped ", (m_index + 1), " at index ", m_index);
 

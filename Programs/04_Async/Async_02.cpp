@@ -15,7 +15,7 @@ namespace EagerVsLazyASync {
 
         Logger::log(std::cout, "Preparing calculations ...");
 
-        std::chrono::system_clock::time_point begin = std::chrono::system_clock::now();
+        std::chrono::system_clock::time_point begin{ std::chrono::system_clock::now() };
 
         std::future<std::chrono::system_clock::time_point> asyncLazy = std::async(
             std::launch::deferred, 

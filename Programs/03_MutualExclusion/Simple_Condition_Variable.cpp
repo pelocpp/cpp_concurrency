@@ -18,7 +18,7 @@ namespace SimpleConditionVariableDemo
 
     void function(int value) 
     {
-        std::thread::id tid = std::this_thread::get_id();
+        std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "TID:  ", tid);
 
         std::unique_lock<std::mutex> lock{ mutex };
@@ -29,7 +29,7 @@ namespace SimpleConditionVariableDemo
 
     void test() 
     {
-        std::thread::id mainTID = std::this_thread::get_id();
+        std::thread::id mainTID{ std::this_thread::get_id() };
         Logger::log(std::cout, "Begin Main: ", mainTID);
 
         std::thread t1{ function, 1 };

@@ -4,13 +4,11 @@
 
 #pragma once
 
-class Table {
-public:
-    static const int NumPhilosophers = 5;  // number of dining philosophers
+constexpr size_t NumPhilosophers{ 5 }; // number of dining philosophers
 
+class Table {
 private:
     std::array<bool, NumPhilosophers> m_forks;
-
     std::mutex m_mutex;
     std::condition_variable m_condition;
 
@@ -19,13 +17,13 @@ public:
     Table();
 
     // public interface
-    void demandForks(int seat);
-    void releaseForks(int seat);
+    void demandForks(size_t seat);
+    void releaseForks(size_t seat);
 
 private:
     // private helper methods / operators
     std::string forksToString() const;
-    bool& operator[] (int index);
+    bool& operator[] (size_t index);
 };
 
 // ===========================================================================

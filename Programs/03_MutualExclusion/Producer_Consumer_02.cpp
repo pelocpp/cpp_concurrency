@@ -25,7 +25,7 @@ namespace ConsumerProducerTwo
 
         void produce() {
 
-            int nextNumber = 0;
+            int nextNumber{ 0 };
 
             while (true) {
 
@@ -47,11 +47,10 @@ namespace ConsumerProducerTwo
         }
 
         void consume() {
-            int number;
 
             while (true) {
 
-                number = 0;
+                int number{ 0 };
 
                 // RAII idiom
                 {
@@ -61,7 +60,7 @@ namespace ConsumerProducerTwo
                         lock,
                         [this]() -> bool {
                             // return 'false' if waiting should be continued
-                            bool condition = ! m_data.empty();
+                            bool condition{ !m_data.empty() };
                             Logger::log(std::cout, "Wait -> ", condition);
                             return condition;
                         }

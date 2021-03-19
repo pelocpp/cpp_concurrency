@@ -10,7 +10,7 @@
 #include "Table.h"
 #include "Philosopher.h"
 
-const int SimulationDuration = 3000;   // total time of simulation (milliseonds)
+constexpr int SimulationDuration{ 3000 };   // total time of simulation (milliseonds)
 
 void testDiningPhilosophers()
 {

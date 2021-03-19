@@ -28,8 +28,7 @@ namespace PromisesAndFutures01 {
         std::thread t {doWorkVersion01, &promiseObj };
 
         std::cout << "Waiting for Result - 01: " << std::endl;
-        int result = futureObj.get();
-
+        int result{ futureObj.get() };
         std::cout << "Result: " << result << std::endl;
 
         t.detach();
@@ -53,8 +52,7 @@ namespace PromisesAndFutures01 {
         std::thread t{ doWorkVersion02, std::move (promiseObj) };
 
         std::cout << "Waiting for Result - 02: " << std::endl;
-        int result = futureObj.get();
-
+        int result{ futureObj.get() };
         std::cout << "Result: " << result << std::endl;
 
         t.detach();
