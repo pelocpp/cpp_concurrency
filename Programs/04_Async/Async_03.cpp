@@ -56,7 +56,7 @@ namespace SomeAsyncScenarios {
         std::cout << "Preparing calculations ..." << std::endl;
         std::vector<std::future<long>> fibonaccis;
 
-        for (size_t n{}; n != 50; ++n)
+        for (long n{}; n != 50; ++n)
         {
             std::future<long> fut = std::async(std::launch::deferred, fib, n);  // <==== std::launch::deferred with std::launch::async
             fibonaccis.push_back(std::move(fut));
