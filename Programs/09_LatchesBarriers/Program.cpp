@@ -8,7 +8,7 @@ void test_barriers();
 int main()
 {
     test_latches();
-    //test_barriers();
+    test_barriers();
     return 0;
 }
 
