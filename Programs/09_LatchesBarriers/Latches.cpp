@@ -16,7 +16,7 @@
 namespace Latches_01 {
 
     constexpr size_t ThreadCount{ 4 };
-    constexpr size_t MaxDelay{ 3000 };
+    constexpr size_t MaxDelay{ 5000 };
 
     int calcSumRange(int a, int b) {
         int sum{ 0 };
@@ -46,6 +46,9 @@ namespace Latches_01 {
 
             // simulating still some calculation time ...
             std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
+
+            Logger::log(std::cout, "Done");
+
             done.count_down();
         };
 
