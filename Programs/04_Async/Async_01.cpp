@@ -34,20 +34,17 @@ namespace SimpleAsync {
         // std::async with function
         std::future<std::string> futureFunction{ 
             std::async(
-            std::launch::async,
             helloFunction,
             "function") };
 
         // std::async with functor
         HelloFunctor helloFunctor;
         std::future<std::string> futureFunctionObject{ std::async(
-            std::launch::async,
             helloFunctor,
             "functor") };
 
         // std::async with lambda function
         std::future<std::string> futureLambda{ std::async(
-            std::launch::async,
             helloLambda,
             "lambda") };
 
