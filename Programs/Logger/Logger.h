@@ -25,7 +25,7 @@ public:
     }
 
     template<typename ...Args>
-    static void logInternal(std::ostream& os, Args ...args)
+    static void logInternal(std::ostream& os, Args&& ...args)
     {
         std::stringstream ss;
         std::thread::id currentThreadId{ std::this_thread::get_id() };
@@ -39,7 +39,7 @@ public:
 
     // log conditionally
     template<typename ...Args>
-    static void log(std::ostream& os, Args ...args) 
+    static void log(std::ostream& os, Args&& ...args)
     {
         if (!s_loggingEnabled)
             return;
@@ -49,7 +49,7 @@ public:
 
     // log unconditionally
     template<typename ...Args>
-    static void logAbs(std::ostream& os, Args ...args) 
+    static void logAbs(std::ostream& os, Args&& ...args)
     {
         logInternal(os, std::forward<Args>(args)...);
     }
