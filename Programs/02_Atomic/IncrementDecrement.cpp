@@ -11,7 +11,7 @@
 
 namespace IncrementDecrement {
 
-    constexpr long NumIterations{ 100000000 };
+    constexpr long NumIterations{ 100000 };
 
     class IncDec {
 
@@ -53,7 +53,7 @@ namespace IncrementDecrement {
         }
 
         void runMutex() {
-            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
+            Logger::log(std::cout, "Counter: ", m_counter);
 
             // spawning two threads - calling increment() rsp. decrement()
             std::thread t1{ &IncDec::incrementMutex, this };
@@ -63,11 +63,11 @@ namespace IncrementDecrement {
             t1.join();  // blocks until t1 finishes
             t2.join();  // blocks until t2 finishes
 
-            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
+            Logger::log(std::cout, "Counter: ", m_counter);
         }
 
         void runMutexRAII() {
-            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
+            Logger::log(std::cout, "Counter: ", m_counter);
 
             // spawning two threads - calling increment() rsp. decrement()
             std::thread t1{ &IncDec::incrementMutexRAII, this };
@@ -77,7 +77,7 @@ namespace IncrementDecrement {
             t1.join();  // blocks until t1 finishes
             t2.join();  // blocks until t2 finishes
 
-            Logger::log(std::cout, "Counter: ", m_counterAtomic.load());
+            Logger::log(std::cout, "Counter: ", m_counter);
         }
 
     private:
