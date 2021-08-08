@@ -33,7 +33,7 @@ public:
         std::string prefix{ "[" + std::to_string(tid) + "]: " };
         ss << prefix;
 
-        (ss << ... << args) << std::endl;
+        (ss << ... << std::forward<Args>(args)) << std::endl;
         os << ss.str();
     }
 
