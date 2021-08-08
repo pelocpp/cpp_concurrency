@@ -35,7 +35,7 @@ namespace ConsumerProducerThree
 
         void produce() {
 
-            int counter{};
+            int nextNumber{};
 
             while (true) {
 
@@ -43,7 +43,7 @@ namespace ConsumerProducerThree
                     std::chrono::milliseconds(SleepTimeProducer)
                 );
 
-                counter++;
+                nextNumber++;
 
                 // RAII
                 {
@@ -59,8 +59,8 @@ namespace ConsumerProducerThree
                     if (m_index < 9) {
 
                         m_index++;
-                        m_data.at(m_index) = counter;
-                        Logger::log(std::cout, "pushed ", counter, " at index ", m_index);
+                        m_data.at(m_index) = nextNumber;
+                        Logger::log(std::cout, "pushed ", nextNumber, " at index ", m_index);
 
                         // wakeup any sleeping consuments
                         m_conditionIsEmpty.notify_all();
@@ -77,8 +77,6 @@ namespace ConsumerProducerThree
                     std::chrono::milliseconds(SleepTimeConsumer)
                 );
 
-                int gotNumber{ 0 };
-
                 {
                     // RAII
                     std::unique_lock lock{ m_mutex };  // Dijkstra Monitor
@@ -92,9 +90,9 @@ namespace ConsumerProducerThree
                     // "Lost Wakeup and Spurious Wakeup"
                     if (m_index >= 0) {
 
-                        int value{ m_data.at(m_index) };
+                        int number{ m_data.at(m_index) };
                         m_index--;
-                        Logger::log(std::cout, "popped ", (m_index + 1), " at index ", m_index);
+                        Logger::log(std::cout, "popped ", number, " at index ", (m_index + 1));
 
                         // wakeup any sleeping producers
                         m_conditionIsFull.notify_all();
