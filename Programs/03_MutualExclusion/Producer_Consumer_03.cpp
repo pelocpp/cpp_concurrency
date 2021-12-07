@@ -91,8 +91,8 @@ namespace ConsumerProducerThree
                     if (m_index >= 0) {
 
                         int number{ m_data.at(m_index) };
+                        Logger::log(std::cout, "popped ", number, " at index ", m_index);
                         m_index--;
-                        Logger::log(std::cout, "popped ", number, " at index ", (m_index + 1));
 
                         // wakeup any sleeping producers
                         m_conditionIsFull.notify_all();
