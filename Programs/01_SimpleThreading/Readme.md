@@ -1,6 +1,7 @@
 # Einfache Beispiele zur Klasse `std::thread`
 
-Es werden an einfachen Beispielen folgende Grundlagen des C++ Multithreading betrachtet:
+Es werden an einfachen Beispielen folgende Grundlagen
+des C++&ndash;Multithreadings betrachtet:
 
   * Klasse `std::thread`
   * Methoden `join` und `detach`
@@ -10,7 +11,7 @@ Es werden an einfachen Beispielen folgende Grundlagen des C++ Multithreading bet
 Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu erzeugen:
 
   * Thread mit Funktionszeiger
-  * Thread mit Functor-Objekt
+  * Thread mit Funktor-Objekt
   * Thread mit Lambda-Funktion
   * Thread mit einer Methode eines Objekts
 
