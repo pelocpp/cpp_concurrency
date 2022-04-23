@@ -20,7 +20,7 @@ namespace Latches_01 {
 
     int calcSumRange(int a, int b) {
         int sum{};
-        for (int i = a; i < b; ++i) {
+        for (int i{ a }; i != b; ++i) {
             sum += i;
         }
         return sum;
@@ -56,12 +56,11 @@ namespace Latches_01 {
         int increment{ 100 };
         int end{ begin + increment };
 
-        for (size_t i = 0; i != ThreadCount; ++i) {
+        for (size_t i{}; i != ThreadCount; ++i) {
 
             size_t msecs{ static_cast<size_t>(device()) % MaxDelay };
 
             std::future<void> future = std::async(
-                std::launch::async,
                 worker,
                 i,
                 msecs,
@@ -80,7 +79,7 @@ namespace Latches_01 {
 
         // add partial results of worker threads
         int total{};
-        for (size_t i = 0; i != ThreadCount; ++i) {
+        for (size_t i{}; i != ThreadCount; ++i) {
             total += results.at(i);
             Logger::log(std::cout, "Partial result: ", results.at(i));
         }
