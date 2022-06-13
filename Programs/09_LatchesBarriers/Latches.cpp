@@ -77,6 +77,12 @@ namespace Latches_01 {
         done.wait();
         Logger::log(std::cout, "All calculations done :)");
 
+        /*
+        * Kontrollfrage:
+        * Wie könnte man an dieser Stelle auf das Ende aller Worker-Threads warten
+        * ohne Verwendung eines std::latch-Objekts
+        */
+
         // add partial results of worker threads
         int total{};
         for (size_t i{}; i != ThreadCount; ++i) {
