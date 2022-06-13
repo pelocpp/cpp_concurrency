@@ -81,6 +81,7 @@ namespace Latches_01 {
         * Kontrollfrage:
         * Wie könnte man an dieser Stelle auf das Ende aller Worker-Threads warten
         * ohne Verwendung eines std::latch-Objekts
+        * [tasks.clear();]
         */
 
         // add partial results of worker threads
