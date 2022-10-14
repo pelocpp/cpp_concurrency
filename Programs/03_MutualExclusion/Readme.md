@@ -35,7 +35,7 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 ```cpp
 {
-    std::scoped_lock<std::mutex, std::mutex> lock(mutex1, mutex2);  
+    std::scoped_lock<std::mutex, std::mutex> raii(mutex1, mutex2);  
     ...   
 }
 ```

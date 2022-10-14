@@ -16,13 +16,13 @@ namespace SimpleConditionVariableDemo
     std::mutex mutex;
     std::condition_variable condition;
 
-    void function(int value) 
+    void function()
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "TID:  ", tid);
 
-        std::unique_lock<std::mutex> lock{ mutex };
-        condition.wait(lock);
+        std::unique_lock<std::mutex> raii{ mutex };
+        condition.wait(raii);
 
         Logger::log(std::cout, "Done Thread ", tid);
     }
@@ -32,8 +32,8 @@ namespace SimpleConditionVariableDemo
         std::thread::id mainTID{ std::this_thread::get_id() };
         Logger::log(std::cout, "Begin Main: ", mainTID);
 
-        std::thread t1{ function, 1 };
-        std::thread t2{ function, 2 };
+        std::thread t1{ function };
+        std::thread t2{ function };
 
         std::this_thread::sleep_for(std::chrono::seconds(2));
 

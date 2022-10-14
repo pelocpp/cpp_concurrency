@@ -27,9 +27,9 @@ namespace SimpleMutexDemo
             {
                 {
                     // <== remove comment from next line to demonstrate scattered output
-                    //std::scoped_lock<std::mutex> lock{ s_mutex };
-                    //std::scoped_lock lock{ s_mutex };  // C++ 17 (automatic type deduction)
-                    std::cout << "Counter " << m_id << " has value " << i << "\n";
+                    //std::scoped_lock<std::mutex> raii{ s_mutex };
+                    //std::scoped_lock raii{ s_mutex };  // C++ 17 (automatic type deduction)
+                    std::cout << "Counter " << m_id << ": i=" << i << "\n";
                 }
 
                 // just to force rescheduling the execution of the threads
