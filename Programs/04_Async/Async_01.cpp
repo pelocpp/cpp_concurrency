@@ -35,23 +35,25 @@ namespace SimpleAsync {
         std::future<std::string> futureFunction{ 
             std::async(
             helloFunction,
-            "function") };
+            "function") 
+        };
 
         // std::async with functor
-        HelloFunctor helloFunctor;
+        HelloFunctor helloFunctor{};
         std::future<std::string> futureFunctionObject{ std::async(
             helloFunctor,
-            "functor") };
+            "functor")
+        };
 
         // std::async with lambda function
         std::future<std::string> futureLambda{ std::async(
             helloLambda,
-            "lambda") };
+            "lambda")
+        };
 
-        std::cout 
-            << futureFunction.get() << std::endl
-            << futureFunctionObject.get() << std::endl
-            << futureLambda.get() << std::endl;
+        std::cout << futureFunction.get() << std::endl;
+        std::cout << futureFunctionObject.get() << std::endl;
+        std::cout << futureLambda.get() << std::endl;
     }
 }
 

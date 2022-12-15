@@ -47,11 +47,11 @@ namespace ConsumerProducerThree
 
                 // RAII
                 {
-                    std::unique_lock lock{ m_mutex };
+                    std::unique_lock raii{ m_mutex };
 
                     // is stack full?
                     m_conditionIsFull.wait(
-                        lock,
+                        raii,
                         [this]() -> bool { return m_index < 9; }
                     );
 
@@ -79,11 +79,11 @@ namespace ConsumerProducerThree
 
                 {
                     // RAII
-                    std::unique_lock lock{ m_mutex };  // Dijkstra Monitor
+                    std::unique_lock raii{ m_mutex };  // Dijkstra Monitor
 
                     // is stack empty?
                     m_conditionIsEmpty.wait(
-                        lock,
+                        raii,
                         [this]() -> bool { return m_index >= 0; }
                     );
 
