@@ -32,7 +32,7 @@ namespace Latches_01 {
 
         std::array<int, ThreadCount> results{};
 
-        std::vector<std::future<void>> tasks(ThreadCount);
+        std::vector<std::future<void>> tasks;
 
         std::random_device device;
 
