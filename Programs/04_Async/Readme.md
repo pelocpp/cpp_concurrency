@@ -19,6 +19,26 @@ Die `std::async`-Methode besitzt im Wesentlichen drei Überladungen:
 
 ---
 
+## `std::async` und Thread-Pool
+
+In Bezug auf `std::async` können wir die allgemeine Aussage treffen,
+dass die Funktion eine Funktion in einem separaten Thread startet,
+wenn keine *launch policy* spezifiziert ist.
+
+Der C++-Standard gibt jedoch nicht an, ob der Thread neu ist (`std::thread`)
+oder aus einem Thread-Pool wiederverwendet wird. 
+
+In Bezug auf das Windows Betriebssystem können wir jedoch aus verfügbaren Quellen entnehmen,
+dass das Erzeugen des Threads mit einem Aufruf von `::Concurrency::create_task` erfolgt.
+
+Diese Funktion ist Teil der *Parallel Patterns Library* von Microsoft.
+Laut MSDN verwendet die `task`-Klasse den Windows ThreadPool als Scheduler!
+
+Weitere Details finden sich in einem Artikel *[Implementations of std::async](https://ddanilov.me/std-async-implementations/)*
+von Dmitry Danilov.
+
+---
+
 ## `launch::async` versus `launch::deferred`
 
 Es werden zwei Threads mit `std::async` gestartet, die beide einen Zeitstempel zurückliefern.
