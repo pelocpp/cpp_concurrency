@@ -17,7 +17,7 @@ namespace PackagedTask {
     }
 
     int calcSumRange(int a, int b) {
-        int sum{ 0 };
+        int sum{};
         for (int i = a; i < b; ++i) {
             sum += i;
         }

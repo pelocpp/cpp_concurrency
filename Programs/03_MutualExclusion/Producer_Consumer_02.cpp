@@ -25,7 +25,7 @@ namespace ConsumerProducerTwo
 
         void produce() {
 
-            int nextNumber{ 0 };
+            int nextNumber{};
 
             while (true) {
 
@@ -50,7 +50,7 @@ namespace ConsumerProducerTwo
 
             while (true) {
 
-                int number{ 0 };
+                int number{};
 
                 // RAII idiom
                 {

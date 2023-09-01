@@ -11,7 +11,7 @@
 #include "Philosopher.h"
 
 Philosopher::Philosopher(Table& table, int seat)
-    : m_table{ table }, m_seat{ seat }, m_activities{ 0 },
+    : m_table{ table }, m_seat{ seat }, m_activities{},
       m_state{ PhilosopherState::None }, m_running{ false } {}
 
 void Philosopher::start()

@@ -49,13 +49,14 @@ namespace ConsumerProducerThree
                 {
                     std::unique_lock raii{ m_mutex };
 
-                    // is stack full?
+                    // Is stack full?
+                    // Note: "Lost Wakeup and Spurious Wakeup"
                     m_conditionIsFull.wait(
                         raii,
                         [this]() -> bool { return m_index < 9; }
                     );
 
-                    // "Lost Wakeup and Spurious Wakeup"
+                    // guard
                     if (m_index < 9) {
 
                         m_index++;
@@ -81,13 +82,14 @@ namespace ConsumerProducerThree
                     // RAII
                     std::unique_lock raii{ m_mutex };  // Dijkstra Monitor
 
-                    // is stack empty?
+                    // Is stack empty?
+                    // Note: "Lost Wakeup and Spurious Wakeup"
                     m_conditionIsEmpty.wait(
                         raii,
                         [this]() -> bool { return m_index >= 0; }
                     );
 
-                    // "Lost Wakeup and Spurious Wakeup"
+                    // guard
                     if (m_index >= 0) {
 
                         int number{ m_data.at(m_index) };

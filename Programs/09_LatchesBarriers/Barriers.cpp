@@ -19,7 +19,7 @@ namespace Barriers {
     constexpr size_t MaxDelay{ 3000 };
 
     size_t calcSumRange(size_t a, size_t b) {
-        size_t sum{ 0 };
+        size_t sum{};
         for (size_t i = a; i != b; ++i) {
             sum += i;
         }

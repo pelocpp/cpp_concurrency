@@ -21,7 +21,7 @@ namespace ConsumerProducerOne
 
         void produce() {
 
-            int nextNumber{ 0 };
+            int nextNumber{};
 
             while (true) {
 
@@ -45,7 +45,7 @@ namespace ConsumerProducerOne
 
             while (true) {
 
-                int number{ 0 };
+                int number{};
 
                 // RAII idiom
                 Logger::log(std::cout, "> Consumer");
