@@ -18,8 +18,10 @@
 
 ## [[C++ 20] Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
 
+## [[C++ 20] Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+
 ---
 
-## [Das Problem der dinierenden Philosophen](Programs/10_DiningPhilosophers/Readme.md)
+## [Das Problem der dinierenden Philosophen](Programs/11_DiningPhilosophers/Readme.md)
  
 ---

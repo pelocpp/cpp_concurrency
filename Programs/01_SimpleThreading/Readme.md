@@ -31,7 +31,7 @@ Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu e
 
 Der kritische Teil dieser Beobachtungen besteht darin,
 wenn das Objekt den Gültigkeitsbereich verlässt und zerstört wird.
-Zu diesem Zeitpunkt darf es **nicht im Zustand *joinable* sein** , andernfalls erfolgt ein Aufruf von `std::terminate()`.
+Zu diesem Zeitpunkt darf es **nicht im Zustand *joinable* sein** , andernfalls erfolgt ein Aufruf von `std::terminate()`!
 
 ---
 
@@ -40,6 +40,8 @@ Zu diesem Zeitpunkt darf es **nicht im Zustand *joinable* sein** , andernfalls e
 [Teil 1: `std::thread` Basics](SimpleThreading_01.cpp).
 
 [Teil 2: "*4 Ways to create a Thread*"](SimpleThreading_02.cpp).
+
+[Teil 3: `std::thread` und `std::move`](SimpleThreading_03.cpp).
 
 ---
 
