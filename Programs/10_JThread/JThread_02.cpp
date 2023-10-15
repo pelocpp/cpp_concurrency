@@ -4,7 +4,6 @@
 
 #include <iostream>
 #include <thread>
-// #include <format>
 #include <chrono>
 
 namespace JoinableThreadCooperativeInterruptibility {
