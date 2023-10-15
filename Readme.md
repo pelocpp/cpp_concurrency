@@ -1,4 +1,4 @@
-# C++ Parallele Programmierung
+# C++ Concurrency
 
 ## [Einfache Beispiele zur Klasse `std::thread`](Programs/01_SimpleThreading/Readme.md)
 

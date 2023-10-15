@@ -1,5 +1,5 @@
 // ===========================================================================
-// Simple Threading Demo (std::thread basics)
+// Simple Threading Demo (std::thread basics) // SimpleThreading_01.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -26,6 +26,7 @@ namespace SimpleThreading01 {
     }
 
     void test_01() {
+
         Logger::log(std::cout, "Begin");
 
         std::thread::id mainTID{ std::this_thread::get_id() };
@@ -41,6 +42,7 @@ namespace SimpleThreading01 {
     }
 
     void test_02() {
+
         Logger::log(std::cout, "Begin");
 
         std::thread::id mainTID{ std::this_thread::get_id() };

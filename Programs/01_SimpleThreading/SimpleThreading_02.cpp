@@ -1,5 +1,5 @@
 // ===========================================================================
-// Simple Threading Demo (4 ways to create threads)
+// Simple Threading Demo (4 ways to create threads) // SimpleThreading_02.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -24,12 +24,14 @@ namespace SimpleThreading02 {
     void function(int value, size_t iterations) {
 
         for (size_t i{}; i != iterations; ++i) {
+
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
     void test_01() {
+
         std::thread t{ function, 1, NumIterations };
         t.join();
         Logger::log(std::cout, "Done Version 1.");
@@ -47,6 +49,7 @@ namespace SimpleThreading02 {
             : m_value{ value }, m_iterations{iterations } {}
 
         void operator () () const {
+
             for (size_t i{}; i != m_iterations; ++i) {
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -55,6 +58,7 @@ namespace SimpleThreading02 {
     };
 
     void test_02() {
+
         std::thread t { Runnable { 2, NumIterations } };
         t.join();
         Logger::log(std::cout, "Done Version 2.");
@@ -67,7 +71,7 @@ namespace SimpleThreading02 {
         int value{ 3 };
         size_t iterations{ NumIterations };
 
-        std::thread t{
+        std::thread t {
             [=] () {
                 for (size_t i{}; i != iterations; ++i) {
                     Logger::log(std::cout, "in thread ", value);
@@ -92,7 +96,9 @@ namespace SimpleThreading02 {
             : m_value{ value }, m_iterations{ iterations } {}
 
         void run() const {
+
             for (size_t i{}; i != m_iterations; ++i) {
+
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds(1));
             }
@@ -100,6 +106,7 @@ namespace SimpleThreading02 {
     };
 
     void test_04() {
+
         AnotherRunnable runnable{ 4, NumIterations };
         std::thread t { &AnotherRunnable::run, &runnable };
         t.join();

@@ -147,6 +147,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="SimpleThreading_01.cpp" />
     <ClCompile Include="SimpleThreading_02.cpp" />
+    <ClCompile Include="SimpleThreading_03.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
