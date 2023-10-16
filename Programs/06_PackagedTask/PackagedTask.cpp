@@ -8,7 +8,7 @@
 #include <deque>
 #include <utility>
 
-#include "../Logger/Logger.h"
+// #include "../Logger/Logger.h"
 
 namespace PackagedTask {
 
@@ -18,7 +18,7 @@ namespace PackagedTask {
 
     int calcSumRange(int a, int b) {
         int sum{};
-        for (int i = a; i < b; ++i) {
+        for (int i{ a }; i != b; ++i) {
             sum += i;
         }
         return sum;
@@ -32,8 +32,8 @@ namespace PackagedTask {
         // get the future object for this task
         std::future<int> future{ task.get_future() };
 
-        std::thread t{ std::move(task), 123, 456 };
-        t.detach();
+        // invoke the function
+        task(123, 456);
 
         // do some arbitrary work ......
         std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -49,15 +49,18 @@ namespace PackagedTask {
         constexpr size_t MaxTasks{ 4 };
 
         std::deque<std::packaged_task<int(int, int)>> tasks;
+
         std::deque<std::future<int>> futures;
 
         // define tasks, store corresponding futures
-        for (size_t i = 0; i != MaxTasks; i++) {
+        for (size_t i{}; i != MaxTasks; i++) {
 
             std::packaged_task<int(int, int)> task{ calcSumRange };
+
             std::future<int> future{ task.get_future() };
 
             tasks.push_back(std::move(task));
+
             futures.push_back(std::move(future));
         }
 
@@ -69,10 +72,10 @@ namespace PackagedTask {
         for (size_t i = 0; i != MaxTasks; i++) {
 
             std::packaged_task<int(int, int)> task{ std::move(tasks.front()) };
+            
             tasks.pop_front();
 
-            std::thread t{ std::move(task), begin, end };
-            t.detach();
+            task(begin, end);
 
             begin = end;
             end += increment;

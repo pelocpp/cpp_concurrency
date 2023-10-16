@@ -13,7 +13,7 @@ Für das Arbeiten mit `std::packaged_task`-Objekten sind typischerweise vier Schr
 
   * Die Aufgabe in einem `std::packaged_task`-Objekt verpacken bzw. aufbereiten.
   * Ein `std::future`-Objekt erzeugen.
-  * Die Berechnung (mit einem `std::thread`-Objekt) ausführen.
+  * Die Berechnung (mit dem `std::packaged_task`-Objekt) explizit anstoßen.
   * Das Ergebnis (mit `get` am `std::future`-Objekt) abholen.
 
 ## Ein einfaches Beispiel
