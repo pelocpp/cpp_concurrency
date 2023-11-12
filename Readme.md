@@ -20,8 +20,10 @@
 
 ## [[C++ 20] Klasse `std::jthread`](Programs/10_JThread/Readme.md)
 
+## [[C++ 20] Semaphore / Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+
 ---
 
-## [Das Problem der dinierenden Philosophen](Programs/11_DiningPhilosophers/Readme.md)
+## [Das Problem der dinierenden Philosophen](Programs/20_DiningPhilosophers/Readme.md)
  
 ---
