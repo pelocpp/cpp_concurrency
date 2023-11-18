@@ -4,6 +4,8 @@
 
 ---
 
+### Allgemeines
+
 Unter einer Semaphore versteht man in der Systemprogrammierung eine Datenstruktur,
 die aus einem ganzzahligen Wert (Zähler) und zwei atomaren Nutzungsoperationen &ldquo;Reservieren&rdquo; und &ldquo;Freigeben&rdquo; besteht.
 
@@ -20,6 +22,20 @@ Das heißt, dass das Anfordern und Freigeben der Semaphore in verschiedenen Threa
 
 Intern besitzt die Datenstruktur neben dem Zähler noch eine Warteschlange
 für die Aufnahme blockierter Threads.
+
+---
+
+### Wie funktionieren Semaphore?
+
+Semaphore besitzen eine Zählervariable, die man erhöhen oder verringern kann.
+
+Die Methoden `acquire` und `release` der Semaphore-Klasse steuern die Zählervariable.
+
+Die Methode `acquire` fragt den Semaphore nach Zugriff auf die Ressource.
+Wenn der Wert > 0 ist, wird der Zugriff gewährt und der Zähler wird um 1 reduziert.
+
+Die `release`-Methode gibt den zuvor gewährten Zugriff frei
+und erhöht die Variable des Semaphors wieder um 1.
 
 
 ---
