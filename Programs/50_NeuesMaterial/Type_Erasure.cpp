@@ -132,6 +132,8 @@ namespace Type_Erasure
         std::packaged_task<int()> pt1(f1);
         std::packaged_task<int()> pt2(f2);
         std::packaged_task<int()> pt3(f3);
+
+        // pt1 = pt2; // std::packaged_task is movable only !!! Error
         
         // q2.push_back(pt1);             // ERROR
         q2.push_back(std::move(pt1));
