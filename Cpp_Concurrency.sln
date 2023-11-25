@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "20_DiningPhilosophers", "Pr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "11_Semaphore", "Programs\11_Semaphore\11_Semaphore.vcxproj", "{E2B9988D-D104-420B-84E2-50A042038A02}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "50_NeuesMaterial", "Programs\50_NeuesMaterial\50_NeuesMaterial.vcxproj", "{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -142,6 +144,14 @@ Global
 		{E2B9988D-D104-420B-84E2-50A042038A02}.Release|x64.Build.0 = Release|x64
 		{E2B9988D-D104-420B-84E2-50A042038A02}.Release|x86.ActiveCfg = Release|Win32
 		{E2B9988D-D104-420B-84E2-50A042038A02}.Release|x86.Build.0 = Release|Win32
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Debug|x64.ActiveCfg = Debug|x64
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Debug|x64.Build.0 = Debug|x64
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Debug|x86.ActiveCfg = Debug|Win32
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Debug|x86.Build.0 = Debug|Win32
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Release|x64.ActiveCfg = Release|x64
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Release|x64.Build.0 = Release|x64
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Release|x86.ActiveCfg = Release|Win32
+		{4A421949-9050-47BC-81AD-2F8EBD5DDEA5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
