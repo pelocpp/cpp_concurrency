@@ -26,6 +26,10 @@
 //#include <type_traits>
 //
 
+//https://vorbrodt.blog/2019/02/09/template-concepts-sort-of/
+//
+//https://vorbrodt.blog/2019/02/03/better-blocking-queue/
+
 // https://vorbrodt.blog/2019/02/03/blocking-queue/
 // Blocking queue - 1. approach
 
