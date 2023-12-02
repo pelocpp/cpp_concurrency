@@ -36,9 +36,15 @@
     <ClCompile Include="EventLoop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Thread_Safe_Queue_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="EventLoop.md">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

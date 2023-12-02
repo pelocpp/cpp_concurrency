@@ -2,16 +2,17 @@
 // Program.cpp // JThread
 // ===========================================================================
 
-void test_concurrency_parallel_accumulate();
-void test_concurrency_thread_pool_01();
-void test_concurrency_thread_pool_02();
-void test_concurrency_thread_pool_03();
-void test_type_erasure();
-void test_event_loop();
+extern void test_concurrency_parallel_accumulate();
+extern void test_concurrency_thread_pool_01();
+extern void test_concurrency_thread_pool_02();
+extern void test_concurrency_thread_pool_03();
+extern void test_type_erasure();
+extern void test_event_loop();
+extern void test_thread_safe_queue();
 
 int main()
 {
-    test_event_loop();
+    test_thread_safe_queue();
 
     return 0;
 }

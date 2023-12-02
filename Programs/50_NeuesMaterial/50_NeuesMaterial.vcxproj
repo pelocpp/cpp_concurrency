@@ -134,9 +134,11 @@
     <ClCompile Include="Thread_Pool_01.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />
     <ClCompile Include="Thread_Pool_03.cpp" />
+    <ClCompile Include="Thread_Safe_Queue_01.cpp" />
     <ClCompile Include="Type_Erasure.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="EventLoop.md" />
     <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
