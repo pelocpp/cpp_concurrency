@@ -39,10 +39,6 @@
 
 // https://stackoverflow.com/questions/58900136/custom-allocator-including-placement-new-case
 
-
-// CD : Joe Farrell / George Cables / John Dentz / Tony Dumas – Someday
-
-
 const int COUNT = 10;
 
 

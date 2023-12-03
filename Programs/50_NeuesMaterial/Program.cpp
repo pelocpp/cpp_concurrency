@@ -9,10 +9,12 @@ extern void test_concurrency_thread_pool_03();
 extern void test_type_erasure();
 extern void test_event_loop();
 extern void test_thread_safe_queue();
+extern void test_thread_safe_queue_pelo_version();
+extern void test_thread_safe_stack_pelo_version_02();
 
 int main()
 {
-    test_thread_safe_queue();
+    test_thread_safe_stack_pelo_version_02();
 
     return 0;
 }

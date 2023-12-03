@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="EventLoop.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
@@ -135,6 +136,8 @@
     <ClCompile Include="Thread_Pool_02.cpp" />
     <ClCompile Include="Thread_Pool_03.cpp" />
     <ClCompile Include="Thread_Safe_Queue_01.cpp" />
+    <ClCompile Include="Thread_Safe_Queue_02.cpp" />
+    <ClCompile Include="Thread_Safe_Stack_02.cpp" />
     <ClCompile Include="Type_Erasure.cpp" />
   </ItemGroup>
   <ItemGroup>
