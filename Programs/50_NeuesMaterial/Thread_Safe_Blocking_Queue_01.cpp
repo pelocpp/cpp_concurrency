@@ -113,7 +113,7 @@ namespace Thread_Safe_Queue_01
     };
 }
 
-void test_thread_safe_queue_01()
+void test_thread_safe_blocking_queue_01()
 {
     using namespace Thread_Safe_Queue_01;
 
@@ -153,7 +153,7 @@ void test_thread_safe_queue_01()
 }
 
 
-void test_thread_safe_queue()
+void test_thread_safe_blocking_queue()
 {
-    test_thread_safe_queue_01();
+    test_thread_safe_blocking_queue_01();
 }
