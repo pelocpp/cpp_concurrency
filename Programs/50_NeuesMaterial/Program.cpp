@@ -11,11 +11,11 @@ extern void test_event_loop();
 extern void test_thread_safe_blocking_queue();
 extern void test_thread_safe_queue_pelo_version();
 extern void test_thread_safe_stack_pelo_version_02();
-extern void test_thread_safe_stack_01();
+extern void test_thread_safe_stack();
 
 int main()
 {
-    test_thread_safe_stack_01();
+    test_thread_safe_stack();
 
     return 0;
 }

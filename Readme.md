@@ -1,29 +1,41 @@
 # C++ Concurrency
 
-## [Einfache Beispiele zur Klasse `std::thread`](Programs/01_SimpleThreading/Readme.md)
+## Die Werkzeuge
 
-## [Atomare Operationen](Programs/02_Atomic/Readme.md)
+### [Klasse `std::thread`](Programs/01_SimpleThreading/Readme.md)
 
-## [Mutual Exclusion / Gegenseitiger Ausschluss](Programs/03_MutualExclusion/Readme.md)
+### [Atomare Operationen: Klasse `std::atomic`](Programs/02_Atomic/Readme.md)
 
-## [Die Funktionsschablone `std::async`](Programs/04_Async/Readme.md)
+### [Gegenseitiger Ausschluss (Mutual Exclusion): Klasse `std::mutex`](Programs/03_MutualExclusion/Readme.md)
 
-## [Futures und Promises](Programs/05_FuturesPromises/Readme.md)
+### [Funktion `std::async`](Programs/04_Async/Readme.md)
 
-## [Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
+### [Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
 
-## [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
+### [Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
 
-## [[C++ 20] STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+### [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
-## [[C++ 20] Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+### [[C++ 20] STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
-## [[C++ 20] Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+### [[C++ 20] Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
 
-## [[C++ 20] Semaphore / Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+### [[C++ 20] Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+
+### [[C++ 20] Semaphore / Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 
-## [Das Problem der dinierenden Philosophen](Programs/20_DiningPhilosophers/Readme.md)
- 
+## Entwurfsmuster
+
+
+---
+
+## Beispiele
+
+### [Das Problem der dinierenden Philosophen](Programs/20_DiningPhilosophers/Readme.md)
+
+### [Threadsicherer Stapel (Threadsafe Stack)](Programs/XXX/XXX.md)
+
+
 ---
