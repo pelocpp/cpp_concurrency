@@ -132,6 +132,8 @@
     <ClCompile Include="EventLoop.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
+    <ClCompile Include="Strategized_Locking.cpp" />
+    <ClCompile Include="Strategized_Locking_02_Code_Project.cpp" />
     <ClCompile Include="Thread_Pool_01.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />
     <ClCompile Include="Thread_Pool_03.cpp" />
