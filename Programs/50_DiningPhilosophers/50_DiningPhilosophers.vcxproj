@@ -24,7 +24,7 @@
     <ProjectGuid>{a963c51c-bb0c-424d-ba55-2c137862fa7a}</ProjectGuid>
     <RootNamespace>My10DiningPhilosophers</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>20_DiningPhilosophers</ProjectName>
+    <ProjectName>50_DiningPhilosophers</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
