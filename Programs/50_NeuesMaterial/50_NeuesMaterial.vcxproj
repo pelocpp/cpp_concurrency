@@ -145,6 +145,7 @@
   <ItemGroup>
     <None Include="EventLoop.md" />
     <None Include="Readme.md" />
+    <None Include="Thread_Safe_Stack.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -62,5 +62,6 @@
     <None Include="EventLoop.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Thread_Safe_Stack.md" />
   </ItemGroup>
 </Project>
