@@ -27,12 +27,6 @@
     <ClInclude Include="ILock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StrategizedLockTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ThreadsafeStackTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TestPrimeNumbers.cpp">
@@ -45,9 +39,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestPrimeNumbersTemplate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

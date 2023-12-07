@@ -8,7 +8,7 @@
 
 #include "ILock.h"
 
-namespace Concurrency_StrategizedLockRuntime
+namespace Concurrency_StrategizedLock
 {
     class StrategizedLocking 
     {

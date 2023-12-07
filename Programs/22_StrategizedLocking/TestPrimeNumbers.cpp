@@ -41,16 +41,12 @@ namespace Globals
     constexpr size_t LowerLimit = 1;
     constexpr size_t UpperLimit = 10'000'000;
     // Found:  664.579 prime numbers
-
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100'000'000;
-    //// Found:  5.761.455 prime numbers
 }
 
 void test_strategized_locking_01()
 {
     using namespace Concurrency_ThreadsafeStack;
-    using namespace Concurrency_StrategizedLockRuntime;
+    using namespace Concurrency_StrategizedLock;
 
     NoLock lock;
     // ExclusiveLock lock;
@@ -81,7 +77,7 @@ void test_strategized_locking_02()
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
-    using namespace Concurrency_StrategizedLockRuntime;
+    using namespace Concurrency_StrategizedLock;
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
@@ -108,8 +104,7 @@ void test_strategized_locking_03()
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
-
-    using namespace Concurrency_StrategizedLockRuntime;
+    using namespace Concurrency_StrategizedLock;
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 

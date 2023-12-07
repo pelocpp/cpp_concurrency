@@ -6,7 +6,7 @@
 
 #include "StrategizedLock.h"
 
-namespace Concurrency_StrategizedLockRuntime
+namespace Concurrency_StrategizedLock
 {
     // class StrategizedLocking
     StrategizedLocking::StrategizedLocking(ILock& lock) : m_lock(lock) {

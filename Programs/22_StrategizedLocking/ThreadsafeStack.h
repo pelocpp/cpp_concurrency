@@ -13,7 +13,7 @@
 
 #include "StrategizedLock.h"
 
-using namespace Concurrency_StrategizedLockRuntime;
+using namespace Concurrency_StrategizedLock;
 
 namespace Concurrency_ThreadsafeStack
 {
@@ -43,7 +43,6 @@ namespace Concurrency_ThreadsafeStack
         // mutable std::mutex m_mutex;  // beachte mutable
         // ILock m_lock;  // mutable ????????????????????
         ILock& m_lock;
-
 
     public:
         // c'tors

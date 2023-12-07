@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Concurrency_StrategizedLockRuntime
+namespace Concurrency_StrategizedLock
 {
     class ILock
     {
