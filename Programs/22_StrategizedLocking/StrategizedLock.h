@@ -23,17 +23,11 @@
 
 // #include <shared_mutex>
 
-namespace Strategized_Locking_Runtime_Version
+
+#include "ILock.h"
+
+namespace Concurrency_StrategizedLockRuntime
 {
-    class ILock
-    {
-    public:
-        ~ILock() {}
-
-        virtual void lock() const = 0;
-        virtual void unlock() const = 0;
-    };
-
     class StrategizedLocking 
     {
     private:
@@ -53,7 +47,7 @@ namespace Strategized_Locking_Runtime_Version
     class NoLock : public ILock
     {
     private:
-        mutable NullObjectMutex nullObjectMutex;
+        mutable NullObjectMutex m_nullMutex;
 
     public:
         void lock() const override;
@@ -64,7 +58,7 @@ namespace Strategized_Locking_Runtime_Version
     class ExclusiveLock : public ILock
     {
     private:
-        mutable std::mutex mutex;
+        mutable std::mutex m_mutex;
 
     public:
         void lock() const override;

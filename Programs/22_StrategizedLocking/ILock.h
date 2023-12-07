@@ -1,19 +1,22 @@
 // ===========================================================================
-// Program.cpp // Strategized Locking
+// ILock.h
 // ===========================================================================
 
-void test_strategized_locking_01();
-void test_strategized_locking_02();
+#pragma once
 
-
-int main()
+namespace Concurrency_StrategizedLockRuntime
 {
-    test_strategized_locking_01();
-    // test_strategized_locking_02();
+    class ILock
+    {
+    public:
+        ~ILock() {}
 
-    return 0;
+        virtual void lock() const = 0;
+        virtual void unlock() const = 0;
+    };
 }
 
 // ===========================================================================
 // End-of-File
 // ===========================================================================
+

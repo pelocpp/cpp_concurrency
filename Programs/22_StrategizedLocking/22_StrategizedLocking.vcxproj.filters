@@ -21,7 +21,10 @@
     <ClInclude Include="PrimeCalculator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StrategizedLocking.h">
+    <ClInclude Include="StrategizedLock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ILock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -29,10 +32,13 @@
     <ClCompile Include="TestPrimeNumbers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StrategizedLocking.cpp">
+    <ClCompile Include="StrategizedLock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Program.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

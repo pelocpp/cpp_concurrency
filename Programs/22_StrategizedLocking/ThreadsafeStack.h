@@ -2,7 +2,7 @@
 // ThreadsafeStack.h
 // ===========================================================================
 
-// Copy from Project "20_Threadsafe_Stack"
+// Adapted from Project "20_Threadsafe_Stack"
 
 #pragma once
 
@@ -11,7 +11,9 @@
 #include <mutex>
 #include <optional>
 
-#include "StrategizedLocking.h"
+#include "StrategizedLock.h"
+
+using namespace Concurrency_StrategizedLockRuntime;
 
 namespace Concurrency_ThreadsafeStack
 {
@@ -36,11 +38,11 @@ namespace Concurrency_ThreadsafeStack
     class ThreadsafeStack
     {
     private:
-        std::stack<T>      m_data;
+        std::stack<T> m_data;
         
         // mutable std::mutex m_mutex;  // beachte mutable
         // ILock m_lock;  // mutable ????????????????????
-        StrategizedLocking m_lock;
+        ILock& m_lock;
 
 
     public:
@@ -55,20 +57,26 @@ namespace Concurrency_ThreadsafeStack
         // move constructor may be useful
         ThreadsafeStack(const ThreadsafeStack&& other) noexcept
         {
-            std::lock_guard<std::mutex> lock(other.m_mutex);
+            // std::lock_guard<std::mutex> lock(other.m_mutex);
+            StrategizedLocking m_guard{ m_lock };
+
             m_data = other.m_data;
         }
 
         // public interface
         void push(T new_value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
             m_data.push(new_value);
         }
 
         void pop(T& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
             if (m_data.empty()) throw empty_stack{};
             value = m_data.top();
             m_data.pop();
@@ -76,34 +84,26 @@ namespace Concurrency_ThreadsafeStack
 
         T tryPop()
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
             if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
             T value = m_data.top();
             m_data.pop();
             return value;
         }
 
-        std::optional<T> tryPopOptional()
-        {
-            std::lock_guard<std::mutex> lock{ m_mutex };
-            if (m_data.empty()) {
-                return std::nullopt;
-            }
-
-            std::optional<T> result{ m_data.top() };
-            m_data.pop();
-            return result;
-        }
-
         size_t size() const
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+           //std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
             return m_data.size();
         }
 
         bool empty() const
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+           // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
             return m_data.empty();
         }
     };

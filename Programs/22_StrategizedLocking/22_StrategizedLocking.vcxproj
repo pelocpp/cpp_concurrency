@@ -119,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,13 +129,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ILock.h" />
     <ClInclude Include="PrimeCalculator.h" />
-    <ClInclude Include="StrategizedLocking.h" />
+    <ClInclude Include="StrategizedLock.h" />
     <ClInclude Include="ThreadsafeStack.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="StrategizedLocking.cpp" />
+    <ClCompile Include="StrategizedLock.cpp" />
     <ClCompile Include="TestPrimeNumbers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
