@@ -54,7 +54,7 @@
     <ClCompile Include="Thread_Safe_Stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Strategized_Locking.cpp">
+    <ClCompile Include="Strategized_Locking_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Strategized_Locking_02_Code_Project.cpp">
@@ -68,6 +68,5 @@
     <None Include="EventLoop.md">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="Thread_Safe_Stack.md" />
   </ItemGroup>
 </Project>

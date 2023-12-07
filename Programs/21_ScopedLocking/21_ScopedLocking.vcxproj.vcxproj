@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4a421949-9050-47bc-81ad-2f8ebd5ddea5}</ProjectGuid>
-    <RootNamespace>My50NeuesMaterial</RootNamespace>
+    <ProjectGuid>{2ac45f06-544d-4e51-acd1-cda2b0f37f89}</ProjectGuid>
+    <RootNamespace>My32ScopedLocking</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>21_ScopedLocking</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -104,7 +105,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -128,25 +128,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="EventLoop.cpp" />
-    <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Parallel_Accumulate.cpp" />
-    <ClCompile Include="Strategized_Locking_01.cpp" />
-    <ClCompile Include="Strategized_Locking_02_Code_Project.cpp" />
-    <ClCompile Include="Thread_Pool_01.cpp" />
-    <ClCompile Include="Thread_Pool_02.cpp" />
-    <ClCompile Include="Thread_Pool_03.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Queue_01.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Queue_02.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp" />
-    <ClCompile Include="Thread_Safe_Queue.cpp" />
-    <ClCompile Include="Thread_Safe_Stack.cpp" />
-    <ClCompile Include="Type_Erasure.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="EventLoop.md" />
-    <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

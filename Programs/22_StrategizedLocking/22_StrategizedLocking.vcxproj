@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{4a421949-9050-47bc-81ad-2f8ebd5ddea5}</ProjectGuid>
-    <RootNamespace>My50NeuesMaterial</RootNamespace>
+    <ProjectGuid>{969eb851-7d48-4df9-8a92-1e958160e121}</ProjectGuid>
+    <RootNamespace>My22StrategizedLocking</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -128,25 +128,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="EventLoop.cpp" />
-    <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Parallel_Accumulate.cpp" />
-    <ClCompile Include="Strategized_Locking_01.cpp" />
-    <ClCompile Include="Strategized_Locking_02_Code_Project.cpp" />
-    <ClCompile Include="Thread_Pool_01.cpp" />
-    <ClCompile Include="Thread_Pool_02.cpp" />
-    <ClCompile Include="Thread_Pool_03.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Queue_01.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Queue_02.cpp" />
-    <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp" />
-    <ClCompile Include="Thread_Safe_Queue.cpp" />
-    <ClCompile Include="Thread_Safe_Stack.cpp" />
-    <ClCompile Include="Type_Erasure.cpp" />
+    <ClInclude Include="PrimeCalculator.h" />
+    <ClInclude Include="StrategizedLocking.h" />
+    <ClInclude Include="ThreadsafeStack.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="EventLoop.md" />
-    <None Include="Readme.md" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="StrategizedLocking.cpp" />
+    <ClCompile Include="TestPrimeNumbers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
