@@ -1,5 +1,5 @@
 // ===========================================================================
-// TestPrimeNumbers.cpp
+// TestPrimeNumbersTemplate.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -10,7 +10,8 @@
 #include "ThreadsafeStack.h"
 #include "PrimeCalculator.h"
 
-#include "StrategizedLock.h"
+// #include "StrategizedLock.h"
+#include "StrategizedLockTemplate.h"
 
 #include "../Logger/Logger.h"
 
@@ -50,10 +51,13 @@ namespace Globals
 void test_strategized_locking_01()
 {
     using namespace Concurrency_ThreadsafeStack;
-    using namespace Concurrency_StrategizedLockRuntime;
+    using namespace Concurrency_StrategizedCompileTime;
 
-    NoLock lock;
+    // NoLock lock;
     // ExclusiveLock lock;
+
+    NoLock noLock;
+    StrategizedLocking<NoLock> lock{ noLock };
 
     ThreadsafeStack<size_t> stack{ lock };
 
@@ -82,11 +86,13 @@ void test_strategized_locking_02()
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
     using namespace Concurrency_StrategizedLockRuntime;
+    // using namespace Concurrency_StrategizedCompileTime;
+
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
     NoLock lock;
-     //ExclusiveLock lock;
+    //ExclusiveLock lock;
 
     ThreadsafeStack<size_t> primes{ lock };
 
@@ -110,6 +116,7 @@ void test_strategized_locking_03()
     using namespace Concurrency_PrimeCalculator;
 
     using namespace Concurrency_StrategizedLockRuntime;
+    // using namespace Concurrency_StrategizedCompileTime;
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 

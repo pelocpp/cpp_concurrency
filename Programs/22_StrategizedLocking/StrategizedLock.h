@@ -1,28 +1,10 @@
 // ===========================================================================
-// StrategizedLocking.h
+// StrategizedLock.h
 // ===========================================================================
 
 #pragma once
 
-//#include <iostream>
-//#include <cassert>
-//#include <chrono>
-//#include <future>
-//#include <mutex>
-//#include <queue>
-//#include <thread>
-//#include <vector>
-//#include <functional>
-//#include <deque>
-//#include <type_traits>
-//#include <memory>
-
-// #include <iostream>
 #include <mutex>
-#include <shared_mutex>
-
-// #include <shared_mutex>
-
 
 #include "ILock.h"
 
@@ -52,7 +34,6 @@ namespace Concurrency_StrategizedLockRuntime
     public:
         void lock() const override;
         void unlock() const override;
-        
     };
 
     class ExclusiveLock : public ILock

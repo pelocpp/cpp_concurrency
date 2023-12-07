@@ -1,0 +1,113 @@
+// ===========================================================================
+// ThreadsafeStackTemplate.h
+// ===========================================================================
+
+// Adapted from Project "20_Threadsafe_Stack"
+
+#pragma once
+
+#include <exception>
+#include <stack>
+#include <mutex>
+#include <optional>
+
+// #include "StrategizedLockTemplate.h"
+
+namespace Concurrency_ThreadsafeStack
+{
+    struct empty_stack : std::exception
+    {
+    private:
+        std::string m_what;
+
+    public:
+        explicit empty_stack() : m_what{ std::string{ "Stack is empty!" } } {}
+
+        explicit empty_stack(std::string msg) {
+            m_what = std::move(msg);
+        }
+
+        const char* what() const noexcept override {
+            return m_what.c_str();
+        }
+    };
+
+    template<typename T>
+    class ThreadsafeStack
+    {
+    private:
+        std::stack<T> m_data;
+
+        // mutable std::mutex m_mutex;  // beachte mutable
+        // ILock m_lock;  // mutable ????????????????????
+        ILock& m_lock;
+
+
+    public:
+        // c'tors
+        ThreadsafeStack(ILock& lock) : m_lock{ lock } {}
+
+        // prohibit copy constructor, assignment operator and move assignment
+        ThreadsafeStack(const ThreadsafeStack&) = delete;
+        ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
+        ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
+
+        // move constructor may be useful
+        ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+        {
+            // std::lock_guard<std::mutex> lock(other.m_mutex);
+            StrategizedLocking m_guard{ m_lock };
+
+            m_data = other.m_data;
+        }
+
+        // public interface
+        void push(T new_value)
+        {
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
+            m_data.push(new_value);
+        }
+
+        void pop(T& value)
+        {
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
+            if (m_data.empty()) throw empty_stack{};
+            value = m_data.top();
+            m_data.pop();
+        }
+
+        T tryPop()
+        {
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+
+            if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+            T value = m_data.top();
+            m_data.pop();
+            return value;
+        }
+
+        size_t size() const
+        {
+            //std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+            return m_data.size();
+        }
+
+        bool empty() const
+        {
+            // std::lock_guard<std::mutex> lock{ m_mutex };
+            StrategizedLocking m_guard{ m_lock };
+            return m_data.empty();
+        }
+    };
+}
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================
+

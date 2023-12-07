@@ -1,39 +1,46 @@
-# Threadsicherer Stapel (Threadsafe Stack)
+# Strategisches Locking (Strategized Locking)
 
 [Zurück](../../Readme.md)
 
 ---
 
-
 ### Allgemeines
 
-Die STL stellt mit der Klasse `std::queue<T>` einen leistungsstarken LIFO-Conainer
-(*Last-in, First-out Data Structure*) bereit.
+Das *Strategized Locking*&ndash;Entwurfsmuster
+schützt den kritischen Abschnitt einer Komponente vor gleichzeitigem (konkurriendem) Zugriff.
 
-Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
+Mit anderen Worten: Wenn ein Objekt Daten benötigt, die in einem anderen Thread erstellt werden,
+müssen die kritischen Abschnitte für den Datenzugriff gesperrt werden.
+
+Hierbei können sich allerdings Unterschiede in der Notwendigkeit des Datenschutzes ergeben.
+
+Laufen die kritischen Routinen (Abschnitte) in einer Single-Thread-Umgebung,
+ist ein Datenschutz überhaupt nicht erforderlich und es entsteht ein Performanzproblem,
+da ein laufzeitintensiver Synchronisationsmechanismus zum Einsatz kommt,
+der an dieser Stelle unnötig ist.
+
+Werden die kritischen Abschnitte hingegen im Kontext mehrerer Threads ausgeführt,
+müssen die kritischen Abschnitte geschützt werden.
+
+An dieser Stelle bietet sich das Strategized Locking Entwurfsmuster an:
+
+Die Strategie des Lockings wird in einem Objekt untergebracht,
+das Programm selbst greift nur über eine definierte Schnittstelle auf das Strategie-Objekt zu.
 
 
+### *Runtime* versus *Compile-Time*
 
-### Race Conditions
+Das *Strategized Locking*&ndash;Entwurfsmuster kann sowohl  in einer *Runtime*-Ausprägung
+(Vererbung, Polymorphismus) als auch in einer *Compile-Time*-Ausprägung umgesetzt werden.
 
-Unter einer *Race Condition*
-versteht man im Umfeld der *Concurrency* die Eigenschaft,
-dass Ergebnisse einer Programmausführung davon abhängen,
-in welcher Reihenfolge die Ausführung von Operationen in zwei oder mehreren Threads stattfindet.
+### Wann sollte dieses Muster verwendet werden?
 
-Nicht immer muss diese Beobachtnung fehlerhaft sein.
-Wenn beispielsweise zwei Threads Elemente in einem Stapel zur
-weiteren Verarbeitung ablegen,
-spielt es keine Rolle, welches Element zuerst hinzugefügt wird.
+Verwenden Sie dieses Muster, wenn:
 
-Problematisch sind *Race Condition* dann, wenn sie *Invarianten* brechen.
-Eine Invariante am Beispiel eines Stapels betrachtet könnte sein,
-dass dieser beispielsweise zu einem bestimmten Zeitpunkt &ldquo;nicht leer&rdquo; ist.
-Dies könnte das Resultat eines Methodenaufrufs wie etwa `empty` sein.
-Wird aber zum gleichen Zeitpunkt auf Grund der konkurrierenden Ausführung einer `pop`-Methode
-in einem anderen Thread der Stapel geleert, kommt es in dem Thread,
-der sich auf den Aufruf von `empty` verlassen möchte,
-zu einem Bruch der Invariante. 
+  * Sie müssen einen kritischen Abschnitt schützen
+  * Sie möchten konsistent zur Verwendung eines `std::mutex-Objeks` sein
+  * Der Quellcode soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen laufen
+  * Das Programm soll in jeder Umgebung performant ablaufen.
 
 
 ### Entwurf des APIs
@@ -42,17 +49,14 @@ Die von mir vorgestellt Klasse `ThreadsafeStack<T>`
 besitzt folgende öffentliche Schnittstelle:
 
 ```cpp
-01: template<typename T>
-02: class ThreadsafeStack
-03: {
-04: public:
-05:     void push(T new_value);
-06:     void pop(T& value);
-07:     T tryPop();
-08:     std::optional<T> tryPopOptional();
-09:     size_t size() const;
-10:     bool empty() const;
-11: };
+01: class ILock
+02: {
+03: public:
+04:     ~ILock() {}
+05: 
+06:     virtual void lock() const = 0;
+07:     virtual void unlock() const = 0;
+08: };
 ```
 
 Das Hinzufügen eines Elements zum Stapel kann als trivial betrachtet werden,
