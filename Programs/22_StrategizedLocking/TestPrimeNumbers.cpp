@@ -20,24 +20,6 @@ namespace Globals
 
     constexpr size_t NumThreads = 8;
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100;
-
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 10'000'000;
-    //// Found:  664579 prime numbers
-
-    //constexpr size_t LowerLimit = 1'000'000;
-    //constexpr size_t UpperLimit = 10'000'000;
-
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100'000;
-    //// Found: 9.592 prime numbers
-
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 1'000'000;
-    //// Found: 78.498 prime numbers
-
     constexpr size_t LowerLimit = 1;
     constexpr size_t UpperLimit = 10'000'000;
     // Found:  664.579 prime numbers
@@ -72,8 +54,28 @@ void test_strategized_locking_01()
     Logger::log(std::cout, "Done:  ", msecs, " msecs.");
 }
 
-
 void test_strategized_locking_02()
+{
+    using namespace Concurrency_ThreadsafeStack;
+    using namespace Concurrency_StrategizedLock;
+
+    Logger::log(std::cout, "Testing RecursiveLock");
+
+    // ExclusiveLock lock;  // crashes
+    RecursiveLock lock;   // works
+
+    ThreadsafeStack<size_t> stack{ lock };
+
+    // just want to test recursive lock - need to modify pop method, calling size or empty method
+
+    stack.push(123);
+    size_t value{};
+    stack.pop(value);
+
+    Logger::log(std::cout, "Done.");
+}
+
+void test_strategized_locking_03()
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
@@ -100,7 +102,7 @@ void test_strategized_locking_02()
     Logger::log(std::cout, "Done:  ", msecs, " msecs.");
 }
 
-void test_strategized_locking_03()
+void test_strategized_locking_04()
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
@@ -108,8 +110,8 @@ void test_strategized_locking_03()
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
-    NoLock lock;
-    // ExclusiveLock lock;
+    // NoLock lock;   // crashes sporadically
+    ExclusiveLock lock;
 
     ThreadsafeStack<size_t> primes{ lock };
 

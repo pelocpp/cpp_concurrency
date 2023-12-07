@@ -9,7 +9,7 @@
 namespace Concurrency_StrategizedLock
 {
     // class StrategizedLocking
-    StrategizedLocking::StrategizedLocking(ILock& lock) : m_lock(lock) {
+    StrategizedLocking::StrategizedLocking(const ILock& lock) : m_lock(lock) {
         m_lock.lock();
     }
 
@@ -37,6 +37,15 @@ namespace Concurrency_StrategizedLock
 
     void ExclusiveLock::unlock() const {
         m_mutex.unlock();
+    }
+
+    // class RecursiveLock
+    void RecursiveLock::lock() const {
+        m_recursive_mutex.lock();
+    }
+
+    void RecursiveLock::unlock() const {
+        m_recursive_mutex.unlock();
     }
 }
 
