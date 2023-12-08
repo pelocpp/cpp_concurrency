@@ -193,6 +193,18 @@ an das *Strategized Locking*&ndash;Entwurfsmuster:
 
 ---
 
+#### Quellcode:
+
+[ILock.h](ILock.h).
+[StrategizedLock.h](StrategizedLock.h).
+[ThreadsafeStack.h](ThreadsafeStack.h).
+[PrimeCalculator.h](PrimeCalculator.h).
+
+[StrategizedLock.cpp](StrategizedLock.cpp).
+[PrimeNumbers.cpp](PrimeNumbers.cpp).
+
+---
+
 ## Literaturhinweise
 
 Die Anregungen zur Klasse stammen im Wesentlichen aus der Unterlage

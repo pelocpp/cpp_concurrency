@@ -212,7 +212,13 @@ Im konkreten Anwendungsfall wird es auf `0` (Zeile 7) initialisiert.
 Das heiﬂt, dass der Aufruf `release` den Wert auf 1 (Zeile 19) setzt
 und den Aufruf `acquire` in Zeile 28 entblockt.
 
+---
+
 #### Quellcode:
+
+
+[ThreadsafeStack.h](ThreadsafeStack.h).
+[PrimeCalculator.h](TPrimeCalculator.h).
 
 [TestPrimeNumbers.cpp](TestPrimeNumbers.cpp).
 

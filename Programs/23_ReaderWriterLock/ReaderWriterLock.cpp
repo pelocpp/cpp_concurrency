@@ -1,109 +1,137 @@
 #include <iostream>
-#include <mutex>
+#include <string>
 #include <thread>
+#include <mutex>
 #include <shared_mutex>
 #include <array>
 #include <optional>
+#include <exception>
 
 namespace Reader_Writer
 {
-    struct Data {};
+    struct Data
+    {
+        int m_data;
+    };
 
     template <size_t TRecentCount = 64>
     class Snapshots
     {
     private:
-        // We need mutable, since we mutate the state
-        // of this mutex (by grabbing a lock) in const methods.
-
-        std::array<Data, TRecentCount> m_buffer;
-        size_t m_offset = 0;
-        mutable std::shared_mutex m_mutex;
+        std::array<Data, TRecentCount>  m_buffer;
+        size_t                          m_offset;
+        mutable std::shared_mutex       m_mutex;
 
     public:
+        Snapshots() : m_buffer{}, m_offset{} {}
+
         void push(const Data& data) {
-            // We are about to modify the data, grab a unique_lock
-            std::unique_lock lock(m_mutex);
+
+            // we are about to modify the data, therefore we need a unique_lock
+            std::unique_lock<std::shared_mutex> lock{ m_mutex };
             m_buffer[m_offset % TRecentCount] = data;
             ++m_offset;
         }
 
         std::optional<Data> get(size_t index) const {
-            // We only read, but need to prevent 
-            // concurrent writes, grab a shared_lock
-            std::shared_lock lock(m_mutex);
-            if (index >= m_offset)
-                return std::nullopt;
-            if (m_offset >= TRecentCount && m_offset - TRecentCount > index)
-                return std::nullopt;
-            return m_buffer[index % TRecentCount];
-        }
 
-        size_t min_offset() const {
-            // We only read, but need to prevent 
-            // concurrent writes, grab a shared_lock
-            std::shared_lock lock(m_mutex);
-            if (m_offset <= TRecentCount) return 0;
-            return m_offset - TRecentCount;
-        }
+            // we only read, but need to prevent concurrent writes,
+            // therefore we are using a shared_lock
+            std::shared_lock<std::shared_mutex> lock{ m_mutex };
 
+            if (index >= TRecentCount) {
+                std::string msg{ 
+                    std::string{ "Wrong Index:" } +
+                    std::to_string(index) +
+                    std::string{ " !" }
+                };
+                
+                throw std::out_of_range{ msg };
+            }
+
+            if (m_buffer[index].m_data != 0) {
+                return m_buffer[index];
+            }
+            else {
+                return std::nullopt;
+            }
+        }
     };
 }
 
 void test_reader_writer_lock_01()
 {
     using namespace Reader_Writer;
-
     using namespace std::chrono_literals;
 
-    constexpr size_t RecentCount = 64;
+    constexpr size_t RecentCount{ 64 };
 
-    Snapshots<RecentCount> snapshots;
+    Snapshots<RecentCount> snapshots{};
 
-    // Writer that generates snapshots
-    auto t = std::jthread([&snapshots](std::stop_token stop) {
-        while (!stop.stop_requested()) {
-            std::this_thread::sleep_for(100ms);
-            snapshots.push(Data{});
+    std::jthread thread { 
+        [&] (std::stop_token stop) {
+            int count{};
+            while (!stop.stop_requested()) {
+                std::this_thread::sleep_for(100ms);
+                ++count;
+                snapshots.push(Data{ count });
+            }
         }
-        });
+    };
 
-    // Run for two seconds.
-    auto deadline = std::chrono::system_clock::now() + 2s;
+    // run next while loop for two seconds
+    std::chrono::system_clock::time_point deadline{
+        std::chrono::system_clock::now() + 2s 
+    };
+
+    std::chrono::system_clock::duration pause{ 20ms };
 
     while (true) {
+
         if (std::chrono::system_clock::now() > deadline)
             break;
 
-        // Start two readers that will concurently read snapshots.
-        int r1_cnt = 0;
-        auto r1 = std::jthread([&snapshots, &r1_cnt]() {
-            size_t offset = snapshots.min_offset();
-            for (size_t i = offset; i < offset + RecentCount; i++)
-                r1_cnt += snapshots.get(i) != std::nullopt;
-            });
-        int r2_cnt = 0;
-        auto r2 = std::jthread([&snapshots, &r2_cnt]() {
-            size_t offset = snapshots.min_offset();
-            for (size_t i = offset; i < offset + RecentCount; i++)
-                r2_cnt += snapshots.get(i) != std::nullopt;
-            });
-        r1.join();
-        r2.join();
-        // Note: join() introduces a synchronization point, meaning that
-        // the main thread can now safely read r1_cnt and r2_cnt despite
-        // these variables not being atomic.
+        // start two readers reading concurrently snapshots
+        int counter1{};
+        int counter2{};
 
-        std::cout << "First reader read " << r1_cnt << " snapshots\n";
-        std::cout << "Second reader read " << r2_cnt << " snapshots\n";
-        std::this_thread::sleep_for(50ms);
+        std::jthread reader1 { 
+            [&]() {
+                for (size_t i{}; i < RecentCount; i++) {
+                    if (snapshots.get(i) != std::nullopt) {
+                        ++ counter1;
+                    }
+                }
+            } 
+        };
+
+        std::jthread reader2{
+            [&]() {
+                for (size_t i{}; i < RecentCount; i++) {
+                    if (snapshots.get(i) != std::nullopt) {
+                        ++counter2;
+                    }
+                }
+            }
+        };
+
+        reader1.join();
+        reader2.join();
+
+        // Note:
+        // join() introduces a synchronization point, meaning that
+        // the main thread can now safely read counter1 and counter2
+        // despite these variables not being atomic.
+
+        std::cout << "1. reader: " << counter1 << " snapshots" << std::endl;
+        std::cout << "2. reader: " << counter2 << " snapshots" << std::endl;
+
+        std::this_thread::sleep_for(pause);
     }
 
-    // Stop the writer
-    t.request_stop();
-
+    // stop the writer thread
+    thread.request_stop();
 }
-
 
 
 void test_reader_writer_lock()

@@ -30,13 +30,17 @@
 
 ### [Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
+### [Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
+
 ---
 
 ## Beispiele
 
 ### [Das Problem der dinierenden Philosophen](Programs/20_DiningPhilosophers/Readme.md)
 
-### [Threadsicherer Stapel (Threadsafe Stack)](Programs/XXX/XXX.md)
-
+### [Threadsicherer Stapel (Threadsafe Stack)](Programs/20_Threadsafe_Stack/Readme.md)
 
 ---
+
+
+
