@@ -28,6 +28,7 @@
 
 ## Entwurfsmuster
 
+### [Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
 ---
 

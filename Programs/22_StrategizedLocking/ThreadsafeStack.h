@@ -39,9 +39,6 @@ namespace Concurrency_ThreadsafeStack
     {
     private:
         std::stack<T> m_data;
-        
-        // mutable std::mutex m_mutex;  // beachte mutable
-        // ILock m_lock;  // mutable ????????????????????
         const ILock& m_lock;
 
     public:

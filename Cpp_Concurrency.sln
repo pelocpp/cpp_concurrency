@@ -46,6 +46,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21_ScopedLocking", "Program
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "22_StrategizedLocking", "Programs\22_StrategizedLocking\22_StrategizedLocking.vcxproj", "{969EB851-7D48-4DF9-8A92-1E958160E121}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23_ReaderWriterLock", "Programs\23_ReaderWriterLock\23_ReaderWriterLock.vcxproj", "{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -182,6 +184,14 @@ Global
 		{969EB851-7D48-4DF9-8A92-1E958160E121}.Release|x64.Build.0 = Release|x64
 		{969EB851-7D48-4DF9-8A92-1E958160E121}.Release|x86.ActiveCfg = Release|Win32
 		{969EB851-7D48-4DF9-8A92-1E958160E121}.Release|x86.Build.0 = Release|Win32
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Debug|x64.ActiveCfg = Debug|x64
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Debug|x64.Build.0 = Debug|x64
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Debug|x86.ActiveCfg = Debug|Win32
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Debug|x86.Build.0 = Debug|Win32
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Release|x64.ActiveCfg = Release|x64
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Release|x64.Build.0 = Release|x64
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Release|x86.ActiveCfg = Release|Win32
+		{C239FB9D-3086-44BA-A5D3-ED3A0BA5E935}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

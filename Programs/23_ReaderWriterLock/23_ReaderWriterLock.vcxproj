@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{969eb851-7d48-4df9-8a92-1e958160e121}</ProjectGuid>
-    <RootNamespace>My22StrategizedLocking</RootNamespace>
+    <ProjectGuid>{c239fb9d-3086-44ba-a5d3-ed3a0ba5e935}</ProjectGuid>
+    <RootNamespace>My23ReaderWriterLock</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -119,7 +119,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,19 +128,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ILock.h" />
-    <ClInclude Include="PrimeCalculator.h" />
-    <ClInclude Include="StrategizedLock.h" />
-    <ClInclude Include="ThreadsafeStack.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="StrategizedLock.cpp" />
-    <ClCompile Include="PrimeNumbers.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Readme.md" />
+    <ClCompile Include="ReaderWriterLock.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
