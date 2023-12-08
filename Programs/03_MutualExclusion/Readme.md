@@ -80,8 +80,9 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
     [Beispiel](Simple_Mutex.cpp).
 
   * Elementare Demonstration des `std::condition_variable` Objekts:</br>
-    [Beispiel](Simple_Condition_Variable.cpp).
-
+    [Beispiel](Simple_Condition_Variable_01.cpp).
+    [Beispiel](Simple_Condition_Variable_02.cpp).
+   
   * Demonstration des klassischen Konsumenten/Verbraucher-Problems:</br>
     [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).</br>
     [Beispiel einer Klasse `ConsumerProducerTwo::ConsumerProducer`](Producer_Consumer_02.cpp).</br>

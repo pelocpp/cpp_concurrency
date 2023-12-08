@@ -36,7 +36,10 @@
     <ClCompile Include="Simple_Mutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simple_Condition_Variable.cpp">
+    <ClCompile Include="Simple_Condition_Variable_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Simple_Condition_Variable_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

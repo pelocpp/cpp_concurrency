@@ -1,5 +1,5 @@
 // ===========================================================================
-// Condition Variable
+// Simple_Condition_Variable_01.cpp // Condition Variable
 // ===========================================================================
 
 #include <iostream>
@@ -50,7 +50,7 @@ namespace SimpleConditionVariableDemo
     }
 }
 
-void test_simple_condition_variable()
+void test_simple_condition_variable_01()
 {
     using namespace SimpleConditionVariableDemo;
     test();

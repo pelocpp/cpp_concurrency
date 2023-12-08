@@ -16,13 +16,13 @@
 
 ### [Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
-### [[C++ 20] STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+### [STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
-### [[C++ 20] Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+### [Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
 
-### [[C++ 20] Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+### [Klasse `std::jthread`](Programs/10_JThread/Readme.md)
 
-### [[C++ 20] Semaphore / Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+### [Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 
@@ -36,7 +36,7 @@
 
 ## Beispiele
 
-### [Das Problem der dinierenden Philosophen](Programs/20_DiningPhilosophers/Readme.md)
+### [Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
 
 ### [Threadsicherer Stapel (Threadsafe Stack)](Programs/20_Threadsafe_Stack/Readme.md)
 
