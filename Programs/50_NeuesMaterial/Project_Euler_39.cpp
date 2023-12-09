@@ -1,45 +1,90 @@
 #include <iostream>
-
 #include <string>
 #include <sstream>
-
 #include <array>
 #include <sstream>
-#include <condition_variable>
+#include <algorithm>
 #include <functional>
-#include <future>
 #include <thread>
 #include <vector>
 #include <thread>
-#include <memory>
-#include <cassert>
 #include <format>
-// #include <stack>
 
+// https://stackoverflow.com/questions/36246300/parallel-loops-in-c
+
+namespace Concurrency_Parallel_For_Ex
+{
+    using Callable = std::function<void(size_t start, size_t end)>;
+
+    static void parallel_for(
+        size_t numElements,
+        Callable callable,
+        bool useThreads)
+    {
+        // calculate number of threads to use
+        size_t numThreadsHint{ std::thread::hardware_concurrency() };
+        size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
+        size_t batchSize{ numElements / numThreads };
+        size_t batchRemainder{ numElements % numThreads };
+
+        // allocate vector of uninitialized thread objects
+        std::vector<std::thread> threads;
+
+        if (useThreads) {
+
+            // prepare multi-threaded execution
+            for (size_t i{}; i != numThreads; ++i) {
+
+                size_t start{ i * batchSize };
+                threads.push_back(std::move(std::thread{ callable, start, start + batchSize }));
+            }
+        }
+        else {
+
+            // prepare single-threaded execution (for easy debugging)
+            for (size_t i{}; i < numThreads; ++i) {
+
+                size_t start{ i * batchSize };
+                callable(start, start + batchSize);
+            }
+        }
+
+        // take care of last element - calling 'callable' synchronously 
+        size_t start{ numThreads * batchSize };
+        callable(start, start + batchRemainder);
+
+        // wait for the other thread to finish their task
+        if (useThreads) {
+           std::for_each(
+               threads.begin(),
+               threads.end(),
+               std::mem_fn(&std::thread::join)
+           );
+        }
+
+        std::cout << "Done." << std::endl;
+    }
+}
 
 namespace Project_Euler_39
 {
-    // da ginge auch ein std::tuple ...
     class PythagoreanTriple
     {
     private:
         std::array<size_t, 3> m_numbers;
 
     public:
-        PythagoreanTriple(size_t x, size_t y, size_t z)
-        {
-            m_numbers[0] = x;
-            m_numbers[1] = y;
-            m_numbers[2] = z;
-        }
+        PythagoreanTriple(size_t x, size_t y, size_t z) 
+            : m_numbers { x, y, z}
+        {}
 
-        size_t perimeter() {
+        size_t circumference () {
             return m_numbers[0] + m_numbers[1] + m_numbers[2];
         }
 
         std::string toString() {
-            return std::format("[{:02},{:02},{:02}]", m_numbers[0], m_numbers[1], m_numbers[2]);
-            //return "";
+            return std::format("[{:02},{:02},{:02}]",
+                m_numbers[0], m_numbers[1], m_numbers[2]);
         }
     };
 
@@ -47,45 +92,39 @@ namespace Project_Euler_39
     {
     private:
         size_t m_maxNumber;
-        size_t m_maxPerimeter;
+        size_t m_maxCircumference;
         size_t m_total;
 
-        std::vector<PythagoreanTriple> m_stack;
+        std::vector<PythagoreanTriple> m_triples;
 
     public:
         PythagoreanTripleCalculator() 
-            : m_maxNumber{}, m_maxPerimeter{}, m_total{}
+            : m_maxNumber{}, m_maxCircumference{}, m_total{}
         {}
 
-        void compute(int maximum)
+        // sequential interface
+        void computeAll(size_t maxCircumference)
         {
-            for (size_t p = 3; p <= maximum; p++)
+            for (size_t circ{ 3 }; circ <= maxCircumference; ++circ)
             {
-                size_t found = 0;
-
-                for (size_t a = 1; a <= p; a++)
+                for (size_t found{}, a{ 1 }; a <= circ; ++a)
                 {
-                    for (size_t b = a; b <= p; b++)
+                    for (size_t b{ a }; b <= circ; ++b)
                     {
-                        size_t c = p - a - b;
+                        size_t c{ circ - a - b };
 
                         if (a * a + b * b == c * c)
                         {
-                            // store this pythagorean riple
-                            //PythagoreanTriple triple{ a, b, c };
-                            //m_stack.push_back(triple);
-
-                            m_stack.emplace_back(a, b, c);
-
+                            // store this pythagorean triple
+                            m_triples.emplace_back(a, b, c);
                             m_total++;
 
                             found++;
-
                             if (found > m_maxNumber)
                             {
 
                                 m_maxNumber = found;
-                                m_maxPerimeter = p;
+                                m_maxCircumference = circ;
                             }
                         }
                     }
@@ -93,49 +132,84 @@ namespace Project_Euler_39
             }
         }
 
+        void computeAllEx(size_t maxCircumference)
+        {
+            for (size_t c{ 3 }; c <= maxCircumference; ++c)
+            {
+                computeAllRectangles(c);
+            }
+        }
+
+        void computeAllRectangles(size_t circ)
+        {
+            for (size_t found{}, a{ 1 }; a <= circ; ++a)
+            {
+                for (size_t b{ a }; b <= circ; ++b)
+                {
+                    size_t c{ circ - a - b };
+
+                    if (a * a + b * b == c * c)
+                    {
+                        // store this pythagorean triple
+                        m_triples.emplace_back(a, b, c);  //NEED THREAD SAFE QUEUE !!!
+                        m_total++;
+
+                        found++;
+                        if (found > m_maxNumber)
+                        {
+
+                            m_maxNumber = found;
+                            m_maxCircumference = circ;
+                        }
+                    }
+                }
+            }
+        }
+
+        // concurrent interface
+        void processRange(size_t start, size_t end)
+        {
+            for (size_t i{ start }; i != end; ++i) {
+                computeAllRectangles(i);
+            }
+        }
+
+        void process(size_t maximum, bool useThreads)
+        {
+            Concurrency_Parallel_For_Ex::parallel_for(
+                maximum, 
+                [this] (size_t start, size_t end) { processRange(start, end); },
+                useThreads
+            );
+        }
+
         // getter
-        size_t triplesCount() { return m_stack.size(); }
+        size_t triplesCount() { return m_triples.size(); }
 
         std::string toString()
         {
-            std::stringstream ss;
-
-            ss << "Total: " << m_total << '\n';
-
-            ss << " identically Perimeters:  " << m_maxNumber << " at number "  << m_maxPerimeter <<  '\n';
-
-            //Console.WriteLine("Total: {0}", this.total);
-
-            //return String.Format("# identically Perimeters: {0} at Number {1}",
-            //    this.maxNumber, this.maxPerimeter);
-
-            return ss.str();
+            return std::format("Total: {}\n# identically circumferences: {} at {}",
+                m_total, m_maxNumber, m_maxCircumference);
         }
 
         // helper method
         void dumpStack()
         {
-            if (m_stack.empty())
+            if (m_triples.empty())
                 return;
 
-            size_t lastPerimeter = m_stack[0].perimeter();
+            size_t lastCircumference{ m_triples[0].circumference() };
 
-            for (size_t i = 0; i < m_stack.size(); i++)
+            for (size_t i{}; i != m_triples.size(); i++)
             {
-                if (m_stack[i].perimeter() != lastPerimeter)
+                if (m_triples[i].circumference() != lastCircumference)
                 {
-                    lastPerimeter = m_stack[i].perimeter();
+                    lastCircumference = m_triples[i].circumference();
                     std::cout << '\n';
                 }
-                //Console.WriteLine("{0}: {1}", m_stack[i].Perimeter, m_stack[i]);
 
-                std::string stripel = m_stack[i].toString();
-
-                //std::cout << m_stack[i].perimeter() << std::string{ " - " } << stripel << std::endl;
-
-              //   std::string s = std::format("{0}: {1}", m_stack[i].perimeter(), m_stack[i]);
-
-                std::cout << std::format("{0}: {1}", m_stack[i].perimeter(), stripel) << std::endl;
+                std::string s{ m_triples[i].toString() };
+                std::cout << std::format("{0}: {1}", m_triples[i].circumference(), s) << std::endl;
             }
         }
     };
@@ -147,10 +221,11 @@ void test_project_euler_39_01()
 
     PythagoreanTripleCalculator calculator;
 
-    calculator.compute(3000);
-   // calculator.dumpStack();
-
-    //Console.WriteLine();
+    //calculator.computeAll(20);
+    //calculator.computeAllEx(20);
+    calculator.process(1000, false);
+   
+    calculator.dumpStack();
     std::cout << calculator.toString() << std::endl;
 }
 
@@ -158,3 +233,7 @@ void test_project_euler_39()
 {
     test_project_euler_39_01();
 }
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================
