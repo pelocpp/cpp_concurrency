@@ -28,6 +28,8 @@
 
 ## Entwurfsmuster
 
+### [Locking Mechanismen (*Locking Mechanisms*)](Programs/21_LockingMechanisms/Readme.md)
+
 ### [Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
 ### [Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)

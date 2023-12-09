@@ -9,14 +9,15 @@ extern void test_concurrency_thread_pool_03();
 extern void test_type_erasure();
 extern void test_event_loop();
 extern void test_thread_safe_blocking_queue();
-// extern void test_thread_safe_stack();
 extern void test_thread_local_storage();
 
-extern void function01_reader_writer();
+void test_project_euler_39();
+
+extern void test_parallel_for();
 
 int main()
 {
-    function01_reader_writer();
+    test_project_euler_39();
 
     return 0;
 }

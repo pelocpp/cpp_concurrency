@@ -21,84 +21,66 @@ für das Schreiben effizienter und korrekter gleichzeitiger Programme von entsche
 folgenden Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
 
 
-
   * Klasse `std::lock_guard`
-    * Leichtgewichtige Realisierung (*lightweight implementation*) eines einfachen Sperrmechanismus.
-    * Bietet den exklusiven Besitz eines Mutex für einen begrenzten Zeitraum (&ldquo;Scope&rdquo;, Block, Bereich).
-    * Die Sperre wird bei der Erstellung des `std::lock_guard`-Objekts erworben und automatisch freigegeben,
-    * wenn das Objekt den Gültigkeitsbereich (*Scope*) verlässt.
-    * Ein manuelles Entsperren oder erneutes Sperren des Mutex wird nicht unterstützt.
-    * Ideal für einfache, kurzzeitige Sperren, die eine automatische Freigabe beim Verlassen des Blocks gewährleisten.
+    - Leichtgewichtige Realisierung (*lightweight implementation*) eines einfachen Sperrmechanismus.
+    - Bietet den exklusiven Besitz eines Mutex für einen begrenzten Zeitraum (&ldquo;Scope&rdquo;, Block, Bereich).
+    - Die Sperre wird bei der Erstellung des `std::lock_guard`-Objekts erworben und automatisch freigegeben,
+    - wenn das Objekt den Gültigkeitsbereich (*Scope*) verlässt.
+    - Ein manuelles Entsperren oder erneutes Sperren des Mutex wird nicht unterstützt.
+    - Ideal für einfache, kurzzeitige Sperren, die eine automatische Freigabe beim Verlassen des Blocks gewährleisten.
 
 
-  * Schreiber: Instanz von `std::unique_lock`, z.B.
-    `std::unique_lock<std::shared_mutex> lock{ m_mutex };`
+  * Klasse `std::unique_lock`
+    - Vielseitiger Sperrmechanismus mit einer umfangreicheren Funktionalität als `std::lock_guard`
+    - Es wird sowohl der exklusive Besitz (*exclusive ownership*) als auch der gemeinsame Besitz (*shared ownership*) eines Mutex-Objekts unterstützt.
+    - Ermöglicht manuelles Entsperren als auch erneutes Sperren.
+    - Unterstützt Verschiebe-Semantik.
+    - Unterstützt zeitgesteuertes Sperren sowie Bedingungsvariablen (`std::condition_variable`).
 
-  * Leser: Instanz von `std::shared_lock`, z.B.
-    `std::shared_lock<std::shared_mutex> lock{ m_mutex };`
+  * Klasse `std::shared_lock`
+    - `std::shared_lock` ist für den gemeinsamen Besitz (*shared ownership*) eines Mutex-Objekts konzipiert und ermöglicht mehrere Leser.
+    - Ermöglicht mehreren Threads den gleichzeitigen Erwerb der Sperre für den gemeinsamen (lesenden) Zugriff.
+    - Gewährleistet Thread-Sicherheit, wenn mehrere Threads auf gemeinsam genutzte Ressourcen lesend zugreifen.
+    - Ähnlich wie `std::lock_guard` wird kein manuelles Entsperren oder erneutes Sperren unterstützt.
+
+
+*Zusammenfassung*:
+
+Wenn Sie die Unterschiede zwischen `std::lock_guard`, `std::unique_lock` und `std::shared_lock` verstehen,
+können Sie feststellen, welcher Mechanismus Ihren spezifischen Anforderungen entspricht:
+
+Verwenden Sie `std::lock_guard` für einfache exklusive Sperren,
+`std::unique_lock` für erweiterte Funktionen und Flexibilität und `std::shared_lock`
+für die Aktivierung des gemeinsamen Zugriffs.
+
+Durch den Einsatz des richtigen Sperrmechanismus können Sie Thread-Sicherheit gewährleisten, *Data Races* verhindern
+und effiziente Multithread-Programme erstellen.
+
 
 
 ### Beispiel
 
 
-Der kritische Bereich wird durch eine Klasse `Snapshots` gekapselt:
 
 ```cpp
-
 ```
 
-Die beiden Leser erhalten Zugriff auf ein Objekt des Typs `Snapshots`
-und lesen gleichzeitig Daten aus dem Feld aus:
 
 ```cpp
-
 ```
-
-Wir erkennen, dass der schreibende und lesende Zugriff
-korrekt ausgeführt wird:
 
 
 *Ausgabe*:
 
 
 ```
-1. reader: 0 snapshots
-2. reader: 0 snapshots
-1. reader: 0 snapshots
-2. reader: 0 snapshots
-1. reader: 0 snapshots
-2. reader: 0 snapshots
-1. reader: 0 snapshots
-2. reader: 0 snapshots
-
-2. reader: 2 snapshots
-1. reader: 2 snapshots
-2. reader: 2 snapshots
-1. reader: 2 snapshots
-2. reader: 2 snapshots
-1. reader: 3 snapshots
-2. reader: 3 snapshots
-
-.....
-
-2. reader: 18 snapshots
-1. reader: 18 snapshots
-2. reader: 18 snapshots
-1. reader: 18 snapshots
-2. reader: 18 snapshots
-1. reader: 19 snapshots
-2. reader: 19 snapshots
-1. reader: 19 snapshots
-2. reader: 19 snapshots
-1. reader: 19 snapshots
-2. reader: 19 snapshots
 ```
 
 ---
 
 #### Quellcode:
 
-[ReaderWriterLock.cpp](ReaderWriterLock.cpp).
+[XXX.cpp](XXX.cpp).
 
 ---
 
@@ -106,7 +88,9 @@ korrekt ausgeführt wird:
 
 Die Anregungen zur Klasse stammen im Wesentlichen aus dem Aufsatz
 
-[Daily bit(e) of C++ | std::shared_mutex](https://medium.com/@simontoth/daily-bit-e-of-c-std-shared-mutex-ebe7477a7589) von Šimon Tóth.
+[Understanding Locking Mechanisms in C++](https://medium.com/@elysiumceleste/understanding-locking-mechanisms-in-c-std-lock-guard-std-unique-lock-and-std-shared-lock-a8aac4d575ce)
+
+von Elysium Celeste.
 
 ---
 
