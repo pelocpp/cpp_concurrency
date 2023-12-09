@@ -9,39 +9,58 @@
 
 #include "../Logger/Logger.h"
 
-namespace SimpleConditionVariableDemo
+namespace SimpleConditionVariableDemo01
 {
-    constexpr long NumIterations{ 5 };
+    std::mutex g_mutex;
+    std::condition_variable g_condition;
 
-    std::mutex mutex;
-    std::condition_variable condition;
+    bool g_data{ false };
 
-    void function()
+    void consume()
     {
-        std::thread::id tid{ std::this_thread::get_id() };
-        Logger::log(std::cout, "TID:  ", tid);
+        Logger::log(std::cout, "Function Consume:");
 
-        std::unique_lock<std::mutex> raii{ mutex };
-        condition.wait(raii);
+        {
+            std::unique_lock<std::mutex> raii{ g_mutex };
 
-        Logger::log(std::cout, "Done Thread ", tid);
+            g_condition.wait(raii, []() {
+                Logger::log(std::cout, "  ... check for data being present ...");
+                return g_data == true;
+                }
+            );
+        }
+
+        Logger::log(std::cout, "Data has been consumed ...");
+
+        Logger::log(std::cout, "Done Thread ");
+    }
+
+    void produce()
+    {
+        Logger::log(std::cout, "Function Produce:");
+
+        {
+            std::lock_guard<std::mutex> guard (g_mutex);
+
+            g_data = true;
+        }
+
+        Logger::log(std::cout, "Data has been produced ...");
+
+        g_condition.notify_one();
+
+        Logger::log(std::cout, "Done Thread ");
     }
 
     void test() 
     {
-        std::thread::id mainTID{ std::this_thread::get_id() };
-        Logger::log(std::cout, "Begin Main: ", mainTID);
+        Logger::log(std::cout, "Begin Main:");
 
-        std::thread t1{ function };
-        std::thread t2{ function };
+        std::thread t1{ produce };  // or consume
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-
-        condition.notify_one();     // demonstrate either this line
-        // condition.notify_all();  // or this line
-
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-        condition.notify_one();     // and this line
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+        
+        std::thread t2{ consume };  // or produce
 
         t1.join();
         t2.join();
@@ -52,7 +71,7 @@ namespace SimpleConditionVariableDemo
 
 void test_simple_condition_variable_01()
 {
-    using namespace SimpleConditionVariableDemo;
+    using namespace SimpleConditionVariableDemo01;
     test();
 }
 

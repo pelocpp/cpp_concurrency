@@ -151,6 +151,7 @@
     <ClCompile Include="Producer_Consumer_03.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Simple_Condition_Variable_02.cpp" />
+    <ClCompile Include="Simple_Condition_Variable_03.cpp" />
     <ClCompile Include="Simple_Mutex.cpp" />
   </ItemGroup>
   <ItemGroup>
