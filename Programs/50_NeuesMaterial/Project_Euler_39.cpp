@@ -105,16 +105,16 @@ namespace Project_Euler_39
         // sequential interface
         void computeAll(size_t maxCircumference)
         {
-            for (size_t circ{ 3 }; circ <= maxCircumference; ++circ)
-            {
-                for (size_t found{}, a{ 1 }; a <= circ; ++a)
-                {
-                    for (size_t b{ a }; b <= circ; ++b)
-                    {
+            for (size_t circ{ 3 }; circ <= maxCircumference; ++circ) {
+            
+                for (size_t found{}, a{ 1 }; a <= circ; ++a) {
+                
+                    for (size_t b{ a }; b <= circ; ++b) {
+                    
                         size_t c{ circ - a - b };
 
-                        if (a * a + b * b == c * c)
-                        {
+                        if (a * a + b * b == c * c) {
+                        
                             // store this pythagorean triple
                             m_triples.emplace_back(a, b, c);
                             m_total++;
@@ -134,22 +134,22 @@ namespace Project_Euler_39
 
         void computeAllEx(size_t maxCircumference)
         {
-            for (size_t c{ 3 }; c <= maxCircumference; ++c)
-            {
+            for (size_t c{ 3 }; c <= maxCircumference; ++c) {
+
                 computeAllRectangles(c);
             }
         }
 
         void computeAllRectangles(size_t circ)
         {
-            for (size_t found{}, a{ 1 }; a <= circ; ++a)
-            {
-                for (size_t b{ a }; b <= circ; ++b)
-                {
+            for (size_t found{}, a{ 1 }; a <= circ; ++a) {
+            
+                for (size_t b{ a }; b <= circ; ++b) {
+                
                     size_t c{ circ - a - b };
 
-                    if (a * a + b * b == c * c)
-                    {
+                    if (a * a + b * b == c * c) {
+                    
                         // store this pythagorean triple
                         m_triples.emplace_back(a, b, c);  //NEED THREAD SAFE QUEUE !!!
                         m_total++;
@@ -200,10 +200,10 @@ namespace Project_Euler_39
 
             size_t lastCircumference{ m_triples[0].circumference() };
 
-            for (size_t i{}; i != m_triples.size(); i++)
-            {
-                if (m_triples[i].circumference() != lastCircumference)
-                {
+            for (size_t i{}; i != m_triples.size(); i++) {
+            
+                if (m_triples[i].circumference() != lastCircumference) {
+                
                     lastCircumference = m_triples[i].circumference();
                     std::cout << '\n';
                 }
