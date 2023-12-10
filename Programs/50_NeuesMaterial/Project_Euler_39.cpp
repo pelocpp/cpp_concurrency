@@ -6,15 +6,44 @@
 #include <algorithm>
 #include <functional>
 #include <thread>
-#include <vector>
+#include <stack>
 #include <thread>
 #include <format>
+#include <chrono>
+
+#include "../20_Threadsafe_Stack/ThreadsafeStack.h"
+
+
+// WEITERARBEIT:
+
+// a) Logger intergrieren ...
+// b) Hübsche Testausgaben
+
+// c) Die Klasse / Funbktion callableWrapper separieren .. .. extra Datei
+
+// D) Eine Fallstudie zu PythagoreanTriple schreiben ....
+
+// ======================================================
+
+// E) Im Repository Concurrency:
+
+// E1) Die Klasse / Funbktion callableWrapper separieren .. .. extra Datei
+// E2) Möglocherweise mit den Primzahlen wieder ein ähnliches Beispiel hinzufügen ... mit Zeitmessungen ...
+
+
 
 // https://stackoverflow.com/questions/36246300/parallel-loops-in-c
 
 namespace Concurrency_Parallel_For_Ex
 {
     using Callable = std::function<void(size_t start, size_t end)>;
+
+    static void callableWrapper(Callable callable, size_t start, size_t end) {
+
+        std::cout << "Thread " << std::setw(4) << std::setfill('0') << std::uppercase << std::hex << std::this_thread::get_id() << std::endl;
+
+        callable(start, end);
+    }
 
     static void parallel_for(
         size_t numElements,
@@ -36,7 +65,9 @@ namespace Concurrency_Parallel_For_Ex
             for (size_t i{}; i != numThreads; ++i) {
 
                 size_t start{ i * batchSize };
-                threads.push_back(std::move(std::thread{ callable, start, start + batchSize }));
+                 // threads.push_back(std::move(std::thread{ callable, start, start + batchSize }));
+
+                threads.push_back(std::move(std::thread{ callableWrapper, callable, start, start + batchSize }));
             }
         }
         else {
@@ -74,6 +105,8 @@ namespace Project_Euler_39
         std::array<size_t, 3> m_numbers;
 
     public:
+        PythagoreanTriple() : PythagoreanTriple { 0, 0, 0} {}
+
         PythagoreanTriple(size_t x, size_t y, size_t z) 
             : m_numbers { x, y, z}
         {}
@@ -95,15 +128,17 @@ namespace Project_Euler_39
         size_t m_maxCircumference;
         size_t m_total;
 
-        std::vector<PythagoreanTriple> m_triples;
+        // std::stack<PythagoreanTriple> m_triples;
+        Concurrency_ThreadsafeStack::ThreadsafeStack<PythagoreanTriple> m_triples;
 
     public:
+        // c'tor
         PythagoreanTripleCalculator() 
             : m_maxNumber{}, m_maxCircumference{}, m_total{}
         {}
 
-        // sequential interface
-        void computeAll(size_t maxCircumference)
+        // public sequential interface
+        void calculateAll(size_t maxCircumference)
         {
             for (size_t circ{ 3 }; circ <= maxCircumference; ++circ) {
             
@@ -116,7 +151,7 @@ namespace Project_Euler_39
                         if (a * a + b * b == c * c) {
                         
                             // store this pythagorean triple
-                            m_triples.emplace_back(a, b, c);
+                            m_triples.emplace(a, b, c);
                             m_total++;
 
                             found++;
@@ -132,15 +167,16 @@ namespace Project_Euler_39
             }
         }
 
-        void computeAllEx(size_t maxCircumference)
+        void calculateAllEx(size_t maxCircumference)
         {
             for (size_t c{ 3 }; c <= maxCircumference; ++c) {
 
-                computeAllRectangles(c);
+                calculateAllRectangles(c);
             }
         }
 
-        void computeAllRectangles(size_t circ)
+    private:
+        void calculateAllRectangles(size_t circ)
         {
             for (size_t found{}, a{ 1 }; a <= circ; ++a) {
             
@@ -151,7 +187,7 @@ namespace Project_Euler_39
                     if (a * a + b * b == c * c) {
                     
                         // store this pythagorean triple
-                        m_triples.emplace_back(a, b, c);  //NEED THREAD SAFE QUEUE !!!
+                        m_triples.emplace(a, b, c);  //NEED THREAD SAFE QUEUE !!!
                         m_total++;
 
                         found++;
@@ -166,23 +202,28 @@ namespace Project_Euler_39
             }
         }
 
-        // concurrent interface
-        void processRange(size_t start, size_t end)
-        {
-            for (size_t i{ start }; i != end; ++i) {
-                computeAllRectangles(i);
-            }
-        }
-
+    public:
+        // public concurrent interface
         void process(size_t maximum, bool useThreads)
         {
             Concurrency_Parallel_For_Ex::parallel_for(
                 maximum, 
-                [this] (size_t start, size_t end) { processRange(start, end); },
+                [this] (size_t start, size_t end) { 
+                    processRange(start, end); 
+                },
                 useThreads
             );
         }
 
+    private:
+        void processRange(size_t start, size_t end)
+        {
+            for (size_t i{ start }; i != end; ++i) {
+                calculateAllRectangles(i);
+            }
+        }
+
+    public:
         // getter
         size_t triplesCount() { return m_triples.size(); }
 
@@ -198,18 +239,28 @@ namespace Project_Euler_39
             if (m_triples.empty())
                 return;
 
-            size_t lastCircumference{ m_triples[0].circumference() };
+            Concurrency_ThreadsafeStack::ThreadsafeStack<PythagoreanTriple> copy{ m_triples };
 
-            for (size_t i{}; i != m_triples.size(); i++) {
-            
-                if (m_triples[i].circumference() != lastCircumference) {
-                
-                    lastCircumference = m_triples[i].circumference();
+            PythagoreanTriple triple{};
+
+            size_t lastCircumference{};
+
+            while (true) {
+
+                std::optional<PythagoreanTriple> triple = copy.tryPopOptional();
+
+                if (!triple.has_value()) {
+                    break;
+                }
+
+                if (triple.value().circumference() != lastCircumference) {
+
+                    lastCircumference = triple.value().circumference();
                     std::cout << '\n';
                 }
 
-                std::string s{ m_triples[i].toString() };
-                std::cout << std::format("{0}: {1}", m_triples[i].circumference(), s) << std::endl;
+                std::string s{ triple.value().toString() };
+                std::cout << std::format("{:4}: {}", triple.value().circumference(), s) << std::endl;
             }
         }
     };
@@ -221,12 +272,22 @@ void test_project_euler_39_01()
 
     PythagoreanTripleCalculator calculator;
 
-    //calculator.computeAll(20);
-    //calculator.computeAllEx(20);
-    calculator.process(1000, false);
-   
-    calculator.dumpStack();
+    auto startTime{ std::chrono::high_resolution_clock::now() };
+
+    // sequential interface
+    // calculator.calculateAll(2000);
+    // calculator.calculateAllEx(1000);
+    // 
+    // concurrent interface
+    calculator.process(1000, true);
+
+    auto endTime{ std::chrono::high_resolution_clock::now() };
+    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
+
+    // calculator.dumpStack();
     std::cout << calculator.toString() << std::endl;
+
+    std::cout << "Done [" << msecs << " msecs]." << std::endl;
 }
 
 void test_project_euler_39()

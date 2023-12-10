@@ -39,16 +39,21 @@ namespace Concurrency_ThreadsafeStack
         // c'tors
         ThreadsafeStack() {}
 
-        // prohibit copy constructor, assignment operator and move assignment
-        ThreadsafeStack(const ThreadsafeStack&) = delete;
+        // prohibit assignment operator and move assignment
         ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
         ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
 
-        // move constructor may be useful
-        ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+        // copy and move constructor may be useful
+        ThreadsafeStack(const ThreadsafeStack& other) noexcept
         {
             std::lock_guard<std::mutex> lock(other.m_mutex);
             m_data = other.m_data;
+        }
+        
+        ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+        {
+            std::lock_guard<std::mutex> lock(other.m_mutex);
+            m_data = std::move(other.m_data);
         }
 
         // public interface
@@ -56,6 +61,13 @@ namespace Concurrency_ThreadsafeStack
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
             m_data.push(new_value);
+        }
+
+        template<class... TArgs>
+        void emplace(TArgs&&... args)
+        {
+            std::lock_guard<std::mutex> lock{ m_mutex };
+            m_data.emplace(std::forward<TArgs>(args) ...);
         }
 
         void pop(T& value)
