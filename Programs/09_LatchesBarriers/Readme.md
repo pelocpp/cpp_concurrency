@@ -8,7 +8,7 @@
 
 Eine Beschreibung der Beispiele folgt weiter unten:
 
-[Latches.cpp](Latches.cpp)<br/>
+[Latches.cpp](Latches.cpp)<br />
 [Barriers.cpp](Barriers.cpp)
 
 ---

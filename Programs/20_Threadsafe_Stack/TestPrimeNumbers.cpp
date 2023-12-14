@@ -11,6 +11,7 @@
 #include "PrimeCalculator.h"
 
 #include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
 
 namespace Globals
 {
@@ -74,31 +75,32 @@ void test_thread_safe_stack_02()
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
 
-    Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
+    Logger::log(std::cout,
+        "Calcalating Prime Numbers from ", Globals::LowerLimit,
+        " up to ", Globals::UpperLimit, ':');
 
     ThreadsafeStack<size_t> primes{};
 
     PrimeCalculator<size_t> calc{ primes, Globals::LowerLimit, Globals::UpperLimit + 1 };
 
-    const auto startTime{ std::chrono::high_resolution_clock::now() };
-
-    std::thread calculator(calc);
-    calculator.join();
-
-    const auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
+    {
+        ScopedTimer timer{};
+        std::thread calculator(calc);
+        calculator.join();
+    }
 
     Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
-    Logger::log(std::cout, "Done:  ", msecs, " msecs.");
+    Logger::log(std::cout, "Done.");
 }
-
 
 void test_thread_safe_stack_03()
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
 
-    Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
+    Logger::log(std::cout,
+        "Calcalating Prime Numbers from ", Globals::LowerLimit, 
+        " up to ", Globals::UpperLimit, ':');
 
     ThreadsafeStack<size_t> primes{};
 
@@ -109,33 +111,32 @@ void test_thread_safe_stack_03()
     size_t start = Globals::LowerLimit;
     size_t end = start + range;
 
-    const auto startTime{ std::chrono::high_resolution_clock::now() };
+    {
+        ScopedTimer timer{};
 
-    // setup threads
-    for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
+        // setup threads
+        for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
 
-        PrimeCalculator<size_t> calc{ primes, start, end };
+            PrimeCalculator<size_t> calc{ primes, start, end };
+            threads.emplace_back(calc);
+
+            start = end;
+            end = start + range;
+        }
+
+        // setup last thread
+        end = Globals::UpperLimit;
+        PrimeCalculator<size_t> calc{ primes, start, end + 1 };
         threads.emplace_back(calc);
 
-        start = end;
-        end = start + range;
+        // wait for end of all threads
+        for (size_t i{}; i != Globals::NumThreads; ++i) {
+            threads[i].join();
+        }
     }
-
-    // setup last thread
-    end = Globals::UpperLimit;
-    PrimeCalculator<size_t> calc{ primes, start, end + 1 };
-    threads.emplace_back(calc);
-
-    // wait for end of all threads
-    for (size_t i{}; i != Globals::NumThreads; ++i) {
-        threads[i].join();
-    }
-
-    const auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
 
     Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
-    Logger::log(std::cout, "Done:  ", msecs, " msecs.");
+    Logger::log(std::cout, "Done.");
 }
 
 // ===========================================================================

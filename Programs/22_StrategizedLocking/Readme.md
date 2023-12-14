@@ -1,4 +1,4 @@
-# Strategisches Locking (Strategized Locking)
+# Strategisches Locking (*Strategized Locking*)
 
 [Zurück](../../Readme.md)
 
@@ -17,7 +17,7 @@ Hierbei können sich allerdings Unterschiede in der Notwendigkeit des Datenschutz
 Laufen die kritischen Routinen (Abschnitte) in einer *Single-Threaded*-Umgebung,
 ist ein Datenschutz überhaupt nicht erforderlich und es entsteht ein Performanzproblem,
 wenn laufzeitintensive Synchronisationsmechanismen zum Einsatz kommen,
-die an dieser Stelle unnötig sind.
+die hier unnötig sind.
 
 Werden die kritischen Abschnitte hingegen im Kontext mehrerer Threads ausgeführt (*Multi-Threaded*-Umgebung),
 müssen diese geschützt werden.
@@ -32,15 +32,15 @@ Das Strategie-Objekt hat Kenntnisse über den Kontext, in dem das Programm abläuf
 ### *Runtime* versus *Compile-Time*
 
 Das *Strategized Locking*&ndash;Entwurfsmuster kann sowohl  in einer *Runtime*-Ausprägung
-(Vererbung, Polymorphismus) als auch in einer *Compile-Time*-Ausprägung umgesetzt werden.
+(Vererbung, Polymorphismus) als auch in einer *Compile-Time*-Ausprägung (Templates) umgesetzt werden.
 
 ### Wann sollte dieses Muster verwendet werden?
 
 Verwenden Sie dieses Muster, wenn:
 
-  * Sie müssen einen kritischen Abschnitt schützen
-  * Sie möchten konsistent zur Verwendung eines `std::mutex-Objeks` sein
-  * Das Programm soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen laufen
+  * Sie müssen einen kritischen Abschnitt schützen.
+  * Sie möchten konsistent zur Verwendung eines `std::mutex-Objeks` sein.
+  * Das Programm soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen laufen.
   * Das Programm soll in jeder Umgebung performant ablaufen.
 
 
@@ -85,11 +85,11 @@ sondern einer Wrapper-Klasse `StrategizedLocking`:
 ```
 
 Wir erkennen, dass Aufrufe einer `lock`- und `unlock`-Methode im Konstruktor bzw. Destruktor der
-`StrategizedLocking` durchgeführt werden.
+`StrategizedLocking`-Klasse durchgeführt werden.
 
 Wer führt diese Methodenaufrufe konkret durch?
 Das entscheidet der Ersteller eines `StrategizedLocking`-Objekts, in dem er bei der Objekterzeugung (Konstruktor)
-eine Realisierung der `ILock`-Schnittstelle bereitstellen muss.
+eine Realisierung der `ILock`-Schnittstelle bereitstellt.
 
 
 ### Mögliche Realisierungen der `ILock`-Schnittstelle
@@ -196,12 +196,12 @@ an das *Strategized Locking*&ndash;Entwurfsmuster:
 #### Quellcode:
 
 [ILock.h](ILock.h).
-[StrategizedLock.h](StrategizedLock.h).
-[ThreadsafeStack.h](ThreadsafeStack.h).
-[PrimeCalculator.h](PrimeCalculator.h).
+[StrategizedLock.h](StrategizedLock.h).<br />
+[ThreadsafeStack.h](ThreadsafeStack.h).<br />
+[PrimeCalculator.h](PrimeCalculator.h).<br />
 
-[StrategizedLock.cpp](StrategizedLock.cpp).
-[PrimeNumbers.cpp](PrimeNumbers.cpp).
+[StrategizedLock.cpp](StrategizedLock.cpp).<br />
+[PrimeNumbers.cpp](PrimeNumbers.cpp).<br />
 
 ---
 

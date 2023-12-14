@@ -75,18 +75,18 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 #### Quellcode:
 
-  * Elementare Demonstration des `std::mutex` Objekts:</br>
-    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.</br>
+  * Elementare Demonstration des `std::mutex` Objekts:<br />
+    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.<br />
     [Beispiel](Simple_Mutex.cpp).
 
-  * Elementare Demonstration des `std::condition_variable` Objekts:</br>
+  * Elementare Demonstration des `std::condition_variable` Objekts:<br />
     [Beispiel](Simple_Condition_Variable_01.cpp).
     [Beispiel](Simple_Condition_Variable_02.cpp).
    
-  * Demonstration des klassischen Konsumenten/Verbraucher-Problems:</br>
-    [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).</br>
-    [Beispiel einer Klasse `ConsumerProducerTwo::ConsumerProducer`](Producer_Consumer_02.cpp).</br>
-    [Beispiel einer Klasse `ConsumerProducerThree::ConsumerProducer`](Producer_Consumer_03.cpp).</br>
+  * Demonstration des klassischen Konsumenten/Verbraucher-Problems:<br />
+    [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).<br />
+    [Beispiel einer Klasse `ConsumerProducerTwo::ConsumerProducer`](Producer_Consumer_02.cpp).<br />
+    [Beispiel einer Klasse `ConsumerProducerThree::ConsumerProducer`](Producer_Consumer_03.cpp).<br />
 
 ---
 

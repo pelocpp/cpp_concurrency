@@ -11,8 +11,10 @@
 #include <format>
 #include <chrono>
 
-#include "../20_Threadsafe_Stack/ThreadsafeStack.h"
+#include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
 
+#include "../20_Threadsafe_Stack/ThreadsafeStack.h"
 
 // WEITERARBEIT:
 
@@ -28,7 +30,7 @@
 // E) Im Repository Concurrency:
 
 // E1) Die Klasse / Funbktion callableWrapper separieren .. .. extra Datei
-// E2) Möglocherweise mit den Primzahlen wieder ein ähnliches Beispiel hinzufügen ... mit Zeitmessungen ...
+// E2) Möglicherweise mit den Primzahlen wieder ein ähnliches Beispiel hinzufügen ... mit Zeitmessungen ...
 
 
 
@@ -40,7 +42,9 @@ namespace Concurrency_Parallel_For_Ex
 
     static void callableWrapper(Callable callable, size_t start, size_t end) {
 
-        std::cout << "Thread " << std::setw(4) << std::setfill('0') << std::uppercase << std::hex << std::this_thread::get_id() << std::endl;
+       // std::cout << "Thread " << std::setw(4) << std::setfill('0') << std::uppercase << std::hex << std::this_thread::get_id() << std::endl;
+
+        Logger::log(std::cout, "Thread: ", std::this_thread::get_id());
 
         callable(start, end);
     }
@@ -50,6 +54,8 @@ namespace Concurrency_Parallel_For_Ex
         Callable callable,
         bool useThreads)
     {
+        Logger::log(std::cout, ">>> parallel_for:");
+
         // calculate number of threads to use
         size_t numThreadsHint{ std::thread::hardware_concurrency() };
         size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
@@ -65,7 +71,6 @@ namespace Concurrency_Parallel_For_Ex
             for (size_t i{}; i != numThreads; ++i) {
 
                 size_t start{ i * batchSize };
-                 // threads.push_back(std::move(std::thread{ callable, start, start + batchSize }));
 
                 threads.push_back(std::move(std::thread{ callableWrapper, callable, start, start + batchSize }));
             }
@@ -93,7 +98,7 @@ namespace Concurrency_Parallel_For_Ex
            );
         }
 
-        std::cout << "Done." << std::endl;
+        Logger::log(std::cout, "<<< parallel_for:");
     }
 }
 
@@ -218,6 +223,8 @@ namespace Project_Euler_39
     private:
         void processRange(size_t start, size_t end)
         {
+            Logger::log(std::cout, std::this_thread::get_id(), " processRange: ", start, " -> ", end);
+
             for (size_t i{ start }; i != end; ++i) {
                 calculateAllRectangles(i);
             }
@@ -229,7 +236,7 @@ namespace Project_Euler_39
 
         std::string toString()
         {
-            return std::format("Total: {}\n# identically circumferences: {} at {}",
+            return std::format("Total: {} // # Identically Circumferences: {} at {}",
                 m_total, m_maxNumber, m_maxCircumference);
         }
 
@@ -270,25 +277,27 @@ void test_project_euler_39_01()
 {
     using namespace Project_Euler_39;
 
+    Logger::log(std::cout, "Main:   ", std::this_thread::get_id());
+
     PythagoreanTripleCalculator calculator;
 
-    auto startTime{ std::chrono::high_resolution_clock::now() };
+    {
+        ScopedTimer watch{};
 
-    // sequential interface
-    // calculator.calculateAll(2000);
-    // calculator.calculateAllEx(1000);
-    // 
-    // concurrent interface
-    calculator.process(1000, true);
-
-    auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
+        // sequential interface
+        // calculator.calculateAll(2000);
+        // calculator.calculateAllEx(1000);
+        // 
+        // concurrent interface
+        calculator.process(1000, true);
+    }
 
     // calculator.dumpStack();
-    std::cout << calculator.toString() << std::endl;
+    Logger::log(std::cout, calculator.toString());
 
-    std::cout << "Done [" << msecs << " msecs]." << std::endl;
+    Logger::log(std::cout, "Done.");
 }
+
 
 void test_project_euler_39()
 {

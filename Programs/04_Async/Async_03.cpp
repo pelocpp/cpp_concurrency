@@ -91,7 +91,7 @@ namespace SomeAsyncScenarios {
 
         // retrieve result
         std::cout << "fib(40): " << f40.get() << std::endl; // output: fib(40): 102334155
-        Logger::stopWatchMilli();
+        Logger::stopWatchMilli(std::cout);
     }
 }
 

@@ -28,11 +28,8 @@ public:
     static void logInternal(std::ostream& os, Args&& ...args)
     {
         std::stringstream ss;
-        std::thread::id currentThreadId{ std::this_thread::get_id() };
-        size_t tid{ readableTID(currentThreadId) };
-        std::string prefix{ "[" + std::to_string(tid) + "]: " };
-        ss << prefix;
-
+        ss << getPrefix();
+        ss << '\t';
         (ss << ... << std::forward<Args>(args)) << std::endl;
         os << ss.str();
     }
@@ -69,19 +66,30 @@ public:
         s_begin = std::chrono::steady_clock::now();
     }
 
-    static void stopWatchMilli() {
+    static void stopWatchMilli(std::ostream& os) {
         std::chrono::steady_clock::time_point end{ std::chrono::steady_clock::now() };
         auto duration{ std::chrono::duration_cast<std::chrono::milliseconds>(end - s_begin).count() };
-        std::cout << "Elapsed time in milliseconds = " << duration << " [milliseconds]" << std::endl;
+        os << getPrefix() << '\t' << "Elapsed time: " << duration << " [milliseconds]" << std::endl;
     }
 
-    static void stopWatchMicro() {
+    static void stopWatchMicro(std::ostream& os) {
         std::chrono::steady_clock::time_point end{ std::chrono::steady_clock::now() };
         auto duration{ std::chrono::duration_cast<std::chrono::microseconds>(end - s_begin).count() };
-        std::cout << "Elapsed time in milliseconds = " << duration << " [microseconds]" << std::endl;
+        os << getPrefix() << '\t' << "Elapsed time: " << duration << " [microseconds]" << std::endl;
     }
 
 private:
+    static std::string getPrefix()
+    {
+        std::stringstream ss;
+        std::thread::id currentThreadId{ std::this_thread::get_id() };
+        size_t tid{ readableTID(currentThreadId) };
+        std::string prefix{ "[" + std::to_string(tid) + "]: " };
+        ss << prefix;
+        return ss.str();
+    }
+
+
     static std::chrono::steady_clock::time_point s_begin;
     static bool s_loggingEnabled;
     static std::mutex s_mutexIds;

@@ -8,10 +8,11 @@
 #include <mutex>
 
 #include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
 
 namespace IncrementDecrement {
 
-    constexpr long NumIterations{ 100000 };
+    constexpr long NumIterations{ 10000'000 };
 
     class IncDec {
 
@@ -158,10 +159,11 @@ void test_01()
 {
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
-    Logger::startWatch();
-    IncDec inc_dec;
-    inc_dec.run();
-    Logger::stopWatchMilli();
+    {
+        ScopedTimer timer{};
+        IncDec inc_dec;
+        inc_dec.run();
+    }
     Logger::log(std::cout, "Done.");
 }
 
@@ -169,10 +171,11 @@ void test_02()
 {
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
-    Logger::startWatch();
-    IncDec inc_dec;
-    inc_dec.runAtomic();
-    Logger::stopWatchMilli();
+    {
+        ScopedTimer timer{};
+        IncDec inc_dec;
+        inc_dec.runAtomic();
+    }
     Logger::log(std::cout, "Done.");
 }
 
@@ -180,10 +183,11 @@ void test_03()
 {
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
-    Logger::startWatch();
-    IncDec inc_dec;
-    inc_dec.runMutex();
-    Logger::stopWatchMilli();
+    {
+        ScopedTimer timer{};
+        IncDec inc_dec;
+        inc_dec.runMutex();
+    }
     Logger::log(std::cout, "Done.");
 }
 
@@ -191,10 +195,11 @@ void test_04()
 {
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
-    Logger::startWatch();
-    IncDec inc_dec;
-    inc_dec.runMutexRAII();
-    Logger::stopWatchMilli();
+    {
+        ScopedTimer timer{};
+        IncDec inc_dec;
+        inc_dec.runMutexRAII();
+    }
     Logger::log(std::cout, "Done.");
 }
 

@@ -1,6 +1,6 @@
 # C++ Concurrency
 
-## Die Werkzeuge
+## Werkzeuge
 
 ### [Klasse `std::thread`](Programs/01_SimpleThreading/Readme.md)
 

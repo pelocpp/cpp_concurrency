@@ -182,7 +182,7 @@ int test_non_concurrent_stack()
     Logger::log(std::cout, "Begin");
     Logger::startWatch();
     test();
-    Logger::stopWatchMilli();
+    Logger::stopWatchMilli(std::cout);
     Logger::log(std::cout, "Done.");
     return 1;
 }

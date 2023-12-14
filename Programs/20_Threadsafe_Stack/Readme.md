@@ -7,11 +7,10 @@
 
 ### Allgemeines
 
-Die STL stellt mit der Klasse `std::queue<T>` einen leistungsstarken LIFO-Conainer
-(*Last-in, First-out Data Structure*) bereit.
+Die STL stellt mit der Klasse `std::stack<T>` einen leistungsstarken LIFO-Container
+(*Last-in, First-out* Datenstruktur) bereit.
 
 Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
-
 
 
 ### Race Conditions
@@ -21,17 +20,17 @@ versteht man im Umfeld der *Concurrency* die Eigenschaft,
 dass Ergebnisse einer Programmausführung davon abhängen,
 in welcher Reihenfolge die Ausführung von Operationen in zwei oder mehreren Threads stattfindet.
 
-Nicht immer muss diese Beobachtnung fehlerhaft sein.
+Nicht immer muss diese Beobachtung fehlerhaft sein.
 Wenn beispielsweise zwei Threads Elemente in einem Stapel zur
 weiteren Verarbeitung ablegen,
 spielt es keine Rolle, welches Element zuerst hinzugefügt wird.
 
-Problematisch sind *Race Condition* dann, wenn sie *Invarianten* brechen.
+Problematischer sind *Race Conditions* dann, wenn sie *Invarianten* brechen.
 Eine Invariante am Beispiel eines Stapels betrachtet könnte sein,
 dass dieser beispielsweise zu einem bestimmten Zeitpunkt &ldquo;nicht leer&rdquo; ist.
 Dies könnte das Resultat eines Methodenaufrufs wie etwa `empty` sein.
 Wird aber zum gleichen Zeitpunkt auf Grund der konkurrierenden Ausführung einer `pop`-Methode
-in einem anderen Thread der Stapel geleert, kommt es in dem Thread,
+in einem anderen Thread der Stapel tatsächlich geleert, kommt es in dem Thread,
 der sich auf den Aufruf von `empty` verlassen möchte,
 zu einem Bruch der Invariante. 
 
@@ -66,16 +65,21 @@ Zwei mögliche Signaturen sind
 
 ```cpp
 void pop(T& value);
+```
+
+oder 
+
+```cpp
 T tryPop();
 ```
 
+
 Beide Methoden müssen allerdings eine Ausnahme werfen, wenn der Stapel leer ist.
 
-Möchte man das Exception-Handling umgehen, ist das Datentyp `std::optional<T>`
-eine Option:
+Möchte man das Exception-Handling umgehen, wäre der Datentyp `std::optional<T>` eine Option:
 
 ```cpp
-std::optional<T> tryPopOptional()
+std::optional<T> tryPopOptional();
 ```
 
 ### Thread Sicherheit
@@ -98,73 +102,85 @@ um den Zugriff auf das &ldquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schü
 09:     // c'tors
 10:     ThreadsafeStack() {}
 11: 
-12:     // prohibit copy constructor, assignment operator and move assignment
-13:     ThreadsafeStack(const ThreadsafeStack&) = delete;
-14:     ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
-15:     ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
-16: 
-17:     // move constructor may be useful
-18:     ThreadsafeStack(const ThreadsafeStack&& other) noexcept
-19:     {
-20:         std::lock_guard<std::mutex> lock(other.m_mutex);
-21:         m_data = other.m_data;
-22:     }
-23: 
-24:     // public interface
-25:     void push(T new_value)
-26:     {
-27:         std::lock_guard<std::mutex> lock{ m_mutex };
-28:         m_data.push(new_value);
-29:     }
-30: 
-31:     void pop(T& value)
-32:     {
-33:         std::lock_guard<std::mutex> lock{ m_mutex };
-34:         if (m_data.empty()) throw empty_stack{};
-35:         value = m_data.top();
-36:         m_data.pop();
-37:     }
-38: 
-39:     T tryPop()
-40:     {
-41:         std::lock_guard<std::mutex> lock{ m_mutex };
-42:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-43:         T value = m_data.top();
-44:         m_data.pop();
-45:         return value;
-46:     }
-47: 
-48:     std::optional<T> tryPopOptional()
-49:     {
-50:         std::lock_guard<std::mutex> lock{ m_mutex };
-51:         if (m_data.empty()) {
-52:             return std::nullopt;
-53:         }
-54: 
-55:         std::optional<T> result{ m_data.top() };
+12:     // prohibit assignment operator and move assignment
+13:     ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
+14:     ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
+15: 
+16:     // copy and move constructor may be useful
+17:     ThreadsafeStack(const ThreadsafeStack& other) noexcept
+18:     {
+19:         std::lock_guard<std::mutex> lock(other.m_mutex);
+20:         m_data = other.m_data;
+21:     }
+22:         
+23:     ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+24:     {
+25:         std::lock_guard<std::mutex> lock(other.m_mutex);
+26:         m_data = std::move(other.m_data);
+27:     }
+28: 
+29:     // public interface
+30:     void push(T new_value)
+31:     {
+32:         std::lock_guard<std::mutex> lock{ m_mutex };
+33:         m_data.push(new_value);
+34:     }
+35: 
+36:     template<class... TArgs>
+37:     void emplace(TArgs&&... args)
+38:     {
+39:         std::lock_guard<std::mutex> lock{ m_mutex };
+40:         m_data.emplace(std::forward<TArgs>(args) ...);
+41:     }
+42: 
+43:     void pop(T& value)
+44:     {
+45:         std::lock_guard<std::mutex> lock{ m_mutex };
+46:         if (m_data.empty()) throw empty_stack{};
+47:         value = m_data.top();
+48:         m_data.pop();
+49:     }
+50: 
+51:     T tryPop()
+52:     {
+53:         std::lock_guard<std::mutex> lock{ m_mutex };
+54:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+55:         T value = m_data.top();
 56:         m_data.pop();
-57:         return result;
+57:         return value;
 58:     }
 59: 
-60:     size_t size() const
+60:     std::optional<T> tryPopOptional()
 61:     {
 62:         std::lock_guard<std::mutex> lock{ m_mutex };
-63:         return m_data.size();
-64:     }
-65: 
-66:     bool empty() const
-67:     {
-68:         std::lock_guard<std::mutex> lock{ m_mutex };
-69:         return m_data.empty();
+63:         if (m_data.empty()) {
+64:             return std::nullopt;
+65:         }
+66: 
+67:         std::optional<T> result{ m_data.top() };
+68:         m_data.pop();
+69:         return result;
 70:     }
-71: };
+71: 
+72:     size_t size() const
+73:     {
+74:         std::lock_guard<std::mutex> lock{ m_mutex };
+75:         return m_data.size();
+76:     }
+77: 
+78:     bool empty() const
+79:     {
+80:         std::lock_guard<std::mutex> lock{ m_mutex };
+81:         return m_data.empty();
+82:     }
+83: };
 ```
 
 Wir erkennen an der Realisierung,
 dass alle Zugriffe auf das zugrunde liegende `std::stack<T>`-Objekt
-mithilfe des `std:lock_guard`-Musters (RAII-Stil Mechanismus) zu schützen,
-um sicherzustellen, dass die Sperre vom haltenden Thread
-in allen möglichen Exit-Szenarien (einschließlich Ausnahme) aufgehoben wird.
+mithilfe des `std:lock_guard`-Musters (RAII-Stil Mechanismus) geschützt werden,
+um auf diese Weise sicherzustellen, dass vorhandene Sperren vom haltenden Thread
+in allen möglichen Exit-Szenarien (einschließlich Ausnahmen) wieder aufgehoben werden.
 
 
 ### Schlüsselwort `mutable`
@@ -217,10 +233,9 @@ und den Aufruf `acquire` in Zeile 28 entblockt.
 #### Quellcode:
 
 
-[ThreadsafeStack.h](ThreadsafeStack.h).
-[PrimeCalculator.h](TPrimeCalculator.h).
-
-[TestPrimeNumbers.cpp](TestPrimeNumbers.cpp).
+[ThreadsafeStack.h](ThreadsafeStack.h).<br />
+[PrimeCalculator.h](TPrimeCalculator.h).<br />
+[TestPrimeNumbers.cpp](TestPrimeNumbers.cpp).<br />
 
 ---
 
