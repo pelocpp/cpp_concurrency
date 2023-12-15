@@ -9,13 +9,18 @@
 
 #include "ParallelFor.h"
 
-namespace Concurrency_Parallel_For_Ex
+namespace Concurrency_ParallelFor
 {
+    constexpr bool Verbose{ false };
+
     using Callable = std::function<void(size_t start, size_t end)>;
 
     void callableWrapper(Callable callable, size_t start, size_t end) {
 
-        Logger::log(std::cout, "Thread: ", std::this_thread::get_id());
+        if (Verbose) {
+            Logger::log(std::cout, "TID: ", std::this_thread::get_id());
+        }
+
         callable(start, end);
     }
 
@@ -34,6 +39,7 @@ namespace Concurrency_Parallel_For_Ex
 
         // allocate vector of uninitialized thread objects
         std::vector<std::thread> threads;
+        threads.reserve(numThreads - 1);
 
         if (useThreads) {
 
@@ -41,7 +47,12 @@ namespace Concurrency_Parallel_For_Ex
             for (size_t i{}; i != numThreads - 1; ++i) {
 
                 size_t start{ from + i * batchSize };
-                threads.push_back(std::move(std::thread{ callableWrapper, callable, start, start + batchSize }));
+                
+                threads.push_back(
+                    std::move(std::thread { 
+                        callableWrapper, callable, start, start + batchSize 
+                    })
+                );
             }
         }
         else {
@@ -50,7 +61,9 @@ namespace Concurrency_Parallel_For_Ex
             for (size_t i{}; i != numThreads - 1; ++i) {
 
                 size_t start{ from + i * batchSize };
-                callable(start, start + batchSize);
+                
+                // callable(start, start + batchSize);
+                callableWrapper(callable, start, start + batchSize);
             }
         }
 

@@ -6,7 +6,7 @@
 
 #include <functional>
 
-namespace Concurrency_Parallel_For
+namespace Concurrency_ParallelFor
 {
     using Callable = std::function<void(size_t start, size_t end)>;
 

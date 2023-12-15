@@ -5,6 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <functional>
 #include <chrono>
 
 #include "ThreadsafeStack.h"
@@ -17,33 +18,25 @@ namespace Globals
 {
     // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
 
-    constexpr size_t NumThreads = 8;
+    constexpr size_t NumThreads = 16;
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100;
+    // constexpr size_t UpperLimit { 100 };
+    // Found:  25 prime numbers
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 10'000'000;
-    //// Found:  664579 prime numbers
+    constexpr size_t UpperLimit{ 1000 };
+    // Found:  168 prime numbers
 
-    //constexpr size_t LowerLimit = 1'000'000;
-    //constexpr size_t UpperLimit = 10'000'000;
+    // constexpr size_t UpperLimit { 100'000 };
+    // Found:  9.592 prime numbers
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100'000;
-    //// Found: 9.592 prime numbers
+    // constexpr size_t UpperLimit { 1'000'000 };
+    // Found:  78.498 prime numbers
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 1'000'000;
-    //// Found: 78.498 prime numbers
-
-    constexpr size_t LowerLimit = 1;
-    constexpr size_t UpperLimit = 10'000'000;
+    // constexpr size_t UpperLimit { 10'000'000 };
     // Found:  664.579 prime numbers
 
-    //constexpr size_t LowerLimit = 1;
-    //constexpr size_t UpperLimit = 100'000'000;
-    //// Found:  5.761.455 prime numbers
+    // constexpr size_t UpperLimit { 100'000'000 };
+    // Found:  5.761.455 prime numbers
 }
 
 void test_thread_safe_stack_01()
@@ -76,15 +69,16 @@ void test_thread_safe_stack_02()
     using namespace Concurrency_PrimeCalculator;
 
     Logger::log(std::cout,
-        "Calcalating Prime Numbers from ", Globals::LowerLimit,
+        "Calcalating Prime Numbers from ", 2,
         " up to ", Globals::UpperLimit, ':');
 
     ThreadsafeStack<size_t> primes{};
 
-    PrimeCalculator<size_t> calc{ primes, Globals::LowerLimit, Globals::UpperLimit + 1 };
+    PrimeCalculator<size_t> calc{ primes, 2, Globals::UpperLimit };
 
     {
         ScopedTimer timer{};
+
         std::thread calculator(calc);
         calculator.join();
     }
@@ -99,7 +93,7 @@ void test_thread_safe_stack_03()
     using namespace Concurrency_PrimeCalculator;
 
     Logger::log(std::cout,
-        "Calcalating Prime Numbers from ", Globals::LowerLimit, 
+        "Calcalating Prime Numbers from ", 2, 
         " up to ", Globals::UpperLimit, ':');
 
     ThreadsafeStack<size_t> primes{};
@@ -107,8 +101,8 @@ void test_thread_safe_stack_03()
     std::vector<std::thread> threads;
     threads.reserve(Globals::NumThreads);
 
-    size_t range = (Globals::UpperLimit - Globals::LowerLimit) / Globals::NumThreads;
-    size_t start = Globals::LowerLimit;
+    size_t range = (Globals::UpperLimit - 2) / Globals::NumThreads;
+    size_t start = 2;
     size_t end = start + range;
 
     {
@@ -125,9 +119,66 @@ void test_thread_safe_stack_03()
         }
 
         // setup last thread
-        end = Globals::UpperLimit;
-        PrimeCalculator<size_t> calc{ primes, start, end + 1 };
+        PrimeCalculator<size_t> calc{ primes, start, Globals::UpperLimit };
         threads.emplace_back(calc);
+
+        // wait for end of all threads
+        for (size_t i{}; i != Globals::NumThreads; ++i) {
+            threads[i].join();
+        }
+    }
+
+    Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
+    Logger::log(std::cout, "Done.");
+}
+
+void test_thread_safe_stack_04()
+{
+    constexpr bool Verbose{ false };
+
+    using namespace Concurrency_ThreadsafeStack;
+    using namespace Concurrency_PrimeCalculator;
+
+    Logger::log(std::cout,
+        "Calcalating Prime Numbers from ", 2,
+        " up to ", Globals::UpperLimit, ':');
+
+    using Callable = std::function<void()>;
+
+    auto callableWrapper = [] (Callable callable) {
+
+        if (Verbose) {
+            Logger::log(std::cout, "TID: ", std::this_thread::get_id());
+        }
+
+        callable();
+    };
+
+    ThreadsafeStack<size_t> primes{};
+
+    std::vector<std::thread> threads;
+    threads.reserve(Globals::NumThreads);
+
+    size_t range = (Globals::UpperLimit - 2) / Globals::NumThreads;
+    size_t start = 2;
+    size_t end = start + range;
+
+    {
+        ScopedTimer timer{};
+
+        // setup threads
+        for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
+
+            PrimeCalculator<size_t> calc{ primes, start, end };
+            threads.emplace_back(callableWrapper, calc);
+
+            start = end;
+            end = start + range;
+        }
+
+        // setup last thread
+        PrimeCalculator<size_t> calc{ primes, start, Globals::UpperLimit };
+        threads.emplace_back(callableWrapper, calc);
 
         // wait for end of all threads
         for (size_t i{}; i != Globals::NumThreads; ++i) {

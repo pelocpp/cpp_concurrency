@@ -4,7 +4,6 @@
 
 void test_parallel_for();
 
-
 int main()
 {
     test_parallel_for();
