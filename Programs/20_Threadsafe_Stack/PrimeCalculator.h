@@ -38,7 +38,7 @@ namespace Concurrency_PrimeCalculator
             }
         }
 
-    private:
+    public:
         static bool isPrime(size_t number)
         {
             if (number <= 2) {

@@ -68,7 +68,7 @@ namespace Concurrency_Parallel_For_Ex
         if (useThreads) {
 
             // prepare multi-threaded execution
-            for (size_t i{}; i != numThreads; ++i) {
+            for (size_t i{}; i != numThreads - 1; ++i) {
 
                 size_t start{ i * batchSize };
 
@@ -78,7 +78,7 @@ namespace Concurrency_Parallel_For_Ex
         else {
 
             // prepare single-threaded execution (for easy debugging)
-            for (size_t i{}; i < numThreads; ++i) {
+            for (size_t i{}; i != numThreads - 1; ++i) {
 
                 size_t start{ i * batchSize };
                 callable(start, start + batchSize);
@@ -86,7 +86,7 @@ namespace Concurrency_Parallel_For_Ex
         }
 
         // take care of last element - calling 'callable' synchronously 
-        size_t start{ numThreads * batchSize };
+        size_t start{ from + (numThreads - 1) * batchSize };
         callable(start, start + batchRemainder);
 
         // wait for the other thread to finish their task

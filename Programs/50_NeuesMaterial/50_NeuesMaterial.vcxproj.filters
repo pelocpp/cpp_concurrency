@@ -51,9 +51,6 @@
     <ClCompile Include="Thread_Safe_Queue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Thread_Safe_Stack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ThreadLocalStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

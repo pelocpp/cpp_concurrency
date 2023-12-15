@@ -1,0 +1,74 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <functional>
+#include <thread>
+#include <vector>
+
+#include "../Logger/Logger.h"
+
+#include "ParallelFor.h"
+
+namespace Concurrency_Parallel_For_Ex
+{
+    using Callable = std::function<void(size_t start, size_t end)>;
+
+    void callableWrapper(Callable callable, size_t start, size_t end) {
+
+        Logger::log(std::cout, "Thread: ", std::this_thread::get_id());
+        callable(start, end);
+    }
+
+    void parallel_for(
+        size_t from,
+        size_t to,
+        Callable callable,
+        bool useThreads)
+    {
+        // calculate number of threads to use
+        size_t numThreadsHint{ std::thread::hardware_concurrency() };
+        size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
+        size_t numElements = to - from + 1;
+        size_t batchSize{ numElements / numThreads };
+        size_t batchRemainder{ numElements % numThreads };
+
+        // allocate vector of uninitialized thread objects
+        std::vector<std::thread> threads;
+
+        if (useThreads) {
+
+            // prepare multi-threaded execution
+            for (size_t i{}; i != numThreads - 1; ++i) {
+
+                size_t start{ from + i * batchSize };
+                threads.push_back(std::move(std::thread{ callableWrapper, callable, start, start + batchSize }));
+            }
+        }
+        else {
+
+            // prepare single-threaded execution (for easy debugging)
+            for (size_t i{}; i != numThreads - 1; ++i) {
+
+                size_t start{ from + i * batchSize };
+                callable(start, start + batchSize);
+            }
+        }
+
+        // take care of last element - calling 'callable' synchronously 
+        size_t start{ from + (numThreads - 1) * batchSize };
+        callable(start, to);
+
+        // wait for the other thread to finish their task
+        if (useThreads) {
+            std::for_each(
+                threads.begin(),
+                threads.end(),
+                std::mem_fn(&std::thread::join)
+            );
+        }
+    }
+}
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================

@@ -49,6 +49,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "23_ReaderWriterLock", "Prog
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "21_LockingMechanisms", "Programs\21_LockingMechanisms\21_LockingMechanisms.vcxproj", "{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "24_ParallelFor", "Programs\24_ParallelFor\24_ParallelFor.vcxproj", "{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -193,6 +195,14 @@ Global
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x64.Build.0 = Release|x64
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x86.ActiveCfg = Release|Win32
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x86.Build.0 = Release|Win32
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Debug|x64.ActiveCfg = Debug|x64
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Debug|x64.Build.0 = Debug|x64
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Debug|x86.ActiveCfg = Debug|Win32
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Debug|x86.Build.0 = Debug|Win32
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Release|x64.ActiveCfg = Release|x64
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Release|x64.Build.0 = Release|x64
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Release|x86.ActiveCfg = Release|Win32
+		{81BA4FDE-B6CF-429E-BDBB-FB05080A521B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
