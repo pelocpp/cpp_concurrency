@@ -11,13 +11,14 @@ extern void test_event_loop();
 extern void test_thread_safe_blocking_queue();
 extern void test_thread_local_storage();
 
-void test_project_euler_39();
+
+// void test_project_euler_39();
 
 extern void test_parallel_for();
 
 int main()
 {
-    test_project_euler_39();
+    test_thread_local_storage();
 
     return 0;
 }

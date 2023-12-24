@@ -42,6 +42,8 @@
 
 ### [Threadsicherer Stapel (Threadsafe Stack)](Programs/20_Threadsafe_Stack/Readme.md)
 
+### [Realisierung einer `parallel_for` Wiederholungsschleife](Programs/24_ParallelFor/Readme.md)
+
 ---
 
 
