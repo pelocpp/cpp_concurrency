@@ -13,8 +13,6 @@ namespace Concurrency_ParallelFor
 {
     constexpr bool Verbose{ false };
 
-    using Callable = std::function<void(size_t start, size_t end)>;
-
     void callableWrapper(Callable callable, size_t start, size_t end) {
 
         if (Verbose) {
