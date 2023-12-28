@@ -24,13 +24,13 @@ namespace Concurrency_PrimeCalculator
         PrimeCalculator(ThreadsafeStack<T>& stack, size_t begin, size_t end)
             : m_stack{ stack }, m_begin{ begin }, m_end{ end }
         {
-            Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
+            // Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
         }
 
         void operator() ()
         {
             std::thread::id tid{ std::this_thread::get_id() };
-            // Logger::log(std::cout, "TID: ", tid);
+            Logger::log(std::cout, "TID: ", tid);
 
             for (size_t i{ m_begin }; i != m_end; ++i) {
 

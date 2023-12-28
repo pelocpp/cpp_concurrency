@@ -207,31 +207,109 @@ error: binding reference of type 'std::lock_guard<std::mutex>::mutex_type&' {aka
 
 #### Ein erstes Beispiel
 
-To be Done
+Im Beispiel zu diesem Abschnitt finden Sie eine Klasse `PrimeCalculator` vor.
+Eine Instanz dieser Klasse berechnet Primzahlen in einem bestimmten Zahlenbereich,
+der bei der Erzeugung eines `PrimeCalculator`-Objekts anzugeben ist.
 
-Semaphore können in Sender-Empfänger-Abläufen verwendet werden.
+Mehrere Instanzen der `PrimeCalculator`-Klasse berechnen Primzahlen in unterschiedlichen Zahlenbereichen,
+und können dies auch quasi-parallel im Kontext mehrerer Threads tun. Einzig und allein die berechneten Primzahlen
+sind in einem für alle `PrimeCalculator`-Objekte gleichen Ergebniscontainer abzulegen.
 
-Wird zum Beispiel eine Semaphore auf 0 initialisiert, blockiert der Empfänger-Aufruf `acquire`,
-bis der Sender `release` ausführt.
-Damit wartet der Empfänger auf die Benachrichtigung des Senders:
+An dieser Stelle setzen wir die `ThreadsafeStack`-Klasse ein.
 
-```cpp
-```
+Weitere Details entnehmen Sie bitte dem Sourcecode.
+
+Das Protokoll zur Berechnung aller Primzahlen im Bereich von 1 bis  10.000.000 sieht so aus:
 
 *Ausgabe*:
 
 
 ```
+[1]:    Calcalating Prime Numbers from 2 up to 10000000:
+[2]:    TID: 15416
+[3]:    TID: 15468
+[4]:    TID: 5192
+[5]:    TID: 2008
+[6]:    TID: 15456
+[7]:    TID: 5964
+[8]:    TID: 13392
+[9]:    TID: 3172
+[10]:   TID: 9824
+[11]:   TID: 932
+[12]:   TID: 13136
+[13]:   TID: 3392
+[14]:   TID: 16372
+[15]:   TID: 13664
+[16]:   TID: 4040
+[17]:   TID: 3608
+[1]:    Elapsed time: 1162 [milliseconds]
+[1]:    Found: 664579 prime numbers.
+[1]:    Done.
 ```
 
-Die einmalige Synchronisation von Threads lässt sich einfach mit Semaphoren umsetzen:
+Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
-Das `std::binary_semaphore`-Objekt `m_semaphore` (Zeile 4) kann die Werte 0 oder 1 besitzen.
 
-Im konkreten Anwendungsfall wird es auf `0` (Zeile 7) initialisiert.
+```cpp
+01: void test_primes ()
+02: {
+03:     constexpr bool Verbose{ false };
+04: 
+05:     using namespace Concurrency_ThreadsafeStack;
+06:     using namespace Concurrency_PrimeCalculator;
+07: 
+08:     Logger::log(std::cout,
+09:         "Calcalating Prime Numbers from ", 2,
+10:         " up to ", Globals::UpperLimit, ':');
+11: 
+12:     using Callable = std::function<void()>;
+13: 
+14:     auto callableWrapper = [] (Callable callable) {
+15: 
+16:         if (Verbose) {
+17:             Logger::log(std::cout, "TID: ", std::this_thread::get_id());
+18:         }
+19: 
+20:         callable();
+21:     };
+22: 
+23:     ThreadsafeStack<size_t> primes{};
+24: 
+25:     std::vector<std::thread> threads;
+26:     threads.reserve(Globals::NumThreads);
+27: 
+28:     size_t range = (Globals::UpperLimit - 2) / Globals::NumThreads;
+29:     size_t start = 2;
+30:     size_t end = start + range;
+31: 
+32:     {
+33:         ScopedTimer timer{};
+34: 
+35:         // setup threads
+36:         for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
+37: 
+38:             PrimeCalculator<size_t> calc{ primes, start, end };
+39:             threads.emplace_back(callableWrapper, calc);
+40: 
+41:             start = end;
+42:             end = start + range;
+43:         }
+44: 
+45:         // setup last thread
+46:         PrimeCalculator<size_t> calc{ primes, start, Globals::UpperLimit };
+47:         threads.emplace_back(callableWrapper, calc);
+48: 
+49:         // wait for end of all threads
+50:         for (size_t i{}; i != Globals::NumThreads; ++i) {
+51:             threads[i].join();
+52:         }
+53:     }
+54: 
+55:     Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
+56:     Logger::log(std::cout, "Done.");
+57: }
+```
 
-Das heißt, dass der Aufruf `release` den Wert auf 1 (Zeile 19) setzt
-und den Aufruf `acquire` in Zeile 28 entblockt.
 
 ---
 
