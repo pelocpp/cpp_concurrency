@@ -6,8 +6,8 @@
 
 # Verwendete Hilfsmittel:
 
-  * Klassen `std::thread`, `std::function`, `std::mutex` und `std::lock_guard`
-  * TBD
+  * `std::mutex` und `std::lock_guard`
+  * `std::thread`
 
 ---
 
@@ -60,10 +60,10 @@ besitzt folgende öffentliche Schnittstelle:
 11: };
 ```
 
-Das Hinzufügen eines Elements zum Stapel kann als trivial betrachtet werden,
+Das Hinzufügen eines Elements zum Stapel (Methode `push`) kann als trivial betrachtet werden,
 auch vor dem Hintergrund der *Concurrency*.
 
-Problematischer sieht es mit der Pop-Operation aus:
+Problematischer sieht es mit der `pop`-Operation aus:
 Hier ist es &ndash; auf Grund von *Race Conditions* &ndash; nicht ganz einfach,
 entsprechende Methodensignaturen zu definieren:
 
@@ -197,7 +197,6 @@ wiederum mit `const` markieren zu können.
 
 Interessanterweise lässt sich die gezeigte Realisierung auch ohne Verwendung von `mutable` übersetzen &ndash;
 bei Gebrauch des *Visual C++* Compilers.
-
 Der Gcc-Compiler reagiert an dieser Stelle empfindlicher:
 
 ```
