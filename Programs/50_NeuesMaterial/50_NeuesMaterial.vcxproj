@@ -130,10 +130,8 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="EventLoop.cpp" />
-    <ClCompile Include="Parallel_For.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
-    <ClCompile Include="Project_Euler_39.cpp" />
     <ClCompile Include="ThreadLocalStorage.cpp" />
     <ClCompile Include="Thread_Pool_01.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />

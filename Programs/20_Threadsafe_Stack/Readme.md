@@ -4,6 +4,12 @@
 
 ---
 
+# Verwendete Hilfsmittel:
+
+  * Klassen `std::thread`, `std::function`, `std::mutex` und `std::lock_guard`
+  * TBD
+
+---
 
 ### Allgemeines
 
@@ -27,7 +33,7 @@ spielt es keine Rolle, welches Element zuerst hinzugefügt wird.
 
 Problematischer sind *Race Conditions* dann, wenn sie *Invarianten* brechen.
 Eine Invariante am Beispiel eines Stapels betrachtet könnte sein,
-dass dieser beispielsweise zu einem bestimmten Zeitpunkt &ldquo;nicht leer&rdquo; ist.
+dass dieser beispielsweise zu einem bestimmten Zeitpunkt &bdquo;nicht leer&rdquo; ist.
 Dies könnte das Resultat eines Methodenaufrufs wie etwa `empty` sein.
 Wird aber zum gleichen Zeitpunkt auf Grund der konkurrierenden Ausführung einer `pop`-Methode
 in einem anderen Thread der Stapel tatsächlich geleert, kommt es in dem Thread,
@@ -87,7 +93,7 @@ std::optional<T> tryPopOptional();
 Betrachten wir die Realisierung der Klasse `ThreadsafeStack<T>`,
 so können wir erkennen,
 dass nahezu alle Methoden ein `std::mutex`-Objekt verwenden,
-um den Zugriff auf das &ldquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schützen:
+um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schützen:
 
 
 ```cpp

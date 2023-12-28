@@ -48,7 +48,7 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
     Wie Szenario 1, es wurde von der Klasse `std::thread` zur Klasse `std::jthread` gewechselt.
   * *Szenario* 3:
      Nach 5 Sekunden erfolgt ein Aufruf von `request_stop()`, dieser ändert aber nichts am Ablauf des
-     Programms: Man kann nicht von &ldquo;außen&rdquo; einen Stopp beantragen, der Thread selbst hat das letzte Wort.
+     Programms: Man kann nicht von &bdquo;außen&rdquo; einen Stopp beantragen, der Thread selbst hat das letzte Wort.
   * *Szenario* 4:
    Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
    Dieses besitzt eine Methode `stop_requested` &ndash; im Zusammenspiel mit `request_stop()` kann nun

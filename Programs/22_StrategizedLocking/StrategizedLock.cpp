@@ -17,6 +17,8 @@ namespace Concurrency_StrategizedLock
         m_lock.unlock();
     }
 
+    // -----------------------------------------
+
     // class NullObjectMutex
     void NullObjectMutex::lock() {}
     void NullObjectMutex::unlock() {}
@@ -30,6 +32,8 @@ namespace Concurrency_StrategizedLock
         m_nullMutex.unlock();
     }
 
+    // -----------------------------------------
+
     // class ExclusiveLock
     void ExclusiveLock::lock() const {
         m_mutex.lock();
@@ -38,6 +42,8 @@ namespace Concurrency_StrategizedLock
     void ExclusiveLock::unlock() const {
         m_mutex.unlock();
     }
+
+    // -----------------------------------------
 
     // class RecursiveLock
     void RecursiveLock::lock() const {

@@ -25,9 +25,9 @@ Win32-Betriebssystemfunktionen `WaitForSingleObject` und `WaitForMultipleObjects
 
 ## Einführung
 
-Ein *Latch* ist eine Art &ldquo;Countdown&rdquo;-Zähler,
+Ein *Latch* ist eine Art &bdquo;Countdown&rdquo;-Zähler,
 der mit einem Startwert initialisiert wird und beim Eintreten bestimmter Ereignisse heruntergezählt wird.
-Erreicht der Zähler den Wert 0, meldet er auf eine bestimmte Art &ldquo;fertig&rdquo;.
+Erreicht der Zähler den Wert 0, meldet er auf eine bestimmte Art &bdquo;fertig&rdquo;.
 
 So kann man beispielsweise 5 Threads beauftragen, etwas zu tun, und den Zähler
 mit 5 vorbelegen. Wenn dann jeder Thread sein Ende dem Latch
@@ -65,7 +65,7 @@ Einen groben Überblick auf die wesentlichen Methoden der Klasse `std::latch` gib
 Knapp formuliert kann man sagen, dass die Klasse `std::latch`
 ein Abwärtszähler vom Typ `ptrdiff_t` ist, mit dem Threads synchronisiert werden können.
 Der Wert des Zählers wird bei der Erstellung initialisiert.
-Threads können an der Verriegelung (engl. &ldquo;*latch*&rdquo;)  blockieren,
+Threads können an der Verriegelung (engl. &bdquo;*latch*&rdquo;)  blockieren,
 bis der Zähler auf Null dekrementiert wird.
 Es gibt keine Möglichkeit, den Zähler zwischendurch zu vergrößern oder zurückzusetzen.
 

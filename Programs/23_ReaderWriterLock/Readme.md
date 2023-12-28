@@ -17,26 +17,25 @@ einem besseren Durchsatz im Programmablauf kommt.
 
 ### Beteiligte Klassen und Objekte
 
-Um das *Reader-Writer Lock*&ndash;Entwurfsmuster einzusetzen,
-sind folgende Klassen und Objekte beteiligt:
+Um das *Reader-Writer Lock*&ndash;Entwurfsmuster umzusetzen,
+werden folgende Klassen und Objekte benötigt:
 
-  * Leser und Schreiber: Instanz von `std::shared_mutex`, z.B.
+  * Leser und Schreiber: Instanz von `std::shared_mutex`, z.B.<br />
     `std::shared_mutex m_mutex;`
     
-  * Schreiber: Instanz von `std::unique_lock`, z.B.
+  * Schreiber: Instanz von `std::unique_lock`, z.B.<br />
     `std::unique_lock<std::shared_mutex> lock{ m_mutex };`
 
-  * Leser: Instanz von `std::shared_lock`, z.B.
+  * Leser: Instanz von `std::shared_lock`, z.B.<br />
     `std::shared_lock<std::shared_mutex> lock{ m_mutex };`
 
 
 ### Beispiel
 
 Wir betrachten ein Beispiel, dass ein Feld mit Daten befüllt.
-Der Befüller, also der Schreiber benötigt exklusiven Zugriff auf das Feld.
+Der Befüller, also der Schreiber, benötigt exklusiven Zugriff auf das Feld.
 Daneben gibt es zwei Leser, die gleichzeitig lesend auf den kritischen Bereich
-(Feld) zugreifen dürfen.
-
+(Feld) zugreifen.
 
 Der kritische Bereich wird durch eine Klasse `Snapshots` gekapselt:
 
@@ -226,7 +225,7 @@ korrekt ausgeführt wird:
 
 ## Literaturhinweise
 
-Die Anregungen zur Klasse stammen im Wesentlichen aus dem Aufsatz
+Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen  aus dem Aufsatz
 
 [Daily bit(e) of C++ | std::shared_mutex](https://medium.com/@simontoth/daily-bit-e-of-c-std-shared-mutex-ebe7477a7589) von Šimon Tóth.
 

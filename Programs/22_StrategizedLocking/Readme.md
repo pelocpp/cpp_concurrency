@@ -4,6 +4,14 @@
 
 ---
 
+# Verwendete Hilfsmittel:
+
+  * Klassen `std::mutex` und `std::recursive_mutex`
+  * Klasse `std::thread`
+  * Klasse `std::shared_lock`
+
+---
+
 ### Allgemeines
 
 Das *Strategized Locking*&ndash;Entwurfsmuster
@@ -40,8 +48,7 @@ Verwenden Sie dieses Muster, wenn:
 
   * Sie müssen einen kritischen Abschnitt schützen.
   * Sie möchten konsistent zur Verwendung eines `std::mutex-Objeks` sein.
-  * Das Programm soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen laufen.
-  * Das Programm soll in jeder Umgebung performant ablaufen.
+  * Das Programm soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen performant ablaufen.
 
 
 ### Entwurf des APIs
@@ -138,8 +145,8 @@ Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 
 ### Ein Beispiel: Klasse `ThreadsafeStack<T>`
 
-Betrachten wir eine Anpassung der Klasse `ThreadsafeStack<T>`,
-an das *Strategized Locking*&ndash;Entwurfsmuster:
+Betrachten wir eine Anpassung der Klasse `ThreadsafeStack<T>` an
+das *Strategized Locking*&ndash;Entwurfsmuster:
 
 ```cpp
 01: template<typename T>
@@ -207,10 +214,9 @@ an das *Strategized Locking*&ndash;Entwurfsmuster:
 
 ## Literaturhinweise
 
-Die Anregungen zur Klasse stammen im Wesentlichen aus der Unterlage
+Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen aus der Unterlage
 
 [Concurrency with Modern C++](https://www.grimm-jaud.de/index.php/concurrency-with-modern-c/) von Rainer Grimm.
-
 
 ---
 

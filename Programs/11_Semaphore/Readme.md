@@ -7,7 +7,7 @@
 ### Allgemeines
 
 Unter einer Semaphore versteht man in der Systemprogrammierung eine Datenstruktur,
-die aus einem ganzzahligen Wert (Zähler) und zwei atomaren Nutzungsoperationen &ldquo;Reservieren&rdquo; und &ldquo;Freigeben&rdquo; besteht.
+die aus einem ganzzahligen Wert (Zähler) und zwei atomaren Nutzungsoperationen &bdquo;Reservieren&rdquo; und &bdquo;Freigeben&rdquo; besteht.
 
 Sie eignet sich insbesondere zur Verwaltung eines Code-Abschnitts,
 auf den mehrere Prozesse/Threads zugreifen wollen.
@@ -15,7 +15,7 @@ auf den mehrere Prozesse/Threads zugreifen wollen.
 Das Konzept der Semaphore als Mechanismus für die Synchronisation wurden von Edsger W. Dijkstra erfunden
 und 1965 in seinem Artikel *Cooperating Sequential Processes* vorgestellt.
 
-Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &ldquo;reservieren&rdquo; und &ldquo;freigeben&rdquo;, nicht identisch sein.
+Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &bdquo;reservieren&rdquo; und &bdquo;freigeben&rdquo;, nicht identisch sein.
 
 Im Gegensatz zu einem `std::mutex` ist eine `std::counting_semaphore` nicht an einen Thread gebunden.
 Das heißt, dass das Anfordern und Freigeben der Semaphore in verschiedenen Threads stattfinden kann.
