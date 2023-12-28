@@ -4,13 +4,13 @@
 
 ---
 
-Die Implementierung der `std::jthread`-Klasse basiert auf der bereits vorhandenen `std::thread`-Klasse.
+Die Implementierung der `std::jthread`-Klasse basiert auf der bereits vorhandenen Klasse `std::thread`.
 
-Die `std::jthread`-Klasse ist eine Wrapper-Klasse um die Klasse `std::thread`,
+Die `std::jthread`-Klasse ist eine Wrapper-Klasse um Klasse `std::thread` herum,
 sie stellt dieselben öffentlichen Methoden bereit, die die Aufrufe einfach weiterleiten.
 
 Es kann folglich jedes `std::thread`-Objekt in ein `std::jthread`-Objekt umgewandelt werden,
-dieses verhält sich dann genau so, wie sich das `std::thread`-Objekt verhalten würde.
+dieses verhält sich dann genau so, wie sich ein entsprechendes `std::thread`-Objekt verhalten würde.
 
 ---
 
@@ -28,7 +28,7 @@ wenn sich der Thread noch im Zustand *joinable* befindet.
 
 ---
 
-#### Ein `std::thread`-Objekt ist kooperativ unterbrechbar
+#### Ein `std::jthread`-Objekt ist kooperativ unterbrechbar
 
 Wie die Überschrift vermuten lässt, ist ein `std::thread`-Objekt unterbrechbar,
 es gibt also eine Möglichkeit, den Thread von außen zu stoppen.

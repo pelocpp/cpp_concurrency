@@ -1,5 +1,5 @@
 // ===========================================================================
-// JThread // JThread_01.cpp
+// class JThread // JThread_01.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -8,7 +8,7 @@
 
 namespace JoinableThread {
 
-    void jthread_01()
+    static void jthread_01()
     {
         std::thread t {
             []() { std::cout << "Inside std::thread" << std::endl; }
@@ -21,7 +21,7 @@ namespace JoinableThread {
         t.join();  // <== put into comments -- must not be missing
     }
 
-    void jthread_02()
+    static void jthread_02()
     {
         std::jthread t {
             []() { std::cout << "Inside std::jthread" << std::endl; }
