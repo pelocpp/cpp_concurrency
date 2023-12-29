@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{d2da0daa-5c62-41e2-afa5-dc8edd67138f}</ProjectGuid>
-    <RootNamespace>My21LockingMechanisms</RootNamespace>
+    <ProjectGuid>{43b2183b-14e4-44e6-a27f-4c38801dbede}</ProjectGuid>
+    <RootNamespace>ThreadsafeQueue</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>25_Threadsafe_Queue</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -128,10 +129,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Example.cpp" />
+    <ClCompile Include="Program.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Program.cpp" />
+    <ClInclude Include="ThreadsafeQueue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

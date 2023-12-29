@@ -40,27 +40,27 @@ namespace Concurrency_ThreadsafeStack
         ThreadsafeStack() {}
 
         // prohibit assignment operator and move assignment
-        ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
-        ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
+        ThreadsafeStack& operator= (const ThreadsafeStack&) = delete;
+        ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
 
         // copy and move constructor may be useful
         ThreadsafeStack(const ThreadsafeStack& other) noexcept
         {
-            std::lock_guard<std::mutex> lock(other.m_mutex);
+            std::lock_guard<std::mutex> lock{ other.m_mutex };
             m_data = other.m_data;
         }
         
-        ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+        ThreadsafeStack(ThreadsafeStack&& other) noexcept
         {
-            std::lock_guard<std::mutex> lock(other.m_mutex);
+            std::lock_guard<std::mutex> lock{ other.m_mutex };
             m_data = std::move(other.m_data);
         }
 
         // public interface
-        void push(T new_value)
+        void push(T value)
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
-            m_data.push(new_value);
+            m_data.push(value);
         }
 
         template<class... TArgs>
