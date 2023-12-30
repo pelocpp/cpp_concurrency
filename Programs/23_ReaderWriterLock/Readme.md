@@ -4,6 +4,17 @@
 
 ---
 
+## Verwendete Hilfsmittel:
+
+  * Klasse `std::shared_mutex`
+
+  * Klasse `std::unique_lock`
+  * Klasse `std::shared_lock`
+
+  * Klassen `std::jthread` und `std::stop_token`
+
+---
+
 
 ### Allgemeines
 

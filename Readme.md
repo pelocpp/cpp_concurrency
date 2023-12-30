@@ -28,7 +28,7 @@
 
 ## Entwurfsmuster
 
-### [Locking Mechanismen (*Locking Mechanisms*)](Programs/21_LockingMechanisms/Readme.md)
+### [Mutexe und Locking Mechanismen (*Locking Mechanisms*)](Programs/21_LockingMechanisms/Readme.md)
 
 ### [Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
