@@ -131,7 +131,10 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Examples.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="SimonTothExample.cpp" />
+    <ClCompile Include="SimonTothExample02.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
