@@ -23,13 +23,16 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimonTothExample.cpp">
+    <ClCompile Include="Examples_ScopedLock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Examples.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Examples_RecursiveMutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Examples_LockingStrategies.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

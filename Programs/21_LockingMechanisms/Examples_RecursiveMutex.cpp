@@ -133,8 +133,6 @@ namespace Recursive_Mutex_Example
     };
 }
 
-
-
 void examples_recursive_mutex()
 {
     using namespace Recursive_Mutex_Example;

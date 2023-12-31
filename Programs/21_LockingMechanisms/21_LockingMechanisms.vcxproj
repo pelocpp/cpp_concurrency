@@ -132,8 +132,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Examples.cpp" />
+    <ClCompile Include="Examples_LockingStrategies.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="SimonTothExample.cpp" />
+    <ClCompile Include="Examples_ScopedLock.cpp" />
     <ClCompile Include="Examples_RecursiveMutex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

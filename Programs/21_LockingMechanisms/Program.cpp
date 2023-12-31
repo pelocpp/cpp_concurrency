@@ -3,15 +3,18 @@
 // ===========================================================================
 
 extern void examples();
-extern void simon_toth_main_02();
-
-// Hmmmm... mit Gcc geht das alles ?????????????
+extern void examples_recursive_mutex();
+extern void examples_locking_strategies();
+extern void examples_scoped_lock();
 
 int main()
 {
-    simon_toth_main_02();
+    //examples();
+    //examples_recursive_mutex();
+    //examples_locking_strategies();
+    examples_scoped_lock();
 
-    return 123;
+    return 1;
 }
 
 // ===========================================================================

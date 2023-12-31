@@ -6,14 +6,23 @@
 
 ## Verwendete Hilfsmittel:
 
+<ins>Mutex-Klassen</ins>:
+
   * Klasse `std::mutex`
   * Klasse `std::recursive_mutex`
   * Klasse `std::shared_mutex`
  
+<ins>Hüllen-Klassen für Mutexobjekte</ins>:
+
   * Klasse `std::lock_guard`
   * Klasse `std::unique_lock`
   * Klasse `std::scoped_lock`
   * Klasse `std::shared_lock`
+
+<ins>Sperrstrategien (*Locking Strategies*)</ins>:
+
+  * Klasse `std::defer_lock`
+  * Klasse `std::std::adopt_lock`
 
 ---
 
@@ -32,7 +41,6 @@ wenn mehrere Threads auf gemeinsam genutzte Ressourcen gleichzeitig zugreifen.
 Das Verständnis der Unterschiede und Anwendungsfälle dieser Sperrmechanismen ist
 für das Schreiben effizienter und korrekter nebenläufiger Programme von entscheidender Bedeutung.
 Folgende Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
-
 
 #### Mutex-Klassen
 
@@ -69,8 +77,6 @@ In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
 und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
 Weitere Informationen siehe [Klasse `std::shared_lock`].
-
-
 
 #### Hüllen-Klassen für Mutexobjekte
 
@@ -118,7 +124,6 @@ Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes 
   * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und damit abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
 
 
-
 ##### Klasse `std::scoped_lock`
 
 Die Klasse `std::scoped_lock` realisiert einen sehr einfachen Mechanismus für sperrbare Objekte,
@@ -149,11 +154,51 @@ Eine genauere Beschreibung der beiden Klassen `std::shared_mutex` und `std::shar
 [Reader-Writer Lock](../../Programs/23_ReaderWriterLock/Readme.md)
 aufgezeigt.
 
+#### Sperrstrategien (*Locking Strategies*)
+
+In manchen Situationen muss ein Thread zwei Sperren gleichzeitig halten
+und diese nach dem Zugriff auf die gemeinsam genutzten Daten freigeben.
+Wenn ein Thread mehr als eine Sperre hat, besteht die Gefahr eines Deadlocks.
+Um dies zu vermeiden, gibt es mehrere Strategien in C++:
+
+
+##### Strategie `std::adopt_lock`
+
+Die Strategie `std::adopt_lock` geht davon aus, dass der aufrufende Thread die Sperre bereits besitzt.
+Ein Mutex-Hüllenobjekt sollte den Besitz des Mutex übernehmen und ihn freigeben,
+wenn die Kontrolle den Gültigkeitsbereich verlässt.
+
+```cpp
+01: std::lock(g_mutex1, g_mutex2);
+02: 
+03: std::lock_guard<std::mutex> lock1(g_mutex1, std::adopt_lock);
+04: std::lock_guard<std::mutex> lock2(g_mutex2, std::adopt_lock);
+```
+
+##### Strategie `std::defer_lock`
+
+Die Strategie `std::defer_lock` erwirbt *nicht* den Besitz des Mutex und geht davon aus,
+dass der aufrufende Thread `lock` aufrufen wird,
+um den Mutex zu erwerben.
+Das Mutex-Hüllenobjekt gibt die Sperre frei, wenn die Kontrolle den Gültigkeitsbereich verlässt.
+
+```cpp
+01: std::unique_lock<std::mutex> lock1(g_mutex1, std::defer_lock);
+02: std::unique_lock<std::mutex> lock2(g_mutex2, std::defer_lock);
+03: 
+04: std::lock(lock1, lock2);
+```
+
+##### Unterschiede im Gebrauch von `std::lock_guard` und `std::unique_lock`
+
+  * `std::lock_guard` mit der Strategie `std::adopt_lock` geht davon aus, dass der Mutex bereits erworben wurde.
+  * `std::unique_lock` mit der `std::defer_lock`-Strategie geht davon aus, dass der Mutex nicht bei der Konstruktion erfasst wird, sondern explizit gesperrt wird.
+
 ---
 
 ## Weitere Beispiele
 
-##### Beispiel zur Klasse `std::std::recursive_mutex`
+##### Beispiel zur Klasse `std::recursive_mutex`
 
 
 Betrachten Sie das folgende Beispiel genau:
@@ -256,20 +301,24 @@ Betrachten Sie das folgende Beispiel genau:
 
 Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
 
-Klasse `NonRecursive` verwendet ein Mutex-Objekts des Typs `std::mutex`.
+  * Klasse `NonRecursive` verwendet ein Mutexobjekt des Typs `std::mutex`.
 
-In der `push_back`-Methode wird bei Bedarf die Methode `allocate` aufgerufen.
-Diese darf *keine* erneute Sperre des `std::mutex`-Objekts auslösen, da es sonst zu einem Absturz kommt.
-Aus diesem Grund ist die `allocate`-Methode privat deklariert, damit sie nicht von außen aus aufgerufen werden kann!
+  * In der `push_back`-Methode wird bei Bedarf die Methode `allocate` aufgerufen.
+    Diese darf *keine* erneute Sperre des `std::mutex`-Objekts auslösen, da es sonst zu einem Absturz kommt.
+    Aus diesem Grund ist die `allocate`-Methode privat deklariert, damit sie nicht von außen aus aufgerufen werden kann!
 
-Klasse `Recursive` verwendet ein Mutex-Objekts des Typs `std::recursive`.
+  * Die Methode `reserve` ist öffentlich zugänglich &ndash; und ihre Ausführung ist durch ein Mutexobjekt geschützt.
+    Auch sie ruft intern Methode `allocate` auf &ndash; mit derselben Beobachtung, dass die komplette Ausführung
+    von `allocate` für den ´konkurrierenden Zugriff geschützt ist.
 
-Desweiteren besitzt diese Klasse zwei öffentliche Methoden `push_back` und `reserve`.
-Beide Methoden sperren das Mutex-Objekt.
+  * Klasse `Recursive` verwendet ein Mutexobjekts des Typs `std::recursive`.
 
-*Achtung*: In Methode `push_back` kommt es (bei Bedarf) zu einem Aufruf der `reserve` Methode.
-Dies führt *nicht* zu einem Absturz, da das Mutex-Objekt vom Typ `std::recursive` ist!
+  * Desweiteren besitzt diese Klasse zwei öffentliche Methoden `push_back` und `reserve`.
+    Beide Methoden sperren das Mutexobjekt.
 
+  * *Achtung*: In Methode `push_back` kommt es (bei Bedarf) zu einem Aufruf der `reserve` Methode.
+    Dies führt *nicht* zu einem Absturz, da das Mutexobjekt vom Typ `std::recursive` ist!
+    Eine separate Methode `allocate` ist in dieser Realisierung überflüssig!
 
 
 ---
@@ -278,7 +327,6 @@ Dies führt *nicht* zu einem Absturz, da das Mutex-Objekt vom Typ `std::recursive
 
 [Examples.cpp](Examples.cpp).
 [Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).
-
 
 ---
 
@@ -295,6 +343,17 @@ Zum Zweiten sind auch viele Informationen aus dem Artikel
 [C++ Mutexes, Concurrency, and Locks](https://gabrielstaples.com/cpp-mutexes-and-locks/)
 
 von Gabriel Staples übernommen worden.
+
+Das Beispiel zu rekursiven Mutex-Objekten habe ich in einem Aufsatz von Simon Toth gefunden:
+
+[Daily bit(e) of C++: `std::recursive_mutex`](https://medium.com/@simontoth/daily-bit-e-of-c-std-recursive-mutex-dd9b84f38f8d)
+
+Die Beschreibung der Sperrstrategien lehnt sich an
+
+[C++ 11 Locking Strategy: `adopt_lock` and `defer_lock`](https://medium.com/@back_to_basics/c-11-locking-strategy-adopt-lock-and-defer-lock-eeedf76a2689)
+
+an.
+
 
 ---
 
