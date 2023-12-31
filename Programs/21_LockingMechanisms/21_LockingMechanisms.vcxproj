@@ -131,6 +131,7 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Examples.cpp" />
     <ClCompile Include="Examples_LockingStrategies.cpp" />
     <ClCompile Include="Program.cpp" />

@@ -1,4 +1,4 @@
-# Mutexe und Locking Mechanismen
+# Mutexe und Sperrmechanismen
 
 [Zurück](../../Readme.md)
 
@@ -198,8 +198,183 @@ Das Mutex-Hüllenobjekt gibt die Sperre frei, wenn die Kontrolle den Gültigkeitsb
 
 ## Weitere Beispiele
 
-##### Beispiel zur Klasse `std::recursive_mutex`
+##### Beispiel zur Klasse `std::scoped_lock`
 
+Wir betrachten in diesem Beispiel ein Würfelspiel. Es sind 10 Spieler beteiligt.
+Jeder Spieler würfelt gegen alle anderen Spieler, und dies erfolgt pro Spieler in einem separaten Thread.
+
+Um das Aktualisieren der Punktezahlen akkurat durchzuführen, werden bei einem Würfelspiel zweier Spieler
+die Datenbereich *beider* Spieler gesperrt. 
+
+Studieren Sie den Quellcode des Beispiels genau.
+
+  * Wieviele Mutexobjekte werden in Methode `playWith` gesperrt?
+  * Wann werden diese Mutexobjekte freigegeben?
+
+```cpp
+001: class Player
+002: {
+003: private:
+004:     std::string_view m_name;
+005:     std::mutex m_mutex;
+006:     std::default_random_engine m_random_engine;
+007:     std::uniform_int_distribution<int> m_dist;
+008:     int m_score;
+009: 
+010: public:
+011:     // c'tor
+012:     Player(std::string_view name, int seed)
+013:         : m_name(std::move(name)), m_random_engine(seed), m_dist(1, 6), m_score{}
+014:     {}
+015: 
+016:     // getter
+017:     std::string_view name() const { return m_name; }
+018: 
+019:     int getScore() const { return m_score; }
+020: 
+021:     void incrementScore(int points) {
+022: 
+023:         m_score += points;
+024:         Logger::log(std::cout, name(), " got point => ", m_score);
+025:     }
+026: 
+027:     // public interface
+028:     void playWith(Player& other) {
+029: 
+030:         if (&other == this)
+031:             return;
+032: 
+033:         // retrieve our lock and the lock of the oponent
+034:         std::scoped_lock lock{ m_mutex, other.m_mutex };
+035: 
+036:         Logger::log(std::cout, name(), " plays against ", other.name());
+037: 
+038:         // roll a dice until one player wins,
+039:         // then increase the score of the winner
+040:         int points{};
+041:         int otherPoints{};
+042: 
+043:         do {
+044:             points = roll();
+045:             otherPoints = other.roll();
+046:         } 
+047:         while (points == otherPoints);
+048: 
+049:         if (points > otherPoints) {
+050:             incrementScore(points);
+051:         }
+052:         else {
+053:             other.incrementScore(otherPoints);
+054:         }
+055:     }
+056: 
+057: private:
+058:     // roll a six-sided dice
+059:     int roll() { return m_dist(m_random_engine); }
+060: };
+061: 
+062: void examples_scoped_lock()
+063: {
+064:     std::random_device device;
+065: 
+066:     std::vector<std::unique_ptr<Player>> players;
+067: 
+068:     std::initializer_list<std::string_view> names =
+069:     {
+070:         "Player1", "Player2", "Player3", "Player4", "Player5",
+071:         "Player6", "Player7", "Player8", "Player9", "Player10"
+072:     };
+073: 
+074:     // generate players from the names using transform algorithm
+075:     std::transform(
+076:         std::begin(names),
+077:         std::end(names),
+078:         std::back_inserter(players),
+079:         [&] (std::string_view name) {
+080:             return std::make_unique<Player>(name, device());
+081:         }
+082:     );
+083: 
+084:     std::vector<std::jthread> rounds;
+085: 
+086:     // run the game: each player plays
+087:     // against all other players in parallel
+088:     for (auto& player : players) {
+089:         
+090:         auto round = [&] () {
+091:             for (auto& oponent : players) {
+092:                 player->playWith(*oponent);
+093:             }
+094:         };
+095:         
+096:         rounds.push_back(std::jthread { std::move(round) });
+097:     }
+098: 
+099:     // join all the threads
+100:     std::for_each(
+101:         rounds.begin(),
+102:         rounds.end(),
+103:         std::mem_fn(&std::jthread::join)
+104:     );
+105: 
+106:     // sort
+107:     std::sort(
+108:         players.begin(),
+109:         players.end(),
+110:         [] (const auto& elem1, const auto& elem2) {
+111:             return elem1->getScore() > elem2->getScore();
+112:         }
+113:     );
+114: 
+115:     // print
+116:     std::cout << std::endl << "Final score:" << std::endl;
+117:     for (const auto& player : players) {
+118:         std::cout 
+119:             << player->name() << ": " << player->getScore()
+120:             << " points." << std::endl;
+121:     }
+122: }
+```
+
+*Ausgabe*:
+
+```
+[1]:    Player1 plays against Player2
+[1]:    Player1 got point => 6
+[2]:    Player4 plays against Player1
+[2]:    Player4 got point => 6
+[2]:    Player4 plays against Player2
+[3]:    Player6 plays against Player1
+[2]:    Player4 got point => 10
+[3]:    Player1 got point => 12
+[2]:    Player4 plays against Player3
+[3]:    Player6 plays against Player2
+[2]:    Player3 got point => 3
+[4]:    Player7 plays against Player1
+[4]:    Player1 got point => 18
+[2]:    Player4 plays against Player5
+......
+
+[5]:    Player8 plays against Player9
+[4]:    Player10 got point => 52
+[5]:    Player9 got point => 61
+[5]:    Player8 plays against Player10
+[5]:    Player10 got point => 56
+
+Final score:
+Player9:        61 points.
+Player10:       56 points.
+Player3:        51 points.
+Player4:        47 points.
+Player1:        46 points.
+Player5:        40 points.
+Player6:        34 points.
+Player7:        29 points.
+Player8:        27 points.
+Player2:        26 points.
+```
+
+##### Beispiel zur Klasse `std::recursive_mutex`
 
 Betrachten Sie das folgende Beispiel genau:
 
@@ -325,8 +500,10 @@ Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
 
 ##### Quellcode:
 
-[Examples.cpp](Examples.cpp).
-[Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).
+[Examples.cpp](Examples.cpp).<br />
+[Examples_LockingStrategies.cpp](Examples_LockingStrategies.cpp).<br />
+[Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).<br />
+[Examples_ScopedLock.cpp](Examples_ScopedLock.cpp).<br />
 
 ---
 
