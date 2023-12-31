@@ -521,7 +521,7 @@ Zum Zweiten sind auch viele Informationen aus dem Artikel
 
 von Gabriel Staples übernommen worden.
 
-Das Beispiel zu rekursiven Mutex-Objekten habe ich in einem Aufsatz von Šimon Tóth gefunden:
+Das Beispiel zu rekursiven Mutex-Objekten habe ich in einem Aufsatz von Simon Tóth gefunden:
 
 [Daily bit(e) of C++: `std::recursive_mutex`](https://medium.com/@simontoth/daily-bit-e-of-c-std-recursive-mutex-dd9b84f38f8d)
 
@@ -529,7 +529,9 @@ Die Beschreibung der Sperrstrategien lehnt sich an
 
 [C++ 11 Locking Strategy: `adopt_lock` and `defer_lock`](https://medium.com/@back_to_basics/c-11-locking-strategy-adopt-lock-and-defer-lock-eeedf76a2689)
 
-an. Das Würfelbeispiel (Klasse `scoped_lock`) stammt wiederum von Šimon Tóth und kann
+an.
+
+Das Würfelbeispiel (Klasse `scoped_lock`) stammt wiederum von Simon Tóth und kann
 [hier](https://medium.com/@simontoth/daily-bit-e-of-c-std-scoped-lock-9cab4142f9d4) nachgelesen werden.
 
 ---
