@@ -3,12 +3,15 @@
 // ===========================================================================
 
 extern void examples();
+extern void simon_toth_main_02();
 
 // Hmmmm... mit Gcc geht das alles ?????????????
 
 int main()
 {
-    examples();
+    simon_toth_main_02();
+
+    return 123;
 }
 
 // ===========================================================================

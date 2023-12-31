@@ -1,4 +1,4 @@
-# Mutexe und Locking Mechanismen (*Locking Mechanisms*)
+# Mutexe und Locking Mechanismen
 
 [Zurück](../../Readme.md)
 
@@ -63,6 +63,15 @@ threadsichere Datenstrukturen entwerfen und zum anderen die Methoden der
 öffentlichen Schnittstelle von unterschiedlichen Ebenen aus
 auf die kritischen Abschnitte bzw. Daten der Datenstruktur zugreifen.
 
+##### Klasse `std::shared_mutex`
+
+In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
+das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
+und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
+Weitere Informationen siehe [Klasse `std::shared_lock`].
+
+
+
 #### Hüllen-Klassen für Mutexobjekte
 
 ##### Klasse `std::lock_guard`
@@ -121,9 +130,8 @@ für mehrere Mutexobjekte gleichzeitig verwendet werden kann!
   * Bei der Erstellung sperrt ein `std::scoped_lock`-Objekt automatisch ein oder mehrere Mutexobjekte.
   * Bei der Zerstörung (Verlassen des Gültigkeitsbereichs) entsperrt ein `std::scoped_lock`-Objekt automatisch alle Mutexobjekte.
 
-  
 
-##### Klassen `std::shared_mutex` und `std::shared_lock`
+##### Klasse `std::shared_lock`
 
 In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
@@ -131,7 +139,6 @@ und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
 
 Dies ist in Situationen hilfreich, in denen viele Threads schreibgeschützten Zugriff
 auf dieselbe Datenstruktur benötigen, Schreibvorgänge jedoch nicht häufig verwendet werden.
-
 
   * Die Klasse `std::shared_lock` ist für den gemeinsamen Besitz (*shared ownership*) eines Mutexobjekts konzipiert und ermöglicht mehrere Leser.
   * Ermöglicht mehreren Threads den gleichzeitigen Erwerb der Sperre für den gemeinsamen lesenden Zugriff.
@@ -142,19 +149,136 @@ Eine genauere Beschreibung der beiden Klassen `std::shared_mutex` und `std::shar
 [Reader-Writer Lock](../../Programs/23_ReaderWriterLock/Readme.md)
 aufgezeigt.
 
+---
+
+## Weitere Beispiele
+
+##### Beispiel zur Klasse `std::std::recursive_mutex`
 
 
+Betrachten Sie das folgende Beispiel genau:
 
-*Zusammenfassung*:
+  * Welche Mutex-Klassen kommen zum Einsatz?
+  * Studieren Sie die beiden Methoden `reserve` und `allocate`: Wann kommt es zum Gebrauch eines Mutex-Hüllenobjekts und wann nicht?
+  * Begründen Sie Ihre Beobachtungen.
 
-Durch den Einsatz des richtigen Sperrmechanismus können Sie Thread-Sicherheit gewährleisten, *Data Races* verhindern
-und effiziente Multithreaded-Programme erstellen.
+
+```cpp
+01: constexpr size_t BucketSize = 4;
+02: 
+03: class NonRecursive
+04: {
+05: private:
+06:     std::mutex m_mutex;
+07:     std::unique_ptr<int[]> m_data;
+08:     size_t m_size;
+09:     size_t m_capacity;
+10: 
+11: public:
+12:     NonRecursive() : m_size{}, m_capacity{} {}
+13: 
+14:     void push_back(int value) {
+15: 
+16:         std::unique_lock lock{ m_mutex };
+17: 
+18:         if (m_size == m_capacity) {
+19:             allocate(m_capacity == 0 ? BucketSize : m_capacity * 2);
+20:         }
+21: 
+22:         m_data[m_size++] = value;
+23:     }
+24: 
+25:     void reserve(size_t capacity) {
+26: 
+27:         std::unique_lock lock{ m_mutex };
+28:         allocate(capacity);
+29:     }
+30: 
+31: private:
+32:     void allocate(size_t capacity) {
+33: 
+34:         std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
+35:         size_t newSize{ std::min(m_size, capacity) };
+36: 
+37:         std::copy(
+38:             m_data.get(),
+39:             m_data.get() + newSize,
+40:             data.get()
+41:         );
+42: 
+43:         m_data = std::move(data);
+44:         m_capacity = capacity;
+45:         m_size = newSize;
+46:     }
+47: };
+48: 
+49: class Recursive
+50: {
+51: private:
+52:     std::recursive_mutex m_mutex;
+53:     std::unique_ptr<int[]> m_data;
+54:     size_t m_size;
+55:     size_t m_capacity;
+56: 
+57: public:
+58:     Recursive() : m_size{}, m_capacity{} {}
+59: 
+60:     void push_back(int value) {
+61: 
+62:         std::unique_lock lock{ m_mutex };
+63: 
+64:         if (m_size == m_capacity) {
+65:             reserve(m_capacity == 0 ? BucketSize : m_capacity * 2);
+66:         }
+67: 
+68:         m_data[m_size++] = value;
+69:     }
+70: 
+71:     void reserve(size_t capacity) {
+72: 
+73:         std::unique_lock lock{ m_mutex };
+74: 
+75:         std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
+76:         size_t newSize{ std::min(m_size, capacity) };
+77: 
+78:         std::copy(
+79:             m_data.get(),
+80:             m_data.get() + newSize,
+81:             data.get()
+82:         );
+83: 
+84:         m_data = std::move(data);
+85:         m_capacity = capacity;
+86:         m_size = newSize;
+87:     }
+88: };
+```
+
+Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
+
+Klasse `NonRecursive` verwendet ein Mutex-Objekts des Typs `std::mutex`.
+
+In der `push_back`-Methode wird bei Bedarf die Methode `allocate` aufgerufen.
+Diese darf *keine* erneute Sperre des `std::mutex`-Objekts auslösen, da es sonst zu einem Absturz kommt.
+Aus diesem Grund ist die `allocate`-Methode privat deklariert, damit sie nicht von außen aus aufgerufen werden kann!
+
+Klasse `Recursive` verwendet ein Mutex-Objekts des Typs `std::recursive`.
+
+Desweiteren besitzt diese Klasse zwei öffentliche Methoden `push_back` und `reserve`.
+Beide Methoden sperren das Mutex-Objekt.
+
+*Achtung*: In Methode `push_back` kommt es (bei Bedarf) zu einem Aufruf der `reserve` Methode.
+Dies führt *nicht* zu einem Absturz, da das Mutex-Objekt vom Typ `std::recursive` ist!
+
+
 
 ---
 
 ##### Quellcode:
 
 [Examples.cpp](Examples.cpp).
+[Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).
+
 
 ---
 
