@@ -41,8 +41,6 @@ namespace Locking_Strategies
     }
 }
 
-
-
 void examples_locking_strategies()
 {
     using namespace Locking_Strategies;
@@ -51,7 +49,6 @@ void examples_locking_strategies()
     example02();
 
 }
-
 
 // ===========================================================================
 // End-of-File
