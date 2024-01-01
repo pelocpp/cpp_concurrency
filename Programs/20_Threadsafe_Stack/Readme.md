@@ -6,7 +6,8 @@
 
 # Verwendete Hilfsmittel:
 
-  * `std::mutex` und `std::lock_guard`
+  * `std::mutex`
+  * `std::lock_guard`
   * `std::thread`
 
 ---
@@ -35,6 +36,7 @@ Problematischer sind *Race Conditions* dann, wenn sie *Invarianten* brechen.
 Eine Invariante am Beispiel eines Stapels betrachtet könnte sein,
 dass dieser beispielsweise zu einem bestimmten Zeitpunkt &bdquo;nicht leer&rdquo; ist.
 Dies könnte das Resultat eines Methodenaufrufs wie etwa `empty` sein.
+
 Wird aber zum gleichen Zeitpunkt auf Grund der konkurrierenden Ausführung einer `pop`-Methode
 in einem anderen Thread der Stapel tatsächlich geleert, kommt es in dem Thread,
 der sich auf den Aufruf von `empty` verlassen möchte,
@@ -190,7 +192,7 @@ um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schü
 
 Wir erkennen an der Realisierung,
 dass alle Zugriffe auf das zugrunde liegende `std::stack<T>`-Objekt
-mithilfe des `std:lock_guard`-Musters (RAII-Stil Mechanismus) geschützt werden,
+mithilfe des `std:lock_guard`-Objekts (RAII-Stil Mechanismus) geschützt werden,
 um auf diese Weise sicherzustellen, dass vorhandene Sperren vom haltenden Thread
 in allen möglichen Exit-Szenarien (einschließlich Ausnahmen) wieder aufgehoben werden.
 

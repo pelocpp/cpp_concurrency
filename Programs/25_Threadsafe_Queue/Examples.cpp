@@ -5,94 +5,79 @@
 #include <iostream>
 #include <sstream>
 
-#include <functional>
-
+#include "../Logger/Logger.h"
 
 #include "ThreadsafeQueue.h"
-
 
 namespace Threadsafe_Queue_Examples {
 
     using namespace Concurrency_ThreadsafeQueue;
 
-    void example_01()
+    static void example_01()
     {
-        ThreadsafeQueue<int> q;
+        ThreadsafeQueue<int> queue;
 
         // push some data 
-        q.push(1);
-        q.push(2);
-        q.push(3);
+        queue.push(1);
+        queue.push(2);
+        queue.push(3);
 
         // pop some data 
         int value;
-        q.try_pop(value);
+        queue.tryPop(value);
         std::cout << value << std::endl;
-        q.try_pop(value);
+        queue.tryPop(value);
         std::cout << value << std::endl;
-        q.try_pop(value);
+        queue.tryPop(value);
         std::cout << value << std::endl;
     }
 
-    // das gehört zu
-    // https://juanchopanzacpp.wordpress.com/2013/02/26/concurrent-queue-c11/
+    // ------------------------------------------------------------
 
+    constexpr int NumConsumers{ 5 };
+    constexpr int NumToConsume{ 4 };
+    constexpr int NumToProduce{ NumToConsume * NumConsumers };
 
-    const int nbConsumers = 4;
-    const int nbToConsume = 3;
-    const int nbToProduce = nbToConsume * nbConsumers;
-
-    void print(std::string x) {
-        static std::mutex mutex;
-        std::unique_lock<std::mutex> locker(mutex);
-        std::cout << x << "\n";
-    }
-
-
-    void produce(ThreadsafeQueue<int>& q) {
-        for (int i = 1; i <= nbToProduce; ++i) {
-            std::ostringstream tmp;
-            tmp << "--> " << i;
-            print(tmp.str());
-            q.push(i);
+    static void produce(ThreadsafeQueue<int>& queue)
+    {
+        for (int i{ 1 }; i <= NumToProduce; ++i) {
+            Logger::log(std::cout, "--> ", i);
+            queue.push(i);
         }
     }
 
-    void consume(ThreadsafeQueue<int>& q, unsigned int id) {
-        for (int i = 0; i < nbToConsume; ++i) {
+    static void consume(ThreadsafeQueue<int>& queue, unsigned int id)
+    {
+        for (int i{}; i != NumToConsume; ++i) {
             int value{};
-            q.wait_and_pop(value);
-            std::ostringstream tmp;
-            tmp << "        " << value << " --> C" << id;
-            print(tmp.str());
+            queue.waitAndPop(value);
+            Logger::log(std::cout, "        ", value, " <== Consumer [", id, ']');
         }
     }
 
-
-    void example_02()
+    static void example_02()
     {
         using namespace Concurrency_ThreadsafeQueue;
 
-        ThreadsafeQueue<int> q;
+        ThreadsafeQueue<int> queue;
 
-        // start the producer thread.
-        std::thread prod1(std::bind(produce, std::ref(q)));    // #include <functional>
+        std::thread producer{ produce, std::ref(queue) };
 
-        // Start the consumer threads.
         std::vector<std::thread> consumers;
-        for (int i = 0; i < nbConsumers; ++i) {
-            std::thread consumer(std::bind(&consume, std::ref(q), i + 1));
+
+        for (int i{}; i != NumConsumers; ++i) {
+
+            std::thread consumer{ consume, std::ref(queue), i + 1 };
             consumers.push_back(std::move(consumer));
         }
 
-        prod1.join();
+        producer.join();
 
         for (auto& consumer : consumers) {
             consumer.join();
         }
     }
 }
-
 
 void examples()
 {

@@ -89,7 +89,6 @@ private:
         return ss.str();
     }
 
-
     static std::chrono::steady_clock::time_point s_begin;
     static bool s_loggingEnabled;
     static std::mutex s_mutexIds;

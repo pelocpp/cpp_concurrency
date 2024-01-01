@@ -15,8 +15,8 @@ namespace Concurrency_ThreadsafeStack
     class ThreadsafeStack
     {
     private:
-        std::stack<T>      m_data;
-        mutable std::mutex m_mutex;
+        std::stack<T>       m_data;
+        mutable std::mutex  m_mutex;
 
     public:
         // c'tors

@@ -5,8 +5,8 @@
 #pragma once
 
 #include <mutex>
-#include <condition_variable>
 #include <queue>
+#include <condition_variable>
 
 namespace Concurrency_ThreadsafeQueue
 {
@@ -22,7 +22,7 @@ namespace Concurrency_ThreadsafeQueue
         ThreadsafeQueue() {}
 
         // copy and move constructor may be useful
-        ThreadsafeQueue(ThreadsafeQueue const& other)
+        ThreadsafeQueue(const ThreadsafeQueue& other)
         {
             std::lock_guard<std::mutex> lock{ other.m_mutex };
             m_data = other.m_data;
@@ -70,9 +70,9 @@ namespace Concurrency_ThreadsafeQueue
             m_condition.notify_one();
         }
 
-        void wait_and_pop(T& value)
+        void waitAndPop(T& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::unique_lock<std::mutex> lock{ m_mutex };
             m_condition.wait(lock, [this] () {
                 return !m_data.empty(); 
                 }
@@ -82,7 +82,7 @@ namespace Concurrency_ThreadsafeQueue
             m_data.pop();
         }
 
-        bool try_pop(T& value)
+        bool tryPop(T& value)
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
             if (m_data.empty()) {
