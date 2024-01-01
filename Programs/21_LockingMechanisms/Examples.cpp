@@ -1,8 +1,6 @@
 // ===========================================================================
-// Program.cpp // Locking Mechanisms
+// Examples.cpp // Locking Mechanisms
 // ===========================================================================
-
-// from https://gabrielstaples.com/cpp-mutexes-and-locks/#gsc.tab=0
 
 #include <iostream>
 #include <thread>
@@ -45,7 +43,6 @@ namespace Mutex_And_Locking_Examples {
             // 'g_mutex.unlock()' is automatically called here
             //  at the destruction of the 'std::lock_guard' 
         }
-
 
         // ...
     }

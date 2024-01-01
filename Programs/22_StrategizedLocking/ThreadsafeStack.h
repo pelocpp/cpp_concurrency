@@ -17,23 +17,6 @@ using namespace Concurrency_StrategizedLock;
 
 namespace Concurrency_ThreadsafeStack
 {
-    struct empty_stack : std::exception
-    {
-    private:
-        std::string m_what;
-
-    public:
-        explicit empty_stack() : m_what{ std::string{ "Stack is empty!" } } {}
-
-        explicit empty_stack(std::string msg) {
-            m_what = std::move(msg);
-        }
-
-        const char* what() const noexcept override {
-            return m_what.c_str();
-        }
-    };
-
     template<typename T>
     class ThreadsafeStack
     {
@@ -58,10 +41,10 @@ namespace Concurrency_ThreadsafeStack
         }
 
         // public interface
-        void push(T new_value)
+        void push(const T& value)
         {
             StrategizedLocking m_guard{ m_lock };
-            m_data.push(new_value);
+            m_data.push(value);
         }
 
         void pop(T& value)
@@ -73,7 +56,7 @@ namespace Concurrency_ThreadsafeStack
             //     std::cout << "Emtpy Stack !";
             // }
 
-            if (m_data.empty()) throw empty_stack{};
+            if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
             value = m_data.top();
             m_data.pop();
         }

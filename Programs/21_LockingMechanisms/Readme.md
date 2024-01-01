@@ -254,11 +254,11 @@ Studieren Sie den Quellcode des Beispiels genau.
 040:         int points{};
 041:         int otherPoints{};
 042: 
-043:         do {
-044:             points = roll();
-045:             otherPoints = other.roll();
-046:         } 
-047:         while (points == otherPoints);
+043:         while (points == otherPoints)
+044:         {
+045:             points = roll();
+046:             otherPoints = other.roll();
+047:         }
 048: 
 049:         if (points > otherPoints) {
 050:             incrementScore(points);
@@ -282,7 +282,7 @@ Studieren Sie den Quellcode des Beispiels genau.
 068:     std::initializer_list<std::string_view> names =
 069:     {
 070:         "Player1", "Player2", "Player3", "Player4", "Player5",
-071:         "Player6", "Player7", "Player8", "Player9", "Player10"
+071:         "Player6", "Player7", "Player8", "Player9"
 072:     };
 073: 
 074:     // generate players from the names using transform algorithm
@@ -330,7 +330,7 @@ Studieren Sie den Quellcode des Beispiels genau.
 116:     std::cout << std::endl << "Final score:" << std::endl;
 117:     for (const auto& player : players) {
 118:         std::cout 
-119:             << player->name() << ": " << player->getScore()
+119:             << player->name() << ":\t" << player->getScore()
 120:             << " points." << std::endl;
 121:     }
 122: }
@@ -340,38 +340,53 @@ Studieren Sie den Quellcode des Beispiels genau.
 
 ```
 [1]:    Player1 plays against Player2
-[1]:    Player1 got point => 6
-[2]:    Player4 plays against Player1
-[2]:    Player4 got point => 6
-[2]:    Player4 plays against Player2
-[3]:    Player6 plays against Player1
-[2]:    Player4 got point => 10
-[3]:    Player1 got point => 12
-[2]:    Player4 plays against Player3
-[3]:    Player6 plays against Player2
-[2]:    Player3 got point => 3
+[1]:    Player2 got point => 3
+[1]:    Player1 plays against Player3
+[1]:    Player3 got point => 5
+[1]:    Player1 plays against Player4
+[1]:    Player1 got point => 5
+[1]:    Player1 plays against Player5
+[1]:    Player5 got point => 3
+[1]:    Player1 plays against Player6
+[1]:    Player6 got point => 2
+[1]:    Player1 plays against Player7
+[1]:    Player1 got point => 11
+[1]:    Player1 plays against Player8
+[1]:    Player1 got point => 16
+[1]:    Player1 plays against Player9
+[1]:    Player1 got point => 21
+[2]:    Player5 plays against Player1
+[2]:    Player5 got point => 6
+[2]:    Player5 plays against Player2
+[3]:    Player3 plays against Player1
+[2]:    Player2 got point => 5
+[3]:    Player3 got point => 8
+[3]:    Player3 plays against Player2
 [4]:    Player7 plays against Player1
-[4]:    Player1 got point => 18
-[2]:    Player4 plays against Player5
+[3]:    Player3 got point => 14
+[4]:    Player7 got point => 5
 ......
 
-[5]:    Player8 plays against Player9
-[4]:    Player10 got point => 52
-[5]:    Player9 got point => 61
-[5]:    Player8 plays against Player10
-[5]:    Player10 got point => 56
+[9]:    Player9 got point => 38
+[7]:    Player9 plays against Player7
+[7]:    Player9 got point => 42
+[6]:    Player4 plays against Player8
+[6]:    Player4 got point => 36
+[6]:    Player4 plays against Player9
+[6]:    Player9 got point => 47
+[7]:    Player9 plays against Player8
+[7]:    Player8 got point => 46
 
 Final score:
-Player9:        61 points.
-Player10:       56 points.
-Player3:        51 points.
-Player4:        47 points.
-Player1:        46 points.
-Player5:        40 points.
-Player6:        34 points.
-Player7:        29 points.
-Player8:        27 points.
-Player2:        26 points.
+Player3:        50 points.
+Player9:        47 points.
+Player8:        46 points.
+Player1:        38 points.
+Player4:        36 points.
+Player6:        35 points.
+Player7:        33 points.
+Player5:        31 points.
+Player2:        19 points.
 ```
 
 ##### Beispiel zur Klasse `std::recursive_mutex`

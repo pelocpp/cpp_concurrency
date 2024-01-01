@@ -51,13 +51,14 @@ besitzt folgende öffentliche Schnittstelle:
 02: class ThreadsafeStack
 03: {
 04: public:
-05:     void push(T new_value);
-06:     void pop(T& value);
-07:     T tryPop();
-08:     std::optional<T> tryPopOptional();
-09:     size_t size() const;
-10:     bool empty() const;
-11: };
+05:     void push(const T& value);
+06:     void push(T&& value);
+07:     void pop(T& value);
+08:     T tryPop();
+09:     std::optional<T> tryPopOptional();
+10:     size_t size() const;
+11:     bool empty() const;
+12: };
 ```
 
 Das Hinzufügen eines Elements zum Stapel (Methode `push`) kann als trivial betrachtet werden,
@@ -95,7 +96,6 @@ so können wir erkennen,
 dass nahezu alle Methoden ein `std::mutex`-Objekt verwenden,
 um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schützen:
 
-
 ```cpp
 01: template<typename T>
 02: class ThreadsafeStack
@@ -109,77 +109,83 @@ um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schü
 10:     ThreadsafeStack() {}
 11: 
 12:     // prohibit assignment operator and move assignment
-13:     ThreadsafeStack& operator = (const ThreadsafeStack&) = delete;
-14:     ThreadsafeStack& operator = (ThreadsafeStack&&) noexcept = delete;
+13:     ThreadsafeStack& operator= (const ThreadsafeStack&) = delete;
+14:     ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
 15: 
 16:     // copy and move constructor may be useful
 17:     ThreadsafeStack(const ThreadsafeStack& other) noexcept
 18:     {
-19:         std::lock_guard<std::mutex> lock(other.m_mutex);
+19:         std::lock_guard<std::mutex> lock{ other.m_mutex };
 20:         m_data = other.m_data;
 21:     }
 22:         
-23:     ThreadsafeStack(const ThreadsafeStack&& other) noexcept
+23:     ThreadsafeStack(ThreadsafeStack&& other) noexcept
 24:     {
-25:         std::lock_guard<std::mutex> lock(other.m_mutex);
+25:         std::lock_guard<std::mutex> lock{ other.m_mutex };
 26:         m_data = std::move(other.m_data);
 27:     }
 28: 
 29:     // public interface
-30:     void push(T new_value)
+30:     void push(const T& value)
 31:     {
 32:         std::lock_guard<std::mutex> lock{ m_mutex };
-33:         m_data.push(new_value);
+33:         m_data.push(value);
 34:     }
 35: 
-36:     template<class... TArgs>
-37:     void emplace(TArgs&&... args)
-38:     {
-39:         std::lock_guard<std::mutex> lock{ m_mutex };
-40:         m_data.emplace(std::forward<TArgs>(args) ...);
-41:     }
-42: 
-43:     void pop(T& value)
+36:     void push(T&& value)
+37:     {
+38:         std::lock_guard<std::mutex> lock{ m_mutex };
+39:         m_data.push(std::move(value));
+40:     }
+41: 
+42:     template<class... TArgs>
+43:     void emplace(TArgs&&... args)
 44:     {
 45:         std::lock_guard<std::mutex> lock{ m_mutex };
-46:         if (m_data.empty()) throw empty_stack{};
-47:         value = m_data.top();
-48:         m_data.pop();
-49:     }
-50: 
-51:     T tryPop()
-52:     {
-53:         std::lock_guard<std::mutex> lock{ m_mutex };
-54:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-55:         T value = m_data.top();
-56:         m_data.pop();
-57:         return value;
-58:     }
-59: 
-60:     std::optional<T> tryPopOptional()
-61:     {
-62:         std::lock_guard<std::mutex> lock{ m_mutex };
-63:         if (m_data.empty()) {
-64:             return std::nullopt;
-65:         }
-66: 
-67:         std::optional<T> result{ m_data.top() };
-68:         m_data.pop();
-69:         return result;
-70:     }
-71: 
-72:     size_t size() const
-73:     {
-74:         std::lock_guard<std::mutex> lock{ m_mutex };
-75:         return m_data.size();
+46:         m_data.emplace(std::forward<TArgs>(args) ...);
+47:     }
+48: 
+49:     void pop(T& value)
+50:     {
+51:         std::lock_guard<std::mutex> lock{ m_mutex };
+52:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+53:         value = m_data.top();
+54:         m_data.pop();
+55:     }
+56: 
+57:     T tryPop()
+58:     {
+59:         std::lock_guard<std::mutex> lock{ m_mutex };
+60:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+61:         T value = m_data.top();
+62:         m_data.pop();
+63:         return value;
+64:     }
+65: 
+66:     std::optional<T> tryPopOptional()
+67:     {
+68:         std::lock_guard<std::mutex> lock{ m_mutex };
+69:         if (m_data.empty()) {
+70:             return std::nullopt;
+71:         }
+72: 
+73:         std::optional<T> result{ m_data.top() };
+74:         m_data.pop();
+75:         return result;
 76:     }
 77: 
-78:     bool empty() const
+78:     size_t size() const
 79:     {
 80:         std::lock_guard<std::mutex> lock{ m_mutex };
-81:         return m_data.empty();
+81:         return m_data.size();
 82:     }
-83: };
+83: 
+84:     bool empty() const
+85:     {
+86:         std::lock_guard<std::mutex> lock{ m_mutex };
+87:         return m_data.empty();
+88:     }
+89: };
 ```
 
 Wir erkennen an der Realisierung,

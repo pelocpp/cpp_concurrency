@@ -161,16 +161,16 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 10:     ThreadsafeStack(const ILock& lock) : m_lock{lock} {}
 11: 
 12:     // public interface
-13:     void push(T new_value)
+13:     void push(const T& value)
 14:     {
 15:         StrategizedLocking m_guard{ m_lock };
-16:         m_data.push(new_value);
+16:         m_data.push(value);
 17:     }
 18: 
 19:     void pop(T& value)
 20:     {
 21:         StrategizedLocking m_guard{ m_lock };
-22:         if (m_data.empty()) throw empty_stack{};
+22:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
 23:         value = m_data.top();
 24:         m_data.pop();
 25:     }

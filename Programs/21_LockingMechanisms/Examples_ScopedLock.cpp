@@ -58,11 +58,11 @@ public:
         int points{};
         int otherPoints{};
 
-        do {
+        while (points == otherPoints)
+        {
             points = roll();
             otherPoints = other.roll();
-        } 
-        while (points == otherPoints);
+        }
 
         if (points > otherPoints) {
             incrementScore(points);
@@ -88,7 +88,7 @@ void examples_scoped_lock()
     std::initializer_list<std::string_view> names =
     {
         "Player1", "Player2", "Player3", "Player4", "Player5",
-        "Player6", "Player7", "Player8", "Player9", "Player10"
+        "Player6", "Player7", "Player8", "Player9"
     };
 
     // generate players from the names using transform algorithm

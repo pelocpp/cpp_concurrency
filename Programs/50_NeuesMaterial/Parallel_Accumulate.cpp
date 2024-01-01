@@ -85,7 +85,7 @@ namespace concurrencyParallelAccumulate01
 
             std::stringstream ss;
             ss << "  launching " << std::this_thread::get_id() << ":\n";
-            std::cout << ss.str();;
+            std::cout << ss.str();
 
             m_result = std::accumulate(m_first, m_last, m_result);
         }

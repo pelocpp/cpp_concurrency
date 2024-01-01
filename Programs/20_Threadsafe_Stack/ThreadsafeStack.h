@@ -11,23 +11,6 @@
 
 namespace Concurrency_ThreadsafeStack
 {
-    struct empty_stack : std::exception
-    {
-    private:
-        std::string m_what;
-
-    public:
-        explicit empty_stack() : m_what{ std::string{ "Stack is empty!" } } {}
-
-        explicit empty_stack(std::string msg) {
-            m_what = std::move(msg);
-        }
-
-        const char* what() const noexcept override {
-            return m_what.c_str();
-        }
-    };
-
     template<typename T>
     class ThreadsafeStack
     {
@@ -57,10 +40,16 @@ namespace Concurrency_ThreadsafeStack
         }
 
         // public interface
-        void push(T value)
+        void push(const T& value)
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
             m_data.push(value);
+        }
+
+        void push(T&& value)
+        {
+            std::lock_guard<std::mutex> lock{ m_mutex };
+            m_data.push(std::move(value));
         }
 
         template<class... TArgs>
@@ -73,7 +62,7 @@ namespace Concurrency_ThreadsafeStack
         void pop(T& value)
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
-            if (m_data.empty()) throw empty_stack{};
+            if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
             value = m_data.top();
             m_data.pop();
         }
