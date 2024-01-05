@@ -144,7 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="EventLoop.md" />
-    <None Include="Readme.md" />
+    <None Include="Readme_StopToken.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
