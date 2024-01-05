@@ -53,14 +53,17 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
    Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
    Dieses besitzt eine Methode `stop_requested` &ndash; im Zusammenspiel mit `request_stop()` kann nun
    kooperativ ein Ende des Threads veranlasst werden.
+  * *Szenario* 5:
+   Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
+   Mit diesem Objekt kann man ein `std::stop_callback`-Objekt erzeugen, welches aufgerufen wird, wenn wiederum
+   die `request_stop()`-Methode aufgerufen wird.
 
 ---
 
 #### Quellcode:
 
-[Teil 1: `std::jthread`-Objekt und `join()`-Aufruf](JThread_01.cpp).
-
-[Teil 2: Kooperative Unterbrechung eines Threads](JThread_02.cpp).
+[JThread_01.cpp: `std::jthread`-Objekt und `join()`-Aufruf](JThread_01.cpp).<br />
+[JThread_02.cpp: Kooperative Unterbrechung eines Threads](JThread_02.cpp).<br />
 
 ---
 

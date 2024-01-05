@@ -15,8 +15,8 @@
 
 ### Allgemeines
 
-Die STL stellt mit der Klasse `std::queue<T>` einen leistungsstarken FIFO-Container
-(*First-in, First-out* Datenstruktur) bereit.
+Die STL stellt mit der Klasse `std::queue<T>` einen leistungsstarken FIFO-Container bereit
+(*First-in, First-out* Datenstruktur).
 
 Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
 
@@ -46,7 +46,7 @@ zu einem Bruch der Invariante.
 
 ### Entwurf des APIs
 
-Die von mir vorgestellt Klasse `ThreadsafeStack<T>`
+Die von mir vorgestellt Klasse `ThreadsafeQueue<T>`
 besitzt folgende öffentliche Schnittstelle:
 
 ```cpp
@@ -68,8 +68,8 @@ besitzt folgende öffentliche Schnittstelle:
 16: };
 ```
 
-Das Hinzufügen eines Elements zum Stapel (Methode `push`) kann als trivial betrachtet werden,
-auch vor dem Hintergrund der *Concurrency*. Zunächst einmal gibt es diese Methode in zwei Ausprägungen,
+Das Hinzufügen eines Elements zur Warteschlange (Methode `push`) kann als trivial betrachtet werden,
+auch vor dem Hintergrund der *Concurrency*. Es gibt diese Methode in zwei Ausprägungen,
 um das Verschieben von temporären Objekten laufzeitoptimal ausführen zu können.
 
 Desweiteren gilt es in der Realisierung eine Feinheit zu beachten:
@@ -86,12 +86,12 @@ Desweiteren gilt es in der Realisierung eine Feinheit zu beachten:
 
 Die kritische Datenstruktur `m_data` wird durch ein Hüllenobjekt des Typs `std::unique_lock` geschützt.
 Das Benachrichtigen von Clients, die auf den Zustand &bdquo;Warteschlange ist nicht mehr leer&rdquo; warten,
-muss aber nicht im kritischen Abschnitt stattfinden.
+muss aber *nicht* im kritischen Abschnitt stattfinden.
 
 Aus diesem Grund ist das Hüllenobjekt vom Typ `std::unique_lock`,
 es steht dann eine Methode `unlock` (siehe Zeile 5) zur Freigabe des kritischen Abschnitts zur Verfügung.
 
-Die `pop`-Operation ist auf Grund von *Race Conditions* &ndash; nicht ganz einfach zu definieren.
+Die `pop`-Operation ist auf Grund von *Race Conditions* nicht ganz einfach zu definieren.
 Zwei mögliche Signaturen sind
 
 ```cpp
@@ -104,8 +104,8 @@ oder
 bool tryPop(T& value);
 ```
 
-Von der Laufzeit bedeutet das zunächst, dass `tryPop` nicht wartet, bei Erfolg den Wert `true`
-zurückliefert und der gesuchte Wert im Arugment des Referenz-Parameters `value` abgelegt ist.
+Von der Laufzeit her gesehen bedeutet das zunächst, dass `tryPop` nicht wartet, bei Erfolg den Wert `true`
+zurückliefert und der gesuchte Wert im Argument des Referenz-Parameters `value` abgelegt ist.
 
 Die Methode `waitAndPop` hingegen blockiert solange, bis in der Warteschlange ein Wert vorhanden ist.
 
@@ -119,7 +119,102 @@ um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::queue<T>`-Objekt zu schü
 
 
 ```cpp
-
+01: template<typename T>
+02: class ThreadsafeQueue
+03: {
+04: private:
+05:     std::queue<T>            m_data;
+06:     mutable std::mutex       m_mutex;
+07:     std::condition_variable  m_condition;
+08: 
+09: public:
+10:     ThreadsafeQueue() {}
+11: 
+12:     // copy and move constructor may be useful
+13:     ThreadsafeQueue(const ThreadsafeQueue& other)
+14:     {
+15:         std::lock_guard<std::mutex> lock{ other.m_mutex };
+16:         m_data = other.m_data;
+17:     }
+18: 
+19:     ThreadsafeQueue(ThreadsafeQueue&& other) noexcept
+20:     {
+21:         std::lock_guard<std::mutex> lock{ other.m_mutex };
+22:         m_data = std::move(other.m_data);
+23:     }
+24: 
+25:     ThreadsafeQueue& operator= (const ThreadsafeQueue& other)
+26:     {
+27:         if (&other == this)
+28:             return *this;
+29: 
+30:         std::scoped_lock<std::mutex> lock{ m_mutex, other.m_mutex };
+31:         m_data = other.m_data;
+32:         return *this;
+33:     }
+34: 
+35:     ThreadsafeQueue& operator= (ThreadsafeQueue&& other) noexcept
+36:     {
+37:         if (&other == this)
+38:             return *this;
+39: 
+40:         std::scoped_lock<std::mutex> lock{ m_mutex, other.m_mutex };
+41:         m_data = std::move (other.m_data);
+42:         return *this;
+43:     }
+44: 
+45:     void push(const T& value)
+46:     {
+47:         std::unique_lock<std::mutex> lock{ m_mutex };
+48:         m_data.push(value);
+49:         lock.unlock();
+50:         m_condition.notify_one();
+51:     }
+52: 
+53:     void push(T&& value)
+54:     {
+55:         std::unique_lock<std::mutex> lock{ m_mutex };
+56:         m_data.push(std::move(value));
+57:         lock.unlock();
+58:         m_condition.notify_one();
+59:     }
+60: 
+61:     void waitAndPop(T& value)
+62:     {
+63:         std::unique_lock<std::mutex> lock{ m_mutex };
+64:         m_condition.wait(lock, [this] () {
+65:             return !m_data.empty(); 
+66:             }
+67:         );
+68: 
+69:         value = m_data.front();
+70:         m_data.pop();
+71:     }
+72: 
+73:     bool tryPop(T& value)
+74:     {
+75:         std::lock_guard<std::mutex> lock{ m_mutex };
+76:         if (m_data.empty()) {
+77:             return false;
+78:         }
+79: 
+80:         value = m_data.front();
+81:         m_data.pop();
+82:         return true;
+83:     }
+84: 
+85:     bool empty() const
+86:     {
+87:         std::lock_guard<std::mutex> lock{ m_mutex };
+88:         return m_data.empty();
+89:     }
+90: 
+91:     size_t size() const
+92:     {
+93:         std::lock_guard<std::mutex> lock{ m_mutex };
+94:         return m_data.size();
+95:     }
+96: };
 ```
 
 Wir erkennen an der Realisierung,
@@ -133,7 +228,7 @@ Wir demonstrieren in der Realisierung der `ThreadsafeQueue<T>`-Klasse gleich dre
 
 * `std::lock_guard`<br />Kommt dann zum Einsatz, wenn keine besonderen Anforderungen vorhanden sind.
 * `std::unique_lock`<br />Wird dann benötigt, wenn die `wait`-Methode an einem `std::condition_variable`-Objekt aufgerufen werden soll. 
-* `std::scoped_lock`<br />Wird im Kopier-Konstruktor und in den Wertzuweisungsoperatoren eingesetzt, um das Sperren von zwei Mutex-Objekten zu ermöglichen.
+* `std::scoped_lock`<br />Wird in den Kopier-Konstruktoren und in den Wertzuweisungsoperatoren eingesetzt, um das Sperren von zwei Mutex-Objekten zu ermöglichen.
 
 
 ### Schlüsselwort `mutable`
@@ -159,7 +254,7 @@ Beide Funktionen greifen auf ein `ThreadsafeQueue<int>`-Objekt zu.
 Führen wir beide Funktionen im Kontext unterschiedlicher Threads aus,
 werden die Methoden `push` und `waitAndPop` nebenläufig ausgeführt.
 
-  * Studieren Sie die Ausgaben des Programm.
+  * Studieren Sie die Ausgaben des Programms.
   * Überzeugen Sie sich von der Korrektheit der Ergebnisse.
 
 
@@ -302,8 +397,12 @@ Kleinere Ergänzungen wurden in Abstimmung mit der Unterlage
 
 vorgenommen.
 
+Weitere Anregungen zur Entwicklung einer threadsicheren Warteschlange kann man auch in
+[Modern C++: Writing a thread-safe Queue](https://codetrips.com/2020/07/26/modern-c-writing-a-thread-safe-queue/comment-page-1/)
+nachlesen.
+
 Das Praxisbeispiel mit Produzenten und Konsumenten stammt aus
-[Juan's C++ Block - Concurrent Queue – C++ 11](https://juanchopanzacpp.wordpress.com/2013/02/26/concurrent-queue-c11/).
+[Juan's C++ Block &ndash; Concurrent Queue &ndash; C++ 11](https://juanchopanzacpp.wordpress.com/2013/02/26/concurrent-queue-c11/).
 
 ---
 

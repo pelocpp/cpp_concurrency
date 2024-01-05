@@ -132,6 +132,7 @@
     <ClCompile Include="EventLoop.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
+    <ClCompile Include="StopToken_01.cpp" />
     <ClCompile Include="ThreadLocalStorage.cpp" />
     <ClCompile Include="Thread_Pool_01.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />
@@ -139,7 +140,6 @@
     <ClCompile Include="Thread_Safe_Blocking_Queue_01.cpp" />
     <ClCompile Include="Thread_Safe_Blocking_Queue_02.cpp" />
     <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp" />
-    <ClCompile Include="Thread_Safe_Queue.cpp" />
     <ClCompile Include="Type_Erasure.cpp" />
   </ItemGroup>
   <ItemGroup>

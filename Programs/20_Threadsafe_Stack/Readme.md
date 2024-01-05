@@ -14,8 +14,8 @@
 
 ### Allgemeines
 
-Die STL stellt mit der Klasse `std::stack<T>` einen leistungsstarken LIFO-Container
-(*Last-in, First-out* Datenstruktur) bereit.
+Die STL stellt mit der Klasse `std::stack<T>` einen leistungsstarken LIFO-Container bereit
+(*Last-in, First-out* Datenstruktur).
 
 Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
 

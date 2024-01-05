@@ -75,14 +75,46 @@ namespace JoinableThreadCooperativeInterruptibility {
     }
 
     // =============================================
-    // Szenario 3:
-    // class std::jthread -- using request_stop -- still endless loop
+    // Szenario 4:
+    // class std::jthread -- using request_stop -- no more endless loop
 
     static void jthread_04()
     {
         std::jthread jt{
+            [](std::stop_token token) {
+                while (!token.stop_requested()) {
+                    std::cout << "Working ..." << std::endl;
+                    sleep(1);
+                }
+            }
+        };
+
+        sleep(5);
+        jt.request_stop();
+        jt.join();
+    }
+
+    // =============================================
+    // Szenario 5:
+    // class std::jthread -- using request_stop -- still endless loop
+
+    static void jthread_05()
+    {
+        std::jthread jt {
             [] (std::stop_token token) {
-                while (! token.stop_requested()) {
+
+                bool running { true };
+
+                // called on a stop request
+                std::stop_callback callback {
+                    token, 
+                    [&] () {
+                        std::cout << "Stop requested" << std::endl;
+                        running = false;
+                    }
+                };
+
+                while (running) {
                     std::cout << "Working ..." << std::endl;
                     sleep(1);
                 }
@@ -100,10 +132,11 @@ void test_jthread_02()
 {
     using namespace JoinableThreadCooperativeInterruptibility;
 
-    jthread_01();
+    //jthread_01();
     //jthread_02();
     //jthread_03();
-    //jthread_04();
+    // jthread_04();
+    jthread_05();
 }
 
 

@@ -48,10 +48,10 @@
     <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Thread_Safe_Queue.cpp">
+    <ClCompile Include="ThreadLocalStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadLocalStorage.cpp">
+    <ClCompile Include="StopToken_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
