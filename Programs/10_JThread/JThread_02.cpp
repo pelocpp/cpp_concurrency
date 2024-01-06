@@ -5,6 +5,7 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
+#include <atomic>
 
 namespace JoinableThreadCooperativeInterruptibility {
 
@@ -103,7 +104,7 @@ namespace JoinableThreadCooperativeInterruptibility {
         std::jthread jt {
             [] (std::stop_token token) {
 
-                bool running { true };
+                std::atomic<bool> running { true };
 
                 // called on a stop request
                 std::stop_callback callback {
@@ -125,6 +126,41 @@ namespace JoinableThreadCooperativeInterruptibility {
         jt.request_stop();
         jt.join();
     }
+
+    // =============================================
+    // Szenario 6:
+    // class std::jthread -- using request_stop -- introducing XXX
+
+    static void jthread_06()
+    {
+        std::jthread jt{
+            [](std::stop_token token) {
+
+                std::atomic<bool> running { true };
+
+                // called on a stop request
+                std::stop_callback callback {
+                    token,
+                    [&]() {
+                        std::cout << "Stop requested" << std::endl;
+                        running = false;
+                    }
+                };
+
+                while (running) {
+                    std::cout << "Working ..." << std::endl;
+                    sleep(1);
+                }
+            }
+        };
+
+        sleep(5);
+
+        std::stop_source source{ jt.get_stop_source() };
+        
+        source.request_stop();  // request stop on stop token of thread 'jt'
+        jt.join();
+    }
 }
 
 
@@ -132,11 +168,12 @@ void test_jthread_02()
 {
     using namespace JoinableThreadCooperativeInterruptibility;
 
-    //jthread_01();
+    jthread_01();
     //jthread_02();
     //jthread_03();
-    // jthread_04();
-    jthread_05();
+    //jthread_04();
+    //jthread_05();
+    //jthread_06();
 }
 
 

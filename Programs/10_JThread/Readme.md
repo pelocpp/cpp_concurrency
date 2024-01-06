@@ -57,7 +57,11 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
    Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
    Mit diesem Objekt kann man ein `std::stop_callback`-Objekt erzeugen, welches aufgerufen wird, wenn wiederum
    die `request_stop()`-Methode aufgerufen wird.
-
+  *Szenario* 6:
+   Dieses Szenario ist vergleichbar zum letzten Szenario mit dem Unterschied, 
+   dass aufgezeigt wird, dass das `std::stop_source` auch über die Instanz eines `std::jthread`-Objekts
+   abgerufen werden kann.
+     
 ---
 
 #### Quellcode:

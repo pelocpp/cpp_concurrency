@@ -6,7 +6,7 @@
 #include <mutex>
 #include <condition_variable>
 
-#include <syncstream>
+#include "../Logger/Logger.h"
 
 namespace Concurrency_Stop_Tokens_and_Condition_Variables
 {
@@ -83,61 +83,88 @@ namespace Concurrency_Stop_Tokens_and_Condition_Variables
 }
 
 // =============================================================================
+// =============================================================================
 
-namespace Concurrency_Stop_Tokens_and_Condition_Variables
+
+#include "../Logger/Logger.h"
+
+namespace Concurrency_Using_Stop_Callbacks
 {
-    auto syncOut(std::ostream& strm = std::cout) {
-        return std::osyncstream{ strm };
-    }
-
-
-
-    void task(std::stop_token st, int num)
+    static void task_demo(std::stop_token token, int num)
     {
-        auto id = std::this_thread::get_id();
-        syncOut() << "call task(" << num << ")\n";
+        // register temporary callback
+        std::stop_callback cb{
+            token,
+            [] { std::cout << "stop requested"; }
+        };
 
-        // register a first callback:
-        std::stop_callback cb1{ st, [num, id] {
-        syncOut() << "- STOP1 requested in task(" << num
-        << (id == std::this_thread::get_id() ? ")\n"
-        : ") in main thread\n");
-        } };
-        std::this_thread::sleep_for(std::chrono::milliseconds(20));
-        // register a second callback:
-        std::stop_callback cb2{ st, [num, id] {
-        syncOut() << "- STOP2 requested in task(" << num
-        << (id == std::this_thread::get_id() ? ")\n"
-        : ") in main thread\n");
-        } };
-        std::this_thread::sleep_for(std::chrono::milliseconds(3));
+        // ...
+
+    } // unregisters callback is unregistered
+
+    // =============================================================================
+    // =============================================================================
+
+    static void task(std::stop_token token, int num)
+    {
+        Logger::log(std::cout, "Task");
+
+        auto id{ std::this_thread::get_id() };
+
+        // register a stop callback
+        std::stop_callback cb{
+            token, 
+            [=] {
+                auto currentId{ std::this_thread::get_id() };
+                if (currentId == id) {
+                    Logger::log(std::cout, "Task: Stop requested - Thread Context = Task");
+                }
+                else {
+                    Logger::log(std::cout, "Task: Stop requested - Thread Context = Main");
+                }
+            }
+        };
+
+        std::this_thread::sleep_for(std::chrono::seconds(4));
+
+        Logger::log(std::cout, "Done Task");
     }
-
-
 
     static void test_02()
     {
-        // create stop_source and stop_token:
-        std::stop_source ssrc;
-        std::stop_token stok{ ssrc.get_token() };
-        // register callback:
-        std::stop_callback cb{ stok, [] {
-        syncOut() << "- STOP requested in main()\n" << std::flush;
-        } };
-        // in the background call task() a bunch of times:
-        auto fut = std::async([stok] {
-            for (int num = 1; num < 10; ++num) {
-                task(stok, num);
-            }
-            });
-        // after a while, request stop:
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
-        ssrc.request_stop();
+        Logger::log(std::cout, "Main");
+
+        // create stop source and stop token
+        std::stop_source source;
+        std::stop_token token{ source.get_token() };
+
+        // register callback
+        std::stop_callback cb{ 
+            token,
+            [] {
+                Logger::log(std::cout, "Main: Stop requested");
+            } 
+        };
+
+        // request stop before task has been created
+        source.request_stop();
+
+        std::future<void> future {
+            std::async(std::launch::async, [token] { task(token, 123); })
+        };
+
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+
+        // request stop after task has been created
+        // (runs any associated callbacks on this thread)
+        // source.request_stop();
+
+        Logger::log(std::cout, "Done Main");
     }
 }
 
 void test_Stop_Tokens_and_Condition_Variables()
 {
-    //Concurrency_Stop_Tokens_and_Condition_Variables::test_01();
-    Concurrency_Stop_Tokens_and_Condition_Variables::test_02();
+    Concurrency_Stop_Tokens_and_Condition_Variables::test_01();
+    Concurrency_Using_Stop_Callbacks::test_02();
 }

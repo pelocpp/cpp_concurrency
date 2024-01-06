@@ -24,31 +24,31 @@ public:
         return s_loggingEnabled;
     }
 
-    template<typename ...Args>
-    static void logInternal(std::ostream& os, Args&& ...args)
+    template<typename ... TArgs>
+    static void logInternal(std::ostream& os, TArgs&& ...args)
     {
         std::stringstream ss;
         ss << getPrefix();
         ss << '\t';
-        (ss << ... << std::forward<Args>(args)) << std::endl;
+        (ss << ... << std::forward<TArgs>(args)) << std::endl;
         os << ss.str();
     }
 
     // log conditionally
-    template<typename ...Args>
-    static void log(std::ostream& os, Args&& ...args)
+    template<typename ... TArgs>
+    static void log(std::ostream& os, TArgs&& ...args)
     {
         if (!s_loggingEnabled)
             return;
 
-        logInternal(os, std::forward<Args>(args)...);
+        logInternal(os, std::forward<TArgs>(args)...);
     }
 
     // log unconditionally
-    template<typename ...Args>
-    static void logAbs(std::ostream& os, Args&& ...args)
+    template<typename ... TArgs>
+    static void logAbs(std::ostream& os, TArgs&& ...args)
     {
-        logInternal(os, std::forward<Args>(args)...);
+        logInternal(os, std::forward<TArgs>(args)...);
     }
 
     static size_t readableTID(const std::thread::id id)
