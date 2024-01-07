@@ -1,15 +1,15 @@
-# C++20: *Latches* und *Barrieren*
+# Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`
 
 [Zurück](../../Readme.md)
 
 ---
 
-#### Quellcode:
+## Verwendete Werkzeuge
 
-Eine Beschreibung der Beispiele folgt weiter unten:
+<ins>Thread-Klassen</ins>:
 
-[Latches.cpp](Latches.cpp)<br />
-[Barriers.cpp](Barriers.cpp)
+  * Klasse `std::latch`
+  * Klasse `std::barrier`
 
 ---
 
@@ -30,7 +30,7 @@ der mit einem Startwert initialisiert wird und beim Eintreten bestimmter Ereigni
 Erreicht der Zähler den Wert 0, meldet er auf eine bestimmte Art &bdquo;fertig&rdquo;.
 
 So kann man beispielsweise 5 Threads beauftragen, etwas zu tun, und den Zähler
-mit 5 vorbelegen. Wenn dann jeder Thread sein Ende dem Latch
+mit 5 vorbelegen. Wenn dann jeder Thread sein Ende dem *Latch*
 als Ereignis mitteilt, meldet dieser nach 5 fertigen Threads, dass
 die gesamte Ausführung abgeschlossen ist.
 
@@ -95,9 +95,26 @@ kann dieselbe Barriere erneut verwendet werden.
 
 ## Beispiele zu `std::latch`
 
+
+### Mehrere Tätigkeiten zeitlich aufeinander abstimmen
+
+Das erste Beispiel betrachtet zwei Threads, die unterschiedliche Arbeiten durchführen.
+Der Hauptthread arbeitet an einem bestimmten Punkt erst dann weiter,
+wenn beide Threads ihre Tätigkeiten beendet haben.
+
+### Gemeinsamer Start in der Ausführung mehrerer Tätigkeiten
+
+Ein zweites Beispiel demonstriert einen Einsatz der `arrive_and_wait`-Methode.
+Es werden eine Reihe von Threads gestartet, die vorbereitende Tätigkeiten absolvieren.
+An einem bestimmten Punkt sind sie mit den Vorbereitungen fertig und rufen die `arrive_and_wait`-Methode aus.
+Diese Methode blockiert solange (bei geeigneter Initialisierung eines beteiligten `std::latch`-Objekts),
+bis alle Threads ihre Vorbereitungen abgeschlossen haben.
+Kehrt `arrive_and_wait` aus der Blockade zurück, können alle Threads &ndash; mehr oder minder &ndash; zeitgleich
+mit Folgeaktivitäten starten.
+
 ### Summenbildung von disjunkten Zahlenbereichen
 
-Das erste Beispiel ist ähnlich zum Beispiel aus dem Projekt `std::packaged_task`.
+Das dritte Beispiel ist ähnlich zum Beispiel aus dem Projekt `std::packaged_task`.
 Es wird die Summation einer Reihe natürlicher Zahlen auf mehrere Threads (hier: `std::async`) aufgeteilt.
 Der Worker-Thread liefert zu Demonstrationszwecken das Ergebnis nicht über ein `std::future`-Objekt zurück,
 sondern legt es an einer bestimmten Position (Parameter `index`) in einem globalen `std::array`-Objekt ab.
@@ -252,6 +269,15 @@ beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt
 [4]: fulltimeWorker  (3): Afternoon work done!
 [1]: Working ends starts [PartimeWorker & FulltimeWorker].
 ```
+
+---
+
+#### Quellcode:
+
+Eine Beschreibung der Beispiele folgt weiter unten:
+
+[Latches.cpp](Latches.cpp)<br />
+[Barriers.cpp](Barriers.cpp)
 
 ---
 

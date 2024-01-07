@@ -18,13 +18,16 @@
     <ClCompile Include="Barriers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Latches.cpp">
+    <ClCompile Include="Latches_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Latches_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

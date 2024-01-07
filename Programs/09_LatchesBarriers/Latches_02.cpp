@@ -1,5 +1,5 @@
 // ===========================================================================
-// Latches.cpp
+// Latches_02.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -13,7 +13,7 @@
 
 #include "../Logger/Logger.h"
 
-namespace Latches_01 {
+namespace Latches_03 {
 
     constexpr size_t ThreadCount{ 4 };
     constexpr size_t MaxDelay{ 5000 };
@@ -26,7 +26,7 @@ namespace Latches_01 {
         return sum;
     }
 
-    void example_latches_01()
+    static void example_latches_03()
     {
         std::latch done{ ThreadCount };
 
@@ -98,7 +98,7 @@ namespace Latches_01 {
 
 // =======================================================================
 
-namespace Latches_02 {
+namespace Latches_04 {
 
     constexpr size_t MaxDelay{ 3000 };
 
@@ -123,7 +123,7 @@ namespace Latches_02 {
         Logger::log(std::cout, name, ": Exit.");
     };
 
-    void example_latches_02()
+    static void example_latches_04()
     {
         std::deque<std::future<void>> tasks;
 
@@ -143,12 +143,16 @@ namespace Latches_02 {
     }
 }
 
-void test_latches()
+void test_latches_03()
 {
-    using namespace Latches_01;
-    using namespace Latches_02;
-    example_latches_01();
-    example_latches_02();
+    using namespace Latches_03;
+    example_latches_03();
+}
+
+void test_latches_04()
+{
+    using namespace Latches_04;
+    example_latches_04();
 }
 
 // ===========================================================================

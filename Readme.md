@@ -24,7 +24,7 @@
 
 ### [11. Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`](Programs/12_StopToken/Readme.md)
 
-### [12. Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+### [12. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
 
 ### [13. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
 

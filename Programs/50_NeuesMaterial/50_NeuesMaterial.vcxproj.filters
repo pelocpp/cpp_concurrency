@@ -51,9 +51,6 @@
     <ClCompile Include="ThreadLocalStorage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NJ_Latches_01.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

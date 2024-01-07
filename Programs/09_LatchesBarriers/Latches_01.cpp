@@ -1,15 +1,18 @@
+// ===========================================================================
+// Latches_01.cpp
+// ===========================================================================
+
 #include <iostream>
+#include <string>
+#include <sstream>
 #include <queue>
 #include <thread>
 #include <latch>
 #include <array>
 #include <vector>
-#include <string>
-#include <sstream>
-#include <iostream>
 
-namespace Concurrency_Latches
-{
+namespace Latches_01 {
+
     static void loopOver(char ch) {
 
         for (int j{}; j != 10; ++j) {
@@ -19,9 +22,9 @@ namespace Concurrency_Latches
         }
     }
 
-    static void test_01()
+    static void example_latches_01()
     {
-        std::array<char, 5> tags = { '1', '2', '3', '4', '5' }; // tags we have to perform a task for
+        std::array<char, 5> tags = { '1', '2', '3', '4', '5' };   // tags we have to perform a task for
 
         // initialize latch to react when all tasks are done
         // (initialize countdown with number of tasks)
@@ -31,21 +34,25 @@ namespace Concurrency_Latches
         std::jthread t1 {
             [&] () {
                 for (size_t i{}; i < tags.size(); i += 2) { // even indexes
+
                     loopOver(tags[i]);
+
                     // signal that the task is done:
                     allDone.count_down(); // atomically decrement counter of latch
                 }
             }
         };
 
-        std::jthread t2 { 
+        std::jthread t2 {
             [&] () {
                 for (size_t i{ 1 }; i < tags.size(); i += 2) { // odd indexes
+
                     loopOver(tags[i]);
+
                     // signal that the task is done:
                     allDone.count_down(); // atomically decrement counter of latch
                 }
-            } 
+            }
         };
 
         // wait until all tasks are done
@@ -56,9 +63,11 @@ namespace Concurrency_Latches
         t1.join();  // wait until end of threads
         t2.join();
     }
+}
 
-    // page 426
-    static void test_02()
+namespace Latches_02 {
+
+    static void example_latches_02()
     {
         std::ptrdiff_t numThreads{ 10 };
 
@@ -71,9 +80,9 @@ namespace Concurrency_Latches
 
         for (int i{}; i != numThreads; ++i) {
 
-            std::jthread t { 
-                
-                [i, &allReady] () {
+            std::jthread t{
+
+                [i, &allReady]() {
 
                     // initialize each thread (simulate to take some time):
                     std::this_thread::sleep_for(std::chrono::milliseconds(300 * i));
@@ -85,14 +94,18 @@ namespace Concurrency_Latches
 
                     // synchronize threads so that all start together here:
                     allReady.arrive_and_wait();
-                
+
+                    // or
+                    //allReady.count_down();
+                    //allReady.wait();
+
                     // perform whatever the thread does
                     // (loop printing its index):
                     for (int j{}; j != 10; ++j) {
                         std::cout.put(static_cast<char>('0' + i)).flush();
                         std::this_thread::sleep_for(std::chrono::milliseconds(50));
                     }
-                } 
+                }
             };
 
             threads.push_back(std::move(t));
@@ -100,11 +113,18 @@ namespace Concurrency_Latches
     }
 }
 
-// =============================================================================
-// =============================================================================
-
-void test_Latches()
+void test_latches_01()
 {
-  //  Concurrency_Latches::test_01();
-    Concurrency_Latches::test_02();
+    using namespace Latches_01;
+    example_latches_01();
 }
+
+void test_latches_02()
+{
+    using namespace Latches_02;
+    example_latches_02();
+}
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================
