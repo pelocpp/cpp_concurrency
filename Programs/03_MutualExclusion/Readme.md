@@ -121,6 +121,10 @@ Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausg
 
 ---
 
+[Zurück](../../Readme.md)
+
+---
+
 In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
 gibt es eine ausführliche Beschreibung zum Thema *Mutual Exclusion*, das dort
 die Programmiersprache C# zugrunde legt. Die Ausführungen lassen sich ohne Weiteres auch auf andere

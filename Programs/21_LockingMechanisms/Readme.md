@@ -68,8 +68,8 @@ aufgezeigt.
 
 Die Klasse `std::recursive_mutex` ist dann erforderlich, wenn Sie zum einen
 threadsichere Datenstrukturen entwerfen und zum anderen die Methoden der
-öffentlichen Schnittstelle von unterschiedlichen Ebenen aus
-auf die kritischen Abschnitte bzw. Daten der Datenstruktur zugreifen.
+öffentlichen Schnittstelle von unterschiedlichen Ebenen aus aufrufen,
+um auf die kritischen Abschnitte bzw. Daten der Datenstruktur zuzugreifen.
 
 ##### Klasse `std::shared_mutex`
 

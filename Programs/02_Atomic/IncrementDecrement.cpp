@@ -138,7 +138,7 @@ namespace IncrementDecrement {
         void incrementMutexRAII() {
             Logger::log(std::cout, "> incrementMutexRAII");
             for (size_t n{}; n != NumIterations; ++n) {
-                std::scoped_lock<std::mutex> raii{ m_mutex };
+                std::lock_guard<std::mutex> raii{ m_mutex };
                 ++m_counter;
             }
             Logger::log(std::cout, "< incrementMutexRAII");
@@ -147,7 +147,7 @@ namespace IncrementDecrement {
         void decrementMutexRAII() {
             Logger::log(std::cout, "> decrementMutexRAII");
             for (size_t n{}; n != NumIterations; ++n) {
-                std::scoped_lock<std::mutex> raii{ m_mutex };
+                std::lock_guard<std::mutex> raii{ m_mutex };
                 --m_counter;
             }
             Logger::log(std::cout, "< decrementMutexRAII");

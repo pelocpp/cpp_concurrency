@@ -28,22 +28,22 @@
 
 ## Entwurfsmuster
 
-### [Mutexe und Sperrmechanismen](Programs/21_LockingMechanisms/Readme.md)
+### [1. Mutexe und Sperrmechanismen](Programs/21_LockingMechanisms/Readme.md)
 
-### [Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
+### [2. Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
-### [Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
+### [3. Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
 
 ---
 
 ## Beispiele
 
-### [Threadsicherer Stapel (Threadsafe Stack)](Programs/20_Threadsafe_Stack/Readme.md)
+### [1. Threadsicherer Stapel (Threadsafe Stack)](Programs/20_Threadsafe_Stack/Readme.md)
 
-### [Threadsichere Warteschlange (Threadsafe Queue)](Programs/25_Threadsafe_Queue/Readme.md)
+### [2. Threadsichere Warteschlange (Threadsafe Queue)](Programs/25_Threadsafe_Queue/Readme.md)
 
-### [Realisierung einer `parallel_for` Wiederholungsschleife](Programs/24_ParallelFor/Readme.md)
+### [3. Realisierung einer `parallel_for` Wiederholungsschleife](Programs/24_ParallelFor/Readme.md)
 
-### [Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
+### [4. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
 
 ---
