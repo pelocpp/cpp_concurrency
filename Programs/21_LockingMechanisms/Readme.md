@@ -136,7 +136,7 @@ für mehrere Mutexobjekte gleichzeitig verwendet werden kann!
   * Bei der Zerstörung (Verlassen des Gültigkeitsbereichs) entsperrt ein `std::scoped_lock`-Objekt automatisch alle Mutexobjekte.
 
 
-##### Klasse std::shared_lock
+##### Klasse `std::shared_lock`
 
 In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
