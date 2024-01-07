@@ -76,7 +76,7 @@ um auf die kritischen Abschnitte bzw. Daten der Datenstruktur zuzugreifen.
 In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
 und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
-Weitere Informationen siehe [hier](#klasse-std::shared_lock).
+Weitere Informationen siehe [hier](#klasse-stdshared_lock).
 
 #### Hüllen-Klassen für Mutexobjekte
 
