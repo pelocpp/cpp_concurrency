@@ -4,7 +4,7 @@
 
 ---
 
-## Verwendete Hilfsmittel:
+## Verwendete Werkzeuge
 
 <ins>Mutex-Klassen</ins>:
 

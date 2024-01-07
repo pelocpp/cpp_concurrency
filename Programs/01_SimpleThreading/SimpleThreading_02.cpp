@@ -21,7 +21,7 @@ namespace SimpleThreading02 {
 
     constexpr size_t NumIterations{ 5 };
 
-    void function(int value, size_t iterations) {
+    static void function(int value, size_t iterations) {
 
         for (size_t i{}; i != iterations; ++i) {
 
@@ -30,7 +30,7 @@ namespace SimpleThreading02 {
         }
     }
 
-    void test_01() {
+    static void test_01() {
 
         std::thread t{ function, 1, NumIterations };
         t.join();
@@ -57,7 +57,7 @@ namespace SimpleThreading02 {
         }
     };
 
-    void test_02() {
+    static void test_02() {
 
         std::thread t { Runnable { 2, NumIterations } };
         t.join();
@@ -66,7 +66,7 @@ namespace SimpleThreading02 {
 
     // --------------------------------------------
 
-    void test_03() {
+    static void test_03() {
 
         int value{ 3 };
         size_t iterations{ NumIterations };
@@ -105,7 +105,7 @@ namespace SimpleThreading02 {
         }
     };
 
-    void test_04() {
+    static void test_04() {
 
         AnotherRunnable runnable{ 4, NumIterations };
         std::thread t { &AnotherRunnable::run, &runnable };

@@ -10,9 +10,13 @@
 
 namespace SimpleThreading01 {
 
+    /*
+     *  std::thread basics
+     */
+
     constexpr size_t NumIterations{ 5 };
 
-    void function(int value) {
+    static void function(int value) {
 
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "tid:  ", tid);
@@ -25,7 +29,7 @@ namespace SimpleThreading01 {
         Logger::log(std::cout, "Done Thread.");
     }
 
-    void test_01() {
+    static void test_01() {
 
         Logger::log(std::cout, "Begin");
 
@@ -41,7 +45,7 @@ namespace SimpleThreading01 {
         Logger::log(std::cout, "Done.");
     }
 
-    void test_02() {
+    static void test_02() {
 
         Logger::log(std::cout, "Begin");
 

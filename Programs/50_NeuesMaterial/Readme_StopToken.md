@@ -5,7 +5,7 @@
 
 ---
 
-## Verwendete Hilfsmittel:
+## Verwendete Werkzeuge
 
 <ins>Klassen</ins>:
 

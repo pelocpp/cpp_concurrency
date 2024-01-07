@@ -1,4 +1,4 @@
-# Mutual Exclusion / Gegenseitiger Ausschluss
+# Gegenseitiger Ausschluss: Klasse `std::mutex`
 
 [Zurück](../../Readme.md)
 

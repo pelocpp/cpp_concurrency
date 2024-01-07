@@ -12,9 +12,10 @@ namespace SimpleThreading03 {
 
     constexpr size_t NumIterations{ 5 };
 
-    void function(int value) {
+    static void function(int value) {
 
         for (size_t i{}; i != NumIterations; ++i) {
+
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds(1));
         }
@@ -22,7 +23,7 @@ namespace SimpleThreading03 {
         Logger::log(std::cout, "Done Thread.");
     }
 
-    void test() {
+    static void test() {
 
         Logger::log(std::cout, "Begin");
 

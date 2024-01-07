@@ -11,7 +11,7 @@ Es erlaubt, sowohl die Synchronisation wie auch die Kooperation der beteiligten 
 
 ---
 
-## Verwendete Hilfsmittel
+## Verwendete Werkzeuge
 
 Folgende Klassen kommen in der vorgestellten Lösung zum Einsatz:
 

@@ -134,6 +134,7 @@
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
     <ClCompile Include="NJ_StopToken_01.cpp" />
+    <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp" />
     <ClCompile Include="ThreadLocalStorage.cpp" />
     <ClCompile Include="Thread_Pool_01.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />

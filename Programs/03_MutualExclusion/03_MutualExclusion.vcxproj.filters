@@ -27,9 +27,6 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Concurrency.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

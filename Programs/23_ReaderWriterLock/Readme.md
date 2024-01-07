@@ -4,7 +4,7 @@
 
 ---
 
-## Verwendete Hilfsmittel:
+## Verwendete Werkzeuge
 
   * Klasse `std::shared_mutex`
 

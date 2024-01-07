@@ -1,4 +1,4 @@
-# Die Funktionsschablone `std::async`
+# Nochmals nebenläufige Ausführung: Funktion `std::async`
 
 [Zurück](../../Readme.md)
 

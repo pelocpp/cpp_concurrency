@@ -1,4 +1,4 @@
-﻿# Atomare Operationen
+﻿# Atomare Operationen: Klasse `std::atomic<T>`
 
 [Zurück](../../Readme.md)
 
@@ -6,14 +6,14 @@
 
 Aus *Wikipedia*:
 
-"In der Informatik bezeichnet eine **atomare Operation** (von griechisch άτομο átomo ‚unteilbar‘
+"In der Informatik bezeichnet eine **atomare Operation** (von griechisch άτομο átomo ‚unteilbar‘)
 einen Verbund von Einzeloperationen, der als logische Einheit betrachtet werden kann und nur als Ganzes erfolgreich abläuft oder fehlschlägt.
 
 Dabei können die Einzeloperationen wiederum aus kleineren atomaren Operationen bestehen, bei deren Fehlschlag die höherrangige Operation in ihrer Ganzheit als fehlgeschlagen anzusehen ist. Dabei ist das Ziel, auf jeder Ebene den Überblick über die vielen möglichen fehlerhaften Zwischenzustände zu erleichtern und bei jedem Fehlschlag die Operation auf den aus ihrer Sicht konsistenten Zustand zurücksetzen zu können.
 
 Der Begriff wird vor allem in der Datenbanktheorie und auf bestimmte CPU-Befehle angewendet."
 
-In C++ gibt es mehrere Klassenschablonen `std::atomic`, mit deren Hilfe atomare Operationen
+In C++ gibt es mehrere Klassenschablonen `std::atomic<T>`, mit deren Hilfe atomare Operationen
 realisiert werden können:
 
 Ab C++ 11:
@@ -66,7 +66,11 @@ Tabelle 1: Vordefinierte atomare Datentypen.
 
 #### Quellcode:
 
-[Siehe hier](IncrementDecrement.cpp).
+[IncrementDecrement.cpp](IncrementDecrement.cpp).
+
+---
+
+[Zurück](../../Readme.md)
 
 ---
 
