@@ -1,5 +1,5 @@
 // ===========================================================================
-// Simple_Condition_Variable_01.cpp // Condition Variable
+// Simple_Condition_Variable_02.cpp // Condition Variable
 // ===========================================================================
 
 #include <iostream>
@@ -9,25 +9,26 @@
 
 #include "../Logger/Logger.h"
 
-namespace SimpleConditionVariableDemo03
+namespace SimpleConditionVariableDemo02
 {
     constexpr long NumIterations{ 5 };
 
     std::mutex mutex;
+
     std::condition_variable condition;
 
-    void function()
+    static void function()
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "TID:  ", tid);
 
-        std::unique_lock<std::mutex> raii{ mutex };
-        condition.wait(raii);
+        std::unique_lock<std::mutex> guard{ mutex };
+        condition.wait(guard);
 
         Logger::log(std::cout, "Done Thread ", tid);
     }
 
-    void test()
+    static void test()
     {
         std::thread::id mainTID{ std::this_thread::get_id() };
         Logger::log(std::cout, "Begin Main: ", mainTID);
@@ -50,9 +51,9 @@ namespace SimpleConditionVariableDemo03
     }
 }
 
-void test_simple_condition_variable_03()
+void test_simple_condition_variable_02()
 {
-    using namespace SimpleConditionVariableDemo03;
+    using namespace SimpleConditionVariableDemo02;
     test();
 }
 

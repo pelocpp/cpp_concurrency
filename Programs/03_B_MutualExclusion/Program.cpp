@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Locking Mechanisms
+// Program.cpp // Mutual Exclusion // Locking Mechanisms
 // ===========================================================================
 
 extern void examples();

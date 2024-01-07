@@ -225,13 +225,13 @@ namespace Mutex_And_Locking_Examples {
             // 1. explicitly lock all mutexes at once
             std::lock(g_mutex1, g_mutex2, g_mutex3);
 
-            // 2. Now pass their ownership individually to `std::lock_guard` objects to
-            // auto-unlock them at the termination of this scope.
-            // Creating a `std::lock_guard` with the `std::adopt_lock` parameter means,
-            // that the ownership of the mutex is acquired without attempting to lock it!
-            std::lock_guard<std::mutex> lock1(g_mutex1, std::adopt_lock);
-            std::lock_guard<std::mutex> lock2(g_mutex2, std::adopt_lock);
-            std::lock_guard<std::mutex> lock3(g_mutex3, std::adopt_lock);
+            // 2. Now pass their ownership individually to `std::lock_guard` objects
+            //    to auto-unlock them at the termination of this scope.
+            //    Creating a `std::lock_guard` with the `std::adopt_lock` parameter means,
+            //    that the ownership of the mutex is acquired without attempting to lock it!
+            std::lock_guard<std::mutex> lock1{ g_mutex1, std::adopt_lock };
+            std::lock_guard<std::mutex> lock2{ g_mutex2, std::adopt_lock };
+            std::lock_guard<std::mutex> lock3{ g_mutex3, std::adopt_lock };
 
             // critical section here
             // ...

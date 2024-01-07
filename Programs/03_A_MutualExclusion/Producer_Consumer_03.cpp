@@ -13,8 +13,8 @@
 
 namespace ConsumerProducerThree
 {
-    constexpr std::chrono::milliseconds SleepTimeConsumer { 2000 };
-    constexpr std::chrono::milliseconds SleepTimeProducer { 2000 };
+    constexpr std::chrono::milliseconds SleepTimeConsumer { 100 };
+    constexpr std::chrono::milliseconds SleepTimeProducer { 200 };
 
     class ConsumerProducer
     {
@@ -62,11 +62,11 @@ namespace ConsumerProducerThree
                         m_index++;
                         m_data.at(m_index) = nextNumber;
                         Logger::log(std::cout, "pushed ", nextNumber, " at index ", m_index);
-
-                        // wakeup any sleeping consuments
-                        m_conditionIsEmpty.notify_all();
                     }
                 }
+
+                // wakeup any sleeping consuments
+                m_conditionIsEmpty.notify_all();
             }
         }
 
@@ -95,11 +95,11 @@ namespace ConsumerProducerThree
                         int number{ m_data.at(m_index) };
                         Logger::log(std::cout, "popped ", number, " at index ", m_index);
                         m_index--;
-
-                        // wakeup any sleeping producers
-                        m_conditionIsFull.notify_all();
                     }
                 }
+
+                // wakeup any sleeping producers
+                m_conditionIsFull.notify_all();
             }
         }
 

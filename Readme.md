@@ -6,23 +6,25 @@
 
 ### [2. Atomare Operationen: Klassen `std::atomic<T>`](Programs/02_Atomic/Readme.md)
 
-### [3. Gegenseitiger Ausschluss: Klasse `std::mutex`](Programs/03_MutualExclusion/Readme.md)
+### [3. Mutexe und Sperrmechanismen: Erste Schritte](Programs/03_A_MutualExclusion/Readme.md)
 
-### [4. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
+### [4. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_B_MutualExclusion/Readme.md)
 
-### [5. Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
+### [5. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
 
-### [6. Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
+### [6. Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
 
-### [7. Exception Handling](Programs/07_ExceptionHandling/Readme.md)
+### [7. Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
 
-### [8. STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+### [8. Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
-### [9. Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+### [9. STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
-### [10. Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+### [10. Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
 
-### [11. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+### [11. Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+
+### [12. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 

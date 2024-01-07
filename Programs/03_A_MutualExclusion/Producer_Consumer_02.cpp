@@ -11,13 +11,19 @@
 
 #include "../Logger/Logger.h"
 
-namespace ConsumerProducerOne
+namespace ConsumerProducerTwo
 {
     class ConsumerProducer {
 
     private:
         std::queue<int> m_data;
+
         std::mutex m_mutex;
+
+        std::condition_variable m_condition;
+
+    public:
+        ConsumerProducer() = default;
 
         void produce() {
 
@@ -25,19 +31,21 @@ namespace ConsumerProducerOne
 
             while (true) {
 
-                // sleep some seconds
+                // sleep a second
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
                 nextNumber++;
 
                 // RAII idiom
-                Logger::log(std::cout, "> Producer");
                 {
-                    std::scoped_lock<std::mutex> raii{ m_mutex };
+                    std::scoped_lock<std::mutex> guard{ m_mutex };
+
                     m_data.push(nextNumber);
                 }
 
                 Logger::log(std::cout, "Added ", nextNumber, " to queue.");
+
+                m_condition.notify_one();  // wakeup consumer, if any
             }
         }
 
@@ -48,9 +56,19 @@ namespace ConsumerProducerOne
                 int number{};
 
                 // RAII idiom
-                Logger::log(std::cout, "> Consumer");
                 {
-                    std::scoped_lock<std::mutex> raii{ m_mutex };
+                    std::unique_lock<std::mutex> guard{ m_mutex };
+
+                    m_condition.wait(
+                        guard,
+                        [this]() -> bool {
+                            // return 'false' if waiting should be continued
+                            bool condition{ !m_data.empty() };
+                            Logger::log(std::cout, "Wait -> ", condition);
+                            return condition;
+                        }
+                    );
+
                     if (!m_data.empty()) {
                         number = m_data.front();
                         m_data.pop();
@@ -76,8 +94,8 @@ namespace ConsumerProducerOne
     };
 }
 
-void test_mutual_exclusion_01() {
-    using namespace ConsumerProducerOne;
+void test_mutual_exclusion_02() {
+    using namespace ConsumerProducerTwo;
     ConsumerProducer cp;
     cp.run();
 }

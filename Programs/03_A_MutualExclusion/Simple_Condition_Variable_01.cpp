@@ -11,21 +11,22 @@
 
 namespace SimpleConditionVariableDemo01
 {
-    std::mutex g_mutex;
-    std::condition_variable g_condition;
+    std::mutex mutex;
 
-    bool g_data{ false };
+    std::condition_variable condition;
 
-    void consume()
+    bool data{ false };
+
+    static void consume()
     {
         Logger::log(std::cout, "Function Consume:");
 
         {
-            std::unique_lock<std::mutex> raii{ g_mutex };
+            std::unique_lock<std::mutex> guard{ mutex };
 
-            g_condition.wait(raii, []() {
+            condition.wait(guard, []() {
                 Logger::log(std::cout, "  ... check for data being present ...");
-                return g_data == true;
+                return data == true;
                 }
             );
         }
@@ -35,32 +36,32 @@ namespace SimpleConditionVariableDemo01
         Logger::log(std::cout, "Done Thread ");
     }
 
-    void produce()
+    static void produce()
     {
         Logger::log(std::cout, "Function Produce:");
 
-        {
-            std::lock_guard<std::mutex> guard (g_mutex);
+        // put into comment ... or not
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 
-            g_data = true;
+        {
+            std::lock_guard<std::mutex> guard (mutex);
+
+            data = true;
         }
 
         Logger::log(std::cout, "Data has been produced ...");
 
-        g_condition.notify_one();
+        condition.notify_one();
 
         Logger::log(std::cout, "Done Thread ");
     }
 
-    void test() 
+    static void test()
     {
-        Logger::log(std::cout, "Begin Main:");
+        Logger::log(std::cout, "Function Main:");
 
-        std::thread t1{ produce };  // or consume
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
-        
-        std::thread t2{ consume };  // or produce
+        std::thread t1{ produce };
+        std::thread t2{ consume };
 
         t1.join();
         t2.join();
