@@ -98,15 +98,15 @@ kann dieselbe Barriere erneut verwendet werden.
 
 ### Mehrere Tätigkeiten zeitlich aufeinander abstimmen
 
-Das erste Beispiel betrachtet zwei Threads, die unterschiedliche Arbeiten durchführen.
+Das erste Beispiel betrachtet zwei Threads, die unterschiedliche Tätigkeiten durchführen.
 Der Hauptthread arbeitet an einem bestimmten Punkt erst dann weiter,
 wenn beide Threads ihre Tätigkeiten beendet haben.
 
-### Gemeinsamer Start in der Ausführung mehrerer Tätigkeiten
+### Gemeinsamer Start in der Ausführung verschiedener Tätigkeiten
 
 Ein zweites Beispiel demonstriert einen Einsatz der `arrive_and_wait`-Methode.
 Es werden eine Reihe von Threads gestartet, die vorbereitende Tätigkeiten absolvieren.
-An einem bestimmten Punkt sind sie mit den Vorbereitungen fertig und rufen die `arrive_and_wait`-Methode aus.
+An einem bestimmten Punkt sind sie mit den Vorbereitungen fertig und rufen die `arrive_and_wait`-Methode auf.
 Diese Methode blockiert solange (bei geeigneter Initialisierung eines beteiligten `std::latch`-Objekts),
 bis alle Threads ihre Vorbereitungen abgeschlossen haben.
 Kehrt `arrive_and_wait` aus der Blockade zurück, können alle Threads &ndash; mehr oder minder &ndash; zeitgleich

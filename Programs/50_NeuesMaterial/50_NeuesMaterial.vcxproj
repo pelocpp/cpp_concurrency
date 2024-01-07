@@ -130,6 +130,7 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="EventLoop.cpp" />
+    <ClCompile Include="NJ_Semaphore.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp" />
