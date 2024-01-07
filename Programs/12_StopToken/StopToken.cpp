@@ -62,7 +62,6 @@ namespace Stop_Tokens_and_Condition_Variables
         // store three messages
         for (std::string s : { std::string{ "Tic" }, std::string{ "Tac" }, std::string{ "Toe" }}) {
 
-            // std::scoped_lock lg{ m_mutex };
             std::lock_guard guard { m_mutex };
             m_messages.push(s);
         }
@@ -162,9 +161,13 @@ namespace Using_Stop_Callbacks
     }
 }
 
-void test_stop_tokens()
+void test_stop_tokens_01()
 {
     Stop_Tokens_and_Condition_Variables::test_01();
+}
+
+void test_stop_tokens_02()
+{
     Using_Stop_Callbacks::test_02();
 }
 

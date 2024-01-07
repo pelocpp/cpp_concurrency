@@ -26,14 +26,14 @@ etabliert.
 
 ---
 
-## Stop Tokens und Bedingungsvariablen
+## Stopp Tokens und Bedingungsvariablen
 
 Wenn die Beendigung (Anhalten, Stoppen) eines Threads angefordert wird, kann es sein,
 dass zu genau diesem Zeitpunkt der Thread blockiert ist,
-weil er auf die Benachrichtigung für eine Bedingungsvariable wartet (Methode `wait`).
+weil er auf die Benachrichtigung für eine Bedingungsvariable (`std::condition_variable_any`) wartet (Methode `wait`).
 
 Es gibt für diesen Fall eine neue Überladung der `wait`-Methode:
-Sie bekommt neben dem Callable für die Auswertung der Bedingung noch ein `std::stop_token`-Objekt übergeben,
+Sie bekommt neben dem *Callable* für die Auswertung der Bedingung noch ein `std::stop_token`-Objekt übergeben,
 so dass der `wait`-Methodenaufruf unterbrochen werden kann, wenn eine Stopp-Anforderung vorliegt.
 
 Aus technischen Gründen ist für diesen Fall eine Bedingungsvariable vom Typ `std::condition_variable_any` zu verwenden.
@@ -43,7 +43,7 @@ In den meisten Fällen sollten ein `std::stop_token`-Objekt per *Value*
 übergeben werden, da das Kopieren von `std::stop_token`-Objekten (und `std::stop_source`-Objekten)
 relativ günstig ist.
 
-Da außerdem `std::token`-Objjekte normalerweise in einem *Callable* (*Lambda*) gespeichert
+Da außerdem `std::token`-Objekte normalerweise in einem *Callable* (*Lambda*) gespeichert
 und/oder in einem anderen Thread verwendet werden,
 können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 
@@ -98,35 +98,34 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 46:     // store three messages
 47:     for (std::string s : { std::string{ "Tic" }, std::string{ "Tac" }, std::string{ "Toe" }}) {
 48: 
-49:         // std::scoped_lock lg{ m_mutex };
-50:         std::lock_guard guard { m_mutex };
-51:         m_messages.push(s);
-52:     }
-53: 
-54:     // notify waiting thread
-55:     m_condition_variable.notify_one();
-56: 
-57:     // after some time, store another message
-58:     std::this_thread::sleep_for(3s);
-59: 
-60:     {
-61:         std::lock_guard guard{ m_mutex };
-62:         m_messages.push("Done");
-63:     }
-64: 
-65:     // notify waiting thread
-66:     m_condition_variable.notify_one();
-67: 
-68:     // after some time, end program (requests stop, which interrupts wait())
-69:     std::this_thread::sleep_for(3s);
-70: }
+49:         std::lock_guard guard { m_mutex };
+50:         m_messages.push(s);
+51:     }
+52: 
+53:     // notify waiting thread
+54:     m_condition_variable.notify_one();
+55: 
+56:     // after some time, store another message
+57:     std::this_thread::sleep_for(std::chrono::seconds(3));
+58: 
+59:     {
+60:         std::lock_guard guard{ m_mutex };
+61:         m_messages.push("Done");
+62:     }
+63: 
+64:     // notify waiting thread
+65:     m_condition_variable.notify_one();
+66: 
+67:     // after some time, end program (requests stop, which interrupts wait())
+68:     std::this_thread::sleep_for(std::chrono::seconds(3));
+69: }
 ```
 
-Studieren Sie in dem Beispiel den Aufruf der `wait`-Methode (Zeile 22):
+Studieren Sie in dem Beispiel den Aufruf der `wait`-Methode (Zeile 20):
 Wir übergeben neben weiteren Parametern auch ein `std::stop_token`-Objekt.
 Somit kann das Warten jetzt aus einem von zwei Gründen enden:
 
-  * Es gab eine Benachrichtigung mit `notify_one` bzw. `notify_all`, dass die Warteschlange nicht mehr leer ist.
+  * Es gab eine Benachrichtigung mit `notify_one` bzw. `notify_all`, um anzuzeigen, dass die Warteschlange nicht mehr leer ist.
   * Es wurde ein Stopp angefordert.
 
 
@@ -149,7 +148,7 @@ Stop has been requested!
 
 ---
 
-### Stop Callbacks
+### Stopp Callbacks
 
 Ein *Stop Callback* ist ein Objekt vom Typ `std::stop_callback` mit RAII-Verhaltensweise.
 Der Konstruktor registriert ein *Callable*
@@ -174,13 +173,13 @@ Verlässt das *Stop Callback* den Gültigkeitsbereich, wird das *Callable* abgemel
 
 ---
 
-## Stop Sources und Stop Tokens
+## Stopp Quellen und Stop Tokens
 
-`std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt,
-das automatisch einem Token zugeordnet wird,
+`std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt´.
+Dieses ist automatisch einem Token zugeordnet,
 wenn das an `std::jthread` übergebene *Callable* ein `std::stop_token`-Objekt als Parameter besitzt.
 
-Optional, wenn es gewünscht ist, Code bei Anforderungs eines Stopps auszuführen, 
+Optional, wenn es gewünscht ist, Code bei Anforderung eines Stopps auszuführen, 
 kann das `std::stop_token`-Objekt mit einer Stopp-Callbackmethode verknüpft werden.
 Derartige Aufrufe sind jedoch mit einer Einschränkung verbunden:
 Der Rückruf wird
@@ -218,7 +217,7 @@ Der Rückruf wird
 23:     Logger::log(std::cout, "Done Task");
 24: }
 25: 
-26: static void test_02()
+26: static void test()
 27: {
 28:     Logger::log(std::cout, "Main");
 29: 

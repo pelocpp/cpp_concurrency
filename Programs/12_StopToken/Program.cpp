@@ -2,11 +2,13 @@
 // Program.cpp // std::stop_token
 // ===========================================================================
 
-void test_stop_tokens();
+extern void test_stop_tokens_01();
+extern void test_stop_tokens_02();
 
 int main()
 {
-    test_stop_tokens();
+    test_stop_tokens_01();
+    test_stop_tokens_02();
 
     return 0;
 }

@@ -128,8 +128,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="StopToken_01.cpp" />
+    <ClCompile Include="StopToken.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
