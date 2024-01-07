@@ -1,5 +1,4 @@
-# Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`
-
+# Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`
 
 [Zurück](../../Readme.md)
 
@@ -297,3 +296,4 @@ von Simon Tóth vorgenommen.
 [Zurück](../../Readme.md)
 
 ---
+

@@ -20,21 +20,21 @@
 
 ### [9. STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
-### [10. Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+### [10. Nochmals nebenläufige Ausführung: Klasse `std::jthread`](Programs/10_JThread/Readme.md)
 
-### [11. Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+### [11. Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`](Programs/12_StopToken/Readme.md)
 
-### [12. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+### [12. Verriegelungen (*Latches*) und Barrieren (*Barriers*)](Programs/09_LatchesBarriers/Readme.md)
+
+### [13. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 
 ## Entwurfsmuster
 
-### [1. Mutexe und Sperrmechanismen](Programs/21_LockingMechanisms/Readme.md)
+### [1. Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
-### [2. Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
-
-### [3. Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
+### [2. Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
 
 ---
 

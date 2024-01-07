@@ -15,7 +15,6 @@
 
 ---
 
-
 ### Allgemeines
 
 Das *Reader-Writer Lock*&ndash;Entwurfsmuster dient der

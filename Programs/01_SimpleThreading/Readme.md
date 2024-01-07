@@ -1,17 +1,6 @@
 # Nebenläufige Ausführung: Klasse `std::thread`
 
----
-
-## Allgemeines
-
-Es werden an einfachen Beispielen Grundlagen des C++&ndash;Multithreadings betrachtet.
-
-Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu erzeugen:
-
-  * Thread mit Funktionszeiger
-  * Thread mit Funktor-Objekt
-  * Thread mit Lambda-Funktion
-  * Thread mit einer Methode eines Objekts
+[Zurück](../../Readme.md)
 
 ---
 
@@ -31,6 +20,18 @@ Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu e
 
 ---
 
+## Allgemeines
+
+Es werden an einfachen Beispielen Grundlagen des C++&ndash;Multithreadings betrachtet.
+
+Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu erzeugen:
+
+  * Thread mit Funktionszeiger
+  * Thread mit Funktor-Objekt
+  * Thread mit Lambda-Funktion
+  * Thread mit einer Methode eines Objekts
+
+---
 
 #### Klasse `std::thread`, Methoden `join` und `detach`
 

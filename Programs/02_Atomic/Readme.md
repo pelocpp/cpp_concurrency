@@ -4,6 +4,14 @@
 
 ---
 
+## Verwendete Werkzeuge
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::atomic<T>`
+
+---
+
 ## Allgemeines
 
 Aus *Wikipedia*:
@@ -14,15 +22,6 @@ einen Verbund von Einzeloperationen, der als logische Einheit betrachtet werden 
 Dabei können die Einzeloperationen wiederum aus kleineren atomaren Operationen bestehen, bei deren Fehlschlag die höherrangige Operation in ihrer Ganzheit als fehlgeschlagen anzusehen ist. Dabei ist das Ziel, auf jeder Ebene den Überblick über die vielen möglichen fehlerhaften Zwischenzustände zu erleichtern und bei jedem Fehlschlag die Operation auf den aus ihrer Sicht konsistenten Zustand zurücksetzen zu können.
 
 Der Begriff wird vor allem in der Datenbanktheorie und auf bestimmte CPU-Befehle angewendet."
-
----
-
-## Verwendete Werkzeuge
-
-<ins>Klassen</ins>:
-
-  * Klasse `std::atomic<T>`
-
 
 ---
 

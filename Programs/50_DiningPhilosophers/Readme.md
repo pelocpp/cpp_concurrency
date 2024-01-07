@@ -4,13 +4,6 @@
 
 ---
 
-## Problem
-
-Das Beispiel der dinierenden Philosophen ist eines der populärsten Standardprobleme aus dem Bereich der Parallelprogrammierung.
-Es erlaubt, sowohl die Synchronisation wie auch die Kooperation der beteiligten Threads in einer lebendigen Simulation darzustellen.
-
----
-
 ## Verwendete Werkzeuge
 
 Folgende Klassen kommen in der vorgestellten Lösung zum Einsatz:
@@ -21,6 +14,13 @@ Folgende Klassen kommen in der vorgestellten Lösung zum Einsatz:
   * `std::this_thread::sleep_for`
   * `std::future`
   * `std::async`
+
+---
+
+## Problem
+
+Das Beispiel der dinierenden Philosophen ist eines der populärsten Standardprobleme aus dem Bereich der Parallelprogrammierung.
+Es erlaubt, sowohl die Synchronisation wie auch die Kooperation der beteiligten Threads in einer lebendigen Simulation darzustellen.
 
 ---
 

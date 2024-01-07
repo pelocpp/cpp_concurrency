@@ -1,3 +1,7 @@
+// ===========================================================================
+// Program.cpp // std::stop_token
+// ===========================================================================
+
 #include <iostream>
 #include <queue>
 #include <thread>
@@ -8,7 +12,7 @@
 
 #include "../Logger/Logger.h"
 
-namespace Concurrency_Stop_Tokens_and_Condition_Variables
+namespace Stop_Tokens_and_Condition_Variables
 {
     static void test_01()
     {
@@ -83,12 +87,8 @@ namespace Concurrency_Stop_Tokens_and_Condition_Variables
 }
 
 // =============================================================================
-// =============================================================================
 
-
-#include "../Logger/Logger.h"
-
-namespace Concurrency_Using_Stop_Callbacks
+namespace Using_Stop_Callbacks
 {
     static void task_demo(std::stop_token token, int num)
     {
@@ -102,7 +102,6 @@ namespace Concurrency_Using_Stop_Callbacks
 
     } // unregisters callback is unregistered
 
-    // =============================================================================
     // =============================================================================
 
     static void task(std::stop_token token, int num)
@@ -163,8 +162,12 @@ namespace Concurrency_Using_Stop_Callbacks
     }
 }
 
-void test_Stop_Tokens_and_Condition_Variables()
+void test_stop_tokens()
 {
-    Concurrency_Stop_Tokens_and_Condition_Variables::test_01();
-    Concurrency_Using_Stop_Callbacks::test_02();
+    Stop_Tokens_and_Condition_Variables::test_01();
+    Using_Stop_Callbacks::test_02();
 }
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================
