@@ -54,9 +54,6 @@
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NJ_Semaphore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NJ_Barriers.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -128,9 +128,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Semaphore_01.cpp" />
     <ClCompile Include="Semaphore_02.cpp" />
+    <ClCompile Include="Semaphore_03.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

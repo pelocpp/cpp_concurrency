@@ -6,9 +6,9 @@
 
 ### [2. Atomare Operationen: Klassen `std::atomic<T>`](Programs/02_Atomic/Readme.md)
 
-### [3. Mutexe und Sperrmechanismen: Erste Schritte](Programs/03_A_MutualExclusion/Readme.md)
+### [3. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_A_MutualExclusion/Readme.md)
 
-### [4. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_B_MutualExclusion/Readme.md)
+### [4. Mutexe und Sperrmechanismen: Weiterführung](Programs/03_B_MutualExclusion/Readme.md)
 
 ### [5. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
 
@@ -26,7 +26,7 @@
 
 ### [12. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
 
-### [13. Semaphore: Klasse `std::binary_semaphore`](Programs/11_Semaphore/Readme.md)
+### [13. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 

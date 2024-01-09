@@ -3,8 +3,6 @@
 // ===========================================================================
 
 #include <iostream>
-#include <iomanip>
-#include <sstream>
 #include <thread>
 #include <chrono>
 #include <semaphore>
@@ -14,18 +12,16 @@ namespace ConcurrencyBinarySemaphore {
     class Worker
     {
     private:
-        std::binary_semaphore m_semaphore;
+        std::binary_semaphore   m_semaphore;
 
     public:
         Worker() : m_semaphore{ 0 } {}
 
         void scheduleJob() {
 
-            using namespace std::chrono_literals;
-
             std::cout << "scheduleJob: Data preparing ...\n";
 
-            std::this_thread::sleep_for(5000ms);
+            std::this_thread::sleep_for(std::chrono::seconds(5));
 
             std::cout << "scheduleJob: Data prepared.\n";
 
@@ -34,15 +30,13 @@ namespace ConcurrencyBinarySemaphore {
 
         void executeJob() {
 
-            using namespace std::chrono_literals;
-
             std::cout << "executeJob:  Waiting for data ...\n";
 
             m_semaphore.acquire();
 
             std::cout << "executeJob:  Executing job ...\n";
 
-            std::this_thread::sleep_for(3000ms);
+            std::this_thread::sleep_for(std::chrono::seconds(3));
 
             std::cout << "executeJob:  Done.\n";
         }
@@ -55,14 +49,10 @@ void test_binary_semaphore_01() {
 
     Worker worker{};
 
-    std::thread t1(&Worker::scheduleJob, &worker);
-    std::thread t2(&Worker::executeJob, &worker);
-
-    t1.join();
-    t2.join();
+    std::jthread t1{ &Worker::scheduleJob, &worker };
+    std::jthread t2{ &Worker::executeJob, &worker };
 }
 
 // ===========================================================================
 // End-of-File
 // ===========================================================================
-

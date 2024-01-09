@@ -16,7 +16,7 @@ extern void test_semaphore_01();
 
 int main()
 {
-    test_barriers();
+    test_semaphore_01();
 
     return 0;
 }
