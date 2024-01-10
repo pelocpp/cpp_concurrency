@@ -12,11 +12,10 @@ extern void test_thread_safe_blocking_queue();
 extern void test_thread_local_storage();
 extern void test_barriers();
 
-extern void test_semaphore_01();
 
 int main()
 {
-    test_semaphore_01();
+    test_barriers();
 
     return 0;
 }

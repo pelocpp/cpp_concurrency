@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Barriers.cpp">
+    <ClCompile Include="Barriers_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Latches_02.cpp">
@@ -28,6 +28,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Latches_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Barriers_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

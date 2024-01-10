@@ -1,5 +1,5 @@
 // ===========================================================================
-// Barriers.cpp
+// Barriers_02.cpp
 // ===========================================================================
 
 #include <iostream>
@@ -13,12 +13,12 @@
 
 #include "../Logger/Logger.h"
 
-namespace Barriers {
+namespace Concurrency_Barriers_02 {
 
     constexpr size_t ThreadCount{ 4 };
     constexpr size_t MaxDelay{ 3000 };
 
-    size_t calcSumRange(size_t a, size_t b) {
+    static size_t calcSumRange(size_t a, size_t b) {
         size_t sum{};
         for (size_t i = a; i != b; ++i) {
             sum += i;
@@ -26,7 +26,7 @@ namespace Barriers {
         return sum;
     }
 
-    void example_barriers_helper(std::array<size_t, ThreadCount>& results)
+    static void example_barriers_helper(std::array<size_t, ThreadCount>& results)
     {
         std::barrier sync{ ThreadCount };
 
@@ -74,7 +74,7 @@ namespace Barriers {
         // for them all to finish at the end of this function !
     }
 
-    void example_barriers_01()
+    static void example_barriers_01()
     {
         std::array<size_t, ThreadCount> results{ 0 };
 
@@ -129,7 +129,7 @@ namespace Barriers {
     };
 
     // fulltime and forenoon workers
-    void example_barriers_02_a() {
+    static void example_barriers_02_a() {
 
         std::deque<std::future<void>> tasks;
         size_t msecs;
@@ -154,7 +154,7 @@ namespace Barriers {
     }
 
     // fulltime and afternoon workers
-    void example_barriers_02_b() {
+    static void example_barriers_02_b() {
 
         std::deque<std::future<void>> tasks;
         size_t msecs;
@@ -178,7 +178,7 @@ namespace Barriers {
         tasks.push_back(std::async(std::launch::async, parttimeWorker, PartTime::Afternoon, "afternoonWorker (C)", msecs));
     }
 
-    void example_barriers_02()
+    static void example_barriers_02()
     {
         Logger::log(std::cout, "Working starts [PartimeWorker & FulltimeWorker]:");
 
@@ -189,9 +189,9 @@ namespace Barriers {
     }
 }
 
-void test_barriers()
+void test_barriers_02()
 {
-    using namespace Barriers;
+    using namespace Concurrency_Barriers_02;
     example_barriers_01();
     example_barriers_02();
 }

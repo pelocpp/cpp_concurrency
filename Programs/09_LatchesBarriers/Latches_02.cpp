@@ -18,7 +18,7 @@ namespace Latches_03 {
     constexpr size_t ThreadCount{ 4 };
     constexpr size_t MaxDelay{ 5000 };
 
-    int calcSumRange(int a, int b) {
+    static int calcSumRange(int a, int b) {
         int sum{};
         for (int i{ a }; i != b; ++i) {
             sum += i;

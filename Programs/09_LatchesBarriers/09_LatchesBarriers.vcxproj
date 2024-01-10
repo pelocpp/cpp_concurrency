@@ -142,7 +142,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Barriers.cpp" />
+    <ClCompile Include="Barriers_01.cpp" />
+    <ClCompile Include="Barriers_02.cpp" />
     <ClCompile Include="Latches_01.cpp" />
     <ClCompile Include="Latches_02.cpp" />
     <ClCompile Include="Program.cpp" />

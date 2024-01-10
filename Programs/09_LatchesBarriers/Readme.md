@@ -188,6 +188,36 @@ und mögliche Aufräumarbeiten (Freigabe von Ressourcen) zum richtigen Zeitpunkt d
 
 ## Beispiele zu `std::barrier`
 
+
+### Potenzen berechnen
+
+In diesem einfachen Beispiel werden Potenten natürlicher Zahlen berechnet und in einem `std::vector`-Objekt abgelegt.
+Man beachte im Quellcode: Die Ausgaben auf die Konsole erfolgen direkt mit `std::cout`,
+also nicht mit einer thread-sicheren `Logger`-Klasse. Warum geht das in diesem Beispiel?
+
+*Ausgabe*:
+
+```
+         13960               1              2              3              4              5              6
+          8780               1              4              9             16             25             36
+          2368               1             16             81            256            625           1296
+          6880               1            256           6561          65536         390625        1679616
+          2368               1          65536       43046721     4294967296   152587890625  2821109907456
+Done.
+```
+
+Mit dem GCC-Compiler sehen die Thread-Ids etwas anders aus, aber ansonsten läuft das Programm identisch ab:
+
+
+```
+140527120779136               1              2              3              4              5              6
+140527078799104               1              4              9             16             25             36
+140527120762624               1             16             81            256            625           1296
+140527087191808               1            256           6561          65536         390625        1679616
+140527103977216               1          65536       43046721     4294967296   152587890625  2821109907456
+Done.
+```
+
 ### Summenbildung von disjunkten Zahlenbereichen
 
 Dieses Beispiel ist sehr ähnlich zum entsprechenden Beispiel mit einem `std::latch`-Objekt.
@@ -292,6 +322,10 @@ und
 [Barrieren in C++ 20](https://www.heise.de/developer/artikel/Barrieren-und-atomare-Smart-Pointers-in-C-20-5041229.html)<br>(abgerufen am 17.02.2021)
 
 vor.
+
+Die restlichen Beispiele stammen im Wesentlichen aus dem Buch
+
+[C++ &ndash; The Complete Guide](https://www.josuttis.com/cppstd20/index.html) von Nicolai M. Josuttis.
 
 ---
 
