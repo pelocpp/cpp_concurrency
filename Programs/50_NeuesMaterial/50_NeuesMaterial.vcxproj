@@ -130,6 +130,8 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="EventLoop.cpp" />
+    <ClCompile Include="PlacementNew_01.cpp" />
+    <ClCompile Include="PlacementNew_02.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Parallel_Accumulate.cpp" />
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp" />
@@ -144,6 +146,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="EventLoop.md" />
+    <None Include="Placement_New.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

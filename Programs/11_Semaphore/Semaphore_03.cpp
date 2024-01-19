@@ -59,7 +59,7 @@ namespace ConcurrencyCountingSemaphore {
                 // remove thread from the set of enabled threads
                 enabled.release();
             }
-            };
+        };
 
         // create and start all threads of the pool
         for (int i{}; i != numThreads; ++i) {

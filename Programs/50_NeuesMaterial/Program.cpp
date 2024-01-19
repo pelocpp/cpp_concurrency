@@ -10,12 +10,13 @@ extern void test_type_erasure();
 extern void test_event_loop();
 extern void test_thread_safe_blocking_queue();
 extern void test_thread_local_storage();
-extern void test_barriers();
+extern void test_placement_new();
+extern void test_placement_new_queue();
 
 
 int main()
 {
-    test_barriers();
+    test_placement_new_queue();
 
     return 0;
 }

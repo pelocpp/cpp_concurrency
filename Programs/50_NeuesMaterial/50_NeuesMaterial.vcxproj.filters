@@ -54,9 +54,18 @@
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PlacementNew_01.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PlacementNew_02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="EventLoop.md">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Placement_New.md">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
