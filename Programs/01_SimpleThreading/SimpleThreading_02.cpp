@@ -26,7 +26,7 @@ namespace SimpleThreading02 {
         for (size_t i{}; i != iterations; ++i) {
 
             Logger::log(std::cout, "in thread ", value);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         }
     }
 
@@ -52,7 +52,7 @@ namespace SimpleThreading02 {
 
             for (size_t i{}; i != m_iterations; ++i) {
                 Logger::log(std::cout, "in thread ", m_value);
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds{ 1 });
             }
         }
     };
@@ -75,7 +75,7 @@ namespace SimpleThreading02 {
             [=] () {
                 for (size_t i{}; i != iterations; ++i) {
                     Logger::log(std::cout, "in thread ", value);
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    std::this_thread::sleep_for(std::chrono::seconds{ 1 });
                 }
             }
         };

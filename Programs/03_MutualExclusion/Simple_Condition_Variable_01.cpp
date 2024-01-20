@@ -41,7 +41,7 @@ namespace SimpleConditionVariableDemo01
         Logger::log(std::cout, "Function Produce:");
 
         // put into comment ... or not
-        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::this_thread::sleep_for(std::chrono::milliseconds{ 5000 });
 
         {
             std::lock_guard<std::mutex> guard (mutex);

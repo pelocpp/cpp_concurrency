@@ -27,7 +27,7 @@ namespace ConsumerProducerOne
             while (true) {
 
                 // sleep some seconds
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 
                 nextNumber++;
 

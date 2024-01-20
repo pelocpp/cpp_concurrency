@@ -41,7 +41,7 @@ void testDiningPhilosophers()
     p5.start();
 
     // set duration time of this simulation
-    std::this_thread::sleep_for(std::chrono::milliseconds(SimulationDuration));
+    std::this_thread::sleep_for(std::chrono::milliseconds{ SimulationDuration });
 
     // terminate simulation
     p1.stop();

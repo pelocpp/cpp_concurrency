@@ -39,7 +39,7 @@ void Philosopher::thinking()
     Logger::log(std::cout, "thinking at seat ", m_seat);
     m_state = PhilosopherState::Thinking;
     int milliSecondsSleeping = distribution(generator);
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliSecondsSleeping));
+    std::this_thread::sleep_for(std::chrono::milliseconds{ milliSecondsSleeping });
 }
 
 void Philosopher::hungry() 
@@ -56,7 +56,7 @@ void Philosopher::eating()
     Logger::log(std::cout, "eating at seat ", m_seat);
     m_state = PhilosopherState::Eating;
     int milliSecondsEating{ distribution(generator) };
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliSecondsEating));
+    std::this_thread::sleep_for(std::chrono::milliseconds{ milliSecondsEating });
 }
 
 void Philosopher::eatingDone() 

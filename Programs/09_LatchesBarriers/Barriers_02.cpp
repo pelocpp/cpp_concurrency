@@ -42,7 +42,7 @@ namespace Concurrency_Barriers_02 {
             results.at(i) = result;
 
             // simulating still some calculation time ...
-            std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ msecs });
 
             sync.arrive_and_wait();
             Logger::log(std::cout, "All calculations done :)");
@@ -101,12 +101,12 @@ namespace Concurrency_Barriers_02 {
 
         // simulating still some calculation time ...
         Logger::log(std::cout, name, ": Forenoon work starting!");
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+        std::this_thread::sleep_for(std::chrono::milliseconds{ delay });
         Logger::log(std::cout, name, ": Forenoon work done!");
         workDoneBarrier.arrive_and_wait();  // wait until morning work has completed of all workers
 
         Logger::log(std::cout, name, ": Afternoon work starting!");
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+        std::this_thread::sleep_for(std::chrono::milliseconds{ delay });
         Logger::log(std::cout, name, ": Afternoon work done!");
     };
 
@@ -116,14 +116,14 @@ namespace Concurrency_Barriers_02 {
 
         if (parttime == PartTime::Forenoon) {
             Logger::log(std::cout, name, ": Forenoon work starting!");
-            std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ delay });
             Logger::log(std::cout, name, ": Forenoon work done!");
             workDoneBarrier.arrive_and_drop();  // don't participate in afternoon working
         }
         else if (parttime == PartTime::Afternoon) {
             workDoneBarrier.arrive_and_wait();  // wait until morning work has completed of all workers
             Logger::log(std::cout, name, ": Afternoon work starting!");
-            std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ delay });
             Logger::log(std::cout, name, ": Afternoon work done!");
         }
     };

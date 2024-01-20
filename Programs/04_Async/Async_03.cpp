@@ -80,7 +80,7 @@ namespace SomeAsyncScenarios {
         Logger::startWatch();
 
         while (true) {
-            std::future_status done = f40.wait_for(std::chrono::milliseconds(500));
+            std::future_status done = f40.wait_for(std::chrono::milliseconds{ 500 });
             if (done == std::future_status::timeout) {
                 std::cout << "not yet calculated ..." << std::endl;
             }

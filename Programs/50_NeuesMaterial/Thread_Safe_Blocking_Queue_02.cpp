@@ -226,7 +226,7 @@ void test_thread_safe_queue_02_c()
         while (true) {
 
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(SleepTimeProducer)
+                std::chrono::milliseconds{ SleepTimeProducer }
             );
 
             nextNumber++;
@@ -242,7 +242,7 @@ void test_thread_safe_queue_02_c()
         while (true) {
 
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(SleepTimeConsumer)
+                std::chrono::milliseconds{ SleepTimeConsumer }
             );
 
             int number;

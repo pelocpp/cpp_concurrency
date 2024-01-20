@@ -45,7 +45,7 @@ namespace Latches_03 {
             results.at(index) = result;
 
             // simulating still some calculation time ...
-            std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ msecs });
 
             Logger::log(std::cout, "Done");
 
@@ -112,7 +112,7 @@ namespace Latches_04 {
 
         // simulating still some calculation time ...
         size_t msecs{ 2000 + static_cast<size_t>(device()) % MaxDelay };
-        std::this_thread::sleep_for(std::chrono::milliseconds(msecs));
+        std::this_thread::sleep_for(std::chrono::milliseconds{ msecs });
 
         // notify the master when work is done
         Logger::log(std::cout, name, ": Work done!");

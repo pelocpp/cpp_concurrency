@@ -36,12 +36,12 @@ namespace SimpleConditionVariableDemo02
         std::thread t1{ function };
         std::thread t2{ function };
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
         condition.notify_one();     // demonstrate either this line
         // condition.notify_all();  // or this line
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
         condition.notify_one();     // and this line
 
         t1.join();

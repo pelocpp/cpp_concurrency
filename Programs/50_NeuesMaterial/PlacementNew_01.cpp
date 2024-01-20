@@ -9,7 +9,6 @@
 
 namespace PlacementNew {
 
-
     class User
     {
     private:

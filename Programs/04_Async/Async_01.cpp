@@ -10,7 +10,7 @@ namespace SimpleAsync {
 
     std::string helloFunction(std::string s) {
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
         return "Hello ASync from " + s + ".";
     }
 
@@ -18,14 +18,14 @@ namespace SimpleAsync {
     public:
         std::string operator()(std::string s) const {
 
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds{ 3 });
             return "Hello ASync from " + s + ".";
         }
     };
 
     auto helloLambda =
         [](std::string s) {
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
         return "Hello ASync from " + s + ".";
     };
 

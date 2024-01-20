@@ -23,7 +23,7 @@ namespace SimpleThreading01 {
 
         for (size_t i{}; i != NumIterations; ++i) {
             Logger::log(std::cout, "in thread ", value);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         }
 
         Logger::log(std::cout, "Done Thread.");

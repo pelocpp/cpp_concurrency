@@ -69,7 +69,7 @@ Damit wartet der Empfänger auf die Benachrichtigung des Senders:
 10: 
 11:         std::cout << "scheduleJob: Data preparing ...\n";
 12: 
-13:         std::this_thread::sleep_for(std::chrono::seconds(5));
+13:         std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 14: 
 15:         std::cout << "scheduleJob: Data prepared.\n";
 16: 
@@ -84,7 +84,7 @@ Damit wartet der Empfänger auf die Benachrichtigung des Senders:
 25: 
 26:         std::cout << "executeJob:  Executing job ...\n";
 27: 
-28:         std::this_thread::sleep_for(std::chrono::seconds(3));
+28:         std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 29: 
 30:         std::cout << "executeJob:  Done.\n";
 31:     }

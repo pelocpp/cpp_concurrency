@@ -70,7 +70,7 @@ namespace Stop_Tokens_and_Condition_Variables
         m_condition_variable.notify_one();
 
         // after some time, store another message
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         {
             std::lock_guard guard{ m_mutex };
@@ -81,7 +81,7 @@ namespace Stop_Tokens_and_Condition_Variables
         m_condition_variable.notify_one();
 
         // after some time, end program (requests stop, which interrupts wait())
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
     }
 }
 
@@ -123,7 +123,7 @@ namespace Using_Stop_Callbacks
             }
         };
 
-        std::this_thread::sleep_for(std::chrono::seconds(4));
+        std::this_thread::sleep_for(std::chrono::seconds{ 4 });
 
         Logger::log(std::cout, "Done Task");
     }
@@ -151,7 +151,7 @@ namespace Using_Stop_Callbacks
             std::async(std::launch::async, [token] { task(token, 123); })
         };
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
         // request stop after task has been created
         // (runs any associated callbacks on this thread)

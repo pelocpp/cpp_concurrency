@@ -25,14 +25,14 @@ namespace PromisesAndFutures02 {
 
             thread1Started.set_value();
 
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
             // wait until parameter is set
             int parameter = signalFuture.get();
             Logger::log(std::cout, "Lambda 01 - get returned ", parameter);
 
             // ... now thread starts to work ...
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
             Logger::log(std::cout, "End of Lambda 01.");
         };
 
@@ -41,20 +41,20 @@ namespace PromisesAndFutures02 {
 
             thread2Started.set_value();
 
-            std::this_thread::sleep_for(std::chrono::seconds(4));
+            std::this_thread::sleep_for(std::chrono::seconds{ 4 });
 
             // wait until parameter is set
             int parameter = signalFuture.get();
             Logger::log(std::cout, "Lambda 02 - get returned ", parameter);
 
             // ... now thread starts to work ...
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
             Logger::log(std::cout, "End of Lambda 02.");
         };
 
         Logger::log(std::cout, "Main: (1) ...");
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         // run both lambda expressions asynchronously.
         // Remember to capture the future returned by async()!
@@ -63,7 +63,7 @@ namespace PromisesAndFutures02 {
 
         Logger::log(std::cout, "Main: (2) ...");
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         Logger::log(std::cout, "Main: vor get_future().wait() ...");
 
@@ -73,7 +73,7 @@ namespace PromisesAndFutures02 {
 
         // both threads are now waiting for the parameter,
         // set the parameter to wake up both of them.
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
         Logger::log(std::cout, "Main: vor set_value ...");
         signalPromise.set_value(42);
 

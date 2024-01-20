@@ -17,7 +17,7 @@ namespace SimpleThreading03 {
         for (size_t i{}; i != NumIterations; ++i) {
 
             Logger::log(std::cout, "in thread ", value);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         }
 
         Logger::log(std::cout, "Done Thread.");
@@ -29,7 +29,7 @@ namespace SimpleThreading03 {
 
         std::thread t1{ function, 1 };
 
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 
         std::thread t2{ std::move(t1) };
 

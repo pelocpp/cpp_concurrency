@@ -38,7 +38,7 @@ namespace SimpleMutexDemo
                 }
 
                 // just to force rescheduling the execution of the threads
-                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+                std::this_thread::sleep_for(std::chrono::milliseconds{ 1 });
             }
         }
     };

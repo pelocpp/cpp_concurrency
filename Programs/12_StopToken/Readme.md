@@ -106,7 +106,7 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 54:     m_condition_variable.notify_one();
 55: 
 56:     // after some time, store another message
-57:     std::this_thread::sleep_for(std::chrono::seconds(3));
+57:     std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 58: 
 59:     {
 60:         std::lock_guard guard{ m_mutex };
@@ -117,7 +117,7 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 65:     m_condition_variable.notify_one();
 66: 
 67:     // after some time, end program (requests stop, which interrupts wait())
-68:     std::this_thread::sleep_for(std::chrono::seconds(3));
+68:     std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 69: }
 ```
 
@@ -212,7 +212,7 @@ Der Rückruf wird
 18:         }
 19:     };
 20: 
-21:     std::this_thread::sleep_for(std::chrono::seconds(4));
+21:     std::this_thread::sleep_for(std::chrono::seconds{ 4 });
 22: 
 23:     Logger::log(std::cout, "Done Task");
 24: }
@@ -240,7 +240,7 @@ Der Rückruf wird
 46:         std::async(std::launch::async, [token] { task(token, 123); })
 47:     };
 48: 
-49:     std::this_thread::sleep_for(std::chrono::seconds(2));
+49:     std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 50: 
 51:     // request stop after task has been created
 52:     // (runs any associated callbacks on this thread)

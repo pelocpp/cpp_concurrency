@@ -18,7 +18,7 @@ namespace Latches_01 {
         for (int j{}; j != 10; ++j) {
             // loop printing the char ch
             std::cout.put(ch).flush();
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
         }
     }
 
@@ -85,7 +85,7 @@ namespace Latches_02 {
                 [i, &allReady]() {
 
                     // initialize each thread (simulate to take some time):
-                    std::this_thread::sleep_for(std::chrono::milliseconds(300 * i));
+                    std::this_thread::sleep_for(std::chrono::milliseconds{ 300 * i });
 
                     std::ostringstream ss;
                     ss << "JThread " << i << " waiting for execution\n";
@@ -103,7 +103,7 @@ namespace Latches_02 {
                     // (loop printing its index):
                     for (int j{}; j != 10; ++j) {
                         std::cout.put(static_cast<char>('0' + i)).flush();
-                        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+                        std::this_thread::sleep_for(std::chrono::milliseconds{ 50 });
                     }
                 }
             };

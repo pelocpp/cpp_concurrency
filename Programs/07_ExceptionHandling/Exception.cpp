@@ -15,7 +15,7 @@ namespace ExceptionHandling
     {
         std::cout << "Inside thread  ... working hard ..." << std::endl;
 
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         throw std::out_of_range("==> to be passed between threads");
 
@@ -52,7 +52,7 @@ namespace ExceptionHandling
 
         try
         {
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
             throw std::runtime_error("==> to be passed between threads");
 

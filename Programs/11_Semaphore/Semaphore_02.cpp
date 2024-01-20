@@ -42,7 +42,7 @@ namespace ConcurrencyBinarySemaphore
             std::string msecs{ std::to_string(duration) };
             Logger::log(std::cout, "PrinterQueue: Printing a Job during ", msecs, " millseconds.");
 
-            std::this_thread::sleep_for(std::chrono::milliseconds(duration));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ duration });
             Logger::log(std::cout, "PrinterQueue: The document has been printed");
 
             m_semaphore.release();

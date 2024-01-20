@@ -70,17 +70,17 @@ namespace ConcurrencyCountingSemaphore {
 
         // now play with the threads
         std::cout << ">  wait 3 seconds (no thread enabled)\n" << std::flush;
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         // enable 3 concurrent threads:
         std::cout << ">  enable 3 parallel threads\n" << std::flush;
         enabled.release(3);
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 
         // enable 2 more concurrent threads:
         std::cout << "\n>  enable 4 more parallel threads\n" << std::flush;
         enabled.release(4);
-        std::this_thread::sleep_for(std::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
         // Normally we would run forever, but let’s end the program here:
         std::cout << "\n>  stop processing\n" << std::flush;
