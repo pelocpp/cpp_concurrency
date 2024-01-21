@@ -2,12 +2,13 @@
 // ProducerConsumerProblem_01.cpp
 // ===========================================================================
 
-#include "BlockingQueue.h"
+// #include "BlockingQueue.h"
+#include "BlockingQueueEx.h"
 
 constexpr int NumIterations{ 10 };
 
-constexpr std::chrono::milliseconds SleepTimeConsumer{ 20 };
-constexpr std::chrono::milliseconds SleepTimeProducer{ 10 };
+constexpr std::chrono::milliseconds SleepTimeConsumer{ 200 };
+constexpr std::chrono::milliseconds SleepTimeProducer{ 100 };
 
 static void test_thread_safe_blocking_queue_01()
 {
@@ -24,7 +25,6 @@ static void test_thread_safe_blocking_queue_01()
     std::cout << "Size: " << queue.size() << std::endl;
 }
 
-
 static void test_thread_safe_blocking_queue_02()
 {
     using namespace ProducerConsumerQueue;
@@ -37,20 +37,20 @@ static void test_thread_safe_blocking_queue_02()
 
         Logger::log(std::cout, "Producer");
 
-        for (int i = 1; i <= NumIterations; ++i)
+        for (int i{ 1 }; i <= NumIterations; ++i)
         {
             queue.push(i);
             Logger::log(std::cout, "Pushing ", i);
         }
 
         Logger::log(std::cout, "Producer Done.");
-        });
+    });
 
     std::thread consumer([&]() {
 
         Logger::log(std::cout, "Consumer");
 
-        for (int i = 1; i <= NumIterations; ++i)
+        for (int i{ 1 }; i <= NumIterations; ++i)
         {
             std::this_thread::sleep_for(std::chrono::milliseconds{ SleepTimeConsumer });
             int value;
@@ -59,7 +59,7 @@ static void test_thread_safe_blocking_queue_02()
         }
 
         Logger::log(std::cout, "Consumer Done.");
-        });
+    });
 
     producer.join();
     consumer.join();
@@ -112,7 +112,6 @@ public:
             );
 
             nextNumber++;
-
             m_queue.push(nextNumber);
         }
     }
@@ -133,14 +132,14 @@ static void test_thread_safe_blocking_queue_03()
         Logger::log(std::cout, "Producer");
         p.produce();
         Logger::log(std::cout, "Producer Done.");
-        });
+    });
 
     std::thread consumer([&]() {
 
         Logger::log(std::cout, "Consumer");
         c.consume();
         Logger::log(std::cout, "Consumer Done.");
-        });
+    });
 
     producer.join();
     consumer.join();
@@ -163,21 +162,21 @@ static void test_thread_safe_blocking_queue_04()
         Logger::log(std::cout, "Producer");
         p.produce();
         Logger::log(std::cout, "Producer Done.");
-        });
+    });
 
     std::thread producer2([&]() {
 
         Logger::log(std::cout, "Producer");
         p.produce();
         Logger::log(std::cout, "Producer Done.");
-        });
+    });
 
     std::thread producer3([&]() {
 
         Logger::log(std::cout, "Producer");
         p.produce();
         Logger::log(std::cout, "Producer Done.");
-        });
+    });
 
 
     std::thread consumer1([&]() {
@@ -185,21 +184,21 @@ static void test_thread_safe_blocking_queue_04()
         Logger::log(std::cout, "Consumer");
         c.consume();
         Logger::log(std::cout, "Consumer Done.");
-        });
+    });
 
     std::thread consumer2([&]() {
 
         Logger::log(std::cout, "Consumer");
         c.consume();
         Logger::log(std::cout, "Consumer Done.");
-        });
+    });
 
     std::thread consumer3([&]() {
 
         Logger::log(std::cout, "Consumer");
         c.consume();
         Logger::log(std::cout, "Consumer Done.");
-        });
+    });
 
     producer1.join();
     producer2.join();

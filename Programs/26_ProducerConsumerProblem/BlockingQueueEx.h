@@ -1,5 +1,5 @@
 // ===========================================================================
-// BlockingQueue.h
+// BlockingQueueEx.h
 // ===========================================================================
 
 #pragma once
@@ -7,10 +7,16 @@
 #include <iostream>
 #include <thread>
 #include <chrono>
-#include <semaphore>
+#include <array>
+// #include <semaphore>
 #include <mutex>
 
 #include "../Logger/Logger.h"
+
+//TO BE DONE: Das ist jetzt ein BlockingStack
+
+// Im nächsten schritt abändern !!!
+
 
 namespace ProducerConsumerQueue
 {
@@ -18,27 +24,32 @@ namespace ProducerConsumerQueue
     class BlockingQueue
     {
     private:
+
+        //size_t m_pushIndex;
+        //size_t m_popIndex;
+
+        //std::counting_semaphore<QueueSize> m_openSlots;
+        //std::counting_semaphore<QueueSize> m_fullSlots;
+        //std::mutex mutable m_mutex;
+
+        //T* m_data;
+
+        // array - considered as stack
+        std::array<int, QueueSize> m_data;  // shared object
+        int m_index;                    // shared index
         size_t m_size;
-        size_t m_pushIndex;
-        size_t m_popIndex;
 
-        std::counting_semaphore<QueueSize> m_openSlots;
-        std::counting_semaphore<QueueSize> m_fullSlots;
-        std::mutex mutable m_mutex;
+        // take care of concurrent stack access
+        std::mutex mutable m_mutex{};
 
-        T* m_data;
+        // monitor concept (Dijkstra)
+        std::condition_variable m_conditionIsEmpty{};
+        std::condition_variable m_conditionIsFull{};
 
     public:
         // default c'tor
         BlockingQueue() :
-            // BlockingQueue(size_t capacity) : 
-               // m_capacity{ capacity },
-            m_size{ 0 },
-            m_pushIndex{ 0 },
-            m_popIndex{ 0 },
-            m_openSlots{ static_cast<std::ptrdiff_t>(QueueSize) },
-            m_fullSlots{ 0 },
-            m_data{ static_cast<T*>(std::malloc(sizeof(T) * QueueSize)) }
+            m_data{ 0 }, m_index{}, m_size{}
         {}
 
         // don't need other constructors or assignment operators
@@ -51,74 +62,153 @@ namespace ProducerConsumerQueue
         // destructor
         ~BlockingQueue()
         {
-            size_t n{ 0 };
-            while (n != m_size)
-            {
-                m_data[m_popIndex].~T();
+            //size_t n{ 0 };
+            //while (n != m_size)
+            //{
+            //    m_data[m_popIndex].~T();
 
-                ++m_popIndex;
-                m_popIndex = m_popIndex % QueueSize;
+            //    ++m_popIndex;
+            //    m_popIndex = m_popIndex % QueueSize;
 
-                ++n;
-            }
+            //    ++n;
+            //}
 
-            std::free(m_data);
+            //std::free(m_data);
         }
 
         // public interface
         void push(const T& item)
         {
-            m_openSlots.acquire();
+            //m_openSlots.acquire();
+            //{
+            //    std::lock_guard<std::mutex> guard{ m_mutex };
+
+            //    new (m_data + m_pushIndex) T{ item };
+
+            //    ++m_pushIndex;
+            //    m_pushIndex = m_pushIndex % QueueSize;
+
+            //    ++m_size;
+
+            //    Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
+            //}
+            //m_fullSlots.release();
+
+            // RAII
             {
-                std::lock_guard<std::mutex> guard{ m_mutex };
+                std::unique_lock raii{ m_mutex };
 
-                new (m_data + m_pushIndex) T{ item };
+                // Is stack full?
+                // Note: "Lost Wakeup and Spurious Wakeup"
+                m_conditionIsFull.wait(
+                    raii,
+                    [this]() -> bool { return m_index < 9; }
+                );
 
-                ++m_pushIndex;
-                m_pushIndex = m_pushIndex % QueueSize;
+                // guard
+                if (m_index < 9) {
 
-                ++m_size;
+                    m_index++;
+                    m_data.at(m_index) = item;
 
-                Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
+                    ++m_size;
+
+                    Logger::log(std::cout, "pushed ", item, " at index ", m_index);
+                }
             }
-            m_fullSlots.release();
+
+            // wakeup any sleeping consuments
+            m_conditionIsEmpty.notify_all();
         }
 
         void push(T&& item)
         {
-            m_openSlots.acquire();
+            //m_openSlots.acquire();
+            //{
+            //    std::lock_guard<std::mutex> guard{ m_mutex };
+
+            //    new (m_data + m_pushIndex) T{ std::move(item) };
+
+            //    ++m_pushIndex;
+            //    m_pushIndex = m_pushIndex % QueueSize;
+
+            //    ++m_size;
+
+            //    Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
+            //}
+            //m_fullSlots.release();
+
             {
-                std::lock_guard<std::mutex> guard{ m_mutex };
+                // RAII
+                std::unique_lock raii{ m_mutex };  // Dijkstra Monitor
 
-                new (m_data + m_pushIndex) T{ std::move(item) };
+                // Is stack empty?
+                // Note: "Lost Wakeup and Spurious Wakeup"
+                m_conditionIsEmpty.wait(
+                    raii,
+                    [this]() -> bool { return m_index >= 0; }
+                );
 
-                ++m_pushIndex;
-                m_pushIndex = m_pushIndex % QueueSize;
+                // guard
+                if (m_index >= 0) {
 
-                ++m_size;
+                    // int number{ m_data.at(m_index) };
+                    item = m_data.at(m_index);
+                    Logger::log(std::cout, "popped ", item, " at index ", m_index);
 
-                Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
+                    ++m_size;
+
+                    m_index--;
+                }
             }
-            m_fullSlots.release();
+
+            // wakeup any sleeping producers
+            m_conditionIsFull.notify_all();
         }
 
         void pop(T& item)
         {
-            m_fullSlots.acquire();
+            //m_fullSlots.acquire();
+            //{
+            //    std::lock_guard<std::mutex> guard{ m_mutex };
+
+            //    item = m_data[m_popIndex];
+            //    m_data[m_popIndex].~T();
+
+            //    ++m_popIndex;
+            //    m_popIndex = m_popIndex % QueueSize;
+
+            //    --m_size;
+
+            //    Logger::log(std::cout, "popped ", item, ", Size: ", m_size);
+            //}
+            //m_openSlots.release();
+
             {
-                std::lock_guard<std::mutex> guard{ m_mutex };
+                // RAII
+                std::unique_lock raii{ m_mutex };  // Dijkstra Monitor
 
-                item = m_data[m_popIndex];
-                m_data[m_popIndex].~T();
+                // Is stack empty?
+                // Note: "Lost Wakeup and Spurious Wakeup"
+                m_conditionIsEmpty.wait(
+                    raii,
+                    [this]() -> bool { return m_index >= 0; }
+                );
 
-                ++m_popIndex;
-                m_popIndex = m_popIndex % QueueSize;
+                // guard
+                if (m_index >= 0) {
 
-                --m_size;
+                    item = m_data.at(m_index);
+                    Logger::log(std::cout, "popped ", item, " at index ", m_index);
 
-                Logger::log(std::cout, "popped ", item, ", Size: ", m_size);
+                    --m_size;
+
+                    m_index--;
+                }
             }
-            m_openSlots.release();
+
+            // wakeup any sleeping producers
+            m_conditionIsFull.notify_all();
         }
 
         bool empty() const
