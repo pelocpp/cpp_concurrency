@@ -55,6 +55,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_MutualExclusion", "Progr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13_MutualExclusionEx", "Programs\13_MutualExclusionEx\13_MutualExclusionEx.vcxproj", "{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26_ProducerConsumerProblem", "Programs\26_ProducerConsumerProblem\26_ProducerConsumerProblem.vcxproj", "{1C16157D-7AA1-4F61-A2C3-16FF940F3817}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -223,6 +225,14 @@ Global
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x64.Build.0 = Release|x64
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x86.ActiveCfg = Release|Win32
 		{D2DA0DAA-5C62-41E2-AFA5-DC8EDD67138F}.Release|x86.Build.0 = Release|Win32
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Debug|x64.ActiveCfg = Debug|x64
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Debug|x64.Build.0 = Debug|x64
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Debug|x86.ActiveCfg = Debug|Win32
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Debug|x86.Build.0 = Debug|Win32
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Release|x64.ActiveCfg = Release|x64
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Release|x64.Build.0 = Release|x64
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Release|x86.ActiveCfg = Release|Win32
+		{1C16157D-7AA1-4F61-A2C3-16FF940F3817}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
