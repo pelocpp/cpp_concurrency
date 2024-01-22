@@ -1,4 +1,4 @@
-#  Das Produzenten-Verbraucher Problem (*Producer Consumer Pattern*)
+# Das Erzeuger-Verbraucher Problem (*Producer Consumer Pattern*)
 
 [Zurück](../../Readme.md)
 
@@ -8,189 +8,91 @@
 
 <ins>Klassen</ins>:
 
-  * Klassen `std::binary_semaphore` und `std::counting_semaphore`
+  * Klassen `std::mutex`
+
+  * Klassen `std::counting_semaphore` 
+  * Klassen `std::lock_guard`
+
+
+  * Klassen `std::condition_variable`
+  * Klassen `std::unique_lock`
 
 ---
 
 ### Allgemeines
 
-Unter einer Semaphore versteht man in der Systemprogrammierung eine Datenstruktur,
-die aus einem ganzzahligen Wert (Zähler) und zwei atomaren Nutzungsoperationen &bdquo;Reservieren&rdquo; und &bdquo;Freigeben&rdquo; besteht.
+Das Erzeuger-Verbraucher Problem entsteht, wenn ein Erzeuger Daten produziert und diese
+irgendwo ablegen muss, bis ein Verbraucher in der Lage ist, diese zu verarbeiten.
 
-Sie eignet sich insbesondere zur Verwaltung eines Code-Abschnitts,
-auf den mehrere Prozesse/Threads zugreifen wollen.
+Sind keine Daten vorhanden, kann ein Verbraucher nicht arbeiten.
 
-Das Konzept der Semaphore als Mechanismus für die Synchronisation wurde von *Edsger W. Dijkstra* erfunden
-und 1965 in seinem Artikel *Cooperating Sequential Processes* vorgestellt.
+Das Nadelöhr zwischen dem Erzeuger und dem Verbraucher ist ein Puffer.
+Dieser stellt das Bindeglied zwischen Erzeuger und Verbraucher dar.
 
-Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &bdquo;reservieren&rdquo; und &bdquo;freigeben&rdquo; nicht
-identisch sein, also sind 
-im Gegensatz zu einem `std::mutex`-Objekt ein `std::binary_semaphore`- bzw. ein `std::counting_semaphore`-Objekt nicht an einen Thread gebunden.
-Das Anfordern und Freigeben der Semaphore darf in verschiedenen Threads stattfinden.
-
-Intern besitzt die Datenstruktur neben dem Zähler noch eine Warteschlange
-für die Aufnahme blockierter Threads.
-
----
-
-### Wie funktionieren Semaphore?
-
-Semaphore besitzen eine Zählervariable, die man erhöhen oder verringern kann.
-
-Die Methoden `acquire` und `release` der Semaphore-Klasse steuern die Zählervariable.
-
-Die Methode `acquire` fragt den Semaphore nach Zugriff auf die Ressource.
-Wenn der Wert > 0 ist, wird der Zugriff gewährt und der Zähler wird um 1 reduziert.
-
-Die `release`-Methode gibt den zuvor gewährten Zugriff frei
-und erhöht die Variable des Semaphors wieder um 1.
+Die Länge eines solchen Puffers kann bei seiner Erzeugung möglicherweise variabel eingestellt werden,
+letzten Endes haben wir aber immer die Situation vorliegen, dass ein solcher Puffer eine maximale Länge besitzt.
 
 
----
+<img src="Producer_Consumer_Problem.png" width="600">
 
-#### Ein erstes Beispiel
+*Abbildung* 1: Das Erzeuger-Verbraucher Problem
 
-Semaphore können in Sender-Empfänger-Abläufen verwendet werden.
-
-Wird zum Beispiel eine Semaphore auf 0 initialisiert, blockiert der Empfänger-Aufruf `acquire`,
-bis der Sender `release` ausführt.
-Damit wartet der Empfänger auf die Benachrichtigung des Senders:
-
-```cpp
-01: class Worker
-02: {
-03: private:
-04:     std::binary_semaphore m_semaphore;
-05: 
-06: public:
-07:     Worker() : m_semaphore{ 0 } {}
-08: 
-09:     void scheduleJob() {
-10: 
-11:         std::cout << "scheduleJob: Data preparing ...\n";
-12: 
-13:         std::this_thread::sleep_for(std::chrono::seconds{ 5 });
-14: 
-15:         std::cout << "scheduleJob: Data prepared.\n";
-16: 
-17:         m_semaphore.release();
-18:     }
-19: 
-20:     void executeJob() {
-21: 
-22:         std::cout << "executeJob:  Waiting for data ...\n";
-23: 
-24:         m_semaphore.acquire();
-25: 
-26:         std::cout << "executeJob:  Executing job ...\n";
-27: 
-28:         std::this_thread::sleep_for(std::chrono::seconds{ 3 });
-29: 
-30:         std::cout << "executeJob:  Done.\n";
-31:     }
-32: };
-```
-
-*Beispiel*:
-
-```cpp
-01: Worker worker{};
-02: std::jthread t1{ &Worker::scheduleJob, &worker };
-03: std::jthread t2{ &Worker::executeJob, &worker };
-```
+  * Der Erzeuger speichert Informationen in einem längenmäßig begrenzter Puffer.
+  * Der Verbraucher liest Informationen aus diesem Puffer.
 
 
-*Ausgabe*:
+In der Realisierung steht man nun vor zwei Problemen:
+
+a) Der Puffer ist leer:<br />Wenn der Puffer leer ist, muss der Verbraucher
+warten, bis der Erzeuger eine Information im
+Puffer abgelegt hat, und erst dann weiter
+arbeiten.
+  
+b) Der Puffer ist voll:<br />Wenn der Puffer voll ist, muss der Erzeuger
+warten, bis der Verbraucher eine Information
+aus dem Puffer abgeholt hat, und erst dann
+weiter arbeiten.
+
+Da im Regelfall der Erzeuger und der Verbraucher im Kontext unterschiedlicher Threads arbeiten,
+benötigen wir zustzlich die Werkzeuge der nebenläufigen Programmierung.
+
+Für das Erzeuger-Verbraucher Problem gibt es vor diesem Hintergrund betrachtet
+mehrere Lösungsansätze:
+
+  * Mit Bedingungsvariablen (std::counting_semaphore)
+  * Mit Semaphoren (std::condition_variable)
+
+In jedem Fall wollen wir vermeiden, dass wir für das Überprüfen eines Pufferzustands
+zuviel Rechenzeit verwenden. Wir differenzieren hier zwischen zwei Ansätzen:
+
+  * Aktives Warten (*Busy Waiting*)<br />Diese Variante des Wartens kann man im Regelfall
+in Wiederholungsschleifen beobachten. Eine solche Schleife wird solange ausgeführt,
+bis eine Variable einen bestimmten Wert angenommen hat. Dies hat unter anderen zur Folge,
+dass ein Thread aktiv sein muss und die CPU solange belegt, bis die betrachtete Variable
+ihren Wert geänder hat.
+
+  * Passives Warten<br />In dieser Variante wird Thread blockiert (suspendiert)
+und wartet auf ein Ereignis,
+das ihn wieder in den Zustand bereit versetzt. Der blockierte Thread besitzt keine CPU-Rechenzeit.
+Ein anderer Thread muss das Eintreten eines Ereignisses bewirken.
+Beim Eintreten des Ereignisses wird der blockierte Thread geweckt.
+Zur Umsetzung dieses Ansatzes benötigt man Hilfsmittel des unterlagerten Betriebssystems,
+rein mit den  Mitteln einer gängigen Programmiersprache lässt sich dies nicht realisieren.
+
+Im Quellcode zu diesem Abschnitt finden Sie zwei Realisierung des 
+Erzeuger-Verbraucher Problems vor:
+
+a Erzeuger-Verbraucher-Problem mit Bedingungsvariablen (wait / notify)
+b Erzeuger-Verbraucher-Problem mit Semaphoren (acquire / release)
 
 
-```
-scheduleJob: Data preparing ...
-executeJob:  Waiting for data ...
-scheduleJob: Data prepared.
-executeJob:  Executing job ...
-executeJob:  Done.
-```
-
-Die einmalige Synchronisation von Threads lässt sich einfach mit Semaphoren umsetzen:
-
-Das `std::binary_semaphore`-Objekt `m_semaphore` (Zeile 4) kann die Werte 0 oder 1 besitzen.
-
-Im konkreten Anwendungsfall wird es auf `0` (Zeile 7) initialisiert.
-
-Das heißt, dass der Aufruf `release` den Wert auf 1 (Zeile 19) setzt
-und den Aufruf `acquire` in Zeile 28 entblockt.
 
 ---
-
-#### Ein zweites Beispiel
-
-Um die Verwendung von binären Semaphoren zu veranschaulichen, implementieren wir eine Druckerwarteschlange,
-die zum gleichzeitigen Einstellen von Druckaufträgen verwendet werden kann.
-
-Die Druckerwarteschlange wird durch ein binäres Semaphor geschützt, sodass jeweils nur Druckauftrag
-(ein Thread) drucken kann.
-
-Studieren Sie den Quellcode und die Ausgaben des Programms:
-
-```
-Thread 4ADC: PrintingJob:  Going to enqueue a document
-Thread 05B0: PrintingJob:  Going to enqueue a document
-Thread 517C: PrintingJob:  Going to enqueue a document
-Thread 5010: PrintingJob:  Going to enqueue a document
-Thread 1650: PrintingJob:  Going to enqueue a document
-Thread 2864: PrintingJob:  Going to enqueue a document
-Thread 45C8: PrintingJob:  Going to enqueue a document
-Thread 538C: PrintingJob:  Going to enqueue a document
-Thread 454C: PrintingJob:  Going to enqueue a document
-Thread 5068: PrintingJob:  Going to enqueue a document
-Thread 4ADC: PrinterQueue: Printing a Job during 507 millseconds.
-Thread 4ADC: PrinterQueue: The document has been printed
-Thread 05B0: PrinterQueue: Printing a Job during 506 millseconds.
-Thread 05B0: PrinterQueue: The document has been printed
-Thread 517C: PrinterQueue: Printing a Job during 1112 millseconds.
-Thread 517C: PrinterQueue: The document has been printed
-Thread 5010: PrinterQueue: Printing a Job during 1921 millseconds.
-Thread 5010: PrinterQueue: The document has been printed
-Thread 1650: PrinterQueue: Printing a Job during 1807 millseconds.
-Thread 1650: PrinterQueue: The document has been printed
-Thread 2864: PrinterQueue: Printing a Job during 662 millseconds.
-Thread 2864: PrinterQueue: The document has been printed
-Thread 45C8: PrinterQueue: Printing a Job during 763 millseconds.
-Thread 45C8: PrinterQueue: The document has been printed
-Thread 538C: PrinterQueue: Printing a Job during 1737 millseconds.
-Thread 538C: PrinterQueue: The document has been printed
-Thread 454C: PrinterQueue: Printing a Job during 1006 millseconds.
-Thread 454C: PrinterQueue: The document has been printed
-Thread 5068: PrinterQueue: Printing a Job during 644 millseconds.
-Thread 5068: PrinterQueue: The document has been printed
-```
-
----
-
-#### Ein drittes Beispiel
-
-*Ausgabe*:
-
-```
->  wait 3 seconds (no thread enabled)
->  enable 3 parallel threads
-CABACABACAABCAACABACDDBCDDCDBDCD
->  enable 4 more parallel threads
-EFGHDEBCDFGEDHEIJFGEBJEIJFGHEJEBIJFGEJHEIJ
->  stop processing
->  wait for end of threads
-FGKBJKIJHFGKJKLIMFGKMHKIMFGKLMKIMHFGKMKLIMMHIMLMHLHLLLLL
->  Done.
-```
-
----
-
 
 #### Quellcode:
 
-[Teil 1: Einfaches Beispiel](Semaphore_01.cpp).<br />
-[Teil 2: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
-[Teil 3: Ein Beispiel zur Klasse `std::counting_semaphore`](Semaphore_03.cpp).<br />
+[Erzeuger-Verbraucher-Problem mit Bedingungsvariablen](BlockingQueue.h).<br />
+[Erzeuger-Verbraucher-Problem mit Semaphoren](BlockingQueueEx.h).<br />
 
 ---
 

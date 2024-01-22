@@ -136,8 +136,11 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlockingQueue.h" />
     <ClInclude Include="BlockingQueueEx.h" />
+    <ClInclude Include="BlockingQueue.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Producer_Consumer_Problem.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
