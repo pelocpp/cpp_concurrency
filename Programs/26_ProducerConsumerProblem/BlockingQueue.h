@@ -22,7 +22,7 @@ namespace ProducerConsumerQueue
         size_t m_pushIndex;
         size_t m_popIndex;
 
-        std::counting_semaphore<QueueSize> m_openSlots;
+        std::counting_semaphore<QueueSize> m_emptySlots;
         std::counting_semaphore<QueueSize> m_fullSlots;
         std::mutex mutable m_mutex;
 
@@ -31,15 +31,15 @@ namespace ProducerConsumerQueue
     public:
         // default c'tor
         BlockingQueue() :
-            // BlockingQueue(size_t capacity) : 
-               // m_capacity{ capacity },
             m_size{ 0 },
             m_pushIndex{ 0 },
             m_popIndex{ 0 },
-            m_openSlots{ static_cast<std::ptrdiff_t>(QueueSize) },
+            m_emptySlots{ static_cast<std::ptrdiff_t>(QueueSize) },
             m_fullSlots{ 0 },
             m_data{ static_cast<T*>(std::malloc(sizeof(T) * QueueSize)) }
-        {}
+        {
+            Logger::log(std::cout, "Using BlockingQueue with Semaphores");
+        }
 
         // don't need other constructors or assignment operators
         BlockingQueue(const BlockingQueue&) = delete;
@@ -68,7 +68,7 @@ namespace ProducerConsumerQueue
         // public interface
         void push(const T& item)
         {
-            m_openSlots.acquire();
+            m_emptySlots.acquire();
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };
 
@@ -86,7 +86,7 @@ namespace ProducerConsumerQueue
 
         void push(T&& item)
         {
-            m_openSlots.acquire();
+            m_emptySlots.acquire();
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };
 
@@ -118,7 +118,7 @@ namespace ProducerConsumerQueue
 
                 Logger::log(std::cout, "popped ", item, ", Size: ", m_size);
             }
-            m_openSlots.release();
+            m_emptySlots.release();
         }
 
         bool empty() const
