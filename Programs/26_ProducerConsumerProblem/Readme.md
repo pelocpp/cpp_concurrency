@@ -9,10 +9,10 @@
 <ins>Klassen</ins>:
 
   * Klassen `std::mutex`
-<br />
+
   * Klassen `std::counting_semaphore`
   * Klassen `std::lock_guard`
-<br />
+
   * Klassen `std::condition_variable`
   * Klassen `std::unique_lock`
 
@@ -32,7 +32,7 @@ letzten Endes haben wir aber immer die Situation vorliegen,
 dass ein solcher Puffer eine begrenzte, maximale Länge besitzt:
 
 
-<img src="Producer_Consumer_Problem.png" width="600">
+<img src="ProducerConsumerProblem.svg" width="700">
 
 *Abbildung* 1: Das *Erzeuger-Verbraucher* Problem
 
@@ -82,6 +82,7 @@ Im Quellcode zu diesem Abschnitt finden Sie zwei Realisierungen des
 Erzeuger-Verbraucher Problems vor:
 
 a) Erzeuger-Verbraucher-Problem mit Bedingungsvariablen (`wait` / `notify`).
+
 b) Erzeuger-Verbraucher-Problem mit Semaphoren (`acquire` / `release`).
 
 

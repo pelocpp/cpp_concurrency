@@ -29,6 +29,9 @@
     <None Include="Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="ProducerConsumerProblem.svg">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BlockingQueueEx.h">
@@ -37,10 +40,5 @@
     <ClInclude Include="BlockingQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="Producer_Consumer_Problem.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

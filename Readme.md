@@ -6,9 +6,9 @@
 
 ### [2. Atomare Operationen: Klassen `std::atomic<T>`](Programs/02_Atomic/Readme.md)
 
-### [3. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_A_MutualExclusion/Readme.md)
+### [3. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_MutualExclusion/Readme.md)
 
-### [4. Mutexe und Sperrmechanismen: Weiterführung](Programs/03_B_MutualExclusion/Readme.md)
+### [4. Mutexe und Sperrmechanismen: Weiterführung](Programs/13_MutualExclusionEx/Readme.md)
 
 ### [5. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
 
@@ -35,6 +35,8 @@
 ### [1. Strategisches Locking (Strategized Locking)](Programs/22_StrategizedLocking/Readme.md)
 
 ### [2. Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/23_ReaderWriterLock/Readme.md)
+
+### [3. Das Erzeuger-Verbraucher Problem](Programs/26_ProducerConsumerProblem/Readme.md)
 
 ---
 
