@@ -102,6 +102,7 @@ namespace JoinableThreadCooperativeInterruptibility {
     static void jthread_05()
     {
         std::jthread jt {
+
             [] (std::stop_token token) {
 
                 std::atomic<bool> running { true };
@@ -134,6 +135,7 @@ namespace JoinableThreadCooperativeInterruptibility {
     static void jthread_06()
     {
         std::jthread jt{
+
             [](std::stop_token token) {
 
                 std::atomic<bool> running { true };

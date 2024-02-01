@@ -60,7 +60,7 @@ namespace Stop_Tokens_and_Condition_Variables
         std::cout << "Pushing strings into queue" << std::endl;
 
         // store three messages
-        for (std::string s : { std::string{ "Tic" }, std::string{ "Tac" }, std::string{ "Toe" }}) {
+        for (const auto s : { "Tic" , "Tac", "Toe"  }) {
 
             std::lock_guard guard { m_mutex };
             m_messages.push(s);

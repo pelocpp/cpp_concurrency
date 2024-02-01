@@ -39,7 +39,7 @@ so dass der `wait`-Methodenaufruf unterbrochen werden kann, wenn eine Stopp-Anfo
 Aus technischen Gründen ist für diesen Fall eine Bedingungsvariable vom Typ `std::condition_variable_any` zu verwenden.
 
 *Hinweis*:
-In den meisten Fällen sollten ein `std::stop_token`-Objekt per *Value*
+In den meisten Fällen sollte ein `std::stop_token`-Objekt per *Value*
 übergeben werden, da das Kopieren von `std::stop_token`-Objekten (und `std::stop_source`-Objekten)
 relativ günstig ist.
 
