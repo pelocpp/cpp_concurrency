@@ -63,11 +63,11 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this] () -> bool { return m_index < 9; }
+                    [this] () -> bool { return m_index < (QueueSize - 1); }
                 );
 
                 // guard
-                if (m_index < 9) {
+                if (m_index < (QueueSize - 1)) {
 
                     m_index++;
                     m_data.at(m_index) = item;

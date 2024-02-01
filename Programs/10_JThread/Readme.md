@@ -59,7 +59,7 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
    die `request_stop()`-Methode aufgerufen wird.
   * *Szenario* 6:
    Dieses Szenario ist vergleichbar zum letzten Szenario mit dem Unterschied, 
-   dass aufgezeigt wird, dass das `std::stop_source` auch über die Instanz eines `std::jthread`-Objekts
+   dass aufgezeigt wird, dass das `std::stop_source`-Objekt auch über die Instanz eines `std::jthread`-Objekts
    abgerufen werden kann.
      
 ---

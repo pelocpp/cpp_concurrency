@@ -10,8 +10,8 @@ des Typs `std::future` wird gezeigt.
 Die `std::async`-Methode besitzt im Wesentlichen drei Überladungen:
 
   * `std::async` mit normaler C-Funktion.
-  * `std::async` mit Funktor-Objekt.
-  * `std::async` mit Lambda-Funktion.
+  * `std::async` mit aufrufbarem Objekt.
+  * `std::async` mit Lambda-Objekt.
 
 #### Quellcode:
 

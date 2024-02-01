@@ -48,7 +48,7 @@ Danach kommt ein Aufruf von `get` zum Zuge, dieser wird an einem `Future`-Objekt
 Bei der Zugriffsklausel der Lambda-Methoden beachte man:
 
   * Auf das `std::promise<void>` Objekt wird via Referenz zugegriffen.
-  * Das `std::shared_future<int>` Objekt wird an die Lambda-Funktion als Kopie übergeben.
+  * Das `std::shared_future<int>` Objekt wird an das Lambda-Objekt als Kopie übergeben.
 
 
 #### Quellcode:

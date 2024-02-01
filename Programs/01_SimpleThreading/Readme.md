@@ -26,10 +26,10 @@ Es werden an einfachen Beispielen Grundlagen des C++&ndash;Multithreadings betra
 
 Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu erzeugen:
 
-  * Thread mit Funktionszeiger
-  * Thread mit Funktor-Objekt
-  * Thread mit Lambda-Funktion
-  * Thread mit einer Methode eines Objekts
+  * Thread mit Funktionszeiger.
+  * Thread mit aufrufbarem Objekt.
+  * Thread mit Lambda-Objekt.
+  * Thread mit einer Methode eines Objekts.
 
 ---
 
