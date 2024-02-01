@@ -5,6 +5,9 @@
 #include "BlockingQueue.h"
 //#include "BlockingQueueEx.h"
 
+// TBD: test_thread_safe_blocking_queue_02: Stürzt ab ...
+
+
 constexpr int NumIterations{ 10 };
 
 constexpr std::chrono::milliseconds SleepTimeConsumer{ 105 };
@@ -215,9 +218,9 @@ static void test_thread_safe_blocking_queue_04()
 void test_producer_consumer_problem()
 {
     //test_thread_safe_blocking_queue_01();
-    //test_thread_safe_blocking_queue_02();
+    test_thread_safe_blocking_queue_02();
     //test_thread_safe_blocking_queue_03();
-    test_thread_safe_blocking_queue_04();
+    //test_thread_safe_blocking_queue_04();
 }
 
 // ===========================================================================

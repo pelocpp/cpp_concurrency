@@ -9,8 +9,8 @@
 
 namespace Mutex_And_Locking_Examples {
 
-    // Global, shared mutex to be used by *all* code and threads
-    // in all examples below
+    // Global, shared mutex to be used by *all* code
+    //  and threads in all examples below
     std::mutex g_mutex{};
 
     // -------------------------------------
@@ -161,6 +161,7 @@ namespace Mutex_And_Locking_Examples {
             // section, and notify a consumer thread **which is already waiting on 
             // the condition variable** to get it to wake up and run.
             lock.unlock();
+
             cv.notify_one(); // wake up just one waiting, consumer thread
         }
 
@@ -181,9 +182,10 @@ namespace Mutex_And_Locking_Examples {
             );
 
             // 'mutex.lock()' was called prior to 'wait()' returning above too, even
-            // though the mutex was necessarily **unlocked** during the sleeping/waiting
-            // period
+            // though the mutex was necessarily **unlocked**
+            //  during the sleeping/waiting period
             sharedData.m_newDataAvailable = false;  // reset our boolean "predicate" variable
+            
             Data sharedDataCopy{ sharedData };      // quickly copy out the shared data
 
             lock.unlock();

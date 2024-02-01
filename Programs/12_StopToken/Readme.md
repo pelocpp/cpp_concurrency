@@ -153,7 +153,7 @@ Stop has been requested!
 Ein *Stop Callback* ist ein Objekt vom Typ `std::stop_callback` mit RAII-Verhaltensweise.
 Der Konstruktor registriert ein *Callable*
 (Funktion, Funktionsobjekt oder Lambda), das aufgerufen werden soll,
-wenn ein Stopp für ein angegebenes Stop Token angefordert wird.
+wenn ein Stopp für ein angegebenes Stopp Token angefordert wird.
 
 Verlässt das *Stop Callback* den Gültigkeitsbereich, wird das *Callable* abgemeldet.
 
@@ -173,7 +173,7 @@ Verlässt das *Stop Callback* den Gültigkeitsbereich, wird das *Callable* abgemel
 
 ---
 
-## Stopp Quellen und Stop Tokens
+## Stopp Quellen und Stopp Tokens
 
 `std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt´.
 Dieses ist automatisch einem Token zugeordnet,

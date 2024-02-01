@@ -30,7 +30,7 @@ wenn sich der Thread noch im Zustand *joinable* befindet.
 
 #### Ein `std::jthread`-Objekt ist kooperativ unterbrechbar
 
-Wie die Überschrift vermuten lässt, ist ein `std::thread`-Objekt unterbrechbar,
+Wie die Überschrift vermuten lässt, ist ein `std::jthread`-Objekt unterbrechbar,
 es gibt also eine Möglichkeit, den Thread von außen zu stoppen.
 
 Wir legen dabei Wert auf die Beobachtung, dass der Thread *kooperativ* unterbrechbar ist.
