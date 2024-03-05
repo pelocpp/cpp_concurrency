@@ -1,5 +1,5 @@
 // ===========================================================================
-// std::async
+// Async_01.cpp // std::async
 // ===========================================================================
 
 #include <future>
@@ -8,7 +8,7 @@
 
 namespace SimpleAsync {
 
-    std::string helloFunction(std::string s) {
+    static std::string helloFunction(std::string s) {
 
         std::this_thread::sleep_for(std::chrono::seconds{ 3 });
         return "Hello ASync from " + s + ".";
@@ -29,7 +29,7 @@ namespace SimpleAsync {
         return "Hello ASync from " + s + ".";
     };
 
-    void test_01() {
+    static void test_01() {
 
         // std::async with function
         std::future<std::string> futureFunction{ 

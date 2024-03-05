@@ -36,23 +36,23 @@ die dazu beitragen, Thread-Sicherheit zu gewährleisten und *Data Races* zu verhi
 wenn mehrere Threads auf gemeinsam genutzte Ressourcen gleichzeitig zugreifen.
 
 
-### Beteiligte Klassen und Objekte
+## Beteiligte Klassen und Objekte
 
 Das Verständnis der Unterschiede und Anwendungsfälle dieser Sperrmechanismen ist
 für das Schreiben effizienter und korrekter nebenläufiger Programme von entscheidender Bedeutung.
 Folgende Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
 
-#### Mutex-Klassen
+### Mutex-Klassen
 
 ##### Klasse `std::mutex`
 
-Die Klasse `std::mutex` steht für sperrbare Objekte. Darunter versteht man Objekte, die zwei
+Die Klasse `std::mutex` steht für *sperrbare Objekte*. Darunter versteht man Objekte, die zwei
 Methoden `lock` und `unlock` besitzen, die verhindern, dass kritische Codeabschnitte von anderen Threads
 zum selben Zeitpunkt ausgeführt werden können und auf dieselben Speicherorte wiederum zum selben Zeitpunkt
 zugegriffen werden kann.
 
   * Mit einem `std::mutex`-Objekt kann man *Race Conditions* zwischen mehreren Threads verhindern, indem man den Zugriff auf eine gemeinsam genutzte Ressource explizit sperren (`lock`) und entsperren (`unlock`) kann.
-  * Nachteil: Kommt es &ndash; aus welchen Gründen auch immer &ndash; nicht zum Aufruf von `unlock` nach einem `lock`-Aufruf,
+  * *Nachteil*: Kommt es &ndash; aus welchen Gründen auch immer &ndash; nicht zum Aufruf von `unlock` nach einem `lock`-Aufruf,
     gerät die Programmausführung in den Zustand &bdquo;UB&rdquo; (*Undefined Behaviour*).
 
 
@@ -78,7 +78,7 @@ das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeit
 und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
 Weitere Informationen siehe [hier](#klasse-stdshared_lock).
 
-#### Hüllen-Klassen für Mutexobjekte
+### Hüllen-Klassen für Mutexobjekte
 
 ##### Klasse `std::lock_guard`
 
@@ -154,7 +154,7 @@ Eine genauere Beschreibung der beiden Klassen `std::shared_mutex` und `std::shar
 [Reader-Writer Lock](../../Programs/23_ReaderWriterLock/Readme.md)
 aufgezeigt.
 
-#### Sperrstrategien (*Locking Strategies*)
+### Sperrstrategien (*Locking Strategies*)
 
 In manchen Situationen muss ein Thread zwei Sperren gleichzeitig halten
 und diese nach dem Zugriff auf die gemeinsam genutzten Daten freigeben.
@@ -204,7 +204,7 @@ Wir betrachten in diesem Beispiel ein Würfelspiel. Es sind 10 Spieler beteiligt.
 Jeder Spieler würfelt gegen alle anderen Spieler, und dies erfolgt pro Spieler in einem separaten Thread.
 
 Um das Aktualisieren der Punktezahlen akkurat durchzuführen, werden bei einem Würfelspiel zweier Spieler
-die Datenbereich *beider* Spieler gesperrt. 
+die Datenbereiche *beider* Spieler gesperrt. 
 
 Studieren Sie den Quellcode des Beispiels genau.
 
@@ -244,7 +244,7 @@ Studieren Sie den Quellcode des Beispiels genau.
 030:         if (&other == this)
 031:             return;
 032: 
-033:         // retrieve our lock and the lock of the oponent
+033:         // retrieve our lock and the lock of the opponent
 034:         std::scoped_lock lock{ m_mutex, other.m_mutex };
 035: 
 036:         Logger::log(std::cout, name(), " plays against ", other.name());
@@ -302,8 +302,8 @@ Studieren Sie den Quellcode des Beispiels genau.
 088:     for (auto& player : players) {
 089:         
 090:         auto round = [&] () {
-091:             for (auto& oponent : players) {
-092:                 player->playWith(*oponent);
+091:             for (auto& opponent : players) {
+092:                 player->playWith(*opponent);
 093:             }
 094:         };
 095:         

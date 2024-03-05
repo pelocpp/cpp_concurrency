@@ -48,7 +48,7 @@ public:
         if (&other == this)
             return;
 
-        // retrieve our lock and the lock of the oponent
+        // retrieve our lock and the lock of the opponent
         std::scoped_lock lock{ m_mutex, other.m_mutex };
 
         Logger::log(std::cout, name(), " plays against ", other.name());
@@ -103,13 +103,13 @@ void examples_scoped_lock()
 
     std::vector<std::jthread> rounds;
 
-    // run the game: each player plays
-    // against all other players in parallel
+    // run the game:
+    // each player plays against all other players in parallel
     for (auto& player : players) {
         
         auto round = [&] () {
-            for (auto& oponent : players) {
-                player->playWith(*oponent);
+            for (auto& opponent : players) {
+                player->playWith(*opponent);
             }
         };
         

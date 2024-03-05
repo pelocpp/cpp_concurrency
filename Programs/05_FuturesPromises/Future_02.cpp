@@ -1,5 +1,5 @@
 // ===========================================================================
-// Promises and Futures
+// Future_02.cpp // Promises and Futures
 // ===========================================================================
 
 #include <iostream>
@@ -9,7 +9,7 @@
 
 namespace PromisesAndFutures02 {
 
-    void test()
+    static void test()
     {
         Logger::log(std::cout, "Main: Start ...");
 

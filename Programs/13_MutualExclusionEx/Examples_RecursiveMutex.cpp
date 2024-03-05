@@ -55,7 +55,6 @@ namespace Recursive_Mutex_Example
 
     private:
         // allocate expects m_mutex to be held by the caller
-
         void allocate(size_t capacity) {
 
             std::cout << "allocating " << capacity << std::endl;
@@ -137,16 +136,16 @@ void examples_recursive_mutex()
 {
     using namespace Recursive_Mutex_Example;
 
-    NonRecursive non;
-    for (int i = 0; i < 18; i++) {
+    NonRecursive non{};
+    for (int i{}; i != 18; i++) {
         non.push_back(i+1);
     }
     non.print();
     non.reserve(2);
     non.print();
  
-    Recursive rec;
-    for (int i = 0; i < 18; i++) {
+    Recursive rec{};
+    for (int i{}; i != 18; i++) {
         rec.push_back(100 + i+1);
     }
     rec.print();

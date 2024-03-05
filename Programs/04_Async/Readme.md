@@ -4,6 +4,24 @@
 
 ---
 
+## Verwendete Werkzeuge
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::future`
+
+<ins>Funktionen</ins>:
+
+  * Funktion `std::async`
+
+<ins>Aufzählungstypen</ins>:
+
+  * Aufzählungstyp `enum class launch`
+
+---
+
+## Allgemeines
+
 Das Zusammenspiel zwischen der Methode `std::async` und Objekten
 des Typs `std::future` wird gezeigt.
 
@@ -39,11 +57,11 @@ von Dmitry Danilov.
 
 ---
 
-## `launch::async` versus `launch::deferred`
+## *Launch Policies*: `launch::async` versus `launch::deferred`
 
 Es werden zwei Threads mit `std::async` gestartet, die beide einen Zeitstempel zurückliefern.
 
-Sie unterscheiden sich bzgl. der verwendeten *launch policy*:
+Sie unterscheiden sich bzgl. der verwendeten *Launch Policy*:
 
   * `launch::async`<br/>Startet einen eigenen Thread im Hintergrund.
   * `launch::deferred`<br/>Wartet mit der Ausführung der Threadprozedur, bis der Aufrufer das Ergebnis mit `get` abholen möchte. Dazu muss nicht zwingend ein separater Thread verwendet werden, die Threadprozedur kann im Kontext des aktuellen Threads ausgeführt werden.
@@ -137,6 +155,14 @@ Elapsed time in milliseconds = 5655 [milliseconds]
 #### Quellcode:
 
 [Siehe hier](Async_03.cpp).
+
+---
+
+#### Quellcode:
+
+[Einfache Beispiele zu `std::async`](Async_01.cpp)<br />
+[Unterschiedliche *Launch Policies*](Async_02.cpp)<br />
+[Nochmal *Launch Policies*](Async_03.cpp)<br />
 
 ---
 

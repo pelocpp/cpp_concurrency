@@ -1,5 +1,5 @@
 // ===========================================================================
-// Promises and Futures
+// Future_01.cpp // Promises and Futures
 // ===========================================================================
 
 #include <iostream>
@@ -10,7 +10,7 @@ namespace PromisesAndFutures01 {
 
     using namespace std::chrono_literals;
 
-    void doWorkVersion01(std::promise<int>* promise)
+    static void doWorkVersion01(std::promise<int>* promise)
     {
         std::cout << "Inside Thread (doWork - 01)" << std::endl;
 
@@ -19,7 +19,7 @@ namespace PromisesAndFutures01 {
         promise->set_value(35);
     }
 
-    void testVersion01() {
+    static void testVersion01() {
 
         std::promise<int> promiseObj{};
 
@@ -34,7 +34,7 @@ namespace PromisesAndFutures01 {
         t.detach();
     }
 
-    void doWorkVersion02(std::promise<int>&& promise)
+    static void doWorkVersion02(std::promise<int>&& promise)
     {
         std::cout << "Inside Thread (doWork - 02)" << std::endl;
 
@@ -43,7 +43,7 @@ namespace PromisesAndFutures01 {
         promise.set_value(35);
     }
 
-    void testVersion02() {
+    static void testVersion02() {
 
         std::promise<int> promiseObj{};
 

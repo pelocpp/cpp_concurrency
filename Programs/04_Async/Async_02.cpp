@@ -11,7 +11,7 @@
 
 namespace EagerVsLazyASync {
 
-    void test_01() {
+    static void test_01() {
 
         Logger::log(std::cout, "Preparing calculations ...");
 

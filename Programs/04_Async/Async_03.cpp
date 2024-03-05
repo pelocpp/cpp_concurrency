@@ -9,17 +9,17 @@
 
 namespace SomeAsyncScenarios {
 
-    long fib(long n)
+    static long fib(long n)
     {
         return n <= 1 ? n : fib(n - 1) + fib(n - 2);
     }
 
-    void test_01() 
+    static void test_01()
     {
-        std::future<long> f40{ std::async(fib, 40) };
-        std::future<long> f41{ std::async(fib, 41) };
-        std::future<long> f42{ std::async(fib, 42) };
-        std::future<long> f43{ std::async(fib, 43) };
+        std::future<long> f40{ std::async(std::launch::async, fib, 40) };
+        std::future<long> f41{ std::async(std::launch::async, fib, 41) };
+        std::future<long> f42{ std::async(std::launch::async, fib, 42) };
+        std::future<long> f43{ std::async(std::launch::async, fib, 43) };
 
         std::cout << "Please wait ..." << std::endl;
 
@@ -33,12 +33,12 @@ namespace SomeAsyncScenarios {
         std::cout << "Done." << std::endl;
     }
 
-    void test_02()
+    static void test_02()
     {
-        std::future<long> f40{ std::async(fib, 40) };
-        std::future<long> f41{ std::async(fib, 41) };
-        std::future<long> f42{ std::async(fib, 42) };
-        std::future<long> f43{ std::async(fib, 43) };
+        std::future<long> f40{ std::async(std::launch::async, fib, 40) };
+        std::future<long> f41{ std::async(std::launch::async, fib, 41) };
+        std::future<long> f42{ std::async(std::launch::async, fib, 42) };
+        std::future<long> f43{ std::async(std::launch::async, fib, 43) };
 
         std::cout << "Please wait ..." << std::endl;
 
@@ -51,14 +51,17 @@ namespace SomeAsyncScenarios {
 
     }   // end of other calculations is awaited in the d'tor of the corresponding std::future
 
-    void test_03()
+    static void test_03()
     {
         std::cout << "Preparing calculations ..." << std::endl;
         std::vector<std::future<long>> fibonaccis;
 
         for (long n{}; n != 50; ++n)
         {
-            std::future<long> fut = std::async(std::launch::deferred, fib, n);  // <==== std::launch::deferred with std::launch::async
+            std::launch policy{ std::launch::deferred };  // <==== std::launch::deferred vs std::launch::async
+
+            std::future<long> fut = std::async(policy, fib, n);
+
             fibonaccis.push_back(std::move(fut));
         }
 
@@ -71,18 +74,18 @@ namespace SomeAsyncScenarios {
     }   // end of other calculations is awaited in the d'tor of the corresponding std::future:
         // depends on launch policy !!!
 
-    void test_04()
+    static void test_04()
     {
-        std::cout << "Calculation with wait:" << std::endl;
+        Logger::log(std::cout, "Calculation with wait:");
 
-        std::future<long> f40 = std::async(fib, 40);
+        std::future<long> f42 = std::async(fib, 42);
 
         Logger::startWatch();
 
         while (true) {
-            std::future_status done = f40.wait_for(std::chrono::milliseconds{ 500 });
+            std::future_status done = f42.wait_for(std::chrono::milliseconds{ 500 });
             if (done == std::future_status::timeout) {
-                std::cout << "not yet calculated ..." << std::endl;
+                Logger::log(std::cout, "not yet calculated ...");
             }
             else {
                 break;
@@ -90,7 +93,7 @@ namespace SomeAsyncScenarios {
         }
 
         // retrieve result
-        std::cout << "fib(40): " << f40.get() << std::endl; // output: fib(40): 102334155
+        Logger::log(std::cout, "fib(42): ", f42.get());  // output: fib(42): 267914296
         Logger::stopWatchMilli(std::cout);
     }
 }
@@ -98,6 +101,7 @@ namespace SomeAsyncScenarios {
 void test_async_03() {
 
     using namespace SomeAsyncScenarios;
+
     test_01();
     test_02();
     test_03();

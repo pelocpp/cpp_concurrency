@@ -21,9 +21,6 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Future_03.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Future_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

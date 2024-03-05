@@ -37,12 +37,12 @@ Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu e
 
   * Ein Objekt der Klasse `std::thread` kann mit einem *Callable* und seinen Parametern instanziiert werden
     und beginnt sofort mit der Ausführung.
-  * Danach befindet sich das Objekt im sogenannten *joinable* Zustand, d.h. es muss *joined* oder *detached* werden,
+  * Danach befindet sich das Objekt im sogenannten *joinable* Zustand, d.h. es muss *ge-joined* oder *ge-detached* werden,
     bevor es den Gültigkeitsbereich verlässt.
-  * Wird das Objekt zu irgendeinem Zeitpunkt *ge-joined* (Aufruf von `join()`),
+  * Wird das Objekt zu irgendeinem Zeitpunkt *ge-joined* (Aufruf von `join`),
     wartet der erzeugende Thread an dieser Stelle darauf, dass der erzeugte Thread seine Aufgabe abschließt,
     also die ihm zugeordnete Funktion (*callable*) bis zum Ende ausführt (Blockade).
-  * Wird das Objekt *ge-detached* (Aufruf von `detach()`), läuft der Thread im Hintergrund weiter
+  * Wird das Objekt *ge-detached* (Aufruf von `detach`), läuft der Thread im Hintergrund weiter
     und der erzeugende Thread wartet nicht auf sein Ende.
 
 Der kritische Teil dieser Beobachtungen besteht darin,
