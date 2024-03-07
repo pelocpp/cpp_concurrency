@@ -13,55 +13,45 @@
 
 namespace Latches_01 {
 
-    static void loopOver(char ch) {
+    static void loopOverChar(char ch) {
 
-        for (int j{}; j != 10; ++j) {
+        for (int j{}; j != 30; ++j) 
+        {
             // loop printing the char ch
-            std::cout.put(ch).flush();
+            std::cout.put(ch);
+            std::cout.flush();
             std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
         }
     }
 
     static void example_latches_01()
     {
-        std::array<char, 5> tags = { '1', '2', '3', '4', '5' };   // tags we have to perform a task for
+        std::latch allDone{ 2 };
 
-        // initialize latch to react when all tasks are done
-        // (initialize countdown with number of tasks)
-        std::latch allDone{ tags.size() };
+        std::cout << "Waiting until all tasks are done:" << std::endl;
 
-        // start two threads dealing with every second tag
+        // start two threads dealing with printing chars
         std::jthread t1 {
             [&] () {
-                for (size_t i{}; i < tags.size(); i += 2) { // even indexes
+                loopOverChar('!');
 
-                    loopOver(tags[i]);
-
-                    // signal that the task is done:
-                    allDone.count_down(); // atomically decrement counter of latch
-                }
+                // signal that the task is done:
+                allDone.count_down(); // atomically decrement counter of latch
             }
         };
 
         std::jthread t2 {
-            [&] () {
-                for (size_t i{ 1 }; i < tags.size(); i += 2) { // odd indexes
+            [&] () { 
+                loopOverChar('?');
 
-                    loopOver(tags[i]);
-
-                    // signal that the task is done:
-                    allDone.count_down(); // atomically decrement counter of latch
-                }
+                // signal that the task is done:
+                allDone.count_down(); // atomically decrement counter of latch            
             }
         };
 
         // wait until all tasks are done
-        std::cout << "Waiting until all tasks are done:\n";
         allDone.wait();
-        std::cout << "\nAll tasks done.";
-
-        t1.join();  // wait until end of threads
-        t2.join();
+        std::cout << std::endl << "All tasks done."<< std::endl;
     }
 }
 
@@ -102,7 +92,8 @@ namespace Latches_02 {
                     // perform whatever the thread does
                     // (loop printing its index):
                     for (int j{}; j != 10; ++j) {
-                        std::cout.put(static_cast<char>('0' + i)).flush();
+                        std::cout.put(static_cast<char>('0' + i));
+                        std::cout.flush();
                         std::this_thread::sleep_for(std::chrono::milliseconds{ 50 });
                     }
                 }
