@@ -8,14 +8,12 @@
 #include <thread>
 #include <chrono>
 #include <array>
-// #include <semaphore>
 #include <mutex>
 
 #include "../Logger/Logger.h"
 
 // TO BE DONE: Das ist jetzt ein BlockingStack
 // Im nächsten schritt abändern !!!
-
 
 namespace ProducerConsumerQueue
 {
@@ -63,18 +61,18 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this] () -> bool { return m_index < (QueueSize - 1); }
+                    [this] () -> bool { return m_index < static_cast<int>(QueueSize - 1); }
                 );
 
                 // guard
-                if (m_index < (QueueSize - 1)) {
+                if (m_index < static_cast<int>(QueueSize - 1)) {
 
                     m_index++;
                     m_data.at(m_index) = item;
 
                     ++m_size;
 
-                    Logger::log(std::cout, "pushed ", item, " at index ", m_index);
+                   // Logger::log(std::cout, "pushed ", item, " at index ", m_index);
                 }
             }
 
@@ -90,18 +88,18 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this]() -> bool { return m_index < 9; }
+                    [this]() -> bool { return m_index < static_cast<int>(QueueSize - 1); }    // das mit  der 9 ist FALSCH !!!!!!!!!!
                 );
 
                 // guard
-                if (m_index < 9) {
+                if (m_index < static_cast<int>(QueueSize - 1)) {
 
                     m_index++;
                     m_data.at(m_index) = std::move(item);
 
                     ++m_size;
 
-                    Logger::log(std::cout, "pushed ", item, " at index ", m_index);
+                 //   Logger::log(std::cout, "pushed ", item, " at index ", m_index);
                 }
             }
 
@@ -128,7 +126,7 @@ namespace ProducerConsumerQueue
 
                     --m_size;
 
-                    Logger::log(std::cout, "popped ", item, " at index ", (m_index + 1));
+                //    Logger::log(std::cout, "popped ", item, " at index ", (m_index + 1));
                 }
             }
 

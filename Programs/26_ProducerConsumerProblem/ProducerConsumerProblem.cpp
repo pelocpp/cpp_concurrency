@@ -2,16 +2,16 @@
 // ProducerConsumerProblem_01.cpp
 // ===========================================================================
 
-#include "BlockingQueue.h"
-//#include "BlockingQueueEx.h"
+//#include "BlockingQueue.h"
+#include "BlockingQueueEx.h"
 
-// TBD: test_thread_safe_blocking_queue_02: Stürzt ab ...
+// TBD: test_thread_safe_blocking_queue_02: Stürzt ab ... mit #include "BlockingQueue.h"
 
 
 constexpr int NumIterations{ 10 };
 
-constexpr std::chrono::milliseconds SleepTimeConsumer{ 105 };
-constexpr std::chrono::milliseconds SleepTimeProducer{ 100 };
+constexpr std::chrono::milliseconds SleepTimeConsumer{ 100 };
+constexpr std::chrono::milliseconds SleepTimeProducer{ 1000 };
 
 static void test_thread_safe_blocking_queue_01()
 {
@@ -21,12 +21,14 @@ static void test_thread_safe_blocking_queue_01()
 
     BlockingQueue<int, QueueSize> queue{};
 
-    queue.push(1);
-    queue.push(2);
-    queue.push(3);
+    queue.push(100);
+    queue.push(101);
+    queue.push(102);
 
     std::cout << "Size: " << queue.size() << std::endl;
 }
+
+// ===========================================================================
 
 static void test_thread_safe_blocking_queue_02()
 {
@@ -42,8 +44,8 @@ static void test_thread_safe_blocking_queue_02()
 
         for (int i{ 1 }; i <= NumIterations; ++i)
         {
-            queue.push(i);
-            Logger::log(std::cout, "Pushing ", i);
+            queue.push(100 + i);
+            Logger::log(std::cout, "Pushing ", 100 + i);
         }
 
         Logger::log(std::cout, "Producer Done.");
@@ -58,7 +60,7 @@ static void test_thread_safe_blocking_queue_02()
             std::this_thread::sleep_for(std::chrono::milliseconds{ SleepTimeConsumer });
             int value;
             queue.pop(value);
-            Logger::log(std::cout, "Popped  ", i);
+            Logger::log(std::cout, "Popped  ", value);
         }
 
         Logger::log(std::cout, "Consumer Done.");
@@ -67,6 +69,8 @@ static void test_thread_safe_blocking_queue_02()
     producer.join();
     consumer.join();
 }
+
+// ===========================================================================
 
 class Consumer
 {
@@ -89,6 +93,8 @@ public:
 
             int value;
             m_queue.pop(value);
+
+            Logger::log(std::cout, "Popped ", value);
         }
     }
 };
@@ -116,13 +122,16 @@ public:
 
             nextNumber++;
             m_queue.push(nextNumber);
+
+            Logger::log(std::cout, "Pushed ", nextNumber);
         }
     }
 };
 
+// ===========================================================================
+
 static void test_thread_safe_blocking_queue_03()
 {
-
     constexpr int QueueSize{ 10 };
 
     ProducerConsumerQueue::BlockingQueue<int, QueueSize> queue{ };
@@ -149,6 +158,8 @@ static void test_thread_safe_blocking_queue_03()
 
     Logger::log(std::cout, "Done.");
 }
+
+// ===========================================================================
 
 static void test_thread_safe_blocking_queue_04()
 {
@@ -218,8 +229,8 @@ static void test_thread_safe_blocking_queue_04()
 void test_producer_consumer_problem()
 {
     //test_thread_safe_blocking_queue_01();
-    test_thread_safe_blocking_queue_02();
-    //test_thread_safe_blocking_queue_03();
+     //test_thread_safe_blocking_queue_02();
+    test_thread_safe_blocking_queue_03();
     //test_thread_safe_blocking_queue_04();
 }
 

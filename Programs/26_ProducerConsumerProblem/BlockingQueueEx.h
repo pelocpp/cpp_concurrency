@@ -24,6 +24,7 @@ namespace ProducerConsumerQueue
 
         std::counting_semaphore<QueueSize> m_emptySlots;
         std::counting_semaphore<QueueSize> m_fullSlots;
+
         std::mutex mutable m_mutex;
 
         T* m_data;
@@ -78,8 +79,6 @@ namespace ProducerConsumerQueue
                 m_pushIndex = m_pushIndex % QueueSize;
 
                 ++m_size;
-
-                Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
             }
             m_fullSlots.release();
         }
@@ -96,8 +95,6 @@ namespace ProducerConsumerQueue
                 m_pushIndex = m_pushIndex % QueueSize;
 
                 ++m_size;
-
-                Logger::log(std::cout, "pushed ", item, ", Size: ", m_size);
             }
             m_fullSlots.release();
         }
@@ -115,8 +112,6 @@ namespace ProducerConsumerQueue
                 m_popIndex = m_popIndex % QueueSize;
 
                 --m_size;
-
-                Logger::log(std::cout, "popped ", item, ", Size: ", m_size);
             }
             m_emptySlots.release();
         }

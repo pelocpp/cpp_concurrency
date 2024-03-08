@@ -42,11 +42,11 @@ dass ein solcher Puffer eine begrenzte, maximale Länge besitzt:
 
 In der Realisierung steht man nun vor zwei Problemen:
 
-a) Der Puffer ist leer: Wenn der Puffer leer ist, muss der Verbraucher
+  * Der Puffer ist leer: Wenn der Puffer leer ist, muss der Verbraucher
 warten, bis der Erzeuger ein Element im Puffer abgelegt hat.
 Erst dann kann der Verbraucher weiter arbeiten.
   
-b) Der Puffer ist voll: Wenn der Puffer voll ist, muss der Erzeuger
+  * Der Puffer ist voll: Wenn der Puffer voll ist, muss der Erzeuger
 warten, bis der Verbraucher ein Element aus dem Puffer abgeholt hat.
 Erst dann kann der Erzeuger weiter arbeiten.
 
@@ -58,8 +58,8 @@ mehrere Verbraucher geben kann &ndash; die aber alle gleichzeitig auf einem Puff
 Für das Erzeuger-Verbraucher Problem gibt es vor diesem Hintergrund betrachtet
 mehrere Lösungsansätze:
 
-  * Mit Bedingungsvariablen (`std::counting_semaphore`).
-  * Mit Semaphoren (`std::condition_variable`).
+  * Mit Bedingungsvariablen (`std::counting_semaphore`)
+  * Mit Semaphoren (`std::condition_variable`)
 
 In jedem Fall wollen wir vermeiden, dass wir für das Überprüfen eines Pufferzustands (leer, voll)
 zuviel Rechenzeit verwenden. Wir differenzieren hier zwischen zwei Ansätzen:
@@ -81,9 +81,9 @@ rein mit den  Mitteln gängiger Programmiersprache lässt sich passives Warten nic
 Im Quellcode zu diesem Abschnitt finden Sie zwei Realisierungen des 
 Erzeuger-Verbraucher Problems vor:
 
-a) Erzeuger-Verbraucher-Problem mit Bedingungsvariablen (`wait` / `notify`).
+1. Umsetzung mit Bedingungsvariablen (`wait` / `notify`).
 
-b) Erzeuger-Verbraucher-Problem mit Semaphoren (`acquire` / `release`).
+2. Umsetzung mit Semaphoren (`acquire` / `release`).
 
 
 ---
@@ -101,7 +101,7 @@ Die Realisierung des Erzeuger-Verbraucher-Problems lehnt sich an den Artikel
 
 [Blocking queue](https://vorbrodt.blog/2019/02/03/blocking-queue/)
 
-aus dem C++ Blog von von Martin Vorbrodt an.
+aus dem C++ Blog von Martin Vorbrodt an.
 
 Dieser Artikel demonstriert unter anderem, wie der Puffer über die Technik des *Placement new* 
 verwaltet werden kann.
