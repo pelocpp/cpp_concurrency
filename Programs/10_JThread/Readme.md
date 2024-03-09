@@ -4,6 +4,19 @@
 
 ---
 
+## Verwendete Werkzeuge
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::thread`
+  * Klasse `std::jthread`
+  * Klasse `std::stop_token`
+  * Klasse `std::stop_callback`
+  * Klasse `std::stop_source`
+  * Klasse `std::atomic<bool>`
+
+---
+
 Die Implementierung der `std::jthread`-Klasse basiert auf der bereits vorhandenen Klasse `std::thread`.
 
 Die `std::jthread`-Klasse ist eine Wrapper-Klasse um Klasse `std::thread` herum,

@@ -4,6 +4,15 @@
 
 ---
 
+## Verwendete Werkzeuge
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::packaged_task`
+  * Klasse `std::future`
+
+---
+
 ## `std::packaged_task`
 
 Das charakteristische Merkmal der Klasse `std::packaged_task` ist, dass die betroffene Task (Thread)

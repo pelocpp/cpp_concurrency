@@ -8,15 +8,13 @@
 #include <deque>
 #include <utility>
 
-// #include "../Logger/Logger.h"
-
 namespace PackagedTask {
 
-    int calcSum(int a, int b) { 
+    static int calcSum(int a, int b) {
         return a + b;
     }
 
-    int calcSumRange(int a, int b) {
+    static int calcSumRange(int a, int b) {
         int sum{};
         for (int i{ a }; i != b; ++i) {
             sum += i;
@@ -24,7 +22,7 @@ namespace PackagedTask {
         return sum;
     }
 
-    void test_01() {
+    static void test_01() {
 
         // define a task
         std::packaged_task<int(int, int)> task{ calcSum };
@@ -44,7 +42,7 @@ namespace PackagedTask {
         std::cout << "123 + 456 = " << sum << std::endl;
     }
 
-    void test_02() {
+    static void test_02() {
 
         constexpr size_t MaxTasks{ 4 };
 

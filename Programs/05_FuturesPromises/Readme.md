@@ -11,7 +11,12 @@
   * Klasse `std::future`
   * Klasse `std::promise`
   * Klasse `std::thread`
+  * Klasse `std::jthread`
   * Klasse `std::shared_future`
+
+<ins>Funktionen</ins>:
+
+  * Funktion `std::async`
 
 ---
 

@@ -6,18 +6,21 @@
 
 ## Verwendete Werkzeuge
 
-<ins>Thread-Klassen</ins>:
+<ins>Klassen</ins>:
 
   * Klasse `std::latch`
   * Klasse `std::barrier`
+  * Klasse `std::jthread`
+  * Klasse `std::future`
 
 ---
+
+## Allgemeines
 
 C++ hat weitere Klassen erhalten, um die Synchronisierung von Threads zu vereinfachen: *Latches* und *Barrieren*.
 
----
 
-*Hinweis*: Windows-Systemprogrammierern dürften *Latches* und *Barrieren* in
+*Hinweis*:<br />Windows-Systemprogrammierern dürften *Latches* und *Barrieren* in
 gewisser Weise bekannt vorkommen: Sie haben viele Gemeinsamkeiten mit den
 Win32-Betriebssystemfunktionen `WaitForSingleObject` und `WaitForMultipleObjects`.
 

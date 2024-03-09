@@ -4,6 +4,28 @@
 
 ---
 
+## Verwendete Werkzeuge
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::execution::sequenced_policy`
+  * Klasse `std::execution::parallel_policy`
+  * Klasse `std::execution::parallel_unsequenced_policy`
+
+
+<ins>Funktionen</ins>:
+
+  * Funktion `std::sort`
+
+
+<ins>Konstanten</ins>:
+
+  * Konstante `std::execution::seq`
+  * Konstante `std::execution::par`
+  * Konstante `std::execution::par_unseq`
+
+---
+
 Die Standard Template Library (STL) enthält sehr viele Algorithmen für das Suchen, Zählen, Manipulieren von STL-Containern.
 Mit C++ 17 und spätestens ab C++ 20 wurden viele dieser Algorithmen überladen und neue Algorithmen hinzugefügt.
 Diese überladenen und neuen Algorithmen können mit einer sogenannte *Execution Policy* aufgerufen werden.

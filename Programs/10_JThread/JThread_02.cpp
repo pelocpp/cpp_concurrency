@@ -171,11 +171,11 @@ void test_jthread_02()
     using namespace JoinableThreadCooperativeInterruptibility;
 
     jthread_01();
-    //jthread_02();
-    //jthread_03();
-    //jthread_04();
-    //jthread_05();
-    //jthread_06();
+    jthread_02();
+    jthread_03();
+    jthread_04();
+    jthread_05();
+    jthread_06();
 }
 
 
