@@ -13,7 +13,6 @@ int main()
     examples_recursive_mutex();
     examples_locking_strategies();
     examples_scoped_lock();
-
     return 1;
 }
 

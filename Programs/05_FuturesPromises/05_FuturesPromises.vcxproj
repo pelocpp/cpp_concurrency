@@ -118,7 +118,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -145,8 +145,9 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Future_01.cpp" />
-    <ClCompile Include="Program.cpp" />
     <ClCompile Include="Future_02.cpp" />
+    <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Future_03.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Futures.png" />

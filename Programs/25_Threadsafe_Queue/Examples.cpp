@@ -79,11 +79,10 @@ namespace Threadsafe_Queue_Examples {
     }
 }
 
-void examples()
+void test_thread_safe_queue ()
 {
     using namespace Threadsafe_Queue_Examples;
-
-    // example_01();
+    example_01();
     example_02();
 }
 

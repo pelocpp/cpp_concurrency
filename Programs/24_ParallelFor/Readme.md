@@ -4,29 +4,32 @@
 
 ---
 
-### Allgemeines
+## Verwendete Werkzeuge
 
+<ins>Klassen</ins>:
 
-Wir zeigen in diesem Abschnitt auf, wie man eine `for`-Wiederholungsschleife parallelisieren kann.
-In vielen Bibliotheken gibt es eine solche Funktion unter dem Namen `parallel_for`.
-In der STL gibt es eine derartige Funktion nicht, 
-aber es bereitet keine große Mühe, sie selber zu schreiben.
+* Klasse `std::thread`
+* Klasse `std::mutex`
+* Klasse `std::lock_guard`
+* Klasse `std::function`
+
+<ins>Funktionen</ins>:
+
+* Funktion `std::thread::hardware_concurrency`
+
+<ins>Utility-Funktion</ins>:
+
+* Funktion `std::mem_fn`
 
 ---
 
-# Verwendete Hilfsmittel:
-
-  * Klassen `std::thread`, `std::function`, `std::mutex` und `std::lock_guard`
-  * TBD
+### Allgemeines
 
 
-
-  
-  * Klassen `std::thread` und `std::function`
-  * Funktion `std::thread::hardware_concurrency`
-  * Container `std::vector`, `std::array`
-  * Utility-Funktion `std::mem_fn`
-
+Wir zeigen in diesem Abschnitt, wie man eine `for`-Wiederholungsschleife parallelisieren kann.
+In vielen Bibliotheken gibt es eine solche Funktion unter dem Namen `parallel_for`.
+In der STL gibt es eine derartige Funktion nicht, 
+aber es bereitet keine große Mühe, sie selber zu schreiben.
 
 ---
 

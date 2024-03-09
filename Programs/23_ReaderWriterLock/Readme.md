@@ -1,4 +1,4 @@
-# Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)
+# Reader-Writer Lock<br />(Klassen `std::shared_mutex` und `std::shared_lock`)
 
 [Zurück](../../Readme.md)
 

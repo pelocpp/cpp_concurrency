@@ -4,7 +4,7 @@
 
 ---
 
-# Verwendete Hilfsmittel:
+## Verwendete Werkzeuge
 
   * `std::mutex`
   * `std::lock_guard`, `std::unique_lock` und `std::scoped_lock`

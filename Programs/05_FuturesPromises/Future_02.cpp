@@ -3,88 +3,125 @@
 // ===========================================================================
 
 #include <iostream>
+#include <thread>
 #include <future>
 
 #include "../Logger/Logger.h"
 
 namespace PromisesAndFutures02 {
 
-    static void test()
+    static void test_shared_future_01()
     {
-        Logger::log(std::cout, "Main: Start ...");
+        Logger::log(std::cout, "Start.");
 
-        std::promise<void> thread1Started;
-        std::promise<void> thread2Started;
+        std::promise<int> provider;
 
-        std::promise<int> signalPromise;
+        // transfer the state
+        // from the promise generated future
+        // to a shared future
+        std::future<int> future{ provider.get_future() };
+        std::shared_future<int> sharedFuture{ future.share()};
 
-        std::shared_future<int> signalFuture{ signalPromise.get_future().share() };
+        std::vector<std::jthread> runners;
 
-        auto function1 = [&thread1Started, signalFuture] {
-            Logger::log(std::cout, "Lambda 01:");
+        // start a new thread, taking a copy of the future
+        runners.push_back(std::jthread([sharedFuture]() {
+            // block until the promise is fulfilled
+            int value = sharedFuture.get();
+            Logger::log(std::cout, "Got result ", value);
+            }));
 
-            thread1Started.set_value();
+        // start a new thread, taking a copy of the future
+        runners.push_back(std::jthread([sharedFuture]() {
+            // block until the promise is fulfilled
+            int value = sharedFuture.get();
+            Logger::log(std::cout, "Got result ", value);
+            }));
 
-            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
-            // wait until parameter is set
-            int parameter = signalFuture.get();
-            Logger::log(std::cout, "Lambda 01 - get returned ", parameter);
+        // fulfill the promise
+        provider.set_value(123);
 
-            // ... now thread starts to work ...
-            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-            Logger::log(std::cout, "End of Lambda 01.");
-        };
+        Logger::log(std::cout, "Done.");
+    }
 
-        auto function2 = [&thread2Started, signalFuture] {
-            Logger::log(std::cout, "Lambda 02: ");
+    // same test scenario - just without a std::vector
+    static void test_shared_future_02()
+    {
+        Logger::log(std::cout, "Start.");
 
-            thread2Started.set_value();
+        std::promise<int> provider;
 
-            std::this_thread::sleep_for(std::chrono::seconds{ 4 });
+        std::future<int> future{ provider.get_future() };
+        std::shared_future<int> sharedFuture{ future.share() };
 
-            // wait until parameter is set
-            int parameter = signalFuture.get();
-            Logger::log(std::cout, "Lambda 02 - get returned ", parameter);
+        // start a new thread, taking a copy of the future
+        std::jthread thread1 ([sharedFuture]() {
+            int value = sharedFuture.get();
+            Logger::log(std::cout, "Got result ", value);
+        });
 
-            // ... now thread starts to work ...
-            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-            Logger::log(std::cout, "End of Lambda 02.");
-        };
+        // start a new thread, taking a copy of the future
+        std::jthread thread2([sharedFuture]() {
+            int value = sharedFuture.get();
+            Logger::log(std::cout, "Got result ", value);
+        });
 
-        Logger::log(std::cout, "Main: (1) ...");
+        std::this_thread::sleep_for(std::chrono::seconds(2));
 
-        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
+        // fulfill the promise
+        provider.set_value(123);
 
-        // run both lambda expressions asynchronously.
-        // Remember to capture the future returned by async()!
-        auto result1 = std::async(std::launch::async, function1);
-        auto result2 = std::async(std::launch::async, function2);
+        // watch output of "Done" on the console window
+        // std::this_thread::sleep_for(std::chrono::seconds(1));
 
-        Logger::log(std::cout, "Main: (2) ...");
+        Logger::log(std::cout, "Done.");
+    }
 
-        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
+    // same test scenario - std::vector resides in it's own scope now
+    static void test_shared_future_03()
+    {
+        Logger::log(std::cout, "Start.");
 
-        Logger::log(std::cout, "Main: vor get_future().wait() ...");
+        std::promise<int> provider;
 
-        // wait until both threads have started.
-        thread1Started.get_future().wait();
-        thread2Started.get_future().wait();
+        std::future<int> future{ provider.get_future() };
+        std::shared_future<int> sharedFuture{ future.share() };
 
-        // both threads are now waiting for the parameter,
-        // set the parameter to wake up both of them.
-        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-        Logger::log(std::cout, "Main: vor set_value ...");
-        signalPromise.set_value(42);
+        {
+            std::vector<std::jthread> runners;
 
-        Logger::log(std::cout, "End of Main");
+            // start a new thread, taking a copy of the future
+            runners.push_back(std::jthread([sharedFuture]() {
+
+                int value = sharedFuture.get();
+                Logger::log(std::cout, "Got result ", value);
+                }));
+
+            // start a new thread, taking a copy of the future
+            runners.push_back(std::jthread([sharedFuture]() {
+
+                int value = sharedFuture.get();
+                Logger::log(std::cout, "Got result ", value);
+                }));
+
+            std::this_thread::sleep_for(std::chrono::seconds(2));
+
+            // fulfill the promise
+            provider.set_value(123);
+        }
+
+        Logger::log(std::cout, "Done.");
     }
 }
 
 void test_future_promise_02()
 {
     using namespace PromisesAndFutures02;
-    test();
+    test_shared_future_01();
+    test_shared_future_02();
+    test_shared_future_03();
 }
 
 // ===========================================================================

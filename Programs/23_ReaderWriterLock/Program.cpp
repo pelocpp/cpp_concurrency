@@ -7,7 +7,6 @@ extern void test_reader_writer_lock();
 int main()
 {
     test_reader_writer_lock();
-
     return 0;
 }
 

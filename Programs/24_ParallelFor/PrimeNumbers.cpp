@@ -18,30 +18,19 @@ namespace Globals
 
     constexpr size_t NumThreads = 8;
 
-    // constexpr size_t UpperLimit { 100 };
-    // Found:  25 prime numbers
-
-    // constexpr size_t UpperLimit{ 1000 };
-    // Found:  168 prime numbers
-
-    // constexpr size_t UpperLimit { 100'000 };
-    // Found:  9.592 prime numbers
-
-    constexpr size_t UpperLimit { 1'000'000 };
-    // Found:  78.498 prime numbers
-
-    // constexpr size_t UpperLimit { 10'000'000 };
-    // Found:  664.579 prime numbers
-
-    // constexpr size_t UpperLimit { 100'000'000 };
-    // Found:  5.761.455 prime numbers
+    // constexpr size_t UpperLimit { 100 };             // Found:  25 prime numbers
+    // constexpr size_t UpperLimit { 1000 };            // Found:  168 prime numbers
+    // constexpr size_t UpperLimit { 100'000 };         // Found:  9.592 prime numbers
+       constexpr size_t UpperLimit { 1'000'000 };       // Found:  78.498 prime numbers
+    // constexpr size_t UpperLimit { 10'000'000 };      // Found:  664.579 prime numbers
+    // constexpr size_t UpperLimit { 100'000'000 };     // Found:  5.761.455 prime numbers
 }
 
 // ===========================================================================
 
 Concurrency_ThreadsafeStack::ThreadsafeStack<size_t> g_primes{};
 
-void calcPrimesRange(size_t start, size_t end)
+static void calcPrimesRange(size_t start, size_t end)
 {
     for (size_t i{ start }; i != end; ++i) {
 
@@ -51,7 +40,7 @@ void calcPrimesRange(size_t start, size_t end)
     }
 }
 
-void test_parallel_for_01(size_t from, size_t to, bool useThreads)
+static void test_parallel_for_01(size_t from, size_t to, bool useThreads)
 {
     using namespace Concurrency_ParallelFor;
 
@@ -78,7 +67,7 @@ void test_parallel_for_01(size_t from, size_t to, bool useThreads)
 
 // ===========================================================================
 
-void test_parallel_for_02(size_t from, size_t to, bool useThreads)
+static void test_parallel_for_02(size_t from, size_t to, bool useThreads)
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
@@ -115,10 +104,9 @@ void test_parallel_for_02(size_t from, size_t to, bool useThreads)
 
 void test_parallel_for()
 {
-    //test_parallel_for_01(2, Globals::UpperLimit, true);
-
+    test_parallel_for_01(2, Globals::UpperLimit, true);
     test_parallel_for_02(2, Globals::UpperLimit, true);
-    // test_parallel_for_02(2, 50, false);
+    test_parallel_for_02(2, 50, false);
 }
 
 // ===========================================================================

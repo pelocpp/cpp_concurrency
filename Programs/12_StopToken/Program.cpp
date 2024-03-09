@@ -9,7 +9,6 @@ int main()
 {
     test_stop_tokens_01();
     test_stop_tokens_02();
-
     return 0;
 }
 

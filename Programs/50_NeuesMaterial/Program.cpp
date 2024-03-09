@@ -15,7 +15,6 @@ extern void test_placement_new();
 int main()
 {
     test_thread_safe_blocking_queue();
-
     return 0;
 }
 

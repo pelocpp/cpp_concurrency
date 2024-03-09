@@ -4,7 +4,7 @@
 
 ---
 
-# Verwendete Hilfsmittel:
+## Verwendete Werkzeuge
 
   * Klassen `std::mutex` und `std::recursive_mutex`
   * Klasse `std::thread`
@@ -44,11 +44,11 @@ Das *Strategized Locking*&ndash;Entwurfsmuster kann sowohl  in einer *Runtime*-A
 
 ### Wann sollte dieses Muster verwendet werden?
 
-Verwenden Sie dieses Muster, wenn:
+Verwenden Sie dieses Muster, wenn
 
-  * Sie müssen einen kritischen Abschnitt schützen.
-  * Sie möchten konsistent zur Verwendung eines `std::mutex-Objeks` sein.
-  * Das Programm soll sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen performant ablaufen.
+  * Sie einen kritischen Abschnitt schützen müssen.
+  * Sie konsistent zur Verwendung eines `std::mutex-Objeks` sein möchten.
+  * das Programm sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen performant ablaufen soll.
 
 
 ### Entwurf des APIs
@@ -202,7 +202,7 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 
 #### Quellcode:
 
-[ILock.h](ILock.h).
+[ILock.h](ILock.h).<br />
 [StrategizedLock.h](StrategizedLock.h).<br />
 [ThreadsafeStack.h](ThreadsafeStack.h).<br />
 [PrimeCalculator.h](PrimeCalculator.h).<br />

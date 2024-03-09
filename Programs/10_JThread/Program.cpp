@@ -9,7 +9,6 @@ int main()
 {
     test_jthread_01();
     test_jthread_02();
-
     return 0;
 }
 

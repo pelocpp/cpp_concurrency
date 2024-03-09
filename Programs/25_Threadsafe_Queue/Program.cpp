@@ -2,12 +2,11 @@
 // Program.cpp
 // ===========================================================================
 
-extern void examples();
+extern void test_thread_safe_queue();
 
 int main()
 {
-    examples();
-
+    test_thread_safe_queue();
     return 0;
 }
 
