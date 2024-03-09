@@ -1,5 +1,5 @@
 // ===========================================================================
-// BlockingQueue.h
+// BlockingQueueEx.h
 // ===========================================================================
 
 #pragma once
@@ -32,14 +32,14 @@ namespace ProducerConsumerQueue
     public:
         // default c'tor
         BlockingQueue() :
-            m_size{ 0 },
-            m_pushIndex{ 0 },
-            m_popIndex{ 0 },
+            m_size{},
+            m_pushIndex{},
+            m_popIndex{},
             m_emptySlots{ static_cast<std::ptrdiff_t>(QueueSize) },
             m_fullSlots{ 0 },
             m_data{ static_cast<T*>(std::malloc(sizeof(T) * QueueSize)) }
         {
-            Logger::log(std::cout, "Using BlockingQueue with Semaphores");
+            Logger::log(std::cout, "Using Blocking Queue with Semaphores");
         }
 
         // don't need other constructors or assignment operators
@@ -79,6 +79,8 @@ namespace ProducerConsumerQueue
                 m_pushIndex = m_pushIndex % QueueSize;
 
                 ++m_size;
+
+                Logger::log(std::cout, "    Size: ", m_size);
             }
             m_fullSlots.release();
         }
@@ -95,6 +97,8 @@ namespace ProducerConsumerQueue
                 m_pushIndex = m_pushIndex % QueueSize;
 
                 ++m_size;
+
+                Logger::log(std::cout, "    Size: ", m_size);
             }
             m_fullSlots.release();
         }
@@ -112,6 +116,8 @@ namespace ProducerConsumerQueue
                 m_popIndex = m_popIndex % QueueSize;
 
                 --m_size;
+
+                Logger::log(std::cout, "    Size: ", m_size);
             }
             m_emptySlots.release();
         }

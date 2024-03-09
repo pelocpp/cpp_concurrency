@@ -1,5 +1,5 @@
 // ===========================================================================
-// BlockingQueueEx.h
+// BlockingQueue.h
 // ===========================================================================
 
 #pragma once
@@ -12,21 +12,19 @@
 
 #include "../Logger/Logger.h"
 
-// TO BE DONE: Das ist jetzt ein BlockingStack
-// Im nächsten schritt abändern !!!
-
 namespace ProducerConsumerQueue
 {
     template<typename T, size_t QueueSize = 10>
     class BlockingQueue
     {
     private:
-        // array - considered as stack
-        std::array<int, QueueSize> m_data;  // shared object
-        int m_index;                        // shared index
-        size_t m_size;                      // shared size
+        // array - considered as a queue
+        std::array<T, QueueSize> m_data;
 
-        // take care of concurrent stack access
+        size_t m_pushIndex;
+        size_t m_popIndex;
+        size_t m_size;
+
         std::mutex mutable m_mutex{};
 
         // Monitor Concept (Dijkstra)
@@ -36,9 +34,9 @@ namespace ProducerConsumerQueue
     public:
         // default c'tor
         BlockingQueue() :
-            m_data{ 0 }, m_index{ -1 }, m_size{}
+            m_data{}, m_pushIndex {}, m_popIndex{}, m_size{}
         {
-            Logger::log(std::cout, "Using BlockingQueue with Condition Variables");
+            Logger::log(std::cout, "Using Blocking Queue with Condition Variables");
         }
 
         // don't need other constructors or assignment operators
@@ -47,10 +45,6 @@ namespace ProducerConsumerQueue
 
         BlockingQueue& operator= (const BlockingQueue&) = delete;
         BlockingQueue& operator= (BlockingQueue&&) = delete;
-
-        // destructor - bleibt das so: Löschen
-        ~BlockingQueue()
-        {}
 
         // public interface
         void push(const T& item)
@@ -61,18 +55,20 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this] () -> bool { return m_index < static_cast<int>(QueueSize - 1); }
+                    [this]() -> bool { return m_size < QueueSize; }
                 );
 
                 // guard
-                if (m_index < static_cast<int>(QueueSize - 1)) {
+                if (m_size < QueueSize) {
 
-                    m_index++;
-                    m_data.at(m_index) = item;
+                    m_data.at(m_pushIndex) = item;
+
+                    ++m_pushIndex;
+                    m_pushIndex = m_pushIndex % QueueSize;
 
                     ++m_size;
 
-                   // Logger::log(std::cout, "pushed ", item, " at index ", m_index);
+                    Logger::log(std::cout, "    Size: ", m_size);
                 }
             }
 
@@ -88,18 +84,20 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this]() -> bool { return m_index < static_cast<int>(QueueSize - 1); }    // das mit  der 9 ist FALSCH !!!!!!!!!!
-                );
+                    [this]() -> bool { return m_size < QueueSize; }
+                    );
 
                 // guard
-                if (m_index < static_cast<int>(QueueSize - 1)) {
+                if (m_size < QueueSize) {
 
-                    m_index++;
-                    m_data.at(m_index) = std::move(item);
+                    m_data.at(m_pushIndex) = std::move(item);
+
+                    ++m_pushIndex;
+                    m_pushIndex = m_pushIndex % QueueSize;
 
                     ++m_size;
 
-                 //   Logger::log(std::cout, "pushed ", item, " at index ", m_index);
+                    Logger::log(std::cout, "    Size: ", m_size);
                 }
             }
 
@@ -115,18 +113,20 @@ namespace ProducerConsumerQueue
                 // is stack empty? (Note: lost and spurious wakeups)
                 m_conditionIsEmpty.wait(
                     guard,
-                    [this]() -> bool { return m_index >= 0; }
+                    [this]() -> bool { return m_size != 0; }
                 );
 
                 // guard
-                if (m_index >= 0) {
+                if (m_size != 0) {
 
-                    item = m_data.at(m_index);
-                    --m_index;
+                    item = m_data[m_popIndex];
+
+                    ++m_popIndex;
+                    m_popIndex = m_popIndex % QueueSize;
 
                     --m_size;
 
-                //    Logger::log(std::cout, "popped ", item, " at index ", (m_index + 1));
+                    Logger::log(std::cout, "    Size: ", m_size);
                 }
             }
 
@@ -147,6 +147,7 @@ namespace ProducerConsumerQueue
         }
     };
 }
+
 // ===========================================================================
 // End-of-File
 // ===========================================================================

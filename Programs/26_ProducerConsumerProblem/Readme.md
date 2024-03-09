@@ -97,7 +97,7 @@ Erzeuger-Verbraucher Problems vor:
 
 ## Literaturhinweise
 
-Die Realisierung des Erzeuger-Verbraucher-Problems lehnt sich an den Artikel
+Die Realisierung des Erzeuger-Verbraucher-Problems mit Semaphoren lehnt sich an den Artikel
 
 [Blocking queue](https://vorbrodt.blog/2019/02/03/blocking-queue/)
 
