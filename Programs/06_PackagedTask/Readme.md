@@ -10,6 +10,7 @@
 
   * Klasse `std::packaged_task`
   * Klasse `std::future`
+  * Klasse `std::promise`
 
 ---
 
@@ -34,7 +35,7 @@ demonstriert folgendes Beispiel:
 
 
 ```cpp
-01: void test {
+01: void test() {
 02: 
 03:     // create packaged_task object
 04:     std::packaged_task<int(void)> task { 
@@ -64,7 +65,7 @@ demonstriert folgendes Beispiel:
 Result: 123
 ```
 
-*Hinweis*:
+*Hinweis*:<br />
 Die beiden Klassen `std::packaged_task` und `std::function` besitzen Gemeinsamkeiten.
 
 Die Klasse `std::packaged_task` erzeugt &bdquo;Callable Wrapper&rdquo; Objekte,
@@ -72,13 +73,13 @@ Die Klasse `std::packaged_task` erzeugt &bdquo;Callable Wrapper&rdquo; Objekte,
 nur mit dem Unterschied, dass die Klasse `std::packaged_task`
 einen direkten Zugriff auf ein korrespondierendes `std::future`-Objekt bietet.
 
-Die Klasse `std::packaged_task` bietet einen natürlicheren und einfacheren Arbeitsablauf
+Die Klasse `std::packaged_task` bietet folglich einen natürlicheren und einfacheren Arbeitsablauf
 als das manuelle Einrichten und Durchschleusen eines `std::promise`-Objekts,
 wie wir an folgendem Vergleichsbeispiel betrachten können:
 
 
 ```cpp
-01: static void test_02() {
+01: static void test() {
 02: 
 03:     std::promise<int> promise;
 04: 
@@ -108,6 +109,10 @@ wie wir an folgendem Vergleichsbeispiel betrachten können:
 Result: 123
 ```
 
+#### Quellcode:
+
+[Siehe hier](PackagedTask_01.cpp).
+
 
 ---
 
@@ -120,10 +125,15 @@ Dabei kommen vier `std::packaged_task`-Objekte zum Einsatz.
 Insbesondere betrachte man, dass sowohl `std::packaged_task`- als auch `std::future`-Objekte
 in einem `std::deque`-Objekt ablegt werden können.
 
+*Hinweis*:<br />
+Die *Tasks* können sowohl sequentiell als auch parallel ausgeführt werden.
+Studieren Sie im Quellcode die entsprechenden Abschnitte,
+wo eine *Task* entweder synchron oder asynchron abgearbeitet wird.
+
 
 #### Quellcode:
 
-[Siehe hier](PackagedTask.cpp).
+[Siehe hier](PackagedTask_02.cpp).
 
 ---
 

@@ -8,17 +8,22 @@
 #include <deque>
 #include <utility>
 
+#include "../Logger/Logger.h"
+
 namespace PackagedTask {
 
     static int calcSum(int a, int b) {
+        Logger::log(std::cout, "calcSum: ", a, " + ", b);
         return a + b;
     }
 
     static int calcSumRange(int a, int b) {
+        Logger::log(std::cout, "calcSumRange: ", a, " => ", b);
         int sum{};
         for (int i{ a }; i != b; ++i) {
             sum += i;
         }
+        Logger::log(std::cout, "sum: ", sum);
         return sum;
     }
 
@@ -30,8 +35,14 @@ namespace PackagedTask {
         // get the future object for this task
         std::future<int> future{ task.get_future() };
 
-        // invoke the function
-        task(123, 456);
+        // invoke the function synchronously
+        // task(123, 456);
+
+        // or
+
+        // invoke the function asynchronously
+        std::thread thread{ std::move(task), 123, 456 };
+        thread.detach();
 
         // do some arbitrary work ......
         std::this_thread::sleep_for(std::chrono::seconds{ 2 });
@@ -39,10 +50,12 @@ namespace PackagedTask {
         // get the result
         int sum{ future.get() };
 
-        std::cout << "123 + 456 = " << sum << std::endl;
+        Logger::log(std::cout, "123 + 456 = ", sum);
     }
 
     static void test_02() {
+
+        Logger::log(std::cout, "Start: ");
 
         constexpr size_t MaxTasks{ 4 };
 
@@ -73,7 +86,14 @@ namespace PackagedTask {
             
             tasks.pop_front();
 
-            task(begin, end);
+            // invoke the function synchronously
+            // task(begin, end);
+
+            // or
+            
+            // invoke the function asynchronously
+            std::thread thread{ std::move(task), begin, end };
+            thread.detach();
 
             begin = end;
             end += increment;
@@ -91,9 +111,9 @@ namespace PackagedTask {
         }
 
         // use gauss to verify: n * (n+1) / 2 ==> 80200
-        std::cout
-            << "Sum of 0 " << " .. " << (end-increment-1) 
-            << " = " << sum << std::endl;
+        Logger::log(std::cout, "Sum of 0 ", " .. ", (end - increment - 1), " = ", sum);
+
+        Logger::log(std::cout, "Done.");
     }
 }
 
