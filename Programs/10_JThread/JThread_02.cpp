@@ -130,7 +130,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     // =============================================
     // Szenario 6:
-    // class std::jthread -- using request_stop -- introducing XXX
+    // class std::jthread -- using request_stop -- introducing std::stop_source
 
     static void jthread_06()
     {

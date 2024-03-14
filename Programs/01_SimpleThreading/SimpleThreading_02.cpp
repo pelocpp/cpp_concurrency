@@ -12,7 +12,7 @@
  *  4 ways to create a thread:
  *
  *  a) Thread with Function Pointer
- *  b) Thread with Function Object (Functor)
+ *  b) Thread with Callable Object
  *  c) Thread with Lambda
  *  d) Thread with Member Function
  */

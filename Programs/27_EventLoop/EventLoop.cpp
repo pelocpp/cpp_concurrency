@@ -28,17 +28,26 @@
 
 // default c'tor
 EventLoop::EventLoop()
-    : m_running{ true }, m_thread{ &EventLoop::threadFunc, this }
+    : m_running{ true }, m_thread{} // , m_thread{ &EventLoop::threadProcedure, this }
 {}
 
 // d'tor
 EventLoop::~EventLoop()
 {
-    enqueue([this] { m_running = false; });
-    m_thread.join();
+    if (m_thread.joinable()) {
+
+        enqueue([this] { m_running = false; });
+
+        m_thread.join();
+    }
 }
 
-void EventLoop::threadFunc()
+void EventLoop::start()
+{
+    m_thread = std::thread {&EventLoop::threadProcedure, this };
+}
+
+void EventLoop::threadProcedure()
 {
     Logger::log(std::cout, "> Event Loop");
 
@@ -59,7 +68,7 @@ void EventLoop::threadFunc()
 
         for (const Event& callable : events)
         {
-            Logger::log(std::cout, "# invoking next event");
+            Logger::log(std::cout, "! invoking next event");
             callable();
         }
 
@@ -73,11 +82,25 @@ void EventLoop::enqueue(Event&& callable) noexcept
 {
     {
         std::lock_guard<std::mutex> guard(m_mutex);
+
         m_events.emplace_back(std::move(callable));
     }
 
     m_condition.notify_one();
 }
+
+void EventLoop::enqueue(const Event& callable)
+{
+    {
+        std::lock_guard<std::mutex> guard(m_mutex);
+
+        m_events.emplace_back(callable);
+    }
+
+    m_condition.notify_one();
+}
+
+
 
 template<typename Func, typename... Args>
 auto EventLoop::enqueueAsync(Func&& event, Args&& ...args)

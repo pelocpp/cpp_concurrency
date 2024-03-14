@@ -1,5 +1,5 @@
 // ===========================================================================
-// Packaged Task
+// PackagedTask_02.cpp // Packaged Task
 // ===========================================================================
 
 #include <iostream>
@@ -97,7 +97,7 @@ namespace PackagedTask {
     }
 }
 
-void test_packaged_task()
+void test_packaged_task_02 ()
 {
     using namespace PackagedTask;
     test_01();

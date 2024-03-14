@@ -8,15 +8,15 @@
 
 namespace SimpleAsync {
 
-    static std::string helloFunction(std::string s) {
+    static std::string hello(std::string s) {
 
         std::this_thread::sleep_for(std::chrono::seconds{ 3 });
         return "Hello ASync from " + s + ".";
     }
 
-    class HelloFunctor {
+    class Hello {
     public:
-        std::string operator()(std::string s) const {
+        std::string operator() (std::string s) const {
 
             std::this_thread::sleep_for(std::chrono::seconds{ 3 });
             return "Hello ASync from " + s + ".";
@@ -34,15 +34,15 @@ namespace SimpleAsync {
         // std::async with function
         std::future<std::string> futureFunction{ 
             std::async(
-            helloFunction,
+            hello,
             "function") 
         };
 
-        // std::async with functor
-        HelloFunctor helloFunctor{};
+        // std::async with callable object
+        Hello helloObject{};
         std::future<std::string> futureFunctionObject{ std::async(
-            helloFunctor,
-            "functor")
+            helloObject,
+            "callable object")
         };
 
         // std::async with lambda function

@@ -39,18 +39,33 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
+    void enqueue(const Event& callable);
     void enqueue(Event&& callable) noexcept;
+
+    void start();
 
     template<typename Func, typename... TArgs>
     auto enqueueSync(Func&& callable, TArgs&& ...args)
-        -> std::invoke_result<Func, TArgs...>::type
+        -> std::invoke_result<Func, TArgs...>::type      // ??????
     {
+        // The first if - condition is a protection from a deadlock.
+        // Sometimes you may discover a situation when some synchronous task is trying to schedule another synchronous task,
+        // leading to a deadlock.
+
         if (std::this_thread::get_id() == m_thread.get_id())
         {
             return std::invoke(
                 std::forward<Func>(callable),
                 std::forward<TArgs>(args)...);
         }
+
+
+
+        //// added in Offenbach
+        //XXXX
+        //using type = decltype(detail::INVOKE(std::declval<F>(), std::declval<Args>()...));
+
+
 
         using ReturnType = std::invoke_result<Func, TArgs...>::type;
 
@@ -67,12 +82,11 @@ public:
         return result;
     }
 
-
     template<typename Func, typename... Args>
     auto enqueueAsync(Func&& callable, Args&& ...args);
 
 private:
-    void threadFunc();
+    void threadProcedure();
 };
 
 // ===========================================================================
