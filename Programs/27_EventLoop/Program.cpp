@@ -12,6 +12,8 @@
 // Unterschied std::packaged_task und std::async
 // auch mit einem Thread Pool Beispiel
 
+// https://medium.com/@simontoth/daily-bit-e-of-c-std-packaged-task-b2d3273d97
+
 
 #include <iostream>
 

@@ -9,10 +9,36 @@
 
 namespace PackagedTaskComparison {
 
-    // ---------------------------------------------------------------
-    // demonstrating std::packaged_task
+    // -----------------------------------------------------------------------
+    // demonstrating std::packaged_task with thread (asynchronous execution)
 
     static void test_01() {
+
+        // create packaged_task object
+        std::packaged_task<int(void)> task{
+            []() {
+                std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+                return 123;
+            }
+        };
+
+        // retrieve future object from task
+        std::future<int> future{ task.get_future() };
+
+        // create a thread with this task
+        std::thread thread{ std::move(task) };
+
+        // retrieve result from future object
+        int result{ future.get() };
+        std::cout << "Result: " << result << std::endl;
+
+        thread.join();
+    }
+
+    // -----------------------------------------------------------------------
+    // demonstrating std::packaged_task without thread (synchronous execution)
+
+    static void test_02() {
 
         // create packaged_task object
         std::packaged_task<int(void)> task { 
@@ -25,20 +51,18 @@ namespace PackagedTaskComparison {
         // retrieve future object from task
         std::future<int> future{ task.get_future() };
         
-        // create a thread with this task
-        std::thread thread{ std::move(task) };
+        // execute task
+        task();
 
         // retrieve result from future object
         int result{ future.get() };
         std::cout << "Result: " << result << std::endl;
-
-        thread.join();
     }
 
-    // ---------------------------------------------------------------
+    // -----------------------------------------------------------------------
     // equivalent code, demonstrating std::function and std::promise
 
-    static void test_02() {
+    static void test_03() {
 
         std::promise<int> promise;
 
@@ -67,6 +91,7 @@ void test_packaged_task_01 ()
     using namespace PackagedTaskComparison;
     test_01();
     test_02();
+    test_03();
 }
 
 // ===========================================================================

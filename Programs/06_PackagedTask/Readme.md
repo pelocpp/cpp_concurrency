@@ -16,8 +16,15 @@
 
 ## `std::packaged_task`
 
-Das charakteristische Merkmal der Klasse `std::packaged_task` ist, dass die betroffene Task (Thread)
-nicht von selbst startet, sondern explizit zu starten ist.
+Das charakteristische Merkmal der Klasse `std::packaged_task` ist,
+dass es ein aufrufbares Objekt (*Callable*) umschließt.
+
+Ein auf diese Weise verpacktes Objekt wird nicht von alleine gestartet.
+
+Man muss den Aufruf explizit anstoßen &ndash; dies kann synchron im aktuellen Thread
+oder asynchron durch einen separaten Thread erfolgen.
+
+Der Rückgabewert wird einem `std::future`-Objekt abgelegt.
 
 Für das Arbeiten mit `std::packaged_task`-Objekten sind typischerweise vier Schritte notwendig:
 
@@ -65,7 +72,38 @@ demonstriert folgendes Beispiel:
 Result: 123
 ```
 
-*Hinweis*:<br />
+In diesem Beispiel wurde die *Task* asynchron in einem separaten Thread ausgeführt.
+Es ginge aber auch synchron im aktuellem Thread, siehe hierzu das nächste Beispiel:
+
+
+```cpp
+01: void test() {
+02: 
+03:     // create packaged_task object
+04:     std::packaged_task<int(void)> task { 
+05:         [] () {
+06:             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+07:             return 123;
+08:         }
+09:     };
+10: 
+11:     // retrieve future object from task
+12:     std::future<int> future{ task.get_future() };
+13:         
+14:     // execute task
+15:     task();
+16: 
+17:     // retrieve result from future object
+18:     int result{ future.get() };
+19:     std::cout << "Result: " << result << std::endl;
+20: }
+```
+
+---
+
+## Hinweis
+
+
 Die beiden Klassen `std::packaged_task` und `std::function` besitzen Gemeinsamkeiten.
 
 Die Klasse `std::packaged_task` erzeugt &bdquo;Callable Wrapper&rdquo; Objekte,
