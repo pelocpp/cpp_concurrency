@@ -19,11 +19,11 @@ private:
     using Event = std::function<void()>;
 
 private:
-    std::vector<Event> m_events;
-    std::mutex m_mutex;
+    std::vector<Event>      m_events;
+    std::mutex              m_mutex;
     std::condition_variable m_condition;
-    std::thread m_thread;
-    bool m_running;
+    std::thread             m_thread;
+    bool                    m_running;
 
 public:
     // c'tor(s) / d'tor
@@ -42,48 +42,25 @@ public:
     void enqueue(const Event& callable);
     void enqueue(Event&& callable) noexcept;
 
-    void start();
-
-    template<typename Func, typename... TArgs>
-    auto enqueueSync(Func&& callable, TArgs&& ...args)
-        -> std::invoke_result<Func, TArgs...>::type      // ??????
+    template<typename TFunc, typename ... TArgs>
+    void enqueueTask(TFunc&& callable, TArgs&& ...args)
     {
-        // The first if - condition is a protection from a deadlock.
-        // Sometimes you may discover a situation when some synchronous task is trying to schedule another synchronous task,
-        // leading to a deadlock.
+        Logger::log(std::cout, "enqueueTask ...");
 
-        if (std::this_thread::get_id() == m_thread.get_id())
         {
-            return std::invoke(
-                std::forward<Func>(callable),
-                std::forward<TArgs>(args)...);
+            std::lock_guard<std::mutex> guard(m_mutex);
+
+            m_events.emplace_back([=]() mutable { 
+                std::forward<TFunc>(callable) (std::forward<TArgs>(args)...);
+                }
+            );
         }
 
-
-
-        //// added in Offenbach
-        //XXXX
-        //using type = decltype(detail::INVOKE(std::declval<F>(), std::declval<Args>()...));
-
-
-
-        using ReturnType = std::invoke_result<Func, TArgs...>::type;
-
-        using PackagedTaskType = std::packaged_task<ReturnType(TArgs&&...)>;
-
-        PackagedTaskType task{ std::forward<Func>(callable) };
-
-        enqueue([&] () { task(std::forward<TArgs>(args) ...); });
-
-        std::future<ReturnType> future = task.get_future();
-
-        ReturnType result = future.get();
-
-        return result;
+        m_condition.notify_one();
     }
 
-    template<typename Func, typename... Args>
-    auto enqueueAsync(Func&& callable, Args&& ...args);
+    void start();
+    void stop();
 
 private:
     void threadProcedure();

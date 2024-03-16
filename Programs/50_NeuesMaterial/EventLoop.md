@@ -4,106 +4,121 @@
 
 ---
 
-*Kurz gefasst*:
 
-
-Eine *Event Loop* (Ereigniswarteschlange) kann als Alternative zu einem
-Mutex-Objekt betrachtet werden.
-Beide serialisieren Zugriffe auf geschützte Objekt, jedoch auf etwas unterschiedliche Weise.
-
-*Motivation*:
+## Motivation
 
 Stellen Sie sich vor, Sie haben eine Reihe von Klassen,
-die nicht für die Arbeit in einer Multithread-Umgebung ausgelegt sind.
+die nicht für die Arbeit in einer Multithreading-Umgebung ausgelegt sind.
 
-Vielleicht, weil sie von einem alten Teil des Systems geerbt wurden,
-oder vielleicht entwerfen Sie gerade neue Klassen und möchten sie nicht mit gleich mit
+Die Gründe hierfür können unterschiedlicher Natur sein:
+
+  * Möglicherweise wurden die Klassen von einem alten Teil eines Softwaresystems geerbt.
+  * Sie entwerfen gerade neue Klassen, möchten diese aber nicht mit gleich mit
 Synchronisationsmechanismen wie `std:mutex`-Objekten überfrachten.
-
 
 Sie wollen jedoch von verschiedenen Threads aus auf Objekte dieser Klassen zugreifen können,
 um die Dinge so einfach wie möglich zu halten.
 
-*Realisierung*:
-
-std::function ist eine wirklich interessante Sache.
-
-Es besitzt zwei sehr wichtige Eigenschaften,
-die es für uns so nützlich machen – Type Erasure und Small-Object Optimization.
-
-Auf Grund von Typ-Erasure können wir alles speichern,
-worauf wir den Anrufoperator anwenden können.
-
-Es kann eine C-ähnliche Funktion sein, es kann ein aufrufbares Objekt sein.
-
-Es kann auch ein Lambda sein, einschließlich eines generischen Lambda.
-
-Da ein std::function-Objekt interne Daten enthalten kann,
-wie z. B. die Member des Funktors oder den Capture eines Lambdas,
-muss std::function auch alle diese Daten speichern.
-
-Um Heap-Zuweisungen zu vermeiden oder zumindest zu minimieren, speichert ein std::function-Objekt sine Daten im Objekt selbst,
-wenn es klein genug ist.
-
-Was „klein genug“ ist, hängt von der Umsetzung ab.
-
-Wenn es nicht in den internen Speicher passt, erfolgt die Heap-Zuweisung als Fallback.
-
-Das ist im Wesentlichen die Small-Object-Optimierung.
-
-Wenn Sie das alles wissen, können Sie in den meisten Fällen einen std::vector der std::function verwenden, um sowohl Daten als auch Zeiger auf vtables in einem einzigen Speicherblock zu halten.
-
-Und das ist das erste Mitglied unserer Klasse – std::vector<callable_t> m_writeBuffer;
+*Kurz gefasst*:
 
 
+Eine *Event Loop* (Ereigniswarteschlange) kann man als Alternative zu einem
+Mutex-Objekt betrachtet.
+Beide serialisieren Zugriffe auf geschützte Objekt, jedoch auf unterschiedliche Weise.
+
+## Realisierung
+
+### Klasse `std::function`
+
+Um eine Ereigniswarteschlange zu realisieren, benötigt man die Möglichkeit,
+&bdquo;Methodenaufrufe&rdquo; zwischenzuspeichern. Gewisse Ähnlichkeiten zum *Command Pattern*
+aus dem Umfeld der *Design Pattern* sind hier vorhanden.
+
+Hierfür kommt uns die Klasse `std::function` zur Hilfe.
+Diese Klasse zeichnet sich durch zwei besondere Eigenschaften aus:
+
+  * *Type Erasure*<br />
+Auf Grund des *Type Erasure* Features kann man in einem `std::function`-Objekt alles speichern,
+was man in C++ &bdquo;aufrufen&rdquo; kann:
+  * C-Funktionen
+  * Methoden eines Objekts
+  * Aufrufbare Objekte
+  * Lambdas
+  * Also alles, worauf man den Anrufoperator `operator()` anwenden kann.
 
 
+In den internen Daten des `std::function`-Objekts wird alles abgelegt,
+was pro *Funktion* notwendig ist, wie zum Beispiel die Referenz eines Objekts,
+dessen Methode aufgerufen werden soll oder die Erfassungsklausel (*Capture Clause*) eines Lambda-Objekts.
+
+Dies geht einher mit der so genannten *Small-Object*-Optimierung:
+
+  * *Small-Object*-Optimierung<br />
+  * Um Heap-Zuweisungen zu vermeiden oder zumindest zu minimieren, speichert ein `std::function`-Objekt seine Daten im Objekt selbst ab, wenn es klein genug ist.
+  * Was &bdquo;klein genug&rdquo; ist, hängt von der Umsetzung ab.
+  * Was nicht unmittelbar in das `std::function`-Objekt passt, wird auf dem Heap abgelegt.
+
+Zusammenfassend kann man nun sagen, dass *Aufrufe* bzw. *Nachrichten* in C++
+in einem `std::vector`-Objekt abgelegt werden können, zum Beispiel so:
 
 
-*std::condition_variable*:
+```cpp
+std::vector<std::function<void()>> m_writeBuffer;
+```
 
-Eine Bedingungsvariable ist ein Synchronisationsprimitiv,
-das einen Thread dazu bringt, seine Ausführung über wait() zu verschieben (suspendieren),
-bis ein anderer Thread ihn über notify_one() aufweckt.
+In diesem Beispiel handelt es sich um *Callables*, die keine Parameter entgegennehmen und auch nichts zurückliefern,
+also die Schnittstelle `void()` besitzen.
 
-Was aber, wenn der zweite Thread notify_one() aufgerufen hat, kurz bevor der erste Thread wait() aufruft?
+Das Manko der fehlenden Parameter werden wir in unserer Realisierung abstellen.
 
-Dazu wird das *std::condition_variable* mit einem Mutex-Obekt komniniert:
-Das Mutex ist zu sperren, wenn auf die Zustand (*Bedingung*) des Szenarios zugegriffen wird.
+Eine Rückgabe von Daten erscheint mir in einer Ereigniswarteschlangenrealisierung weniger relevant,
+da diese letzten Endes doch &bdquo;Nachrichten abarbeitet&rdquo;, aber nicht vordergründig zur Berechnung von *Ergebnissen*
+konzipiert ist.
 
-Ist das Mutex-Objekt gesprerrt, möchte std::condition_variable,
-dass Sie den Status überprüfen, ob der erste Thread in den Ruhezustand fallen muss
-oder die Bedingung bereits erfüllt wurde und der Thread einfach weitermachen muss.
+### Klasse `std::condition_variable`
 
-Wenn sich herausstellt, dass der Thread verschoben werden muss, passiert als nächstes etwas Interessantes.
+Eine *Bedingungsvariable* ist ein Synchronisationsprimitiv,
+das einen Thread dazu bringt, seine Ausführung über `wait()` zu verschieben (suspendieren),
+bis ein anderer Thread ihn über `notify_one()` aufweckt.
 
-Ist Ihnen aufgefallen, dass die Funktion wait() diesen gesperrten Mutex akzeptiert?
+Was aber, wenn der zweite Thread `notify_one()` aufgerufen hat, kurz bevor der erste Thread `wait()` aufruft?
 
-Dies liegt daran, dass die Funktion „wait()“ Ihr Betriebssystem auffordert, Folgendes zu tun:
+Dazu wird das *std::condition_variable* mit einem Mutex-Objekt kombiniert:
+Das Mutex-Objekt ist zu sperren, wenn auf den Zustand (*die Bedingung*) des Szenarios zugegriffen wird.
 
-A) Entsperren Sie den Mutex und verschieben Sie die Ausführung (Suspendiering wird aufrecht erhalten)
+Ist das Mutex-Objekt gesprerrt, erwartet ein `std::condition_variable`-Objekt,
+dass der Status (die Bedingung) überprüft wird, ob der erste Thread in den Ruhezustand fallen muss
+oder die Bedingung bereits erfüllt wurde und der Thread einfach weiterarbeiten kann.
 
-B) Sperren Sie den Mutex und setzen Sie die Ausführung fort,
-   wenn der Aufruf notify_one() / notify_all() erfolgt.
+Wenn sich herausstellt, dass der Thread zu blockieren ist, tritt folgender Ablauf ein:
+
+Die `wait()`-Methode bekommt ein gesperrtes Mutex-Objekt als Parameter übergeben:
+
+Mit diesem Mutex-Objekt geht folgende Arbeitsweise einher:
+
+  * Das Mutex-Objekt wird im Kontext der `wait()`-Methode entsperrt, damit die Ausführung anderer Threads weiter erfolgen kann.
+  * Es wird zu bestimmten Zeitpunkten eine &bdquo;Kontrollfunktion&rdquo; aufgerufen, die überprüft, ob die Suspendierung des wartenden Threads weiter aufrecht zu erhalten ist oder nicht.
+  * Zu diesem Zweck wird das Mutex-Objekt gesperrt und nach dem Aufruf der Kontrollfunktion wieder entsperrt.
+  * Kommt die Kontrollfunktion zu der Erkenntnis, dass die Bedingung für eine Weiterarbeit gegeben ist, sperrt sie das Mutex-Objekt wieder und setzt die Ausführung fort.
+  Dies geht im Regelfall damit einher, dass ein Aufruf von `notify_one()` / `notify_all()` erfolgte.
 
 
-Wie Sie sehen, benötigen wir einen geschützten Zustand, der durch den Mutex geschützt wird.
+Es gibt also einen gemeinsamen Zustand, der durch das Mutex-Objekt geschützt wird.
 
-Daher sollte der zweite benachrichtigende Thread Folgendes tun:
+Daher sollte der zweite, benachrichtigende Thread Folgendes tun:
 
-A) Sperren Sie den Mutex, ändern Sie den freigegebenen Status und entsperren Sie den Mutex.
+  * Das Mutex-Objekt sperren, den gemeinsamen Status ändern und das Mutex-Objekt wieder entsperren.
+  * Den ersten Thread mit `notify_one()` / `notify_all()` benachrichtigen
 
-B) Benachrichtigen Sie den ersten Thread.
 
  
-Bemerkung:
-Einige Entwickler rufen notify_one() auf, während sie den Mutex halten.
+*Bemerkung*:<br />
+Einige Entwickler rufen `notify_one()` auf, während sie das Mutex-Objekt sperren.
 Das ist nicht falsch, aber es macht das System ineffizient.
 Um zusätzliche Synchronisierungen zu vermeiden, stellen Sie einfach sicher, dass Sie notify_one() aufrufen, nachdem Sie den Mutex freigegeben haben.
 
 
-
-Double Buffering Technik
+## Double Buffering Technik
 
 Was diese Implementierung wirklich besonders effizient macht, ist, dass wir hier zwei Puffer haben.
 

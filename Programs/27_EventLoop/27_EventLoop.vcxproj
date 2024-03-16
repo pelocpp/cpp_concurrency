@@ -130,8 +130,8 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="EventLoop.cpp" />
-    <ClCompile Include="EventLoopLEGACY.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Reste.cpp" />
     <ClCompile Include="TestEventLoop.cpp" />
   </ItemGroup>
   <ItemGroup>

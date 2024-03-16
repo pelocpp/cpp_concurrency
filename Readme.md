@@ -14,7 +14,7 @@
 
 ### [6. Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
 
-### [7. Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
+### [7. Funktionen verpacken: Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
 
 ### [8. Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 

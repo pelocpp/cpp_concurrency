@@ -1,32 +1,78 @@
 // ===========================================================================
-// EventLoop.cpp
+// Program.cpp // Event Loop
 // ===========================================================================
 
-//#define _CRTDBG_MAP_ALLOC
-//#include <cstdlib>
-//#include <crtdbg.h>
-//
-//#ifdef _DEBUG
-//#ifndef DBG_NEW
-//#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
-//#define new DBG_NEW
-//#endif
-//#endif  // _DEBUG
+#if 0
 
-#include <iostream>
-//#include <sstream>
-//#include <condition_variable>
-#include <functional>
-//#include <future>
-#include <thread>
-//#include <vector>
-//#include <thread>
-#include <memory>
-//#include <cassert>
-#include <chrono>
+// VORSICHT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// https://floating.io/2017/07/lambda-shared_ptr-memory-leak/
 
+template<typename TFunc, typename... TArgs>
+auto enqueueSync(TFunc&& callable, TArgs&& ...args)
+{
+    // The first if - condition is a protection from a deadlock.
+    // Sometimes you may discover a situation when some synchronous task is trying to schedule another synchronous task,
+    // leading to a deadlock.
 
-#include "EventLoop.h"
+    if (std::this_thread::get_id() == m_thread.get_id())
+    {
+        return std::invoke(
+            std::forward<TFunc>(callable),
+            std::forward<TArgs>(args)...);
+    }
+
+    // using library function
+    // using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
+
+    // using self written function
+    using ReturnType = decltype(std::declval<TFunc>() (std::declval<TArgs>()...));
+
+    using PackagedTaskType = std::packaged_task<ReturnType(TArgs&&...)>;
+
+    PackagedTaskType task{ std::forward<TFunc>(callable) };
+
+    std::future<ReturnType> future = task.get_future();
+
+    enqueue([&]() { task(std::forward<TArgs>(args) ...); });
+
+    //Event event{ [&]() { task(std::forward<TArgs>(args) ...); } };
+    //enqueue(event);
+
+    ReturnType result = future.get();
+
+    return result;
+}
+
+template<typename TFunc, typename... TArgs>
+auto enqueueAsync(TFunc&& callable, TArgs&& ...args)
+{
+    // using library function
+    // using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
+
+    // using self written function
+    using ReturnType = decltype(std::declval<TFunc>() (std::declval<TArgs>()...));
+
+    using PackagedTaskType = std::packaged_task<ReturnType(TArgs&&...)>;
+
+    PackagedTaskType task{ std::forward<TFunc>(callable) };
+
+    std::future<ReturnType> future = task.get_future();
+
+    enqueue([&]() { task(std::forward<TArgs>(args) ...); });
+
+    //Event event{ [&]() { task(std::forward<TArgs>(args) ...); } };
+    //enqueue(event);
+
+  //  ReturnType result = future.get();
+
+    return future;
+}
+
+//template<typename Func, typename... Args>
+//auto enqueueAsync(Func&& callable, Args&& ...args);
+
+// ===========================================================================
+
 
 //
 //    // ============================================================
@@ -482,5 +528,124 @@
 //    test_pitfall_01();
 //}
 //
-//
-//
+==============================================================================
+
+
+// ===========================================================================
+// dealing with result of an event
+
+static void test_event_loop_05()
+{
+    Logger::log(std::cout, "Main");
+
+    EventLoop eventLoop;
+
+    eventLoop.start();
+
+    auto func = [](int x, int y, int z) -> int {
+        Logger::log(std::cout, "func: adding ", x, ", ", y, " and ", z);
+        return x + y + z;
+        };
+
+    auto result = eventLoop.enqueueSync(func, 1, 2, 3);
+    Logger::log(std::cout, "Result: ", result);
+
+    result = eventLoop.enqueueSync(func, 4, 5, 6);
+    Logger::log(std::cout, "Result: ", result);
+
+    Logger::log(std::cout, "Done.");
+}
+
+// testing non-trivial return type parameter
+
+class X
+{
+public:
+    std::string print() { return "I'm a X ;)"; };
+};
+
+static void test_event_loop_05_a()
+{
+    Logger::log(std::cout, "Main");
+
+    EventLoop eventLoop;
+
+    eventLoop.start();
+
+    auto func = [](int x, int y, int z) {
+        Logger::log(std::cout, "func: returning X{} ");
+        return X{};
+        };
+
+    auto result = eventLoop.enqueueSync(func, 1, 2, 3);
+    Logger::log(std::cout, "Result: ", result.print());
+
+    result = eventLoop.enqueueSync(func, 4, 5, 6);
+    Logger::log(std::cout, "Result: ", result.print());
+
+    Logger::log(std::cout, "Done.");
+}
+
+
+
+// ===========================================================================
+// first attempt to create an asyn version
+
+// crashes ???????????????????????????????????????????????????????
+
+static void test_event_loop_06()
+{
+    Logger::log(std::cout, "Main");
+
+    EventLoop eventLoop;
+
+    eventLoop.start();
+
+    auto func = [](int x, int y, int z) -> int {
+        Logger::log(std::cout, "func: adding ", x, ", ", y, " and ", z);
+        return x + y + z;
+        };
+
+    auto result = eventLoop.enqueueAsync(func, 1, 2, 3);
+    //    Logger::log(std::cout, "Result: ", result);
+
+    auto result2 = eventLoop.enqueueAsync(func, 4, 5, 6);
+    //    Logger::log(std::cout, "Result: ", result);
+
+
+    result.get();
+    result2.get();
+
+    Logger::log(std::cout, "Done.");
+}
+
+
+// ========================================================
+
+
+static void test_event_loop_07()
+{
+    Logger::log(std::cout, "Main");
+
+    EventLoop eventLoop;
+
+    auto func = [](int x, int y, int z) {
+        Logger::log(std::cout, "func: adding", x, ", ", y, " and ", z);
+        return x + y + z;
+        };
+
+    eventLoop.enqueue(function);
+
+    auto result = eventLoop.enqueueSync(func, 1, 2, 3);
+
+    eventLoop.enqueue(function);
+
+    Logger::log(std::cout, "Result: ", result);
+    Logger::log(std::cout, "Done.");
+}
+
+#endif
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================

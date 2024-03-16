@@ -14,6 +14,9 @@
 
 // https://medium.com/@simontoth/daily-bit-e-of-c-std-packaged-task-b2d3273d97
 
+// VORSICHT !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// https://floating.io/2017/07/lambda-shared_ptr-memory-leak/
+
 
 #include <iostream>
 

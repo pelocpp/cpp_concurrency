@@ -19,12 +19,11 @@
 Das charakteristische Merkmal der Klasse `std::packaged_task` ist,
 dass es ein aufrufbares Objekt (*Callable*) umschließt.
 
-Ein auf diese Weise verpacktes Objekt wird nicht von alleine gestartet.
-
+Ein auf diese Weise verpacktes Objekt wird *nicht* von alleine gestartet:
 Man muss den Aufruf explizit anstoßen &ndash; dies kann synchron im aktuellen Thread
 oder asynchron durch einen separaten Thread erfolgen.
 
-Der Rückgabewert wird einem `std::future`-Objekt abgelegt.
+Der Rückgabewert wird in einem `std::future`-Objekt abgelegt.
 
 Für das Arbeiten mit `std::packaged_task`-Objekten sind typischerweise vier Schritte notwendig:
 
