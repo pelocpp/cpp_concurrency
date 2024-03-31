@@ -22,7 +22,7 @@ private:
     std::vector<Event>      m_events;
     std::mutex              m_mutex;
     std::condition_variable m_condition;
-    std::thread             m_thread;
+    std::jthread            m_thread;
     bool                    m_running;
 
 public:

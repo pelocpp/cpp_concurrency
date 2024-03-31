@@ -4,15 +4,28 @@
 
 ---
 
-## Motivation
+## Verwendete Werkzeuge
+
+  * `std::function`
+  * `std::mutex`
+  * `std::lock_guard` und `std::unique_lock`
+  * `std::condition_variable`
+  * `std::jthread`
+  * `std::swap`
+
+---
+
+## Allgemeines
 
 *Kurz gefasst*:
 
 Eine Ereigniswarteschlange (engl. *Event Loop* ) kann man als Alternative zu einem
-Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf geschützte Objekt bzw. deren Methoden, jedoch auf unterschiedliche Weise.
+Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf geschützte Objekt bzw. deren Methoden,
+jedoch auf unterschiedliche Weise:
 
   * `std:mutex`-Objekte stellen einen Synchronisationsmechanismus dar, es sind zu diesem Zweck die kritischen Abschnitte
-  zu identifizieren und mit entsprechenden `lock` bzw. `unlock`-Aufrufen zu schützen.
+  zu identifizieren und mit entsprechenden `lock` bzw. `unlock`-Aufrufen zu schützen.<br />
+  *Bemerkung*: In der Praxis kommen hier entsprechende Hüllen-Objekte wie z.B. `std::lock_guard` zum Zuge.
   * Reiht man die kritischen Abschnitte in eine Ereigniswarteschlange ein, kann man auf `std:mutex`-Objekte verzichten.
   Die kritischen Abschnitte müssen zu diesem Zweck aber Funktions-(Methoden-)grenzen haben,
   um die in eine Ereigniswarteschlange einschleusen zu können.
@@ -118,17 +131,18 @@ Um zusätzliche Synchronisierungen zu vermeiden, stellen Sie einfach sicher, dass
 nachdem Sie den Mutex freigegeben haben.
 
 
-### Double Buffering Technik
+### Doppelpuffertechnik (*Double Buffering*)
 
-Im Beispiel zu diesem Abschnitt finden Sie eine Umsetzung der *Double Buffering Technik* vor.
+In der Realisierung der Abarbeitung der Nachrichten
+finden Sie eine Umsetzung der *Double Buffering Technik* vor.
 
-Es kommen in der Implementierung zwei Objekte des Typs `std::vector<std::function<void()>>` zum Einsatz.
+Es kommen zwei Objekte des Typs `std::vector<std::function<void()>>` zum Einsatz:
 
   * Der erste Puffer dient ausschließlich zum Einreihen neuer Nachrichten.
   * Der zweite Puffer dient ausschließlich zum Entnehmen vorhandener Nachrichten.
 
-Das Tauschen der Puffer findet innerhalb einer Mutex-Sperre statt, mit der Funktion `std::swap` tauschen
-wir die beiden Pufferinhalte möglichst effizient.
+Das Tauschen der Puffer findet innerhalb einer Mutex-Sperre statt, mit der Funktion `std::swap` werden
+die beiden Pufferinhalte möglichst effizient getauscht.
 
 Nach einem Tausch ist der erste Puffer grundsätzlich leer, der zweite Puffer hat den Inhalt des ersten Puffers erhalten
 und kann nun bei Bedarf bzw. wenn Rechenzeit vorhanden ist, abgearbeitet werden.
@@ -164,12 +178,31 @@ Eine grobe Skizzierung der Realisierung der Verarbeitung der Nachrichten in der 
 25: }
 ```
 
+In Zeile 10 finden wir einen Aufruf der `wait`-Methode an einem `m_condition`-Objekt vor.
+Hierzu muss es einen korrespondierenden `notify_one`- oder `notify_all`-Aufruf geben:
+
+```cpp
+01: void enqueue (const std::function<void()>& callable)
+02: {
+03:     {
+04:         std::lock_guard<std::mutex> guard(m_mutex);
+05:         m_events.emplace_back(callable);
+06:     }
+07: 
+08:     m_condition.notify_one();
+09: }
+```
+
+Sinnigerweise ist dieser in der Methode `enqueue` vorhanden, wenn neue Nachrichten in der
+Warteschlange aufgenommen werden.
+
+
 ### Funktionen mit Parametern in der Ereigniswarteschlange
 
 Es lassen sich auch Funktionen mit Parametern in die Ereigniswarteschlange einreihen &ndash; in dies sogar,
 ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
 
-Wie könnte dieser Trick aussehen?
+Wie könnte dieser Trick aussehen?<br />
 Und wie werden die Parameter zwischengespeichert?
 
 Wir greifen auf das C++ Sprachfeature von Lambda-Objekten zurück.

@@ -17,7 +17,7 @@ void EventLoop::start()
 {
     m_running = true;
 
-    m_thread = std::thread { &EventLoop::threadProcedure, this };
+    m_thread = std::jthread { &EventLoop::threadProcedure, this };
 }
 
 void EventLoop::stop()
