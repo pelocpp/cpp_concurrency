@@ -229,7 +229,7 @@ korrekt ausgeführt wird:
 
 #### Quellcode:
 
-[ReaderWriterLock.cpp](ReaderWriterLock.cpp).
+[*ReaderWriterLock.cpp*](ReaderWriterLock.cpp).
 
 ---
 

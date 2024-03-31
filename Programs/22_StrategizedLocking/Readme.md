@@ -202,13 +202,13 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 
 #### Quellcode:
 
-[ILock.h](ILock.h).<br />
-[StrategizedLock.h](StrategizedLock.h).<br />
-[ThreadsafeStack.h](ThreadsafeStack.h).<br />
-[PrimeCalculator.h](PrimeCalculator.h).<br />
+[*ILock.h*](ILock.h).<br />
+[*StrategizedLock.h*](StrategizedLock.h).<br />
+[*ThreadsafeStack.h*](ThreadsafeStack.h).<br />
+[*PrimeCalculator.h*](PrimeCalculator.h).<br />
 
-[StrategizedLock.cpp](StrategizedLock.cpp).<br />
-[PrimeNumbers.cpp](PrimeNumbers.cpp).<br />
+[*StrategizedLock.cpp*](StrategizedLock.cpp).<br />
+[*PrimeNumbers.cpp*](PrimeNumbers.cpp).<br />
 
 ---
 

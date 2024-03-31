@@ -29,7 +29,7 @@ an den Erzeugerthread propagiert werden:
 
 #### Quellcode:
 
-[Siehe hier](Exception.cpp).
+[*Exception.cpp*](Exception.cpp).
 
 ---
 

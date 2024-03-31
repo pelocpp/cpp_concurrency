@@ -54,6 +54,9 @@ public:
                 std::forward<TFunc>(callable) (std::forward<TArgs>(args)...);
                 }
             );
+
+            // more simpler, but not perfect
+            m_events.emplace_back( [=] () mutable { callable (args ...); } );
         }
 
         m_condition.notify_one();

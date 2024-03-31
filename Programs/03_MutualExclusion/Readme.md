@@ -77,11 +77,11 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
   * Elementare Demonstration des `std::mutex` Objekts:<br />
     Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.<br />
-    [Beispiel](Simple_Mutex.cpp).
+    [*Simple_Mutex.cpp*](Simple_Mutex.cpp).
 
   * Elementare Demonstration des `std::condition_variable` Objekts:<br />
-    [Beispiel](Simple_Condition_Variable_01.cpp).
-    [Beispiel](Simple_Condition_Variable_02.cpp).
+    [*Simple_Condition_Variable_01.cpp*](Simple_Condition_Variable_01.cpp).
+    [*Simple_Condition_Variable_02.cpp*](Simple_Condition_Variable_02.cpp).
    
   * Demonstration des klassischen Konsumenten/Verbraucher-Problems:<br />
     [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).<br />

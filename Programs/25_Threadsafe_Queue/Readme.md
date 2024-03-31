@@ -380,8 +380,8 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
 #### Quellcode:
 
-[ThreadsafeQueue.h](ThreadsafeQueue.h).<br />
-[Examples.cpp](Examples.cpp).<br />
+[*ThreadsafeQueue.h*](ThreadsafeQueue.h).<br />
+[*Examples.cpp*](Examples.cpp).<br />
 
 ---
 

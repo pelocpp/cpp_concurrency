@@ -53,7 +53,7 @@ Damit kann man den Sachverhalt einfacher formulieren:
 
 #### Quellcode:
 
-[Siehe hier](STL_ParallelAlgorithms.cpp).
+[*STL_ParallelAlgorithms.cpp*](STL_ParallelAlgorithms.cpp).
 
 Die Ausführung des Programms - und vor allem die Ausführungszeit - sieht auf meinem Rechner wie folgt aus:
 

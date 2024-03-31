@@ -48,6 +48,8 @@
 
 ### [3. Realisierung einer `parallel_for` Wiederholungsschleife](Programs/24_ParallelFor/Readme.md)
 
-### [4. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
+### [4. Realisierung einer Ereigniswarteschlange (*Event Loop* )](Programs/27_EventLoop/Readme.md)
+
+### [5. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
 
 ---

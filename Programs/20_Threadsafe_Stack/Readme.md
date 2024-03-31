@@ -324,9 +324,9 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 #### Quellcode:
 
 
-[ThreadsafeStack.h](ThreadsafeStack.h).<br />
-[PrimeCalculator.h](TPrimeCalculator.h).<br />
-[TestPrimeNumbers.cpp](TestPrimeNumbers.cpp).<br />
+[*ThreadsafeStack.h*](ThreadsafeStack.h).<br />
+[*PrimeCalculator.h*](TPrimeCalculator.h).<br />
+[*TestPrimeNumbers.cpp*](TestPrimeNumbers.cpp).<br />
 
 ---
 

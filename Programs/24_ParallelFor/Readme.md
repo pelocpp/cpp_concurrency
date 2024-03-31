@@ -35,10 +35,9 @@ aber es bereitet keine große Mühe, sie selber zu schreiben.
 
 #### Quellcode:
 
-[ParallelFor.h](ParallelFor.h).
-
-[ParallelFor.cpp](ParallelFor.cpp).<br />
-[PrimeNumbers.cpp](PrimeNumbers.cpp).<br />
+[*ParallelFor.h*](ParallelFor.h).
+[*ParallelFor.cpp*](ParallelFor.cpp).<br />
+[*PrimeNumbers.cpp*](PrimeNumbers.cpp).<br />
 
 ---
 

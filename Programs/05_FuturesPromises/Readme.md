@@ -49,7 +49,7 @@ Klassische Zeiger oder rvalue-Referenzen sind ein gangbarer Weg.
 
 #### Quellcode:
 
-[Siehe hier](Future_01.cpp).
+[*Future_01.cpp*](Future_01.cpp).
 
 ---
 
@@ -71,14 +71,14 @@ Bei der Zugriffsklausel der Lambda-Methoden beachte man:
 
 #### Quellcode:
 
-[Siehe hier](Future_02.cpp).
+[*Future_02.cpp*](Future_02.cpp).
 
 ---
 
 #### Quellcode:
 
-[Einfaches Beispiel](Future_01.cpp)<br />
-[Beispiel zu `std::shared_future`](Future_02.cpp)
+[*Einfaches Beispiel*](Future_01.cpp)<br />
+[*Beispiel zu* `std::shared_future`](Future_02.cpp)
 
 ---
 

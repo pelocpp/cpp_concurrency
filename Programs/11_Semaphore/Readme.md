@@ -188,9 +188,9 @@ FGKBJKIJHFGKJKLIMFGKMHKIMFGKLMKIMHFGKMKLIMMHIMLMHLHLLLLL
 
 #### Quellcode:
 
-[Teil 1: Einfaches Beispiel](Semaphore_01.cpp).<br />
-[Teil 2: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
-[Teil 3: Ein Beispiel zur Klasse `std::counting_semaphore`](Semaphore_03.cpp).<br />
+[*Teil 1*: Einfaches Beispiel](Semaphore_01.cpp).<br />
+[*Teil 2*: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
+[*Teil 3*: Ein Beispiel zur Klasse `std::counting_semaphore`](Semaphore_03.cpp).<br />
 
 ---
 

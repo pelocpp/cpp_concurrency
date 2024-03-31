@@ -142,10 +142,6 @@
     <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp" />
     <ClCompile Include="Type_Erasure.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="EventLoop.md" />
-    <None Include="Placement_New.md" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
