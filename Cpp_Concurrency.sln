@@ -59,6 +59,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "26_ProducerConsumerProblem"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "27_EventLoop", "Programs\27_EventLoop\27_EventLoop.vcxproj", "{4385B9F0-3EF7-4618-9C88-635A11F49316}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "30_ThreadPool", "Programs\30_ThreadPool\30_ThreadPool.vcxproj", "{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -243,6 +245,14 @@ Global
 		{4385B9F0-3EF7-4618-9C88-635A11F49316}.Release|x64.Build.0 = Release|x64
 		{4385B9F0-3EF7-4618-9C88-635A11F49316}.Release|x86.ActiveCfg = Release|Win32
 		{4385B9F0-3EF7-4618-9C88-635A11F49316}.Release|x86.Build.0 = Release|Win32
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Debug|x64.ActiveCfg = Debug|x64
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Debug|x64.Build.0 = Debug|x64
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Debug|x86.ActiveCfg = Debug|Win32
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Debug|x86.Build.0 = Debug|Win32
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Release|x64.ActiveCfg = Release|x64
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Release|x64.Build.0 = Release|x64
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Release|x86.ActiveCfg = Release|Win32
+		{D11C6CBE-63A9-4CAA-966C-FCAFE702BE28}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

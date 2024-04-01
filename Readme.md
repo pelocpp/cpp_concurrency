@@ -50,6 +50,8 @@
 
 ### [4. Realisierung einer Ereigniswarteschlange (*Event Loop* )](Programs/27_EventLoop/Readme.md)
 
-### [5. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
+### [5. Realisierung eines Thread Pools](Programs/30_ThreadPool/Readme.md)
+
+### [6. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
 
 ---
