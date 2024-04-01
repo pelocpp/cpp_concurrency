@@ -12,15 +12,15 @@
 
 void test_concurrency_thread_pool_01()
 {
-    auto callable = [] () {
-        std::stringstream ss;
-        ss << "Thread " << std::setw(4) << std::setfill('0')
-            << std::uppercase << std::hex << std::this_thread::get_id();
+        auto callable = [] () {
+            std::stringstream ss;
+            ss << "Thread " << std::setw(4) << std::setfill('0')
+                << std::uppercase << std::hex << std::this_thread::get_id();
 
-        std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
+            std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
 
-        Logger::log(std::cout, "###  > ", ss.str());
-    };
+            Logger::log(std::cout, "###  > ", ss.str());
+        };
 
     ThreadPool pool;
 
