@@ -1,14 +1,15 @@
 // ===========================================================================
-// ThreadPool_01_Simple.cpp // Thread Pool
+// ThreadPool_02_Simple_Improved.cpp // Thread Pool
 // ===========================================================================
 
 #include "../Logger/Logger.h"
 
-#include "ThreadPool_01_Simple.h"
-using namespace ThreadPool_Simple;
+#include "ThreadPool_02_Simple_Improved.h"
+using namespace ThreadPool_Simple_Improved;
 
 #include <iostream>
 #include <thread>
+#include <future>
 
 ThreadPool::ThreadPool() : m_done{ false }, m_joiner{ m_threads }
 {
@@ -43,7 +44,8 @@ void ThreadPool::worker_thread()
 
     while (!m_done)
     {
-        std::function<void()> task{};
+        // std::function<void()> task{};
+        FunctionWrapper task{};
 
         if (m_workQueue.tryPop(task))
         {

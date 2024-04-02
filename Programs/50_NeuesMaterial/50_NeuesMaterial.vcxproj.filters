@@ -48,5 +48,8 @@
     <ClCompile Include="ReproducingConcurrencyCrashDemo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Thread_Pool_04.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

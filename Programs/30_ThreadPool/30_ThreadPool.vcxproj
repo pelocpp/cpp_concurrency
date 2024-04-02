@@ -128,20 +128,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Readme.md" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Examples_01.cpp" />
     <ClCompile Include="Examples_02.cpp" />
+    <ClCompile Include="Examples_03.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="ThreadPool_01_Simple.cpp" />
-    <ClCompile Include="ThreadPool_02_XXX.cpp" />
+    <ClCompile Include="ThreadPool_02_Simple_Improved.cpp" />
+    <ClCompile Include="ThreadPool_03_ArthurDwyer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="FunctionWrapper.h" />
     <ClInclude Include="JoinThreads.h" />
     <ClInclude Include="ThreadPool_01_Simple.h" />
-    <ClInclude Include="ThreadPool_02_XXX.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Readme.md" />
+    <ClInclude Include="ThreadPool_02_Simple_Improved.h" />
+    <ClInclude Include="ThreadPool_03_ArthurDwyer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

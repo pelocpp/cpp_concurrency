@@ -1,12 +1,9 @@
 // ===========================================================================
-// Examples.cpp // Thread Pool
+// Examples_02.cpp // Thread Pool
 // ===========================================================================
 
-#include "../Logger/Logger.h"
-
-#include "ThreadPool_02_XXX.h"
-using namespace ThreadPool_Improved;
-
+#include "ThreadPool_02_Simple_Improved.h"
+using namespace ThreadPool_Simple_Improved;
 
 #include <iostream>
 #include <iomanip>
@@ -14,7 +11,7 @@ using namespace ThreadPool_Improved;
 #include <thread>
 #include <chrono>
 
-void test_concurrency_thread_pool_10()
+void test_concurrency_thread_pool_02_01()
 {
     auto callable = []() {
         std::stringstream ss;
@@ -37,49 +34,29 @@ void test_concurrency_thread_pool_10()
     std::cin >> ch;
 }
 
-// NEU
-static auto callable = []() -> int {
+auto callable = []() -> int {
 
     std::cout << "callable\n";
     return 123;
-};
+    };
 
-static int callableFunc() {
+int callableFunc() {
 
     std::cout << "callableFunc\n";
     return 123;
 };
 
-
-class Callable
-{
-public:
-    auto operator()() -> int {
-
-        std::cout << "callable\n";
-        return 123;
-    }
-};
-
-
-void test_concurrency_thread_pool_11()
+void test_concurrency_thread_pool_02_02()
 {
     ThreadPool pool;
 
     std::deque<std::future<int>> futures;
 
     for (int i = 0; i < 10; ++i) {
-        std::future<int> f1 = pool.submit(callable);
-        futures.push_back(std::move(f1));
-        
+        std::future<int> f = pool.submit(callableFunc);
         // or
-        std::future<int> f2 = pool.submit(callableFunc);
-        futures.push_back(std::move(f2));
-        
-        // or
-        Callable callableObj{};
-        std::future<int> f3 = pool.submit(callableObj);
-        futures.push_back(std::move(f3));
+        // std::future<int> f = pool.submitXX(callableFunc);
+        futures.push_back(std::move(f));
     }
 
     // get the results
@@ -90,82 +67,17 @@ void test_concurrency_thread_pool_11()
         std::cout << "n =  " << n << std::endl;
     }
 
-    //char ch;
-    //std::cin >> ch;
+    Logger::log(std::cout, "Press any key to quit ...");
+    char ch;
+    std::cin >> ch;
+}
+
+void test_concurrency_thread_pool_02()
+{
+   // test_concurrency_thread_pool_02_01();
+    test_concurrency_thread_pool_02_02();
 }
 
 // ===========================================================================
 // End-of-File
 // ===========================================================================
-
-// testing class template std::invoke_result
-
-template<typename FunctionType>
-void testFunction(FunctionType func)
-{
-#if defined (_MSC_VER)
-    std::cout << __FUNCSIG__ << std::endl;
-#endif
-
-#if defined (__GNUC__)
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
-#endif
-
-    using result_type = typename std::invoke_result<FunctionType>::type;
-
-    result_type xxx{};
-}
-
-template<typename FunctionType>
-void testFunctionSubmit(FunctionType func)
-{
-    using result_type = typename std::invoke_result<FunctionType>::type;
-
-    // invoking an instance of type FunctionType(such as f) with no arguments
-    std::packaged_task<result_type()> task1(std::move(func));
-    // or
-    std::packaged_task task2  (std::move(func));             // using CTAD
-
-    std::future future(task1.get_future());
-
-    task1();
-
-    int result = future.get();
-
-    std::cout << "Ergebnis = " << result << "\n";
-
-    result_type xxx{ result };
-}
-
-template<typename FunctionType>
-using result_type = typename std::invoke_result<FunctionType>::type;
-
-template<typename FunctionType>
-std::future<result_type<FunctionType>>
-testFunctionSubmitEx(FunctionType func)
-{
-    // std::packaged_task<result_type()> task(std::move(func));
-    std::packaged_task<result_type<FunctionType>()> task(std::move(func));
-
-    std::future<result_type<FunctionType>> future(task.get_future());
-
-    task();
-
-    result_type<FunctionType> xxx{};
-
-    return future;
-}
-
-
-void test_concurrency_thread_pool_12()
-{
-    testFunction(callable);
-
-    testFunctionSubmit(callableFunc);
-
-    std::future<int> future = testFunctionSubmitEx(callable);
-
-    int result = future.get();
-
-    std::cout << "Ergebnis = " << result << "\n";
-}

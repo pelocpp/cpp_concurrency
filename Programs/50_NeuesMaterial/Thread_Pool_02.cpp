@@ -299,7 +299,7 @@ void test_concurrency_thread_pool_02_a()
     for (int i = 0; i < 10; ++i) {
         std::future<int> f = pool.submit(callableFunc);
         // or
-        std::future<int> f = pool.submitXX(callableFunc);
+        // std::future<int> f = pool.submitXX(callableFunc);
         futures.push_back(std::move(f));
     }
 

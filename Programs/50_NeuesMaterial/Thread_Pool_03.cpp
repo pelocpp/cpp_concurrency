@@ -8,6 +8,8 @@
 #include <vector>
 #include <utility>
 
+// AUS DEM BUCH VON ARTHUR DWYER
+
 namespace Concurrency_ThreadPool_03
 {
 
@@ -84,7 +86,9 @@ namespace Concurrency_ThreadPool_03
             if (std::lock_guard lk(m_state.mtx); true) {
                 m_state.aborting = true;
             }
+
             m_cv.notify_all();
+            
             for (std::thread& t : m_workers) {
                 t.join();
             }

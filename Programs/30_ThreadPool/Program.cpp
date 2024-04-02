@@ -3,13 +3,11 @@
 // ===========================================================================
 
 void test_concurrency_thread_pool_01();
-
-void test_concurrency_thread_pool_10();
-
+void test_concurrency_thread_pool_02();
 
 int main()
 {
-    test_concurrency_thread_pool_10();
+    test_concurrency_thread_pool_02();
     return 0;
 }
 
