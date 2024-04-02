@@ -18,13 +18,19 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ThreadPool.cpp">
+    <ClCompile Include="ThreadPool_01_Simple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Examples.cpp">
+    <ClCompile Include="Examples_01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Examples_02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadPool_02_XXX.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -32,7 +38,10 @@
     <ClInclude Include="JoinThreads.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ThreadPool.h">
+    <ClInclude Include="ThreadPool_01_Simple.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadPool_02_XXX.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

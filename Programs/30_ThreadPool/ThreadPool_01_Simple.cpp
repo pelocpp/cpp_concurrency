@@ -4,7 +4,8 @@
 
 #include "../Logger/Logger.h"
 
-#include "ThreadPool.h"
+#include "ThreadPool_01_Simple.h"
+using namespace ThreadPool_Simple;
 
 #include <iostream>
 #include <thread>
@@ -18,8 +19,8 @@ ThreadPool::ThreadPool() : m_done{ false }, m_joiner{ m_threads }
         for (unsigned i{}; i < count; ++i)
         {
             Logger::log(std::cout, "push_back of next worker_thread function ...");
-            std::thread tmp{ &ThreadPool::worker_thread, this };
-            m_threads.push_back(std::move(tmp));
+            std::thread t{ &ThreadPool::worker_thread, this };
+            m_threads.push_back(std::move(t));
         }
     }
     catch (...)

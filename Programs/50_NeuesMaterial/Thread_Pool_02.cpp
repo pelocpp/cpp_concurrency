@@ -9,18 +9,7 @@
 #include <type_traits>
 #include <vector>
 #include <numeric>
-
-//#include <iostream>
-//#include <iomanip>
 #include <sstream>
-//#include <thread>
-//
-//#include <algorithm>
-//#include <functional>
-//#include <vector>
-//#include <iterator>
-//#include <type_traits>
-//#include <chrono>
 
 namespace Concurrency_ThreadPool_02
 {
@@ -223,16 +212,16 @@ namespace Concurrency_ThreadPool_02
         // Es muss zweimal std::invoke_result<FunctionType> an Stelle von
         // std::invoke_result<FunctionType()>
         // heiﬂen !!!!!!!!!!!!!!!!!!!!!!!!!
-        //template<typename FunctionType>
-        //std::future<typename std::invoke_result<FunctionType>::type>
-        //submit(FunctionType f)
-        //{
-        //    typedef typename std::invoke_result<FunctionType>::type result_type;
-        //    std::packaged_task<result_type()> task(std::move(f));
-        //    std::future<result_type> res(task.get_future());
-        //    m_workQueue.push(std::move(task));
-        //    return res;
-        //}
+        template<typename FunctionType>
+        std::future<typename std::invoke_result<FunctionType>::type>
+        submitXX(FunctionType f)
+        {
+            typedef typename std::invoke_result<FunctionType>::type result_type;
+            std::packaged_task<result_type()> task(std::move(f));
+            std::future<result_type> res(task.get_future());
+            m_workQueue.push(std::move(task));
+            return res;
+        }
 
     public:
         ThreadPool() : m_done{ false }, m_joiner{ m_threads }
@@ -290,7 +279,7 @@ auto callable = []() -> int {
 
     std::cout << "callable\n";
     return 123;
-    };
+};
 
 int callableFunc() {
 
@@ -309,6 +298,8 @@ void test_concurrency_thread_pool_02_a()
 
     for (int i = 0; i < 10; ++i) {
         std::future<int> f = pool.submit(callableFunc);
+        // or
+        std::future<int> f = pool.submitXX(callableFunc);
         futures.push_back(std::move(f));
     }
 

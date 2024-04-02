@@ -129,13 +129,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Examples.cpp" />
+    <ClCompile Include="Examples_01.cpp" />
+    <ClCompile Include="Examples_02.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="ThreadPool.cpp" />
+    <ClCompile Include="ThreadPool_01_Simple.cpp" />
+    <ClCompile Include="ThreadPool_02_XXX.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="JoinThreads.h" />
-    <ClInclude Include="ThreadPool.h" />
+    <ClInclude Include="ThreadPool_01_Simple.h" />
+    <ClInclude Include="ThreadPool_02_XXX.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

@@ -2,15 +2,14 @@
 // Program.cpp // Thread Pool
 // ===========================================================================
 
-// Nachteil:  
-// Die Threads warten mit yield auf einen nächsten Job
-// ==> das ist eine Busy-Loop
-
 void test_concurrency_thread_pool_01();
+
+void test_concurrency_thread_pool_10();
+
 
 int main()
 {
-    test_concurrency_thread_pool_01();
+    test_concurrency_thread_pool_10();
     return 0;
 }
 
