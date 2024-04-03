@@ -91,7 +91,7 @@ namespace Concurrency_ThreadsafeQueue
                 return false;
             }
 
-            // value = m_data.front();
+            //value = m_data.front();
             value = std::move(m_data.front());
             m_data.pop();
 

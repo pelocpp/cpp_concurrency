@@ -12,7 +12,6 @@
 
 namespace Concurrency_ThreadPool_03
 {
-
     // from Thread_Pool_02
     class function_wrapper
     {
@@ -103,7 +102,8 @@ namespace Concurrency_ThreadPool_03
 
     private:
         void worker_loop() {
-            while (true) {
+            while (true)
+            {
                 std::unique_lock lk(m_state.mtx);
 
                 while (m_state.work_queue.empty() && !m_state.aborting) {

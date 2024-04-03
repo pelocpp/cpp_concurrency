@@ -64,7 +64,7 @@ void test_concurrency_thread_pool_02_02()
         std::future<int> future{ std::move(futures.front()) };
         futures.pop_front();
         int n{ future.get() };
-        std::cout << "n =  " << n << std::endl;
+        Logger::log(std::cout, "####################### n = ", n);
     }
 
     Logger::log(std::cout, "Press any key to quit ...");

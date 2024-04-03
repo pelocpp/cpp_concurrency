@@ -28,12 +28,12 @@ namespace ThreadPool_Simple_Improved {
 
     class ThreadPool
     {
+    // using ThreadPoolFunction = std::packaged_task<void()>;
+    using ThreadPoolFunction = FunctionWrapper;
+
     private:
         std::atomic_bool                        m_done;
-
-     //   ThreadsafeQueue<std::function<void()>>  m_workQueue;
-        ThreadsafeQueue<FunctionWrapper>  m_workQueue;
-
+        ThreadsafeQueue<ThreadPoolFunction>     m_workQueue;
         std::vector<std::thread>                m_threads;
         JoinThreads                             m_joiner;
 
@@ -55,9 +55,9 @@ namespace ThreadPool_Simple_Improved {
         {
             typedef typename std::invoke_result<FunctionType>::type result_type;
 
-            std::packaged_task<result_type()> task(std::move(f));
+            std::packaged_task<result_type()> task{ std::move(f) };
 
-            std::future<result_type> res(task.get_future());
+            std::future<result_type> res{ task.get_future() };
 
             // Diese Zeile übersetzt nicht:
             m_workQueue.push(std::move(task));

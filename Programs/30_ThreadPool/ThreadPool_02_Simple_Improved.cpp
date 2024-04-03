@@ -45,7 +45,8 @@ void ThreadPool::worker_thread()
     while (!m_done)
     {
         // std::function<void()> task{};
-        FunctionWrapper task{};
+        // FunctionWrapper task{};
+        ThreadPoolFunction task{};
 
         if (m_workQueue.tryPop(task))
         {

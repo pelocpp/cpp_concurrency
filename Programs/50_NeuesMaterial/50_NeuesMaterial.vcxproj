@@ -135,7 +135,6 @@
     <ClCompile Include="ThreadLocalStorage.cpp" />
     <ClCompile Include="Thread_Pool_02.cpp" />
     <ClCompile Include="Thread_Pool_03.cpp" />
-    <ClCompile Include="Thread_Pool_04.cpp" />
     <ClCompile Include="Thread_Safe_Blocking_Queue_01.cpp" />
     <ClCompile Include="Thread_Safe_Blocking_Queue_02.cpp" />
     <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp" />
