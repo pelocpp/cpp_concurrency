@@ -309,8 +309,10 @@ beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt
 
 Eine Beschreibung der Beispiele folgt weiter unten:
 
-[*Latches.cpp*](Latches.cpp)<br />
-[*Barriers.cpp*](Barriers.cpp)
+[*Latches_01.cpp*](Latches_01.cpp)<br />
+[*Latches_02.cpp*](Latches_02.cpp)<br />
+[*Barriers_01.cpp*](Barriers_01.cpp)<br />
+[*Barriers_02.cpp*](Barriers_02.cpp)
 
 ---
 
