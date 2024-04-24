@@ -56,7 +56,7 @@ public:
             );
 
             // more simpler, but not perfect
-            m_events.emplace_back( [=] () mutable { callable (args ...); } );
+            // m_events.emplace_back( [=] () mutable { callable (args ...); } );
         }
 
         m_condition.notify_one();

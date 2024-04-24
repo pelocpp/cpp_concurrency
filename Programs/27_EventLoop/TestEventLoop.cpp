@@ -234,11 +234,11 @@ static void test_event_loop_21()
 
 void test_event_loop()
 {
-    test_event_loop_01();
-    test_event_loop_02();
-    test_event_loop_03();
+    //test_event_loop_01();
+    //test_event_loop_02();
+    //test_event_loop_03();
     //test_event_loop_04();
-    //test_event_loop_10();
+    test_event_loop_10();
     //test_event_loop_20();
     //test_event_loop_21();
 }
