@@ -25,11 +25,11 @@ namespace ProducerConsumerQueue
         size_t m_popIndex;
         size_t m_size;
 
-        std::mutex mutable m_mutex{};
+        std::mutex mutable m_mutex;
 
         // Monitor Concept (Dijkstra)
-        std::condition_variable m_conditionIsEmpty{};
-        std::condition_variable m_conditionIsFull{};
+        std::condition_variable m_conditionIsEmpty;
+        std::condition_variable m_conditionIsFull;
 
     public:
         // default c'tor
