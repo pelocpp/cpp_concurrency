@@ -44,7 +44,7 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testSeq(const std::vector<T>& numbers)
     {
-        for (size_t i = 0; i != IterationCount; ++i)
+        for (size_t i{}; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };
@@ -57,7 +57,7 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testPar(const std::vector<T>& numbers)
     {
-        for (size_t i = 0; i != IterationCount; ++i)
+        for (size_t i{}; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };
