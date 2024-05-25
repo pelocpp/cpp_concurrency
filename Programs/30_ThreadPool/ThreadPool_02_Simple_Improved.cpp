@@ -45,8 +45,6 @@ namespace ThreadPool_Simple_Improved
 
         while (!m_done)
         {
-             //std::function<void()> task{};
-            // FunctionWrapper task{};
             ThreadPoolFunction task{};
 
             if (m_workQueue.tryPop(task))
@@ -55,7 +53,7 @@ namespace ThreadPool_Simple_Improved
             }
             else
             {
-                Logger::log(std::cout, "std::this_thread::yield ...");
+                // Logger::log(std::cout, "std::this_thread::yield ...");
                 std::this_thread::yield();
             }
         }

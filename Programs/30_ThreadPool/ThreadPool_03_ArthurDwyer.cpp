@@ -5,32 +5,45 @@
 #include "../Logger/Logger.h"
 
 #include "ThreadPool_03_ArthurDwyer.h"
-using namespace ThreadPool_ArthurDwyer;
 
 #include <iostream>
 #include <thread>
 
-//  Logger::log(std::cout, "Created pool with ", count, " threads.");
+namespace ThreadPool_ArthurDwyer
+{
 
-ThreadPool::ThreadPool() : ThreadPool{5} {}
+    //  Logger::log(std::cout, "Created pool with ", count, " threads.");
 
-ThreadPool::ThreadPool(int size) {
-    for (int i = 0; i < size; ++i) {
-        m_threads.emplace_back([this]() { worker_loop(); });
+    ThreadPool::ThreadPool() : ThreadPool{ 5 } {}
+
+    ThreadPool::ThreadPool(int size) {
+
+        m_state.m_aborting = false;
+
+        for (size_t i{}; i != size; ++i) {
+            m_threads.emplace_back([this]() { worker_loop(); });
+        }
     }
+
+    ThreadPool::~ThreadPool() {
+        //if (std::lock_guard lk(m_state.m_mutex); true) {
+        //    m_state.m_aborting = true;
+        //}
+
+        {
+            std::lock_guard guard(m_state.m_mutex);
+            m_state.m_aborting = true;
+        }
+
+        m_condition.notify_all();
+
+        for (std::thread& t : m_threads) {
+            t.join();
+        }
+    }
+
 }
 
-ThreadPool::~ThreadPool() {
-    if (std::lock_guard lk(m_state.m_mutex); true) {
-        m_state.m_aborting = true;
-    }
-
-    m_condition.notify_all();
-
-    for (std::thread& t : m_threads) {
-        t.join();
-    }
-}
 
 // ===========================================================================
 // End-of-File

@@ -30,7 +30,8 @@ namespace ThreadPool_ArthurDwyer {
 
         // KLÄREN: Warum nicht  ThreadsafeQueue<function_wrapper> m_workQueue;
 
-        struct {
+        struct
+        {
             std::mutex                 m_mutex;
             std::queue<UniqueFunction> m_workQueue;
             bool                       m_aborting = false;  // TODO: Einheiltlich intialisieren ....
@@ -45,10 +46,17 @@ namespace ThreadPool_ArthurDwyer {
         ThreadPool(int size);
         ~ThreadPool();
 
-        void enqueue_task(UniqueFunction task) {
-            if (std::lock_guard lk(m_state.m_mutex); true) {
+        void enqueue_task(UniqueFunction task)
+        {
+            //if (std::lock_guard lk(m_state.m_mutex); true) {
+            //    m_state.m_workQueue.push(std::move(task));
+            //}
+
+            {
+                std::lock_guard guard(m_state.m_mutex);
                 m_state.m_workQueue.push(std::move(task));
             }
+
             m_condition.notify_one();
         }
 
@@ -57,10 +65,10 @@ namespace ThreadPool_ArthurDwyer {
         {
             while (true)
             {
-                std::unique_lock lk(m_state.m_mutex);
+                std::unique_lock guard(m_state.m_mutex);
 
                 while (m_state.m_workQueue.empty() && !m_state.m_aborting) {
-                    m_condition.wait(lk);
+                    m_condition.wait(guard);
                 }
 
                 if (m_state.m_aborting) {
@@ -74,7 +82,7 @@ namespace ThreadPool_ArthurDwyer {
 
                 m_state.m_workQueue.pop();
 
-                lk.unlock();
+                guard.unlock();
 
                 // Actually run the task. This might take a while.
                 task();

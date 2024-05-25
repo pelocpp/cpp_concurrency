@@ -5,8 +5,6 @@
 #include "../Logger/Logger.h"
 
 #include "ThreadPool_03_ArthurDwyer.h"
-using namespace ThreadPool_ArthurDwyer;
-
 
 #include <iostream>
 #include <iomanip>
@@ -14,9 +12,12 @@ using namespace ThreadPool_ArthurDwyer;
 #include <thread>
 #include <chrono>
 
-void test_concurrency_thread_pool_03_01()
+static void test_concurrency_thread_pool_03_01()
 {
-    auto callable = []() {
+    using namespace ThreadPool_ArthurDwyer;
+
+    auto callable = []()
+    {
         std::stringstream ss;
         ss << "Thread " << std::setw(4) << std::setfill('0')
             << std::uppercase << std::hex << std::this_thread::get_id();
@@ -24,7 +25,7 @@ void test_concurrency_thread_pool_03_01()
         std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
 
         Logger::log(std::cout, "###  > ", ss.str());
-        };
+    };
 
     ThreadPool pool{3};
 
@@ -61,8 +62,10 @@ public:
 };
 
 
-void test_concurrency_thread_pool_03_02()
+static void test_concurrency_thread_pool_03_02()
 {
+    using namespace ThreadPool_ArthurDwyer;
+
     ThreadPool pool;
 
     std::deque<std::future<int>> futures;
@@ -94,8 +97,10 @@ void test_concurrency_thread_pool_03_02()
 }
 
 
-void test_concurrency_thread_pool_03_03_Aus_Buch()
+static void test_concurrency_thread_pool_03_03_Aus_Buch()
 {
+    using namespace ThreadPool_ArthurDwyer;
+
     std::atomic<int> sum(0);
 
     ThreadPool tp(4);
@@ -119,7 +124,9 @@ void test_concurrency_thread_pool_03_03_Aus_Buch()
 
 void test_concurrency_thread_pool_03()
 {
-    test_concurrency_thread_pool_03_01();
+    //test_concurrency_thread_pool_03_01();
+    test_concurrency_thread_pool_03_02();
+    //test_concurrency_thread_pool_03_03_Aus_Buch();
 }
 // ===========================================================================
 // End-of-File

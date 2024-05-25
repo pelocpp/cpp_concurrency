@@ -7,7 +7,9 @@
 /*
  * Aus dem Buch "Concurrency in Action - 2nd Edition", Kapitel 9.2
  * 
- * A thread pool with waitable tasks
+ * Nachteil: Busy Polling
+ * 
+ * Vorteil:  Ergebnisse der Threads können mit std::future-Objekten abgeholt werden 
  *
  */
 
@@ -27,8 +29,12 @@ namespace ThreadPool_Simple_Improved
 {
     using namespace Concurrency_ThreadsafeQueue;
 
-    // using ThreadPoolFunction = std::packaged_task<void()>;
-    using ThreadPoolFunction = FunctionWrapper;
+    //using ThreadPoolFunction = std::packaged_task<void()>;
+    //using ThreadPoolFunction = FunctionWrapper;
+    using ThreadPoolFunction = PolymorphicObjectWrapper;
+
+    template<typename TFunc>
+    using TReturn = typename std::invoke_result<TFunc>::type;
 
     class ThreadPool
     {
@@ -42,18 +48,20 @@ namespace ThreadPool_Simple_Improved
         ThreadPool();
         ~ThreadPool();
 
-        template<typename TFunctionType>
-        std::future<typename std::invoke_result<TFunctionType>::type>
-        submit(TFunctionType&& f)
+        template<typename TFunc>
+        std::future<TReturn<TFunc>>
+        submit(TFunc&& func)
         {
-            typedef typename std::invoke_result<TFunctionType>::type result_type;
+            std::packaged_task<TReturn<TFunc>()> task{ std::move(func) };
 
-            std::packaged_task<result_type()> task{ std::move(f) };
+            std::future<TReturn<TFunc>> future{ task.get_future() };
 
-            std::future<result_type> future{ task.get_future() };
-
-            // Diese Zeile übersetzt nicht: // Type Erasure ... stimmt das ...
+            // Diese Zeile übersetzt nicht: Beachte Type Erasure !
             m_workQueue.push(std::move(task));
+
+            // ausführlich
+            //ThreadPoolFunction tmp{ std::move(task) };
+            //m_workQueue.push(std::move(tmp));
 
             return future;
         }

@@ -3,7 +3,6 @@
 // ===========================================================================
 
 #include "ThreadPool_02_Simple_Improved.h"
-// using namespace ThreadPool_Simple_Improved;
 
 #include <iostream>
 #include <iomanip>
@@ -15,15 +14,17 @@ static void test_concurrency_thread_pool_02_01()
 {
     using namespace ThreadPool_Simple_Improved;
 
-    auto callable = []() {
+    auto callable = [] () -> void
+    {
         std::stringstream ss;
+    
         ss << "Thread " << std::setw(4) << std::setfill('0')
             << std::uppercase << std::hex << std::this_thread::get_id();
 
         std::this_thread::sleep_for(std::chrono::milliseconds{ 100 });
 
         Logger::log(std::cout, "###  > ", ss.str());
-        };
+    };
 
     ThreadPool pool{};
 
@@ -54,9 +55,10 @@ static void test_concurrency_thread_pool_02_02()
 
     ThreadPool pool;
 
-    std::deque<std::future<int>> futures;
+    std::deque<std::future<int>> futures{};
 
-    for (int i = 0; i < 10; ++i) {
+    for (size_t i{}; i != 10; ++i) {
+
         std::future<int> f = pool.submit(callableFunc);
         // or
         // std::future<int> f = pool.submitXX(callableFunc);
@@ -64,7 +66,8 @@ static void test_concurrency_thread_pool_02_02()
     }
 
     // get the results
-    for (size_t i = 0; i != 10; i++) {
+    for (size_t i{}; i != 10; ++i) {
+
         std::future<int> future{ std::move(futures.front()) };
         futures.pop_front();
         int n{ future.get() };
@@ -78,7 +81,7 @@ static void test_concurrency_thread_pool_02_02()
 
 void test_concurrency_thread_pool_02()
 {
-    test_concurrency_thread_pool_02_01();
+    //test_concurrency_thread_pool_02_01();
     test_concurrency_thread_pool_02_02();
 }
 

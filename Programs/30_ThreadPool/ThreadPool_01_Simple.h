@@ -39,11 +39,11 @@ namespace ThreadPool_Simple
         ThreadPool();
         ~ThreadPool();
 
-        template<typename TFunctionType>
-        void submit(TFunctionType&& f)
+        template<typename TFunc>
+        void submit(TFunc&& func)
         {
             Logger::log(std::cout, "submitted function ...");
-            m_workQueue.push(f);
+            m_workQueue.push(std::function<void()> (func));
         }
 
     private:
