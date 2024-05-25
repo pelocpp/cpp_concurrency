@@ -41,7 +41,7 @@ Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Metho
 die diese Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
 
 Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang dieser Warteschlange und führt die Funktion aus.
-Nach Ausführung der Funktion entnimmt der Worker Thread die nächste Taks aus der Warteschlange
+Nach Ausführung der Funktion entnimmt der Worker Thread die nächste Task aus der Warteschlange
 oder er begibt sich in einen *Idle*-Zustand, wenn die Warteschlange leer ist.
 
 In der aktuellen Realisierung haben die Tasks in der Warteschlange alle den Rückgabetyp `void`,
@@ -105,7 +105,7 @@ Wenn sich keine Tasks in der Warteschlange befinden, ruft die Funktion `std::thi
 um zumindest eine kleine Pause einzulegen und einem anderen Thread die Möglichkeit zu geben,
 etwas Arbeit in die Warteschlange zu stellen, bevor er beim nächsten Mal wieder versucht, etwas zu entnehmen.
 
-Beachte, dass die Reihenfolge der Deklarationen der Instanzvariablen von Klasse `ThreadPool` wichtig ist:
+Beachten Sie, dass die Reihenfolge der Deklarationen der Instanzvariablen von Klasse `ThreadPool` wichtig ist:
 
 ```cpp
 01: class ThreadPool

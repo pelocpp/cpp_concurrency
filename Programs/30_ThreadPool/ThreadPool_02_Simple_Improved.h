@@ -5,14 +5,13 @@
 #pragma once
 
 /*
- * Aus Buch "Concurrency in Action - 2nd Edition", Kapitel 9.1
+ * Aus dem Buch "Concurrency in Action - 2nd Edition", Kapitel 9.2
  * 
- * Größter Nachteil: Busy Polling
+ * A thread pool with waitable tasks
  *
  */
 
 #include "../25_Threadsafe_Queue/ThreadsafeQueue.h"
-using namespace Concurrency_ThreadsafeQueue;
 
 #include "FunctionWrapper.h"
 #include "JoinThreads.h"
@@ -24,54 +23,45 @@ using namespace Concurrency_ThreadsafeQueue;
 #include <vector>
 #include <deque>
 
-namespace ThreadPool_Simple_Improved {
+namespace ThreadPool_Simple_Improved
+{
+    using namespace Concurrency_ThreadsafeQueue;
 
-    class ThreadPool
-    {
     // using ThreadPoolFunction = std::packaged_task<void()>;
     using ThreadPoolFunction = FunctionWrapper;
 
+    class ThreadPool
+    {
     private:
-        std::atomic_bool                        m_done;
-        ThreadsafeQueue<ThreadPoolFunction>     m_workQueue;
-        std::vector<std::thread>                m_threads;
-        JoinThreads                             m_joiner;
+        std::atomic_bool                     m_done;
+        ThreadsafeQueue<ThreadPoolFunction>  m_workQueue;
+        std::vector<std::thread>             m_threads;
+        JoinThreads                          m_joiner;
 
     public:
         ThreadPool();
         ~ThreadPool();
 
-        // TODO: Da könnte man auch eine Referenz übergeben ! Oder gleich eine Universal Referenz !!!
-        //template<typename FunctionType>
-        //void submit(FunctionType f)
-        //{
-        //    Logger::log(std::cout, "submitted function ...");
-        //    m_workQueue.push(std::function<void()>(f));
-        //}
-
-        template<typename FunctionType>
-        std::future<typename std::invoke_result<FunctionType>::type>
-        submit(FunctionType f)
+        template<typename TFunctionType>
+        std::future<typename std::invoke_result<TFunctionType>::type>
+        submit(TFunctionType&& f)
         {
-            typedef typename std::invoke_result<FunctionType>::type result_type;
+            typedef typename std::invoke_result<TFunctionType>::type result_type;
 
             std::packaged_task<result_type()> task{ std::move(f) };
 
-            std::future<result_type> res{ task.get_future() };
+            std::future<result_type> future{ task.get_future() };
 
-            // Diese Zeile übersetzt nicht:
+            // Diese Zeile übersetzt nicht: // Type Erasure ... stimmt das ...
             m_workQueue.push(std::move(task));
 
-            return res;
+            return future;
         }
 
     private:
         void worker_thread();
     };
 }
-
-
-
 
 // ===========================================================================
 // End-of-File

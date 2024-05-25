@@ -3,7 +3,7 @@
 // ===========================================================================
 
 #include "ThreadPool_01_Simple.h"
-using namespace ThreadPool_Simple;
+// using namespace ThreadPool_Simple;
 
 #include <iostream>
 #include <iomanip>
@@ -13,7 +13,10 @@ using namespace ThreadPool_Simple;
 
 void test_concurrency_thread_pool_01()
 {
-    auto callable = [] () {
+    using namespace ThreadPool_Simple;
+
+    auto callable = [] () 
+        {
         std::stringstream ss;
         ss << "Thread " << std::setw(4) << std::setfill('0')
             << std::uppercase << std::hex << std::this_thread::get_id();

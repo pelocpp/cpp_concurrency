@@ -5,63 +5,64 @@
 #include "../Logger/Logger.h"
 
 #include "ThreadPool_02_Simple_Improved.h"
-using namespace ThreadPool_Simple_Improved;
 
 #include <iostream>
 #include <thread>
 #include <future>
 
-ThreadPool::ThreadPool() : m_done{ false }, m_joiner{ m_threads }
+namespace ThreadPool_Simple_Improved
 {
-    const unsigned int count{ std::thread::hardware_concurrency() };
-
-    try
+    ThreadPool::ThreadPool() : m_done{ false }, m_joiner{ m_threads }
     {
-        for (unsigned i{}; i < count; ++i)
+        const unsigned int count{ std::thread::hardware_concurrency() };
+
+        try
         {
-            Logger::log(std::cout, "push_back of next worker_thread function ...");
-            std::thread t{ &ThreadPool::worker_thread, this };
-            m_threads.push_back(std::move(t));
+            for (unsigned i{}; i < count; ++i)
+            {
+                Logger::log(std::cout, "push_back of next worker_thread function ...");
+                std::thread t{ &ThreadPool::worker_thread, this };
+                m_threads.push_back(std::move(t));
+            }
         }
+        catch (...)
+        {
+            m_done = true;
+            throw;
+        }
+
+        Logger::log(std::cout, "Created pool with ", count, " threads.");
     }
-    catch (...)
+
+    ThreadPool::~ThreadPool()
     {
         m_done = true;
-        throw;
     }
 
-    Logger::log(std::cout, "Created pool with ", count, " threads.");
-}
-
-ThreadPool::~ThreadPool()
-{
-    m_done = true;
-}
-
-void ThreadPool::worker_thread()
-{
-    Logger::log(std::cout, "> worker_thread ...");
-
-    while (!m_done)
+    void ThreadPool::worker_thread()
     {
-        // std::function<void()> task{};
-        // FunctionWrapper task{};
-        ThreadPoolFunction task{};
+        Logger::log(std::cout, "> worker_thread ...");
 
-        if (m_workQueue.tryPop(task))
+        while (!m_done)
         {
-            task();
+             //std::function<void()> task{};
+            // FunctionWrapper task{};
+            ThreadPoolFunction task{};
+
+            if (m_workQueue.tryPop(task))
+            {
+                task();
+            }
+            else
+            {
+                Logger::log(std::cout, "std::this_thread::yield ...");
+                std::this_thread::yield();
+            }
         }
-        else
-        {
-            Logger::log(std::cout, "std::this_thread::yield ...");
-            std::this_thread::yield();
-        }
+
+        Logger::log(std::cout, "< worker_thread ...");
     }
-
-    Logger::log(std::cout, "< worker_thread ...");
 }
-
 
 // ===========================================================================
 // End-of-File

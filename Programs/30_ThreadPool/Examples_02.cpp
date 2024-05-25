@@ -3,7 +3,7 @@
 // ===========================================================================
 
 #include "ThreadPool_02_Simple_Improved.h"
-using namespace ThreadPool_Simple_Improved;
+// using namespace ThreadPool_Simple_Improved;
 
 #include <iostream>
 #include <iomanip>
@@ -11,8 +11,10 @@ using namespace ThreadPool_Simple_Improved;
 #include <thread>
 #include <chrono>
 
-void test_concurrency_thread_pool_02_01()
+static void test_concurrency_thread_pool_02_01()
 {
+    using namespace ThreadPool_Simple_Improved;
+
     auto callable = []() {
         std::stringstream ss;
         ss << "Thread " << std::setw(4) << std::setfill('0')
@@ -34,20 +36,22 @@ void test_concurrency_thread_pool_02_01()
     std::cin >> ch;
 }
 
-auto callable = []() -> int {
+auto callable = [] () -> int {
 
     std::cout << "callable\n";
     return 123;
-    };
+};
 
-int callableFunc() {
+static int callableFunc() {
 
     std::cout << "callableFunc\n";
     return 123;
 };
 
-void test_concurrency_thread_pool_02_02()
+static void test_concurrency_thread_pool_02_02()
 {
+    using namespace ThreadPool_Simple_Improved;
+
     ThreadPool pool;
 
     std::deque<std::future<int>> futures;
@@ -74,7 +78,7 @@ void test_concurrency_thread_pool_02_02()
 
 void test_concurrency_thread_pool_02()
 {
-   // test_concurrency_thread_pool_02_01();
+    test_concurrency_thread_pool_02_01();
     test_concurrency_thread_pool_02_02();
 }
 

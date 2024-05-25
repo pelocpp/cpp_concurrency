@@ -123,6 +123,4 @@ namespace ThreadPool_ArthurDwyer {
             return future;
         }
     };
-
 }
-

@@ -5,14 +5,13 @@
 #pragma once
 
 /*
- * Aus Buch "Concurrency in Action - 2nd Edition", Kapitel 9.1
+ * Aus dem Buch "Concurrency in Action - 2nd Edition", Kapitel 9.1
  * 
  * Größter Nachteil: Busy Polling
  *
  */
 
 #include "../25_Threadsafe_Queue/ThreadsafeQueue.h"
-using namespace Concurrency_ThreadsafeQueue;
 
 #include "JoinThreads.h"
 
@@ -20,29 +19,30 @@ using namespace Concurrency_ThreadsafeQueue;
 #include <functional>
 #include <thread>
 #include <vector>
+#include <future>
 
-namespace ThreadPool_Simple {
+namespace ThreadPool_Simple
+{
+    using namespace Concurrency_ThreadsafeQueue;
+
+    using ThreadPoolFunction = std::function<void()>;
 
     class ThreadPool
     {
     private:
-        std::atomic_bool                        m_done;
-        ThreadsafeQueue<std::function<void()>>  m_workQueue;
-        std::vector<std::thread>                m_threads;
-        JoinThreads                             m_joiner;
+        std::atomic_bool                     m_done;
+        ThreadsafeQueue<ThreadPoolFunction>  m_workQueue;
+        std::vector<std::thread>             m_threads;
+        JoinThreads                          m_joiner;
 
     public:
         ThreadPool();
         ~ThreadPool();
 
-        // TODO: Da könnte man auch eine Referenz übergeben ! Oder gleich eine Universal Referenz !!!
-        template<typename FunctionType>
-        void submit(FunctionType f)
+        template<typename TFunctionType>
+        void submit(TFunctionType&& f)
         {
             Logger::log(std::cout, "submitted function ...");
-            
-            // m_workQueue.push(std::function<void()>(f));
-            // Hmmm , wozu wird da der ganze Datentyp wiederholt:
             m_workQueue.push(f);
         }
 

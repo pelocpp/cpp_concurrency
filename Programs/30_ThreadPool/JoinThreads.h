@@ -11,6 +11,7 @@
 
 class JoinThreads
 {
+private:
     std::vector<std::thread>& m_threads;
 
 public:
@@ -22,7 +23,7 @@ public:
     {
         Logger::log (std::cout, "> ~JoinThreads ...");
 
-        for (size_t i{}; i < m_threads.size(); ++i)
+        for (size_t i{}; i != m_threads.size(); ++i)
         {
             if (m_threads[i].joinable())
                 m_threads[i].join();
