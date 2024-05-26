@@ -13,11 +13,9 @@ namespace ThreadPool_ArthurDwyer
 {
     ThreadPool::ThreadPool() : ThreadPool{ 5 } {}
 
-    ThreadPool::ThreadPool(size_t size) {
-
+    ThreadPool::ThreadPool(size_t size) : m_aborting{ false }
+    {
         Logger::log(std::cout, "Starting Thread Pool with ", size, " threads.");
-
-        m_state.m_aborting = false;
 
         for (size_t i{}; i != size; ++i) {
 
@@ -25,19 +23,16 @@ namespace ThreadPool_ArthurDwyer
         }
     }
 
-    ThreadPool::~ThreadPool() {
-        //if (std::lock_guard lk(m_state.m_mutex); true) {
-        //    m_state.m_aborting = true;
-        //}
-
+    ThreadPool::~ThreadPool() 
+    {
         {
-            std::lock_guard guard(m_state.m_mutex);
-            m_state.m_aborting = true;
+            std::lock_guard guard(m_mutex);
+            m_aborting = true;
         }
 
         m_condition.notify_all();
 
-        for (std::thread& t : m_threads) {
+        for (auto& t : m_threads) {
             t.join();
         }
 

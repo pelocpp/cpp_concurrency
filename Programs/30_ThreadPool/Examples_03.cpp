@@ -11,6 +11,7 @@
 #include <sstream>
 #include <thread>
 #include <chrono>
+#include <utility>
 
 namespace ThreadPool_ArthurDwyer
 {
@@ -163,19 +164,18 @@ namespace ThreadPool_ArthurDwyer
 
         std::vector<std::future<bool>> futures;
 
-
         size_t numThreads{ std::thread::hardware_concurrency() };
         ThreadPool pool{ numThreads };
 
         Logger::log(std::cout, "Enqueuing tasks");
 
-        //const size_t Start = 1000000000001;
+        const size_t Start = 1000000000001;
+        const size_t End = Start + 100000;
+
+        //const size_t Start = 1;
         //const size_t End = Start + 100;
 
-        const size_t Start = 1;
-        const size_t End = Start + 100;
-
-        for (size_t i = Start; i < End; i += 2) {
+        for (size_t i{ Start }; i < End; i += 2) {
 
             auto f = pool.async( [i] () {
                 return isPrime(i);
@@ -185,14 +185,73 @@ namespace ThreadPool_ArthurDwyer
             futures.push_back(std::move(f));
         }
 
+        Logger::log(std::cout, "Enqueuing tasks done.");
+
         //for (size_t i = Start; i < End; i += 2) {
         //    eventLoop.enqueueTask(primeTask, i);
         //}
 
+        for (auto& f : futures) {
 
+            bool b = f.get();
+            if (b) {
+                ++foundPrimeNumbers;
+            }
+        }
 
         Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
+        Logger::log(std::cout, "Done.");
+    }
 
+    static void test_concurrency_thread_pool_03_05_PrimeNUmbers()
+    {
+        Logger::log(std::cout, "Start:");
+
+        size_t foundPrimeNumbers{};
+
+        //EventLoop eventLoop;
+
+        std::vector<std::future<std::pair<bool, size_t>>> futures;
+
+        size_t numThreads{ std::thread::hardware_concurrency() };
+        ThreadPool pool{ numThreads };
+
+        Logger::log(std::cout, "Enqueuing tasks");
+
+        //const size_t Start = 1000000000001;
+        //const size_t End = Start + 100000;
+
+        const size_t Start = 1;
+        const size_t End = Start + 100;
+
+        for (size_t i{ Start }; i < End; i += 2) {
+
+            auto future = pool.async([i] () {
+
+                bool primeFound{ isPrime(i) };
+
+                if (primeFound) {
+
+                    Logger::log(std::cout, "> ", i, " IS prime.");
+                }
+
+                return std::make_pair(primeFound, i);
+            });
+
+            futures.push_back(std::move(future));
+        }
+
+        Logger::log(std::cout, "Enqueuing tasks done.");
+
+        for (auto& future : futures) {
+
+            const auto& [found, value] = future.get();
+            if (found) {
+                ++foundPrimeNumbers;
+            }
+        }
+
+        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
         Logger::log(std::cout, "Done.");
     }
 }
@@ -207,7 +266,8 @@ void test_concurrency_thread_pool_03()
     //test_concurrency_thread_pool_03_02();
     //test_concurrency_thread_pool_03_03_Aus_Buch();
 
-    test_concurrency_thread_pool_03_04_PrimeNUmbers();
+    // test_concurrency_thread_pool_03_04_PrimeNUmbers();
+    test_concurrency_thread_pool_03_05_PrimeNUmbers();
 }
 // ===========================================================================
 // End-of-File

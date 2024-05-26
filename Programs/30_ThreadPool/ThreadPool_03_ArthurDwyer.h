@@ -26,35 +26,35 @@ namespace ThreadPool_ArthurDwyer {
     class ThreadPool
     {
         //using UniqueFunction = std::packaged_task<void()>;
-        using UniqueFunction = FunctionWrapper;
+        using ThreadPoolFunction = FunctionWrapper;
 
-        // KLÄREN: Warum nicht  ThreadsafeQueue<function_wrapper> m_workQueue;
+        // KLÄREN: Warum nicht  ThreadsafeQueue<ThreadPoolFunction> m_workQueue;
 
-        struct
-        {
-            std::mutex                 m_mutex;
-            std::queue<UniqueFunction> m_workQueue;
-            bool                       m_aborting = false;  // TODO: Einheiltlich intialisieren ....
-        } 
-        m_state;
+        //struct
+        //{
+        std::mutex                        m_mutex;
+        std::queue<ThreadPoolFunction>    m_workQueue;
+        bool                              m_aborting;
+        //} 
+        //m_state;
 
-        std::vector<std::thread>       m_threads;
-        std::condition_variable        m_condition;
+        std::vector<std::thread>          m_threads;
+        std::condition_variable           m_condition;
 
     public:
         ThreadPool();
         ThreadPool(size_t size);
         ~ThreadPool();
 
-        void enqueue_task(UniqueFunction task)
+        void enqueue_task(ThreadPoolFunction task)
         {
             //if (std::lock_guard lk(m_state.m_mutex); true) {
             //    m_state.m_workQueue.push(std::move(task));
             //}
 
             {
-                std::lock_guard guard(m_state.m_mutex);
-                m_state.m_workQueue.push(std::move(task));
+                std::lock_guard guard(m_mutex);
+                m_workQueue.push(std::move(task));
             }
 
             m_condition.notify_one();
@@ -68,23 +68,23 @@ namespace ThreadPool_ArthurDwyer {
 
             while (true)
             {
-                std::unique_lock guard{ m_state.m_mutex };
+                std::unique_lock guard{ m_mutex };
 
-                while (m_state.m_workQueue.empty() && !m_state.m_aborting) {
+                while (m_workQueue.empty() && !m_aborting) {
                     m_condition.wait(guard);
                 }
 
-                if (m_state.m_aborting) {
+                if (m_aborting) {
                     break;
                 }
 
                 // Pop the next task, while still under the lock.
                 // was ist wenn empty ????????????????
-                assert(!m_state.m_workQueue.empty());
+                assert(!m_workQueue.empty());
 
-                UniqueFunction task = std::move(m_state.m_workQueue.front());
+                ThreadPoolFunction task{ std::move(m_workQueue.front()) };
 
-                m_state.m_workQueue.pop();
+                m_workQueue.pop();
 
                 guard.unlock();
 
@@ -101,6 +101,8 @@ namespace ThreadPool_ArthurDwyer {
         //template<typename FunctionType>
         //using result_type = typename std::invoke_result<FunctionType>::type;
 
+        // Die Submit Methode stammt aus dem 2. Beispiel
+
         template<typename FunctionType>
         std::future<typename std::invoke_result<FunctionType>::type>
             submit(FunctionType f)
@@ -113,7 +115,7 @@ namespace ThreadPool_ArthurDwyer {
             std::future<result_type> res(task.get_future());
 
             // DIESE ZEILE GEHT NICHT !!!!!!!!!!!!!!!!!!!!
-            m_state.m_workQueue.push(std::move(task));
+            m_workQueue.push(std::move(task));  // Hier wird implicit ein FunctionWrapper angelegt !!!
 
             return res;
         }
@@ -127,7 +129,7 @@ namespace ThreadPool_ArthurDwyer {
 
             std::future<ResultType> future = pt.get_future();
 
-            UniqueFunction task(
+            ThreadPoolFunction task(
                 [pt1 = std::move(pt)]() mutable { pt1(); }
             );
 
