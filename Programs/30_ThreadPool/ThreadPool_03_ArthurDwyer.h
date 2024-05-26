@@ -88,9 +88,7 @@ namespace ThreadPool_ArthurDwyer {
 
                 guard.unlock();
 
-                // Actually run the task. This might take a while.
-                task();
-                // When we're done with this task, go get another.
+                task();  // run the task without (!) holding the lock
             }
 
             Logger::log(std::cout, "Done [", tid, "]");
@@ -140,3 +138,6 @@ namespace ThreadPool_ArthurDwyer {
         }
     };
 }
+// ===========================================================================
+// End-of-File
+// ===========================================================================
