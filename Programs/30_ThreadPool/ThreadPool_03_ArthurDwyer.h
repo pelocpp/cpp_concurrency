@@ -43,7 +43,7 @@ namespace ThreadPool_ArthurDwyer {
 
     public:
         ThreadPool();
-        ThreadPool(int size);
+        ThreadPool(size_t size);
         ~ThreadPool();
 
         void enqueue_task(UniqueFunction task)
@@ -63,9 +63,12 @@ namespace ThreadPool_ArthurDwyer {
     private:
         void worker_loop() 
         {
+            std::thread::id tid{ std::this_thread::get_id() };
+            Logger::log(std::cout, "Started worker [", tid, "]");
+
             while (true)
             {
-                std::unique_lock guard(m_state.m_mutex);
+                std::unique_lock guard{ m_state.m_mutex };
 
                 while (m_state.m_workQueue.empty() && !m_state.m_aborting) {
                     m_condition.wait(guard);
@@ -76,6 +79,7 @@ namespace ThreadPool_ArthurDwyer {
                 }
 
                 // Pop the next task, while still under the lock.
+                // was ist wenn empty ????????????????
                 assert(!m_state.m_workQueue.empty());
 
                 UniqueFunction task = std::move(m_state.m_workQueue.front());
@@ -88,6 +92,8 @@ namespace ThreadPool_ArthurDwyer {
                 task();
                 // When we're done with this task, go get another.
             }
+
+            Logger::log(std::cout, "Done [", tid, "]");
         }
 
     public:

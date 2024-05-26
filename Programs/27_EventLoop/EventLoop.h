@@ -19,11 +19,11 @@ private:
     using Event = std::function<void()>;
 
 private:
-    std::vector<Event>      m_events;
-    std::mutex              m_mutex;
-    std::condition_variable m_condition;
-    std::jthread            m_thread;
-    bool                    m_running;
+    std::vector<Event>        m_events;
+    std::mutex                m_mutex;
+    std::condition_variable   m_condition;
+    std::jthread              m_thread;
+    bool                      m_running;
 
 public:
     // c'tor(s) / d'tor
@@ -51,11 +51,11 @@ public:
             std::lock_guard<std::mutex> guard(m_mutex);
 
             m_events.emplace_back([=]() mutable { 
-                std::forward<TFunc>(callable) (std::forward<TArgs>(args)...);
+                std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);
                 }
             );
 
-            // more simpler, but not perfect
+            // more simpler, but not "perfect"
             // m_events.emplace_back( [=] () mutable { callable (args ...); } );
         }
 

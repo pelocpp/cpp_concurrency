@@ -11,17 +11,17 @@
 
 namespace ThreadPool_ArthurDwyer
 {
-
-    //  Logger::log(std::cout, "Created pool with ", count, " threads.");
-
     ThreadPool::ThreadPool() : ThreadPool{ 5 } {}
 
-    ThreadPool::ThreadPool(int size) {
+    ThreadPool::ThreadPool(size_t size) {
+
+        Logger::log(std::cout, "Starting Thread Pool with ", size, " threads.");
 
         m_state.m_aborting = false;
 
         for (size_t i{}; i != size; ++i) {
-            m_threads.emplace_back([this]() { worker_loop(); });
+
+            m_threads.emplace_back(std::thread{ [this] () { worker_loop(); } });
         }
     }
 
@@ -40,8 +40,9 @@ namespace ThreadPool_ArthurDwyer
         for (std::thread& t : m_threads) {
             t.join();
         }
-    }
 
+        Logger::log(std::cout, "Thread Pool: Done.");
+    }
 }
 
 

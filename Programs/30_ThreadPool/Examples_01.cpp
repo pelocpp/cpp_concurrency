@@ -3,7 +3,6 @@
 // ===========================================================================
 
 #include "ThreadPool_01_Simple.h"
-// using namespace ThreadPool_Simple;
 
 #include <iostream>
 #include <iomanip>
