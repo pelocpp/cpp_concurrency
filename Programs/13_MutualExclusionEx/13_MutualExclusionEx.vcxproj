@@ -132,11 +132,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Examples.cpp" />
-    <ClCompile Include="Examples_LockingStrategies.cpp" />
+    <ClCompile Include="Advanced_Mutex.cpp" />
+    <ClCompile Include="Example_LockingStrategies.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Examples_ScopedLock.cpp" />
-    <ClCompile Include="Examples_RecursiveMutex.cpp" />
+    <ClCompile Include="Example_ScopedLock.cpp" />
+    <ClCompile Include="Example_RecursiveMutex.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

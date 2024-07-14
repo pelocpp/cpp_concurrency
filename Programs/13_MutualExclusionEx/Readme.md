@@ -43,7 +43,7 @@
 [Examples.cpp](Examples.cpp).<br />
 [Examples_LockingStrategies.cpp](Examples_LockingStrategies.cpp).<br />
 [Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).<br />
-[Examples_ScopedLock.cpp](Examples_ScopedLock.cpp).<br />
+[Examples_ScopedLock.cpp](Examples_ScopedLock.cpp).
 
 ---
 

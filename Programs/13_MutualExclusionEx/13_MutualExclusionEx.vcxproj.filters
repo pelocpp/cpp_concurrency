@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Examples.cpp">
+    <ClCompile Include="Advanced_Mutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Examples_LockingStrategies.cpp">
+    <ClCompile Include="Example_LockingStrategies.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Examples_RecursiveMutex.cpp">
+    <ClCompile Include="Example_RecursiveMutex.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Examples_ScopedLock.cpp">
+    <ClCompile Include="Example_ScopedLock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">

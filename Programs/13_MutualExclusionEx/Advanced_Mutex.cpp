@@ -11,7 +11,7 @@ namespace Mutex_And_Locking_Examples {
 
     // Global, shared mutex to be used by *all* code
     // and threads in all examples below
-    std::mutex g_mutex{};
+    static std::mutex g_mutex{};
 
     // -------------------------------------
     // std::mutex

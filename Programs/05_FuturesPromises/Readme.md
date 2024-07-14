@@ -1,10 +1,19 @@
-# Futures und Promises
+# Klassen `std::future` und `std::promise`
 
 [Zurück](../../Readme.md)
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Ein einfaches Beispiel](#link3)
+  * [Klasse `std::shared_future<>`](#link4)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -20,7 +29,15 @@
 
 ---
 
-## Allgemeines zu den Klassen `std::future`&ndash; und `std::promise`
+#### Quellcode
+
+[*Future_01.cpp*](Future_01.cpp).<br />
+[*Future_02.cpp*](Future_02.cpp).<br />
+[*Future_03.cpp*](Future_03.cpp).
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Das nachfolgende Diagramm skizziert den Ablauf eines Multithreading-Szenarios 
 mit `std::future`&ndash; und `std::promise`-Objekt:
@@ -39,21 +56,16 @@ Daran können mit Hilfe der `set_value`-Methode Resultate vom Thread zum Thread-E
 
 ---
 
-## Ein einfaches Beispiel
+## Ein einfaches Beispiel <a name="link3"></a>
 
 Ein einfaches Beispiel skizziert den Ablauf eines Multithreading-Szenarios mit `Future`- und `Promise`-Objekt.
 
 Beachten Sie dabei: Ein `Promise`-Objekt kann nicht *per value* an eine andere Funktion übergeben werden.
-Klassische Zeiger oder rvalue-Referenzen sind ein gangbarer Weg.
-
-
-#### Quellcode
-
-[*Future_01.cpp*](Future_01.cpp).
+Klassische Zeiger oder *RValue*-Referenzen sind ein gangbarer Weg.
 
 ---
 
-## Klasse `std::shared_future<>`
+## Klasse `std::shared_future<>` <a name="link4"></a>
 
 Ein `std::shared_future` Objekt dient dazu, mehrere Threads zurselben Zeit aufzuwecken (*signal*).
 
@@ -67,18 +79,6 @@ Bei der Zugriffsklausel der Lambda-Methoden beachte man:
 
   * Auf das `std::promise<void>` Objekt wird via Referenz zugegriffen.
   * Das `std::shared_future<int>` Objekt wird an das Lambda-Objekt als Kopie übergeben.
-
-
-#### Quellcode
-
-[*Future_02.cpp*](Future_02.cpp).
-
----
-
-#### Quellcode
-
-[*Einfaches Beispiel*](Future_01.cpp)<br />
-[*Beispiel zu* `std::shared_future`](Future_02.cpp)
 
 ---
 

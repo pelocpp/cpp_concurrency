@@ -4,7 +4,15 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Klasse `std::thread`, Methoden `join` und `detach`](#link3)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Thread-Klassen</ins>:
 
@@ -20,7 +28,15 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*SimpleThreading_01.cpp*: `std::thread` Basics](SimpleThreading_01.cpp)<br />
+[*SimpleThreading_02.cpp*: "*4 Ways to create a Thread*"](SimpleThreading_02.cpp)<br />
+[*SimpleThreading_03.cpp*: `std::thread` und `std::move`](SimpleThreading_03.cpp)<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Es werden an einfachen Beispielen Grundlagen des C++&ndash;Multithreadings betrachtet.
 
@@ -33,7 +49,7 @@ Ferner wird auf die 4 verschiedenen Möglichkeiten eingegangen, einen Thread zu e
 
 ---
 
-#### Klasse `std::thread`, Methoden `join` und `detach`
+## Klasse `std::thread`, Methoden `join` und `detach` <a name="link3"></a>
 
   * Ein Objekt der Klasse `std::thread` kann mit einem *Callable* und seinen Parametern instanziiert werden
     und beginnt sofort mit der Ausführung.
@@ -49,14 +65,6 @@ Der kritische Teil dieser Beobachtungen besteht darin,
 wenn das Objekt den Gültigkeitsbereich verlässt und zerstört wird.
 Zu diesem Zeitpunkt darf es **nicht im Zustand *joinable* sein**,
 andernfalls erfolgt ein Aufruf von `std::terminate()`!
-
----
-
-#### Quellcode
-
-[*SimpleThreading_01.cpp*: `std::thread` Basics](SimpleThreading_01.cpp)<br />
-[*SimpleThreading_02.cpp*: "*4 Ways to create a Thread*"](SimpleThreading_02.cpp)<br />
-[*SimpleThreading_03.cpp*: `std::thread` und `std::move`](SimpleThreading_03.cpp)<br />
 
 ---
 

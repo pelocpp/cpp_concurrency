@@ -4,7 +4,17 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Klassenschablonen `std::atomic<T>`](#link3)
+  * [Übersicht über vordefinierte Datentypen](#link4)
+  * [Auszug aus Buch *Einführung in Visual C#*](#link5)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -12,7 +22,13 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*IncrementDecrement.cpp*](IncrementDecrement.cpp).
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Aus *Wikipedia*:
 
@@ -25,7 +41,7 @@ Der Begriff wird vor allem in der Datenbanktheorie und auf bestimmte CPU-Befehle
 
 ---
 
-## Einführung
+## Klassenschablonen `std::atomic<T>` <a name="link3"></a>
 
 In C++ gibt es mehrere Klassenschablonen `std::atomic<T>`, mit deren Hilfe atomare Operationen
 realisiert werden können:
@@ -56,7 +72,7 @@ struct atomic<std::weak_ptr<U>>;
 
 ---
 
-## Übersicht über vordefinierte Datentypen
+## Übersicht über vordefinierte Datentypen <a name="link4"></a>
 
 
 Es gibt in der Datei `<atomic>` eine Reihe vordefinierter atomarer Datentypen,
@@ -81,15 +97,7 @@ Tabelle 1: Vordefinierte atomare Datentypen.
 
 ---
 
-#### Quellcode
-
-[*IncrementDecrement.cpp*](IncrementDecrement.cpp).
-
----
-
-[Zurück](../../Readme.md)
-
----
+## Auszug aus *Visual C#* <a name="link5"></a>
 
 In [Visual C#](https://amazon.de/Objektorientiertes-Programmieren-methodische-Einführung-Fortgeschrittene/dp/3866454066)
 gibt es eine ausführliche Beschreibung zum Thema *atomare Operationen*, das dort
@@ -98,9 +106,9 @@ Programmiersprachen übertragen, wie zum Beispiel C++.
 
 ---
 
-## Konkurrierender Zugriff auf Variablen
+### Konkurrierender Zugriff auf Variablen
 
-### Probleme des konkurrierenden Zugriffs auf eine Variable
+#### Probleme des konkurrierenden Zugriffs auf eine Variable
 
 Ein großer Vorteil von Threads liegt darin, dass sie Zugang zu allen Daten (Objekten) einer Anwendung haben.
 Dass der nebenläufige Zugriff mehrerer Threads auf gemeinsame Variablen auch mit Problemen verbunden sein kann,
