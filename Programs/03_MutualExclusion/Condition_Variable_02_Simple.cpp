@@ -1,5 +1,5 @@
 // ===========================================================================
-// Simple_Condition_Variable_02.cpp // Condition Variable
+// Condition_Variable_02_Simple.cpp // Condition Variable
 // ===========================================================================
 
 #include <iostream>

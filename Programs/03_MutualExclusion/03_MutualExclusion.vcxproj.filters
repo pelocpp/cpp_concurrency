@@ -7,13 +7,25 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simple_Condition_Variable_01.cpp">
+    <ClCompile Include="Condition_Variable_01_Simple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simple_Condition_Variable_02.cpp">
+    <ClCompile Include="Condition_Variable_02_Simple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simple_Mutex.cpp">
+    <ClCompile Include="Mutex_01_Simple.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Example_LockingStrategies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Example_RecursiveMutex.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Example_ScopedLock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mutex_02_Advanced.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

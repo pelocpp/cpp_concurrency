@@ -1,5 +1,5 @@
 // ===========================================================================
-// Mutual Exclusion Demonstration // Simple_Mutex.cpp
+// Mutual Exclusion Demonstration // Mutex_01_Simple.cpp
 // ===========================================================================
 
 #include <iostream>
