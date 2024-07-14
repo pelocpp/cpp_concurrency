@@ -8,25 +8,23 @@
 
 ### [3. Mutexe und Sperrmechanismen](Programs/03_MutualExclusion/Readme.md)
 
-### [4. Mutexe und Sperrmechanismen: Weiterführung](Programs/13_MutualExclusionEx/Readme.md)
+### [4. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
 
-### [5. Nochmals nebenläufige Ausführung: Funktion `std::async`](Programs/04_Async/Readme.md)
+### [5. Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
 
-### [6. Futures und Promises: Klassen `std::future` und `std::promise`](Programs/05_FuturesPromises/Readme.md)
+### [6. Funktionen verpacken: Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
 
-### [7. Funktionen verpacken: Klasse `std::packaged_task`](Programs/06_PackagedTask/Readme.md)
+### [7. Exception Handling](Programs/07_ExceptionHandling/Readme.md)
 
-### [8. Exception Handling](Programs/07_ExceptionHandling/Readme.md)
+### [8. STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
 
-### [9. STL und parallele Algorithmen](Programs/08_STL_ParallelAlgorithms/Readme.md)
+### [9. Nochmals nebenläufige Ausführung: Klasse `std::jthread`](Programs/10_JThread/Readme.md)
 
-### [10. Nochmals nebenläufige Ausführung: Klasse `std::jthread`](Programs/10_JThread/Readme.md)
+### [10. Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`](Programs/12_StopToken/Readme.md)
 
-### [11. Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`](Programs/12_StopToken/Readme.md)
+### [11. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
 
-### [12. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
-
-### [13. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Readme.md)
+### [12. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Readme.md)
 
 ---
 

@@ -6,39 +6,40 @@
 #include <thread>
 #include <chrono>
 #include <semaphore>
+#include <print>
 
 namespace ConcurrencyBinarySemaphore {
 
     class Worker
     {
     private:
-        std::binary_semaphore   m_semaphore;
+        std::binary_semaphore m_semaphore;
 
     public:
         Worker() : m_semaphore{ 0 } {}
 
         void scheduleJob() {
 
-            std::cout << "scheduleJob: Data preparing ...\n";
+            std::println("ScheduleJob: Data preparing ...");
 
             std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 
-            std::cout << "scheduleJob: Data prepared.\n";
+            std::println("ScheduleJob: Data prepared!");
 
             m_semaphore.release();
         }
 
         void executeJob() {
 
-            std::cout << "executeJob:  Waiting for data ...\n";
+            std::println("ExecuteJob:  Waiting for data ...");
 
             m_semaphore.acquire();
 
-            std::cout << "executeJob:  Executing job ...\n";
+            std::println("ExecuteJob:  Executing job ...");
 
             std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
-            std::cout << "executeJob:  Done.\n";
+            std::println("ExecuteJob:  Done.");
         }
     };
 }
