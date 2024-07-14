@@ -227,7 +227,7 @@ korrekt ausgeführt wird:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*ReaderWriterLock.cpp*](ReaderWriterLock.cpp).
 

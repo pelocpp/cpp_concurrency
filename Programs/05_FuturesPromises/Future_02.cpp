@@ -38,7 +38,7 @@ namespace PromisesAndFutures02 {
             Logger::log(std::cout, "Got result ", value);
             }));
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
         // fulfill the promise
         provider.set_value(123);
@@ -68,13 +68,13 @@ namespace PromisesAndFutures02 {
             Logger::log(std::cout, "Got result ", value);
         });
 
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
         // fulfill the promise
         provider.set_value(123);
 
         // watch output of "Done" on the console window
-        // std::this_thread::sleep_for(std::chrono::seconds(1));
+        // std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
         Logger::log(std::cout, "Done.");
     }
@@ -106,7 +106,7 @@ namespace PromisesAndFutures02 {
                 Logger::log(std::cout, "Got result ", value);
                 }));
 
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            std::this_thread::sleep_for(std::chrono::seconds{ 2 });
 
             // fulfill the promise
             provider.set_value(123);

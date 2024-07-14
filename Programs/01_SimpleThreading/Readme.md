@@ -52,7 +52,7 @@ andernfalls erfolgt ein Aufruf von `std::terminate()`!
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*SimpleThreading_01.cpp*: `std::thread` Basics](SimpleThreading_01.cpp)<br />
 [*SimpleThreading_02.cpp*: "*4 Ways to create a Thread*"](SimpleThreading_02.cpp)<br />

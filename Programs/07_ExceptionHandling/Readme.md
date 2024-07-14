@@ -27,7 +27,7 @@ an den Erzeugerthread propagiert werden:
   * Propagating Exception from `std::async` invocation
   * Propagating Exception from `std::thread` invocation
 
-#### Quellcode:
+#### Quellcode
 
 [*Exception.cpp*](Exception.cpp).
 

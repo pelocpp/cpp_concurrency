@@ -73,7 +73,7 @@ wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Daten
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
   * Elementare Demonstration des `std::mutex` Objekts:<br />
     Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.<br />

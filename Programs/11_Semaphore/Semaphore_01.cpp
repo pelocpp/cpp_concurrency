@@ -21,7 +21,7 @@ namespace ConcurrencyBinarySemaphore {
 
             std::cout << "scheduleJob: Data preparing ...\n";
 
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 
             std::cout << "scheduleJob: Data prepared.\n";
 
@@ -36,7 +36,7 @@ namespace ConcurrencyBinarySemaphore {
 
             std::cout << "executeJob:  Executing job ...\n";
 
-            std::this_thread::sleep_for(std::chrono::seconds(3));
+            std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
             std::cout << "executeJob:  Done.\n";
         }

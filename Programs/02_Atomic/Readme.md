@@ -81,7 +81,7 @@ Tabelle 1: Vordefinierte atomare Datentypen.
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*IncrementDecrement.cpp*](IncrementDecrement.cpp).
 

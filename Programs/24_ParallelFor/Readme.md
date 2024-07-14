@@ -33,7 +33,7 @@ aber es bereitet keine große Mühe, sie selber zu schreiben.
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*ParallelFor.h*](ParallelFor.h).
 [*ParallelFor.cpp*](ParallelFor.cpp).<br />

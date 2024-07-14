@@ -11,9 +11,9 @@
 
 namespace SimpleConditionVariableDemo01
 {
-    std::mutex mutex;
+    std::mutex mutex{};
 
-    std::condition_variable condition;
+    std::condition_variable condition{};
 
     bool data{ false };
 
@@ -24,9 +24,11 @@ namespace SimpleConditionVariableDemo01
         {
             std::unique_lock<std::mutex> guard{ mutex };
 
-            condition.wait(guard, []() {
-                Logger::log(std::cout, "  ... check for data being present ...");
-                return data == true;
+            condition.wait(
+                guard,
+                [] () {
+                    Logger::log(std::cout, "  ... check for data being present ...");
+                    return data == true;
                 }
             );
         }
@@ -44,7 +46,7 @@ namespace SimpleConditionVariableDemo01
         std::this_thread::sleep_for(std::chrono::milliseconds{ 5000 });
 
         {
-            std::lock_guard<std::mutex> guard (mutex);
+            std::lock_guard<std::mutex> guard{ mutex };
 
             data = true;
         }

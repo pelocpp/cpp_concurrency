@@ -52,8 +52,8 @@ namespace ConcurrencyCountingSemaphore {
 
                     std::cout.put(ch).flush();
 
-                    auto duration = std::chrono::milliseconds(300) * ((n % 3) + 1);
-                    std::this_thread::sleep_for(std::chrono::milliseconds(duration));
+                    auto duration = std::chrono::milliseconds{ 300 } *((n % 3) + 1);
+                    std::this_thread::sleep_for(std::chrono::milliseconds{ duration });
                 }
 
                 // remove thread from the set of enabled threads

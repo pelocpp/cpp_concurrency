@@ -4,7 +4,19 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Mutex-Klassen](#link3)
+  * [Hüllen-Klassen für Mutexobjekte](#link4)
+  * [Sperrstrategien (*Locking Strategies*)](#link5)
+  * [Weitere Beispiele](#link6)
+  * [Literaturhinweise](#link7)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Mutex-Klassen</ins>:
 
@@ -26,37 +38,45 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[Examples.cpp](Examples.cpp).<br />
+[Examples_LockingStrategies.cpp](Examples_LockingStrategies.cpp).<br />
+[Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).<br />
+[Examples_ScopedLock.cpp](Examples_ScopedLock.cpp).<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 *Concurrency* (Nebenläufigkeit, Parallelität) und *Synchronization* (Synchronisation)
 sind entscheidende Aspekte der Multithreading-Programmierung.
+
 In C++ stellt die Standardbibliothek mehrere Synchronisierungsprimitive bereit,
 wie etwa `std::mutex`, `std::lock_guard`, `std::unique_lock` usw.,
 die dazu beitragen, Thread-Sicherheit zu gewährleisten und *Data Races* zu verhindern,
 wenn mehrere Threads auf gemeinsam genutzte Ressourcen gleichzeitig zugreifen.
 
+---
 
-## Beteiligte Klassen und Objekte
+### Mutex-Klassen <a name="link3"></a>
 
-Das Verständnis der Unterschiede und Anwendungsfälle dieser Sperrmechanismen ist
-für das Schreiben effizienter und korrekter nebenläufiger Programme von entscheidender Bedeutung.
-Folgende Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
+Folgende Mutex-Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
 
-### Mutex-Klassen
-
-##### Klasse `std::mutex`
+### Klasse `std::mutex`
 
 Die Klasse `std::mutex` steht für *sperrbare Objekte*. Darunter versteht man Objekte, die zwei
 Methoden `lock` und `unlock` besitzen, die verhindern, dass kritische Codeabschnitte von anderen Threads
-zum selben Zeitpunkt ausgeführt werden können und auf dieselben Speicherorte wiederum zum selben Zeitpunkt
+zum selben Zeitpunkt durchlaufen werden können und auf dieselben Speicherorte zum selben Zeitpunkt
 zugegriffen werden kann.
 
-  * Mit einem `std::mutex`-Objekt kann man *Race Conditions* zwischen mehreren Threads verhindern, indem man den Zugriff auf eine gemeinsam genutzte Ressource explizit sperren (`lock`) und entsperren (`unlock`) kann.
+  * Mit einem `std::mutex`-Objekt kann man *Race Conditions* zwischen mehreren Threads verhindern,
+    indem man den Zugriff auf eine gemeinsam genutzte Ressource explizit sperrt (`lock`) und entsperrt (`unlock`).
   * *Nachteil*: Kommt es &ndash; aus welchen Gründen auch immer &ndash; nicht zum Aufruf von `unlock` nach einem `lock`-Aufruf,
     gerät die Programmausführung in den Zustand &bdquo;UB&rdquo; (*Undefined Behaviour*).
 
 
-##### Klasse `std::recursive_mutex`
+### Klasse `std::recursive_mutex`
 
 Die `std::recursive_mutex`-Klasse ist eine Variante der `std::mutex`-Klasse,
 die es einem Thread ermöglicht, mehrere Sperren zu halten.
@@ -66,21 +86,23 @@ Ein Anwendungsfall für die `std::recursive_mutex`-Klasse wird in dem Entwurfsmus
 [Strategisches Locking (Strategized Locking)](../../Programs/22_StrategizedLocking/Readme.md)
 aufgezeigt.
 
-Die Klasse `std::recursive_mutex` ist dann erforderlich, wenn Sie zum einen
+Der Einsatz der Klasse `std::recursive_mutex` ist dann erforderlich, wenn Sie zum einen
 threadsichere Datenstrukturen entwerfen und zum anderen die Methoden der
 öffentlichen Schnittstelle von unterschiedlichen Ebenen aus aufrufen,
 um auf die kritischen Abschnitte bzw. Daten der Datenstruktur zuzugreifen.
 
-##### Klasse `std::shared_mutex`
+### Klasse `std::shared_mutex`
 
 In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
 und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
 Weitere Informationen siehe [hier](#klasse-stdshared_lock).
 
-### Hüllen-Klassen für Mutexobjekte
+---
 
-##### Klasse `std::lock_guard`
+## Hüllen-Klassen für Mutexobjekte <a name="link4"></a>
+
+### Klasse `std::lock_guard`
 
 Leichtgewichtige Realisierung (*lightweight implementation*) eines einfachen Sperrmechanismus.
 Bietet exklusiven Besitz eines `std::mutex`-Objekts für einen begrenzten Zeitraum (&bdquo;Scope&rdquo;, Block, Bereich).
@@ -93,7 +115,7 @@ Bietet exklusiven Besitz eines `std::mutex`-Objekts für einen begrenzten Zeitrau
   * Ideal für einfache, kurzzeitige Sperren, die eine automatische Freigabe beim Verlassen des Blocks gewährleisten.
 
 
-##### Klasse `std::unique_lock`
+### Klasse `std::unique_lock`
 
 Die Klasse `std::unique_lock` bietet einen vielseitigen Sperrmechanismus
 mit einer umfangreicheren Funktionalität als Klasse `std::lock_guard`.
@@ -106,6 +128,8 @@ mit einer umfangreicheren Funktionalität als Klasse `std::lock_guard`.
   * Unterstützt Verschiebe-Semantik.
   * Unterstützt zeitgesteuertes Sperren sowie Bedingungsvariablen (`std::condition_variable`).
 
+
+### Klasse `std::condition_variable`
 
 Wir gehen noch auf die Klasse `std::condition_variable` ein:
 
@@ -124,7 +148,7 @@ Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes 
   * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und damit abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
 
 
-##### Klasse `std::scoped_lock`
+### Klasse `std::scoped_lock`
 
 Die Klasse `std::scoped_lock` realisiert einen sehr einfachen Mechanismus für sperrbare Objekte,
 ähnlich zur Klasse `std::lock_guard`, aber mit dem Unterschied, dass `std::scoped_lock`
@@ -136,7 +160,7 @@ für mehrere Mutexobjekte gleichzeitig verwendet werden kann!
   * Bei der Zerstörung (Verlassen des Gültigkeitsbereichs) entsperrt ein `std::scoped_lock`-Objekt automatisch alle Mutexobjekte.
 
 
-##### Klasse `std::shared_lock`
+### Klasse `std::shared_lock`
 
 In C++ kann man mit den beiden Klassen `std::shared_mutex` und `std::shared_lock` ein Synchronisationsprimitiv umsetzen,
 das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeitig zum Lesen zu nutzen
@@ -154,7 +178,9 @@ Eine genauere Beschreibung der beiden Klassen `std::shared_mutex` und `std::shar
 [Reader-Writer Lock](../../Programs/23_ReaderWriterLock/Readme.md)
 aufgezeigt.
 
-### Sperrstrategien (*Locking Strategies*)
+---
+
+## Sperrstrategien (*Locking Strategies*) <a name="link5"></a>
 
 In manchen Situationen muss ein Thread zwei Sperren gleichzeitig halten
 und diese nach dem Zugriff auf die gemeinsam genutzten Daten freigeben.
@@ -162,7 +188,7 @@ Wenn ein Thread mehr als eine Sperre hat, besteht die Gefahr eines Deadlocks.
 Um dies zu vermeiden, gibt es mehrere Strategien in C++:
 
 
-##### Strategie `std::adopt_lock`
+### Strategie `std::adopt_lock`
 
 Die Strategie `std::adopt_lock` geht davon aus, dass der aufrufende Thread die Sperre bereits besitzt.
 Ein Mutex-Hüllenobjekt sollte den Besitz des Mutex übernehmen und ihn freigeben,
@@ -175,7 +201,7 @@ wenn die Kontrolle den Gültigkeitsbereich verlässt.
 04: std::lock_guard<std::mutex> lock2(g_mutex2, std::adopt_lock);
 ```
 
-##### Strategie `std::defer_lock`
+### Strategie `std::defer_lock`
 
 Die Strategie `std::defer_lock` erwirbt *nicht* den Besitz des Mutex und geht davon aus,
 dass der aufrufende Thread `lock` aufrufen wird,
@@ -189,16 +215,16 @@ Das Mutex-Hüllenobjekt gibt die Sperre frei, wenn die Kontrolle den Gültigkeitsb
 04: std::lock(lock1, lock2);
 ```
 
-##### Unterschiede im Gebrauch von `std::lock_guard` und `std::unique_lock`
+### Unterschiede im Gebrauch von `std::lock_guard` und `std::unique_lock`
 
   * `std::lock_guard` mit der Strategie `std::adopt_lock` geht davon aus, dass der Mutex bereits erworben wurde.
   * `std::unique_lock` mit der `std::defer_lock`-Strategie geht davon aus, dass der Mutex nicht bei der Konstruktion erfasst wird, sondern explizit gesperrt wird.
 
 ---
 
-## Weitere Beispiele
+## Weitere Beispiele <a name="link6"></a>
 
-##### Beispiel zur Klasse `std::scoped_lock`
+### Beispiel zur Klasse `std::scoped_lock`
 
 Wir betrachten in diesem Beispiel ein Würfelspiel. Es sind 10 Spieler beteiligt.
 Jeder Spieler würfelt gegen alle anderen Spieler, und dies erfolgt pro Spieler in einem separaten Thread.
@@ -389,7 +415,7 @@ Player5:        31 points.
 Player2:        19 points.
 ```
 
-##### Beispiel zur Klasse `std::recursive_mutex`
+### Beispiel zur Klasse `std::recursive_mutex`
 
 Betrachten Sie das folgende Beispiel genau:
 
@@ -513,16 +539,7 @@ Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
 
 ---
 
-##### Quellcode:
-
-[Examples.cpp](Examples.cpp).<br />
-[Examples_LockingStrategies.cpp](Examples_LockingStrategies.cpp).<br />
-[Examples_RecursiveMutex.cpp](Examples_RecursiveMutex.cpp).<br />
-[Examples_ScopedLock.cpp](Examples_ScopedLock.cpp).<br />
-
----
-
-## Literaturhinweise
+## Literaturhinweise <a name="link7"></a>
 
 Die Anregungen zur Klasse stammen im Wesentlichen aus dem Aufsatz
 

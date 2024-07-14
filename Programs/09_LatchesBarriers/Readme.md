@@ -305,7 +305,7 @@ beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 Eine Beschreibung der Beispiele folgt weiter unten:
 

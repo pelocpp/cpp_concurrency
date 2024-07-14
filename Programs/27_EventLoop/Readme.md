@@ -247,7 +247,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*EventLoop.h*](./EventLoop.h)<br />
 [*EventLoop.cpp*](./EventLoop.cpp)<br />

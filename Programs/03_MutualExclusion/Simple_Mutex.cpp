@@ -13,7 +13,8 @@ namespace SimpleMutexDemo
     {
     private:
         const size_t NumIterations{ 100000 };
-        int m_id;
+
+        int m_id{};
 
         static std::mutex s_mutex;
 

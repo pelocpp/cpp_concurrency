@@ -146,7 +146,7 @@ wie wir an folgendem Vergleichsbeispiel betrachten können:
 Result: 123
 ```
 
-#### Quellcode:
+#### Quellcode
 
 [*PackagedTask_01.cpp*](PackagedTask_01.cpp).
 
@@ -168,7 +168,7 @@ Studieren Sie im Quellcode die entsprechenden Abschnitte,
 wo eine *Task* entweder synchron oder asynchron abgearbeitet wird.
 
 
-#### Quellcode:
+#### Quellcode
 
 [*PackagedTask_02.cpp*](PackagedTask_02.cpp).
 

@@ -200,7 +200,7 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*ILock.h*](ILock.h).<br />
 [*StrategizedLock.h*](StrategizedLock.h).<br />

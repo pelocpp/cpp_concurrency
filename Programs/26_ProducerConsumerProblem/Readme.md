@@ -88,7 +88,7 @@ Erzeuger-Verbraucher Problems vor:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*Erzeuger-Verbraucher-Problem mit Bedingungsvariablen*](BlockingQueue.h).<br />
 [*Erzeuger-Verbraucher-Problem mit Semaphoren*](BlockingQueueEx.h).<br />

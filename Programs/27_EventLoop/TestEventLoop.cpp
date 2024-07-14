@@ -49,7 +49,7 @@ static void function ()
 {
     std::thread::id tid{ std::this_thread::get_id() };
     Logger::log(std::cout, "Function starting: TID: ", tid);
-    std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+    std::this_thread::sleep_for(std::chrono::milliseconds{ 1500 });
     Logger::log(std::cout, "Function done.");
 }
 
@@ -88,7 +88,7 @@ static void test_event_loop_04()
         eventLoop.enqueue([](){
             std::thread::id tid{ std::this_thread::get_id() };
             Logger::log(std::cout, "Worker starting: TID: ", tid);
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
+            std::this_thread::sleep_for(std::chrono::milliseconds{ 1500 });
             Logger::log(std::cout, "Worker done."); 
         });
     }

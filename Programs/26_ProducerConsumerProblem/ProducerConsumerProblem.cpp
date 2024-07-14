@@ -89,7 +89,7 @@ public:
         while (true) {
 
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(SleepTimeConsumer)
+                std::chrono::milliseconds{ SleepTimeConsumer }
             );
 
             int value;
@@ -118,7 +118,7 @@ public:
         while (true) {
 
             std::this_thread::sleep_for(
-                std::chrono::milliseconds(SleepTimeProducer)
+                std::chrono::milliseconds{ SleepTimeProducer }
             );
 
             nextNumber++;

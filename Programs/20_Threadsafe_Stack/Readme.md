@@ -321,7 +321,7 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 
 [*ThreadsafeStack.h*](ThreadsafeStack.h).<br />

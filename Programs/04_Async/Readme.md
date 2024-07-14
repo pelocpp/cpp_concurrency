@@ -31,7 +31,7 @@ Die `std::async`-Methode besitzt im Wesentlichen drei Überladungen:
   * `std::async` mit aufrufbarem Objekt.
   * `std::async` mit Lambda-Objekt.
 
-#### Quellcode:
+#### Quellcode
 
 [*Async_01.cpp*](Async_01.cpp).
 
@@ -79,7 +79,7 @@ asyncLazy evaluated after : 4.00645 seconds.
 asyncEager evaluated after: 0.0006665 seconds.
 ```
 
-#### Quellcode:
+#### Quellcode
 
 [*Async_02.cpp*](Async_02.cpp).
 
@@ -152,13 +152,13 @@ fib(40): 102334155
 Elapsed time in milliseconds = 5655 [milliseconds]
 ```
 
-#### Quellcode:
+#### Quellcode
 
 [*Async_03.cpp*](Async_03.cpp).
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [Einfache Beispiele zu `std::async`](Async_01.cpp)<br />
 [Unterschiedliche *Launch Policies*](Async_02.cpp)<br />

@@ -378,7 +378,7 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*ThreadsafeQueue.h*](ThreadsafeQueue.h).<br />
 [*Examples.cpp*](Examples.cpp).<br />

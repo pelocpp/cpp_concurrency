@@ -47,7 +47,7 @@ Beachten Sie dabei: Ein `Promise`-Objekt kann nicht *per value* an eine andere F
 Klassische Zeiger oder rvalue-Referenzen sind ein gangbarer Weg.
 
 
-#### Quellcode:
+#### Quellcode
 
 [*Future_01.cpp*](Future_01.cpp).
 
@@ -69,13 +69,13 @@ Bei der Zugriffsklausel der Lambda-Methoden beachte man:
   * Das `std::shared_future<int>` Objekt wird an das Lambda-Objekt als Kopie übergeben.
 
 
-#### Quellcode:
+#### Quellcode
 
 [*Future_02.cpp*](Future_02.cpp).
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*Einfaches Beispiel*](Future_01.cpp)<br />
 [*Beispiel zu* `std::shared_future`](Future_02.cpp)

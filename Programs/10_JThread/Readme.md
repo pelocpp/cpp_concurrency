@@ -77,7 +77,7 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
      
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*JThread_01.cpp*: `std::jthread`-Objekt und `join()`-Aufruf](JThread_01.cpp).<br />
 [*JThread_02.cpp*: Kooperative Unterbrechung eines Threads](JThread_02.cpp).<br />

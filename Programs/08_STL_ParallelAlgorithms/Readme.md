@@ -51,7 +51,7 @@ Damit kann man den Sachverhalt einfacher formulieren:
 
 ---
 
-#### Quellcode:
+#### Quellcode
 
 [*STL_ParallelAlgorithms.cpp*](STL_ParallelAlgorithms.cpp).
 

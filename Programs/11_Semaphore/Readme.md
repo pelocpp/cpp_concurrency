@@ -186,7 +186,7 @@ FGKBJKIJHFGKJKLIMFGKMHKIMFGKLMKIMHFGKMKLIMMHIMLMHLHLLLLL
 ---
 
 
-#### Quellcode:
+#### Quellcode
 
 [*Teil 1*: Einfaches Beispiel](Semaphore_01.cpp).<br />
 [*Teil 2*: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
