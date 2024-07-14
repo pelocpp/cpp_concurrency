@@ -47,6 +47,24 @@
 
 ---
 
+#### Quellcode
+
+  * Elementare Demonstration des `std::mutex` Objekts:<br />
+    Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.<br />
+    [*Simple_Mutex.cpp*](Simple_Mutex.cpp).
+
+  * Elementare Demonstration des `std::condition_variable` Objekts:<br />
+    [*Simple_Condition_Variable_01.cpp*](Simple_Condition_Variable_01.cpp).
+    [*Simple_Condition_Variable_02.cpp*](Simple_Condition_Variable_02.cpp).
+   
+  * Demonstration des klassischen Konsumenten/Verbraucher-Problems:<br />
+    [Beispiel einer Klasse `ConsumerProducerOne::ConsumerProducer`](Producer_Consumer_01.cpp).<br />
+    [Beispiel einer Klasse `ConsumerProducerTwo::ConsumerProducer`](Producer_Consumer_02.cpp).<br />
+    [Beispiel einer Klasse `ConsumerProducerThree::ConsumerProducer`](Producer_Consumer_03.cpp).<br />
+
+
+---
+
 ## Allgemeines <a name="link2"></a>
 
 *Concurrency* (Nebenläufigkeit, Parallelität) und *Synchronization* (Synchronisation)
@@ -59,7 +77,76 @@ wenn mehrere Threads auf gemeinsam genutzte Ressourcen gleichzeitig zugreifen.
 
 ---
 
-### Mutex-Klassen <a name="link3"></a>
+## Der gegenseitige Ausschluss (engl. *Mutual Exclusion*) <a name="link3"></a>
+
+Aus *Wikipedia*:
+
+"Der Begriff "**gegenseitiger Ausschluss**" bzw. *Mutex* (Abk. für engl. *Mutual Exclusion*) bezeichnet eine Gruppe von Verfahren,
+mit denen das Problem des kritischen Abschnitts gelöst wird.
+Mutex-Verfahren verhindern, dass nebenläufige Prozesse bzw. Threads gleichzeitig oder zeitlich verschränkt
+gemeinsam genutzte Datenstrukturen unkoordiniert verändern, wodurch die Datenstrukturen in einen inkonsistenten Zustand geraten können,
+auch wenn die Aktionen jedes einzelnen Prozesses oder Threads für sich betrachtet konsistenzerhaltend sind.
+
+Mutex-Verfahren koordinieren den zeitlichen Ablauf nebenläufiger Prozesse/Threads derart,
+dass andere Prozesse/Threads von der Ausführung kritischer Abschnitte ausgeschlossen sind,
+wenn sich bereits ein Prozess/Thread im kritischen Abschnitt befindet (die Datenstruktur verändert)."
+
+
+---
+
+## Das Monitor-Konzept von Djikstra:
+
+<img src="Dijkstra_2.png" width="150">
+
+*Abbildung* 1: Edsger W. Dijkstra, 2002.
+
+<img src="Monitor_01.png" width="600">
+
+*Abbildung* 2: Anschauliche Darstellung eines Monitors: Ein Gebäude mit drei Räumen, in dem sich beliebig viele Threads nach bestimmten Spielregeln bewegen dürfen..
+
+<img src="Monitor_02.png" width="600">
+
+*Abbildung* 3: Erste Veranschaulichung eines Monitors: Aspekt des gegenseitigen Ausschlusses.
+
+<img src="Monitor_03.png" width="600">
+
+*Abbildung* 4: Zweite, vollständige Veranschaulichung eines Monitors: Aspekt der Koordination von Threads.
+
+---
+
+**Beachte**:
+
+Siehe das Thema
+
+[Do I have to acquire lock before calling std::condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
+
+---
+
+**Beachte**:
+
+Die Funktionsweise der Methode `wait` der Klasse `std::condition_variable` ist wie folgt definiert:
+
+*Definition* von `wait`:
+
+```cpp
+template< class Predicate >
+void wait(std::unique_lock<std::mutex>& lock, Predicate pred);
+```
+
+*Ablauf*:
+
+```cpp
+while (!pred()) {
+    wait(lock);
+}
+```
+
+Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
+
+
+---
+
+## Mutex-Klassen <a name="link3"></a>
 
 Folgende Mutex-Klassen werden hierzu von der C++&ndash;Standardbibliothek bereitgestellt:
 
