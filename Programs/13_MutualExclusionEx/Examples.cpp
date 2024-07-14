@@ -10,13 +10,15 @@
 namespace Mutex_And_Locking_Examples {
 
     // Global, shared mutex to be used by *all* code
-    //  and threads in all examples below
+    // and threads in all examples below
     std::mutex g_mutex{};
 
     // -------------------------------------
     // std::mutex
 
     static void example_01() {
+
+        // ...
 
         g_mutex.lock();
         // critical section here
@@ -35,7 +37,7 @@ namespace Mutex_And_Locking_Examples {
             // 'g_mutex.lock()' is automatically called here
             // at the construction of the 'std::lock_guard'
 
-            std::lock_guard<std::mutex> lock{ g_mutex };
+            std::lock_guard<std::mutex> guard{ g_mutex };
 
             // critical section here
             // ...
@@ -48,7 +50,7 @@ namespace Mutex_And_Locking_Examples {
     }
 
     // -------------------------------------
-    // std::mutex
+    // std::unique_lock
 
     static void example_03_01() {
 
@@ -57,7 +59,7 @@ namespace Mutex_And_Locking_Examples {
             // 'g_mutex.lock()' is automatically called here
             // at the construction of the 'std::unique_lock'
 
-            std::unique_lock<std::mutex> lock{ g_mutex };
+            std::unique_lock<std::mutex> guard{ g_mutex };
 
             // critical section here
             // ...
@@ -74,20 +76,20 @@ namespace Mutex_And_Locking_Examples {
             // 'g_mutex.lock()' is automatically called here
             // at the construction of the 'std::unique_lock'
 
-            std::unique_lock<std::mutex> lock{ g_mutex };
+            std::unique_lock<std::mutex> guard{ g_mutex };
             // first critical section here
             // ...
 
-            lock.unlock();
+            guard.unlock();
             // do non-critical stuff here
             // ...
 
-            lock.lock();
+            guard.lock();
             // second critical section here
             // ...
 
-            lock.unlock();
-            // do non-critical stuff here
+            guard.unlock();
+            // do non-critical stuff again here
             // ...
             
             // 'g_mutex.unlock()' is automatically called here
@@ -102,15 +104,15 @@ namespace Mutex_And_Locking_Examples {
             // 'g_mutex.lock()' is NOT automatically called here
             // at the construction of the 'std::unique_lock'
 
-            std::unique_lock<std::mutex> lock{ g_mutex, std::defer_lock };
+            std::unique_lock<std::mutex> guard{ g_mutex, std::defer_lock };
             // do non-critical stuff here
             // ...
 
-            lock.lock();
+            guard.lock();
             // critical section here
             // ...
 
-            lock.unlock();
+            guard.unlock();
             // do non-critical stuff here
             // ...
 
@@ -148,7 +150,7 @@ namespace Mutex_And_Locking_Examples {
         // via a shared memory object.
         // ------------------------------------------
         {
-            std::unique_lock<std::mutex> lock{ g_mutex };
+            std::unique_lock<std::mutex> guard{ g_mutex };
 
             // critical section here:
             // have unique access via the underlying mutex to
@@ -160,7 +162,7 @@ namespace Mutex_And_Locking_Examples {
             // Now, immediately unlock the mutex since we are done with the critical
             // section, and notify a consumer thread **which is already waiting on 
             // the condition variable** to get it to wake up and run.
-            lock.unlock();
+            guard.unlock();
 
             cv.notify_one(); // wake up just one waiting, consumer thread
         }
@@ -173,11 +175,12 @@ namespace Mutex_And_Locking_Examples {
         // ------------------------------------------
 
         {
-            std::unique_lock<std::mutex> lock{ g_mutex };
+            std::unique_lock<std::mutex> guard{ g_mutex };
 
             // called here at construction 
-            cv.wait(lock, []() {
-                return sharedData.m_newDataAvailable;
+            cv.wait(guard,
+                []() {
+                    return sharedData.m_newDataAvailable;
                 }
             );
 
@@ -188,7 +191,7 @@ namespace Mutex_And_Locking_Examples {
             
             Data sharedDataCopy{ sharedData };      // quickly copy out the shared data
 
-            lock.unlock();
+            guard.unlock();
 
             std::cout 
                 << "Shared Data Copy: i1 = " << sharedDataCopy.m_value1 
@@ -210,7 +213,7 @@ namespace Mutex_And_Locking_Examples {
             // 'lock()' is automatically simultaneously called
             // on all mutexes here at the construction
             // of the 'std::scoped_lock'
-            std::scoped_lock lock{ g_mutex1, g_mutex2, g_mutex3 };
+            std::scoped_lock guard{ g_mutex1, g_mutex2, g_mutex3 };
 
             // critical section here
             // ...

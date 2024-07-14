@@ -16,19 +16,19 @@ namespace Recursive_Mutex_Example
     class NonRecursive
     {
     private:
-        std::mutex m_mutex;
-        std::unique_ptr<int[]> m_data;
-        size_t m_size;
-        size_t m_capacity;
+        std::mutex                m_mutex;
+        std::unique_ptr<size_t[]> m_data;
+        size_t                    m_size;
+        size_t                    m_capacity;
 
     public:
         NonRecursive() : m_size{}, m_capacity{} {}
 
-        void push_back(int value) {
+        void push_back(size_t value) {
 
             std::unique_lock lock{ m_mutex };
 
-            // We already hold m_mutex, so we couldn't call reserve()
+            // we already hold 'm_mutex', so we cannot call reserve()
 
             if (m_size == m_capacity) {
                 allocate(m_capacity == 0 ? BucketSize : m_capacity * 2);
@@ -40,6 +40,7 @@ namespace Recursive_Mutex_Example
         void reserve(size_t capacity) {
 
             std::unique_lock lock{ m_mutex };
+
             allocate(capacity);
         }
 
@@ -59,7 +60,7 @@ namespace Recursive_Mutex_Example
 
             std::cout << "allocating " << capacity << std::endl;
 
-            std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
+            std::unique_ptr<size_t[]> data{ std::make_unique<size_t[]>(capacity) };
 
             size_t newSize{ std::min(m_size, capacity) };
 
@@ -78,17 +79,17 @@ namespace Recursive_Mutex_Example
     class Recursive
     {
     private:
-        std::recursive_mutex m_mutex;
-        std::unique_ptr<int[]> m_data;
-        size_t m_size;
-        size_t m_capacity;
+        std::recursive_mutex      recursive_mutex;
+        std::unique_ptr<size_t[]> m_data;
+        size_t                    m_size;
+        size_t                    m_capacity;
 
     public:
         Recursive() : m_size{}, m_capacity{} {}
 
-        void push_back(int value) {
+        void push_back(size_t value) {
 
-            std::unique_lock lock{ m_mutex };
+            std::unique_lock lock{ recursive_mutex };
 
             // holding a recursive mutex multiple times is fine
 
@@ -101,11 +102,11 @@ namespace Recursive_Mutex_Example
 
         void reserve(size_t capacity) {
 
-            std::unique_lock lock{ m_mutex };
+            std::unique_lock lock{ recursive_mutex };
 
             std::cout << "allocating " << capacity << std::endl;
 
-            std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
+            std::unique_ptr<size_t[]> data{ std::make_unique<size_t[]>(capacity) };
 
             size_t newSize{ std::min(m_size, capacity) };
 
@@ -122,7 +123,7 @@ namespace Recursive_Mutex_Example
 
         void print() {
 
-            std::unique_lock lock{ m_mutex };
+            std::unique_lock lock{ recursive_mutex };
 
             for (size_t i{}; i != m_size; ++i) {
                 std::cout << m_data[i] << ' ';
@@ -132,12 +133,12 @@ namespace Recursive_Mutex_Example
     };
 }
 
-void examples_recursive_mutex()
+void example_recursive_mutex()
 {
     using namespace Recursive_Mutex_Example;
 
     NonRecursive non{};
-    for (int i{}; i != 18; i++) {
+    for (size_t i{}; i != 18; i++) {
         non.push_back(i+1);
     }
     non.print();
@@ -145,7 +146,7 @@ void examples_recursive_mutex()
     non.print();
  
     Recursive rec{};
-    for (int i{}; i != 18; i++) {
+    for (size_t i{}; i != 18; i++) {
         rec.push_back(100 + i+1);
     }
     rec.print();

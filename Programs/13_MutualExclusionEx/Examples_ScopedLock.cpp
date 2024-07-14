@@ -3,6 +3,7 @@
 // ===========================================================================
 
 #include <iostream>
+#include <print>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -16,74 +17,82 @@
 
 // https://medium.com/@simontoth/daily-bit-e-of-c-std-scoped-lock-9cab4142f9d4
 
-class Player
+namespace Scoped_Lock_Example
 {
-private:
-    std::string_view m_name;
-    std::mutex m_mutex;
-    std::default_random_engine m_random_engine;
-    std::uniform_int_distribution<int> m_dist;
-    int m_score;
+    class Player
+    {
+    private:
+        std::string_view                      m_name;
+        std::mutex                            m_mutex;
+        std::default_random_engine            m_random_engine;
+        std::uniform_int_distribution<size_t> m_dist;
+        size_t                                m_score;
 
-public:
-    // c'tor
-    Player(std::string_view name, int seed)
-        : m_name(std::move(name)), m_random_engine(seed), m_dist(1, 6), m_score{}
-    {}
+    public:
+        // c'tor
+        Player(std::string_view name, unsigned int seed)
+            : m_name{ std::move(name) }, m_random_engine{ seed }, m_dist{ 1, 6 }, m_score{}
+        {}
 
-    // getter
-    std::string_view name() const { return m_name; }
+        // getter
+        std::string_view name() const { return m_name; }
 
-    int getScore() const { return m_score; }
+        size_t getScore() const { return m_score; }
 
-    void incrementScore(int points) {
+        // public interface
+        void incrementScore(size_t points) {
 
-        m_score += points;
-        Logger::log(std::cout, name(), " got point => ", m_score);
-    }
+            m_score += points;
 
-    // public interface
-    void playWith(Player& other) {
-
-        if (&other == this)
-            return;
-
-        // retrieve our lock and the lock of the opponent
-        std::scoped_lock lock{ m_mutex, other.m_mutex };
-
-        Logger::log(std::cout, name(), " plays against ", other.name());
-
-        // roll a dice until one player wins,
-        // then increase the score of the winner
-        int points{};
-        int otherPoints{};
-
-        while (points == otherPoints)
-        {
-            points = roll();
-            otherPoints = other.roll();
+            Logger::log(std::cout, name(), " got ", points, " points => Score: ", m_score);
         }
 
-        if (points > otherPoints) {
-            incrementScore(points);
+        void playWith(Player& other) {
+
+            if (&other == this) {
+                return;
+            }
+
+            // retrieve our lock and the lock of the opponent
+            std::scoped_lock lock{ m_mutex, other.m_mutex };
+
+            Logger::log(std::cout, name(), " plays against ", other.name());
+
+            // roll dice until one player wins, then increase the score of the winner
+            size_t points{};
+            size_t otherPoints{};
+
+            while (points == otherPoints)
+            {
+                points = roll();
+                otherPoints = other.roll();
+            }
+
+            if (points > otherPoints) {
+                incrementScore(points);
+            }
+            else {
+                other.incrementScore(otherPoints);
+            }
+
+            // locks are released automatically
         }
-        else {
-            other.incrementScore(otherPoints);
+
+    private:
+        // roll a six-sided dice
+        size_t roll() {
+            return m_dist(m_random_engine);
         }
+    };
+}
 
-        // locks released automatically
-    }
-
-private:
-    // roll a six-sided dice
-    int roll() { return m_dist(m_random_engine); }
-};
-
-void examples_scoped_lock()
+void example_scoped_lock()
 {
-    std::random_device device;
+    using namespace Scoped_Lock_Example;
 
-    std::vector<std::unique_ptr<Player>> players;
+    std::random_device device{};
+
+    std::vector<std::unique_ptr<Player>> players{};
 
     std::initializer_list<std::string_view> names =
     {
@@ -91,7 +100,7 @@ void examples_scoped_lock()
         "Player6", "Player7", "Player8", "Player9"
     };
 
-    // generate players from the names using transform algorithm
+    // generate players from the names using 'std::transform' algorithm
     std::transform(
         std::begin(names),
         std::end(names),
@@ -101,14 +110,14 @@ void examples_scoped_lock()
         }
     );
 
-    std::vector<std::jthread> rounds;
+    std::println("Run the game: ");
 
-    // run the game:
     // each player plays against all other players in parallel
-    for (auto& player : players) {
+    std::vector<std::jthread> rounds;
+    for (const auto& player : players) {
         
         auto round = [&] () {
-            for (auto& opponent : players) {
+            for (const auto& opponent : players) {
                 player->playWith(*opponent);
             }
         };
@@ -120,8 +129,10 @@ void examples_scoped_lock()
     std::for_each(
         rounds.begin(),
         rounds.end(),
-        std::mem_fn(&std::jthread::join)
+        [](auto& t) { t.join(); }
     );
+
+    std::println("Done.");
 
     // sort
     std::sort(
@@ -132,12 +143,9 @@ void examples_scoped_lock()
         }
     );
 
-    // print
-    std::cout << std::endl << "Final score:" << std::endl;
+    std::println("Final score:");
     for (const auto& player : players) {
-        std::cout 
-            << player->name() << ":\t" << player->getScore()
-            << " points." << std::endl;
+        std::println("{}: {}  points.", player->name(), player->getScore());
     }
 }
 

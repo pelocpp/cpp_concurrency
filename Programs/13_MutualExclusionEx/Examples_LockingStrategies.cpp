@@ -19,18 +19,18 @@ namespace Locking_Strategies
         // calling thread locks the mutexes
         std::lock(g_mutex1, g_mutex2);
 
-        std::lock_guard<std::mutex> lock1(g_mutex1, std::adopt_lock);
-        std::lock_guard<std::mutex> lock2(g_mutex2, std::adopt_lock);
+        std::lock_guard<std::mutex> lock1{ g_mutex1, std::adopt_lock };
+        std::lock_guard<std::mutex> lock2{ g_mutex2, std::adopt_lock };
         
-        // access shared data protected by the g_mutex1 and g_mutex2
+        // access shared data protected by g_mutex1 and g_mutex2
 
         // release of mutexes
     }
 
     void example02() {
 
-        std::unique_lock<std::mutex> lock1(g_mutex1, std::defer_lock);
-        std::unique_lock<std::mutex> lock2(g_mutex2, std::defer_lock);
+        std::unique_lock<std::mutex> lock1{ g_mutex1, std::defer_lock };
+        std::unique_lock<std::mutex> lock2{ g_mutex2, std::defer_lock };
 
         // mutexes are locked now
         std::lock(lock1, lock2);
@@ -41,7 +41,7 @@ namespace Locking_Strategies
     }
 }
 
-void examples_locking_strategies()
+void example_locking_strategies()
 {
     using namespace Locking_Strategies;
 

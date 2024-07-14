@@ -111,7 +111,7 @@ Bietet exklusiven Besitz eines `std::mutex`-Objekts für einen begrenzten Zeitrau
   * Bei der Erstellung eines `std::lock_guard`-Objekts wird das Mutexobjekt automatisch gesperrt.
   * Bei der Zerstörung (Verlassen des Gültigkeitsbereichs, *Scope*) wird das Mutexobjekt automatisch entsperrt.
   * Ein manuelles Entsperren oder erneutes Sperren des Mutexobjekts wird nicht unterstützt.
-  * Ein `std::lock_guard`-Objekt kann ein bereits gesperrtes Mutexobjekt &bdquo;übernehmen&rdquo; (siehe in den Beispielen Parameter `std::adopt_lock`).
+  * Ein `std::lock_guard`-Objekt kann ein bereits gesperrtes Mutexobjekt &bdquo;übernehmen&rdquo; (siehe in den nachfolgenden Beispielen Parameter `std::adopt_lock`).
   * Ideal für einfache, kurzzeitige Sperren, die eine automatische Freigabe beim Verlassen des Blocks gewährleisten.
 
 
@@ -137,15 +137,15 @@ Ein `std::unique_lock`-Objekt muss von der &bdquo;empfangenden&rdquo; Seite
 (der Seite, die benachrichtigt wird) verwendet werden, um bei Gebrauch eines `std::condition_variable`-Objekts
 entsprechende Benachrichtigungen empfangen zu können.
 
-Der Grund, warum ein `std::unique_lock` für eine `std::condition_variable` erforderlich ist, besteht darin,
+Der Grund, warum ein `std::unique_lock`-Objekt für ein `std::condition_variable`-Objekt erforderlich ist, besteht darin,
 dass dieses das zugrunde liegende `std::mutex`-Objekt jedes Mal sperren kann,
 wenn die Bedingungsvariable (`std::condition_variable`) nach einer gültigen Benachrichtigung
 aus einer Wartephase aufwacht und einen kritischen Codeabschnitt ausführt.
 
 Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes Mal, wenn
 
-  * der Aufruf der `wait`-Methode an der Bedingungsvariablen fälschlicherweise aktiviert wurde, es muss also erneut gewartet werden.
-  * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und damit abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
+  * der Aufruf der `wait`-Methode an der Bedingungsvariablen fälschlicherweise aktiviert wurde, es also erneut gewartet werden muss.
+  * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und schließlich abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
 
 
 ### Klasse `std::scoped_lock`
@@ -167,7 +167,7 @@ das es mehreren Threads ermöglicht, eine gemeinsam genutzte Ressource gleichzeit
 und gleichzeitig exklusiven Schreibzugriff zu gewährleisten.
 
 Dies ist in Situationen hilfreich, in denen viele Threads schreibgeschützten Zugriff
-auf dieselbe Datenstruktur benötigen, Schreibvorgänge jedoch nicht häufig verwendet werden.
+auf dieselbe Datenstruktur benötigen, Schreibvorgänge jedoch nicht häufig auftreten.
 
   * Die Klasse `std::shared_lock` ist für den gemeinsamen Besitz (*shared ownership*) eines Mutexobjekts konzipiert und ermöglicht mehrere Leser.
   * Ermöglicht mehreren Threads den gleichzeitigen Erwerb der Sperre für den gemeinsamen lesenden Zugriff.
@@ -184,7 +184,18 @@ aufgezeigt.
 
 In manchen Situationen muss ein Thread zwei Sperren gleichzeitig halten
 und diese nach dem Zugriff auf die gemeinsam genutzten Daten freigeben.
+
+Seit C++ 11 gibt es hierfür die Funktion `std::lock`:
+
+<pre>
+std::lock(lock<sub>1</sub>, lock<sub>2</sub>, ..., lock<sub>n</sub>);
+</pre>
+
+Sperrt die aufgeführten sperrbaren Objekte *lock*<sub>1</sub>, *lock*<sub>2</sub>, ..., *lock*<sub>n</sub>
+mithilfe eines Algorithmus, der Deadlocks zu vermeiden versucht.
+
 Wenn ein Thread mehr als eine Sperre hat, besteht die Gefahr eines Deadlocks.
+
 Um dies zu vermeiden, gibt es mehrere Strategien in C++:
 
 
@@ -197,8 +208,8 @@ wenn die Kontrolle den Gültigkeitsbereich verlässt.
 ```cpp
 01: std::lock(g_mutex1, g_mutex2);
 02: 
-03: std::lock_guard<std::mutex> lock1(g_mutex1, std::adopt_lock);
-04: std::lock_guard<std::mutex> lock2(g_mutex2, std::adopt_lock);
+03: std::lock_guard<std::mutex> lock1{ g_mutex1, std::adopt_lock };
+04: std::lock_guard<std::mutex> lock2{ g_mutex2, std::adopt_lock };
 ```
 
 ### Strategie `std::defer_lock`
@@ -209,8 +220,8 @@ um den Mutex zu erwerben.
 Das Mutex-Hüllenobjekt gibt die Sperre frei, wenn die Kontrolle den Gültigkeitsbereich verlässt.
 
 ```cpp
-01: std::unique_lock<std::mutex> lock1(g_mutex1, std::defer_lock);
-02: std::unique_lock<std::mutex> lock2(g_mutex2, std::defer_lock);
+01: std::unique_lock<std::mutex> lock1{ g_mutex1, std::defer_lock };
+02: std::unique_lock<std::mutex> lock2{ g_mutex2, std::defer_lock };
 03: 
 04: std::lock(lock1, lock2);
 ```
@@ -241,44 +252,44 @@ Studieren Sie den Quellcode des Beispiels genau.
 001: class Player
 002: {
 003: private:
-004:     std::string_view m_name;
-005:     std::mutex m_mutex;
-006:     std::default_random_engine m_random_engine;
-007:     std::uniform_int_distribution<int> m_dist;
-008:     int m_score;
+004:     std::string_view                      m_name;
+005:     std::mutex                            m_mutex;
+006:     std::default_random_engine            m_random_engine;
+007:     std::uniform_int_distribution<size_t> m_dist;
+008:     size_t                                m_score;
 009: 
 010: public:
 011:     // c'tor
-012:     Player(std::string_view name, int seed)
-013:         : m_name(std::move(name)), m_random_engine(seed), m_dist(1, 6), m_score{}
+012:     Player(std::string_view name, unsigned int seed)
+013:         : m_name{ std::move(name) }, m_random_engine{ seed }, m_dist{1, 6 }, m_score{}
 014:     {}
 015: 
 016:     // getter
 017:     std::string_view name() const { return m_name; }
 018: 
-019:     int getScore() const { return m_score; }
+019:     size_t getScore() const { return m_score; }
 020: 
-021:     void incrementScore(int points) {
-022: 
-023:         m_score += points;
-024:         Logger::log(std::cout, name(), " got point => ", m_score);
-025:     }
-026: 
-027:     // public interface
+021:     // public interface
+022:     void incrementScore(size_t points) {
+023: 
+024:         m_score += points;
+025:         Logger::log(std::cout, name(), " got ", points, " points => Score: ", m_score);
+026:     }
+027: 
 028:     void playWith(Player& other) {
 029: 
-030:         if (&other == this)
+030:         if (&other == this) {
 031:             return;
-032: 
-033:         // retrieve our lock and the lock of the opponent
-034:         std::scoped_lock lock{ m_mutex, other.m_mutex };
-035: 
-036:         Logger::log(std::cout, name(), " plays against ", other.name());
-037: 
-038:         // roll a dice until one player wins,
-039:         // then increase the score of the winner
-040:         int points{};
-041:         int otherPoints{};
+032:         }
+033: 
+034:         // retrieve our lock and the lock of the opponent
+035:         std::scoped_lock lock{ m_mutex, other.m_mutex };
+036: 
+037:         Logger::log(std::cout, name(), " plays against ", other.name());
+038: 
+039:         // roll dice until one player wins, then increase the score of the winner
+040:         size_t points{};
+041:         size_t otherPoints{};
 042: 
 043:         while (points == otherPoints)
 044:         {
@@ -292,74 +303,77 @@ Studieren Sie den Quellcode des Beispiels genau.
 052:         else {
 053:             other.incrementScore(otherPoints);
 054:         }
-055:     }
-056: 
-057: private:
-058:     // roll a six-sided dice
-059:     int roll() { return m_dist(m_random_engine); }
-060: };
-061: 
-062: void examples_scoped_lock()
-063: {
-064:     std::random_device device;
+055: 
+056:         // locks are released automatically
+057:     }
+058: 
+059: private:
+060:     // roll a six-sided dice
+061:     size_t roll() {
+062:         return m_dist(m_random_engine);
+063:     }
+064: };
 065: 
-066:     std::vector<std::unique_ptr<Player>> players;
-067: 
-068:     std::initializer_list<std::string_view> names =
-069:     {
-070:         "Player1", "Player2", "Player3", "Player4", "Player5",
-071:         "Player6", "Player7", "Player8", "Player9"
-072:     };
-073: 
-074:     // generate players from the names using transform algorithm
-075:     std::transform(
-076:         std::begin(names),
-077:         std::end(names),
-078:         std::back_inserter(players),
-079:         [&] (std::string_view name) {
-080:             return std::make_unique<Player>(name, device());
-081:         }
-082:     );
-083: 
-084:     std::vector<std::jthread> rounds;
-085: 
-086:     // run the game: each player plays
-087:     // against all other players in parallel
-088:     for (auto& player : players) {
-089:         
-090:         auto round = [&] () {
-091:             for (auto& opponent : players) {
-092:                 player->playWith(*opponent);
-093:             }
-094:         };
-095:         
-096:         rounds.push_back(std::jthread { std::move(round) });
-097:     }
-098: 
-099:     // join all the threads
-100:     std::for_each(
-101:         rounds.begin(),
-102:         rounds.end(),
-103:         std::mem_fn(&std::jthread::join)
-104:     );
-105: 
-106:     // sort
-107:     std::sort(
-108:         players.begin(),
-109:         players.end(),
-110:         [] (const auto& elem1, const auto& elem2) {
-111:             return elem1->getScore() > elem2->getScore();
-112:         }
-113:     );
-114: 
-115:     // print
-116:     std::cout << std::endl << "Final score:" << std::endl;
-117:     for (const auto& player : players) {
-118:         std::cout 
-119:             << player->name() << ":\t" << player->getScore()
-120:             << " points." << std::endl;
-121:     }
-122: }
+066: void example_scoped_lock()
+067: {
+068:     std::random_device device{};
+069: 
+070:     std::vector<std::unique_ptr<Player>> players{};
+071: 
+072:     std::initializer_list<std::string_view> names =
+073:     {
+074:         "Player1", "Player2", "Player3", "Player4", "Player5",
+075:         "Player6", "Player7", "Player8", "Player9"
+076:     };
+077: 
+078:     // generate players from the names using 'std::transform' algorithm
+079:     std::transform(
+080:         std::begin(names),
+081:         std::end(names),
+082:         std::back_inserter(players),
+083:         [&] (std::string_view name) {
+084:             return std::make_unique<Player>(name, device());
+085:         }
+086:     );
+087: 
+088:     std::println("Run the game: ");
+089: 
+090:     // each player plays against all other players in parallel
+091:     std::vector<std::jthread> rounds;
+092:     for (const auto& player : players) {
+093:         
+094:         auto round = [&] () {
+095:             for (const auto& opponent : players) {
+096:                 player->playWith(*opponent);
+097:             }
+098:         };
+099:         
+100:         rounds.push_back(std::jthread { std::move(round) });
+101:     }
+102: 
+103:     // join all the threads
+104:     std::for_each(
+105:         rounds.begin(),
+106:         rounds.end(),
+107:         [](auto& t) { t.join(); }
+108:     );
+109: 
+110:     std::println("Done.");
+111: 
+112:     // sort
+113:     std::sort(
+114:         players.begin(),
+115:         players.end(),
+116:         [] (const auto& elem1, const auto& elem2) {
+117:             return elem1->getScore() > elem2->getScore();
+118:         }
+119:     );
+120: 
+121:     std::println("Final score:");
+122:     for (const auto& player : players) {
+123:         std::println("{}: {}  points.", player->name(), player->getScore());
+124:     }
+125: }
 ```
 
 *Ausgabe*:
@@ -425,94 +439,126 @@ Betrachten Sie das folgende Beispiel genau:
 
 
 ```cpp
-01: constexpr size_t BucketSize = 4;
-02: 
-03: class NonRecursive
-04: {
-05: private:
-06:     std::mutex m_mutex;
-07:     std::unique_ptr<int[]> m_data;
-08:     size_t m_size;
-09:     size_t m_capacity;
-10: 
-11: public:
-12:     NonRecursive() : m_size{}, m_capacity{} {}
-13: 
-14:     void push_back(int value) {
-15: 
-16:         std::unique_lock lock{ m_mutex };
-17: 
-18:         if (m_size == m_capacity) {
-19:             allocate(m_capacity == 0 ? BucketSize : m_capacity * 2);
-20:         }
-21: 
-22:         m_data[m_size++] = value;
-23:     }
-24: 
-25:     void reserve(size_t capacity) {
-26: 
-27:         std::unique_lock lock{ m_mutex };
-28:         allocate(capacity);
-29:     }
-30: 
-31: private:
-32:     void allocate(size_t capacity) {
-33: 
-34:         std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
-35:         size_t newSize{ std::min(m_size, capacity) };
-36: 
-37:         std::copy(
-38:             m_data.get(),
-39:             m_data.get() + newSize,
-40:             data.get()
-41:         );
-42: 
-43:         m_data = std::move(data);
-44:         m_capacity = capacity;
-45:         m_size = newSize;
-46:     }
-47: };
-48: 
-49: class Recursive
-50: {
-51: private:
-52:     std::recursive_mutex m_mutex;
-53:     std::unique_ptr<int[]> m_data;
-54:     size_t m_size;
-55:     size_t m_capacity;
-56: 
-57: public:
-58:     Recursive() : m_size{}, m_capacity{} {}
-59: 
-60:     void push_back(int value) {
-61: 
-62:         std::unique_lock lock{ m_mutex };
-63: 
-64:         if (m_size == m_capacity) {
-65:             reserve(m_capacity == 0 ? BucketSize : m_capacity * 2);
-66:         }
-67: 
-68:         m_data[m_size++] = value;
-69:     }
-70: 
-71:     void reserve(size_t capacity) {
-72: 
-73:         std::unique_lock lock{ m_mutex };
-74: 
-75:         std::unique_ptr<int[]> data{ std::make_unique<int[]>(capacity) };
-76:         size_t newSize{ std::min(m_size, capacity) };
-77: 
-78:         std::copy(
-79:             m_data.get(),
-80:             m_data.get() + newSize,
-81:             data.get()
-82:         );
-83: 
-84:         m_data = std::move(data);
-85:         m_capacity = capacity;
-86:         m_size = newSize;
-87:     }
-88: };
+001: constexpr size_t BucketSize = 4;
+002: 
+003: class NonRecursive
+004: {
+005: private:
+006:     std::mutex                m_mutex;
+007:     std::unique_ptr<size_t[]> m_data;
+008:     size_t                    m_size;
+009:     size_t                    m_capacity;
+010: 
+011: public:
+012:     NonRecursive() : m_size{}, m_capacity{} {}
+013: 
+014:     void push_back(size_t value) {
+015: 
+016:         std::unique_lock lock{ m_mutex };
+017: 
+018:         // we already hold 'm_mutex', so we cannot call reserve()
+019: 
+020:         if (m_size == m_capacity) {
+021:             allocate(m_capacity == 0 ? BucketSize : m_capacity * 2);
+022:         }
+023: 
+024:         m_data[m_size++] = value;
+025:     }
+026: 
+027:     void reserve(size_t capacity) {
+028: 
+029:         std::unique_lock lock{ m_mutex };
+030: 
+031:         allocate(capacity);
+032:     }
+033: 
+034:     void print() {
+035: 
+036:         std::unique_lock lock{ m_mutex };
+037: 
+038:         for (size_t i{}; i != m_size; ++i) {
+039:             std::cout << m_data[i] << ' ';
+040:         }
+041:         std::cout << std::endl;
+042:     }
+043: 
+044: private:
+045:     // allocate expects m_mutex to be held by the caller
+046:     void allocate(size_t capacity) {
+047: 
+048:         std::cout << "allocating " << capacity << std::endl;
+049: 
+050:         std::unique_ptr<size_t[]> data{ std::make_unique<size_t[]>(capacity) };
+051: 
+052:         size_t newSize{ std::min(m_size, capacity) };
+053: 
+054:         std::copy(
+055:             m_data.get(),
+056:             m_data.get() + newSize,
+057:             data.get()
+058:         );
+059: 
+060:         m_data = std::move(data);
+061:         m_capacity = capacity;
+062:         m_size = newSize;
+063:     }
+064: };
+065: 
+066: class Recursive
+067: {
+068: private:
+069:     std::recursive_mutex      recursive_mutex;
+070:     std::unique_ptr<size_t[]> m_data;
+071:     size_t                    m_size;
+072:     size_t                    m_capacity;
+073: 
+074: public:
+075:     Recursive() : m_size{}, m_capacity{} {}
+076: 
+077:     void push_back(size_t value) {
+078: 
+079:         std::unique_lock lock{ recursive_mutex };
+080: 
+081:         // holding a recursive mutex multiple times is fine
+082: 
+083:         if (m_size == m_capacity) {
+084:             reserve(m_capacity == 0 ? BucketSize : m_capacity * 2);
+085:         }
+086: 
+087:         m_data[m_size++] = value;
+088:     }
+089: 
+090:     void reserve(size_t capacity) {
+091: 
+092:         std::unique_lock lock{ recursive_mutex };
+093: 
+094:         std::cout << "allocating " << capacity << std::endl;
+095: 
+096:         std::unique_ptr<size_t[]> data{ std::make_unique<size_t[]>(capacity) };
+097: 
+098:         size_t newSize{ std::min(m_size, capacity) };
+099: 
+100:         std::copy(
+101:             m_data.get(),
+102:             m_data.get() + newSize,
+103:             data.get()
+104:         );
+105: 
+106:         m_data = std::move(data);
+107:         m_capacity = capacity;
+108:         m_size = newSize;
+109:     }
+110: 
+111:     void print() {
+112: 
+113:         std::unique_lock lock{ recursive_mutex };
+114: 
+115:         for (size_t i{}; i != m_size; ++i) {
+116:             std::cout << m_data[i] << ' ';
+117:         }
+118:         std::cout << std::endl;
+119:     }
+120: };
 ```
 
 Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
@@ -525,14 +571,14 @@ Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
 
   * Die Methode `reserve` ist öffentlich zugänglich &ndash; und ihre Ausführung ist durch ein Mutexobjekt geschützt.
     Auch sie ruft intern Methode `allocate` auf &ndash; mit derselben Beobachtung, dass die komplette Ausführung
-    von `allocate` für den ´konkurrierenden Zugriff geschützt ist.
+    von `allocate` für den konkurrierenden Zugriff geschützt ist.
 
   * Klasse `Recursive` verwendet ein Mutexobjekts des Typs `std::recursive`.
 
   * Desweiteren besitzt diese Klasse zwei öffentliche Methoden `push_back` und `reserve`.
     Beide Methoden sperren das Mutexobjekt.
 
-  * *Achtung*: In Methode `push_back` kommt es (bei Bedarf) zu einem Aufruf der `reserve` Methode.
+  * *Achtung*: In Methode `push_back` kommt es &ndash; dabei Bedarf &ndash; zu einem Aufruf der `reserve` Methode.
     Dies führt *nicht* zu einem Absturz, da das Mutexobjekt vom Typ `std::recursive` ist!
     Eine separate Methode `allocate` ist in dieser Realisierung überflüssig!
 
@@ -571,4 +617,3 @@ Das Würfelbeispiel (Klasse `scoped_lock`) stammt wiederum von Simon Tóth und kan
 [Zurück](../../Readme.md)
 
 ---
-

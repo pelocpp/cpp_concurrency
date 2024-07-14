@@ -3,17 +3,17 @@
 // ===========================================================================
 
 extern void examples();
-extern void examples_recursive_mutex();
-extern void examples_locking_strategies();
-extern void examples_scoped_lock();
+extern void example_recursive_mutex();
+extern void example_locking_strategies();
+extern void example_scoped_lock();
 
 int main()
 {
     examples();
-    examples_recursive_mutex();
-    examples_locking_strategies();
-    examples_scoped_lock();
-    return 1;
+    example_recursive_mutex();
+    example_locking_strategies();
+    example_scoped_lock();
+    return 0;
 }
 
 // ===========================================================================
