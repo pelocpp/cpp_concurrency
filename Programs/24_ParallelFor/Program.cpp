@@ -2,7 +2,7 @@
 // Program.cpp // Parallel For
 // ===========================================================================
 
-void test_parallel_for();
+extern void test_parallel_for();
 
 int main()
 {

@@ -6,7 +6,7 @@
 
 ### [2. Atomare Operationen: Klassen `std::atomic<T>`](Programs/02_Atomic/Readme.md)
 
-### [3. Mutexe und Sperrmechanismen: Grundlagen](Programs/03_MutualExclusion/Readme.md)
+### [3. Mutexe und Sperrmechanismen](Programs/03_MutualExclusion/Readme.md)
 
 ### [4. Mutexe und Sperrmechanismen: Weiterführung](Programs/13_MutualExclusionEx/Readme.md)
 

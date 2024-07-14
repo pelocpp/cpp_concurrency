@@ -2,10 +2,10 @@
 // Program.cpp // Strategized Locking
 // ===========================================================================
 
-void test_strategized_locking_01();
-void test_strategized_locking_02();
-void test_strategized_locking_03();
-void test_strategized_locking_04();
+extern void test_strategized_locking_01();
+extern void test_strategized_locking_02();
+extern void test_strategized_locking_03();
+extern void test_strategized_locking_04();
 
 int main()
 {

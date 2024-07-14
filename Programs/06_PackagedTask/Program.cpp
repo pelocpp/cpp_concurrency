@@ -2,8 +2,8 @@
 // Program.cpp // Packaged Task
 // ===========================================================================
 
-void test_packaged_task_01();
-void test_packaged_task_02();
+extern void test_packaged_task_01();
+extern void test_packaged_task_02();
 
 int main()
 {

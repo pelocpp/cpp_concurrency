@@ -2,8 +2,8 @@
 // Program.cpp // JThread
 // ===========================================================================
 
-void test_jthread_01();
-void test_jthread_02();
+extern void test_jthread_01();
+extern void test_jthread_02();
 
 int main()
 {

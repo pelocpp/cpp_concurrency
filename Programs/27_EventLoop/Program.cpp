@@ -2,7 +2,7 @@
 // Program.cpp // Event Loop
 // ===========================================================================
 
-void test_event_loop();
+extern void test_event_loop();
 
 int main()
 {

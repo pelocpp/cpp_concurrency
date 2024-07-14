@@ -264,7 +264,7 @@ namespace Mutex_And_Locking_Examples {
     }
 }
 
-void examples()
+void test_advanced_mutex()
 {
     using namespace Mutex_And_Locking_Examples;
 

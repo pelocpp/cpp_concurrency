@@ -47,7 +47,7 @@
     [*Mutex_01_Simple.cpp*](Mutex_01_Simple.cpp).
 
   * Elementare Demonstration des `std::condition_variable` Objekts:<br />
-    [*Condition_Variable_01_Simple.cpp*](Condition_Variable_01_Simple.cpp).
+    [*Condition_Variable_01_Simple.cpp*](Condition_Variable_01_Simple.cpp).<br />
     [*Condition_Variable_02_Simple.cpp*](Condition_Variable_02_Simple.cpp).
    
   * Fortgeschrittene Demonstration des `std::mutex` Objekts mit Hüllenklassen:<br />
@@ -57,9 +57,9 @@
     Die Sperrmechanismen `std::adopt_lock` und `std::defer_lock`.<br />
     Die Klasse `std::recursive_mutex`: Geschachteltes Sperren.<br />
     Die Klasse `std::scoped_lock`: Mehrfaches Sperren.<br />
-    [Example_LockingStrategies.cpp](Example_LockingStrategies.cpp).<br />
-    [Example_RecursiveMutex.cpp](Example_RecursiveMutex.cpp).<br />
-    [Example_ScopedLock.cpp](Example_ScopedLock.cpp).
+    [*Example_LockingStrategies.cpp*](Example_LockingStrategies.cpp).<br />
+    [*Example_RecursiveMutex.cpp*](Example_RecursiveMutex.cpp).<br />
+    [*Example_ScopedLock.cpp*](Example_ScopedLock.cpp).
 
 ---
 
@@ -200,7 +200,7 @@ Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes 
   * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und schließlich abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
 
 
-### Hinweis
+#### Hinweis
 
 Siehe das Thema
 
