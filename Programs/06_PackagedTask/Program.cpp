@@ -8,7 +8,7 @@ void test_packaged_task_02();
 int main()
 {
     test_packaged_task_01();
-  //  test_packaged_task_02();
+    test_packaged_task_02();
     return 0;
 }
 

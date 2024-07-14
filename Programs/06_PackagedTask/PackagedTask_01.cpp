@@ -26,13 +26,13 @@ namespace PackagedTaskComparison {
         std::future<int> future{ task.get_future() };
 
         // create a thread with this task
-        std::thread thread{ std::move(task) };
+        std::thread t{ std::move(task) };
 
         // retrieve result from future object
         int result{ future.get() };
         std::cout << "Result: " << result << std::endl;
 
-        thread.join();
+        t.join();
     }
 
     // -----------------------------------------------------------------------
@@ -76,13 +76,13 @@ namespace PackagedTaskComparison {
         };
 
         // create a thread with this function
-        std::thread thread{ std::move(function), std::move(promise) };
+        std::thread t{ std::move(function), std::move(promise) };
 
         // retrieve result from future object
         int result = future.get();
         std::cout << "Result: " << result << std::endl;
 
-        thread.join();
+        t.join();
     }
 }
 

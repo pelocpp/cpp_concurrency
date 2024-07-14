@@ -4,20 +4,38 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Ein einfaches Beispiel](#link3)
+  * [Die beiden Klassen `std::packaged_task` und `std::function` im Vergleich](#link4)
+  * [Ein zweites Beispiel](#link5)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
   * Klasse `std::packaged_task`
   * Klasse `std::future`
   * Klasse `std::promise`
+  * Klasse `std::function`
 
 ---
 
-## `std::packaged_task`
+#### Quellcode
 
-Das charakteristische Merkmal der Klasse `std::packaged_task` ist,
-dass es ein aufrufbares Objekt (*Callable*) umschließt.
+[*PackagedTask_01.cpp*](PackagedTask_01.cpp).<br />
+[*PackagedTask_02.cpp*](PackagedTask_02.cpp).
+
+---
+
+## Allgemeines <a name="link2"></a>
+
+Das charakteristische Merkmal der Klasse `std::packaged_task` ist seine Fähigkeit,
+ein aufrufbares Objekt (*Callable*) zu umschließen.
 
 Ein auf diese Weise verpacktes Objekt wird *nicht* von alleine gestartet:
 Man muss den Aufruf explizit anstoßen &ndash; dies kann synchron im aktuellen Thread
@@ -34,7 +52,7 @@ Für das Arbeiten mit `std::packaged_task`-Objekten sind typischerweise vier Schr
 
 ---
 
-## Ein einfaches Beispiel
+## Ein einfaches Beispiel <a name="link3"></a>
 
 Die soeben beschriebenen vier Schritte im Umgang mit der Klasse `std::packaged_task`
 demonstriert folgendes Beispiel:
@@ -55,13 +73,13 @@ demonstriert folgendes Beispiel:
 12:     std::future<int> future{ task.get_future() };
 13:         
 14:     // create a thread with this task
-15:     std::thread thread{ std::move(task) };
+15:     std::thread t{ std::move(task) };
 16: 
 17:     // retrieve result from future object
 18:     int result{ future.get() };
 19:     std::cout << "Result: " << result << std::endl;
 20: 
-21:     thread.join();
+21:     t.join();
 22: }
 ```
 
@@ -72,7 +90,8 @@ Result: 123
 ```
 
 In diesem Beispiel wurde die *Task* asynchron in einem separaten Thread ausgeführt.
-Es ginge aber auch synchron im aktuellem Thread, siehe hierzu das nächste Beispiel:
+
+Es ginge aber auch synchron im aktuellen Thread, siehe dazu das nächste Beispiel:
 
 
 ```cpp
@@ -100,10 +119,9 @@ Es ginge aber auch synchron im aktuellem Thread, siehe hierzu das nächste Beispi
 
 ---
 
-## Hinweis
+## Die beiden Klassen `std::packaged_task` und `std::function` im Vergleich <a name="link4"></a>
 
-
-Die beiden Klassen `std::packaged_task` und `std::function` besitzen Gemeinsamkeiten.
+Die beiden Klassen `std::packaged_task` und `std::function` besitzen Ähnlichkeiten.
 
 Die Klasse `std::packaged_task` erzeugt &bdquo;Callable Wrapper&rdquo; Objekte,
 ähnlich wie die Klasse `std::function`,
@@ -130,13 +148,13 @@ wie wir an folgendem Vergleichsbeispiel betrachten können:
 12:     };
 13: 
 14:     // create a thread with this function
-15:     std::thread thread{ std::move(function), std::move(promise) };
+15:     std::thread t{ std::move(function), std::move(promise) };
 16: 
 17:     // retrieve result from future object
 18:     int result = future.get();
 19:     std::cout << "Result: " << result << std::endl;
 20: 
-21:     thread.join();
+21:     t.join();
 22: }
 ```
 
@@ -146,14 +164,9 @@ wie wir an folgendem Vergleichsbeispiel betrachten können:
 Result: 123
 ```
 
-#### Quellcode
-
-[*PackagedTask_01.cpp*](PackagedTask_01.cpp).
-
-
 ---
 
-## Ein zweites Beispiel
+## Ein zweites Beispiel <a name="link5"></a>
 
 Ein einfaches Beispiel skizziert den Ablauf eines Szenarios mit vier `std::packaged_task`-Objekten.
 
@@ -166,11 +179,6 @@ in einem `std::deque`-Objekt ablegt werden können.
 Die *Tasks* können sowohl sequentiell als auch parallel ausgeführt werden.
 Studieren Sie im Quellcode die entsprechenden Abschnitte,
 wo eine *Task* entweder synchron oder asynchron abgearbeitet wird.
-
-
-#### Quellcode
-
-[*PackagedTask_02.cpp*](PackagedTask_02.cpp).
 
 ---
 

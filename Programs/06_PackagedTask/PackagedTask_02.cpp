@@ -41,8 +41,8 @@ namespace PackagedTask {
         // or
 
         // invoke the function asynchronously
-        std::thread thread{ std::move(task), 123, 456 };
-        thread.detach();
+        std::thread t{ std::move(task), 123, 456 };
+        t.detach();
 
         // do some arbitrary work ......
         std::this_thread::sleep_for(std::chrono::seconds{ 2 });
@@ -92,8 +92,8 @@ namespace PackagedTask {
             // or
             
             // invoke the function asynchronously
-            std::thread thread{ std::move(task), begin, end };
-            thread.detach();
+            std::thread t{ std::move(task), begin, end };
+            t.detach();
 
             begin = end;
             end += increment;
