@@ -4,7 +4,16 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Lösungsansätze](#link3)
+  * [Literaturhinweise](#link4)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -18,7 +27,14 @@
 
 ---
 
-### Allgemeines
+#### Quellcode
+
+[*Erzeuger-Verbraucher-Problem mit Bedingungsvariablen*](BlockingQueue.h).<br />
+[*Erzeuger-Verbraucher-Problem mit Semaphoren*](BlockingQueueEx.h).<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Das Erzeuger-Verbraucher Problem entsteht, wenn ein Erzeuger Daten produziert und diese
 irgendwo ablegen muss, bis ein Verbraucher in der Lage ist, diese zu verarbeiten.
@@ -55,11 +71,15 @@ benötigen wir zusätzlich die Werkzeuge der nebenläufigen Programmierung.
 Desweiteren sollte noch erwähnt werden, dass es sowohl mehrere Erzeuger als auch
 mehrere Verbraucher geben kann &ndash; die aber alle gleichzeitig auf einem Puffer operieren.
 
+---
+
+## Lösungsansätze <a name="link3"></a>
+
 Für das Erzeuger-Verbraucher Problem gibt es vor diesem Hintergrund betrachtet
 mehrere Lösungsansätze:
 
-  * Mit Bedingungsvariablen (`std::counting_semaphore`)
-  * Mit Semaphoren (`std::condition_variable`)
+  * Mit Bedingungsvariablen (`std::condition_variable`)
+  * Mit Semaphoren (`std::counting_semaphore`)
 
 In jedem Fall wollen wir vermeiden, dass wir für das Überprüfen eines Pufferzustands (leer, voll)
 zuviel Rechenzeit verwenden. Wir differenzieren hier zwischen zwei Ansätzen:
@@ -78,8 +98,7 @@ Beim Eintreten des Ereignisses wird der blockierte Thread geweckt.
 Zur Umsetzung dieses Ansatzes benötigt man Hilfsmittel des unterlagerten Betriebssystems,
 rein mit den  Mitteln gängiger Programmiersprache lässt sich passives Warten nicht realisieren.
 
-Im Quellcode zu diesem Abschnitt finden Sie zwei Realisierungen des 
-Erzeuger-Verbraucher Problems vor:
+Im Quellcode zu diesem Abschnitt finden Sie zwei Realisierungen des Problems vor:
 
 1. Umsetzung mit Bedingungsvariablen (`wait` / `notify`).
 
@@ -88,14 +107,7 @@ Erzeuger-Verbraucher Problems vor:
 
 ---
 
-#### Quellcode
-
-[*Erzeuger-Verbraucher-Problem mit Bedingungsvariablen*](BlockingQueue.h).<br />
-[*Erzeuger-Verbraucher-Problem mit Semaphoren*](BlockingQueueEx.h).<br />
-
----
-
-## Literaturhinweise
+## Literaturhinweise <a name="link4"></a>
 
 Die Realisierung des Erzeuger-Verbraucher-Problems mit Semaphoren lehnt sich an den Artikel
 

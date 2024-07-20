@@ -65,7 +65,7 @@ namespace JoinableThreadCooperativeInterruptibility {
     {
         std::jthread jt{
 
-            []() {
+            [] () {
                 while (true) {
                     std::cout << "Working ..." << std::endl;
                     sleep(1);
@@ -85,7 +85,7 @@ namespace JoinableThreadCooperativeInterruptibility {
     static void jthread_04()
     {
         std::jthread jt{
-            [](std::stop_token token) {
+            [] (std::stop_token token) {
                 while (!token.stop_requested()) {
                     std::cout << "Working ..." << std::endl;
                     sleep(1);
@@ -139,14 +139,14 @@ namespace JoinableThreadCooperativeInterruptibility {
     {
         std::jthread jt{
 
-            [](std::stop_token token) {
+            [] (std::stop_token token) {
 
                 std::atomic<bool> running { true };
 
                 // called on a stop request
                 std::stop_callback callback {
                     token,
-                    [&]() {
+                    [&] () {
                         std::cout << "Stop requested" << std::endl;
                         running = false;
                     }

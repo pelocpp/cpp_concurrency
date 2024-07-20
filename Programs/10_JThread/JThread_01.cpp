@@ -11,7 +11,7 @@ namespace JoinableThread {
     static void jthread_01()
     {
         std::thread t {
-            []() { std::cout << "Inside std::thread" << std::endl; }
+            [] () { std::cout << "Inside std::thread" << std::endl; }
         };
 
         bool j{ t.joinable() };
@@ -24,7 +24,7 @@ namespace JoinableThread {
     static void jthread_02()
     {
         std::jthread t {
-            []() { std::cout << "Inside std::jthread" << std::endl; }
+            [] () { std::cout << "Inside std::jthread" << std::endl; }
         };
 
         bool j{ t.joinable() };
