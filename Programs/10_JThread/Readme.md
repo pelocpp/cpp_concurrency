@@ -73,8 +73,7 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
    Der Hauptthread erzeugt einen neuen Thread,
    der jede Sekunde wiederholend etwas tut (eine Ausgabe in der Konsole).
    Der Hauptthread fährt dann mit einem 5-Sekunden-Job fort und wartet anschließend
-   auf den Abschluss des anderen Threads.<br /><br />
-   Da dieser nie fertig wird, wartet auch der Hauptthread ewig.
+   auf den Abschluss des anderen Threads. Da dieser nie fertig wird, wartet auch der Hauptthread ewig.<br /><br />
   * *Szenario* 2:
     Wie Szenario 1, es wurde von der Klasse `std::thread` zur Klasse `std::jthread` gewechselt.<br /><br />
   * *Szenario* 3:

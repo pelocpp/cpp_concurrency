@@ -17,21 +17,26 @@ namespace EagerVsLazyASync {
 
         std::chrono::system_clock::time_point begin{ std::chrono::system_clock::now() };
 
-        std::future<std::chrono::system_clock::time_point> asyncLazy = std::async(
-            std::launch::deferred, 
-            [] () {
-                Logger::log(std::cout, "launch::deferred thread done!");
-                return std::chrono::system_clock::now(); 
-            }
-        );
+        std::future<std::chrono::system_clock::time_point> asyncLazy {
 
-        std::future<std::chrono::system_clock::time_point> asyncEager = std::async(
-            std::launch::async,
-            [] () {
-                Logger::log(std::cout, "launch::async thread done!");
-                return std::chrono::system_clock::now();
-            }
-        );
+            std::async(
+                std::launch::deferred,
+                []() {
+                    Logger::log(std::cout, "launch::deferred thread done!");
+                    return std::chrono::system_clock::now();
+                }
+            ) 
+        };
+
+        std::future<std::chrono::system_clock::time_point> asyncEager{ 
+            std::async(
+                std::launch::async,
+                [] () {
+                    Logger::log(std::cout, "launch::async thread done!");
+                    return std::chrono::system_clock::now();
+                }
+            ) 
+        };
 
         Logger::log(std::cout, "Now waiting for 5 seconds ...");
         std::this_thread::sleep_for(std::chrono::seconds{ 5 });
