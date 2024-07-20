@@ -73,25 +73,25 @@ wir betrachten dazu im Quellcode eine Reihe von Beispielen:
    Der Hauptthread erzeugt einen neuen Thread,
    der jede Sekunde wiederholend etwas tut (eine Ausgabe in der Konsole).
    Der Hauptthread fährt dann mit einem 5-Sekunden-Job fort und wartet anschließend
-   auf den Abschluss des anderen Threads.<br />
+   auf den Abschluss des anderen Threads.<br /><br />
    Da dieser nie fertig wird, wartet auch der Hauptthread ewig.
   * *Szenario* 2:
-    Wie Szenario 1, es wurde von der Klasse `std::thread` zur Klasse `std::jthread` gewechselt.<br />
+    Wie Szenario 1, es wurde von der Klasse `std::thread` zur Klasse `std::jthread` gewechselt.<br /><br />
   * *Szenario* 3:
      Nach 5 Sekunden erfolgt ein Aufruf von `request_stop()`, dieser ändert aber nichts am Ablauf des
-     Programms: Man kann nicht von &bdquo;außen&rdquo; einen Stopp beantragen, der Thread selbst hat das letzte Wort.<br />
+     Programms: Man kann nicht von &bdquo;außen&rdquo; einen Stopp beantragen, der Thread selbst hat das letzte Wort.<br /><br />
   * *Szenario* 4:
    Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
    Dieses besitzt eine Methode `stop_requested` &ndash; im Zusammenspiel mit `request_stop()` kann nun
-   kooperativ ein Ende des Threads veranlasst werden.<br />
+   kooperativ ein Ende des Threads veranlasst werden.<br /><br />
   * *Szenario* 5:
    Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
    Mit diesem Objekt kann man ein `std::stop_callback`-Objekt erzeugen, welches aufgerufen wird, wenn wiederum
-   die `request_stop()`-Methode aufgerufen wird.<br />
+   die `request_stop()`-Methode aufgerufen wird.<br /><br />
   * *Szenario* 6:
    Dieses Szenario ist vergleichbar zum letzten Szenario mit dem Unterschied, 
    dass aufgezeigt wird, dass das `std::stop_source`-Objekt auch über die Instanz eines `std::jthread`-Objekts
-   abgerufen werden kann.<br />
+   abgerufen werden kann.<br /><br />
      
 
 *Bemerkung*:<br />
