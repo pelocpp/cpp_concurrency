@@ -7,9 +7,6 @@
 #include <chrono>
 #include <atomic>
 
-// hints to atomic<bool>:
-// https://stackoverflow.com/questions/16320838/when-do-i-really-need-to-use-atomicbool-instead-of-bool
-
 namespace JoinableThreadCooperativeInterruptibility {
 
     static void sleep(int seconds)
