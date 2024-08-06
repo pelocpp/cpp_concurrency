@@ -4,7 +4,21 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [*Runtime* versus *Compile-Time*](#link3)
+  * [Wann sollte dieses Muster verwendet werden?](#link4)
+  * [Entwurf des APIs](#link5)
+  * [Hüllenklasse `StrategizedLocking`](#link6)
+  * [Mögliche Realisierungen der `ILock`-Schnittstelle](#link7)
+  * [Ein Beispiel: Klasse `ThreadsafeStack<T>`](#link8)
+  * [Literaturhinweise](#link9)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
   * Klassen `std::mutex` und `std::recursive_mutex`
   * Klasse `std::thread`
@@ -12,7 +26,19 @@
 
 ---
 
-### Allgemeines
+#### Quellcode
+
+[*ILock.h*](ILock.h).<br />
+[*StrategizedLock.h*](StrategizedLock.h).<br />
+[*ThreadsafeStack.h*](ThreadsafeStack.h).<br />
+[*PrimeCalculator.h*](PrimeCalculator.h).<br />
+
+[*StrategizedLock.cpp*](StrategizedLock.cpp).<br />
+[*PrimeNumbers.cpp*](PrimeNumbers.cpp).<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Das *Strategized Locking*&ndash;Entwurfsmuster
 schützt den kritischen Abschnitt einer Komponente vor gleichzeitigem (konkurriendem) Zugriff.
@@ -37,12 +63,12 @@ das Programm selbst greift nur über eine definierte Schnittstelle auf das Strate
 Das Strategie-Objekt hat Kenntnisse über den Kontext, in dem das Programm abläuft.
 
 
-### *Runtime* versus *Compile-Time*
+## *Runtime* versus *Compile-Time* <a name="link3"></a>
 
 Das *Strategized Locking*&ndash;Entwurfsmuster kann sowohl  in einer *Runtime*-Ausprägung
 (Vererbung, Polymorphismus) als auch in einer *Compile-Time*-Ausprägung (Templates) umgesetzt werden.
 
-### Wann sollte dieses Muster verwendet werden?
+## Wann sollte dieses Muster verwendet werden? <a name="link4"></a>
 
 Verwenden Sie dieses Muster, wenn
 
@@ -51,7 +77,7 @@ Verwenden Sie dieses Muster, wenn
   * das Programm sowohl in Single-Threaded- als auch in Multi-Threaded-Umgebungen performant ablaufen soll.
 
 
-### Entwurf des APIs
+## Entwurf des APIs <a name="link5"></a>
 
 Die Herstellung der Konsistenz in Bezug auf die Verwendung eines `std::mutex`-Objekts
 erfolgt durch eine Schnittstelle `ILock`:
@@ -68,7 +94,7 @@ erfolgt durch eine Schnittstelle `ILock`:
 08: };
 ```
 
-### Hüllenklasse `StrategizedLocking`
+## Hüllenklasse `StrategizedLocking` <a name="link6"></a>
 
 Die kritischen Abschnitte schützen sich nicht direkt mit einem `std::mutex`-Objekt,
 sondern einer Wrapper-Klasse `StrategizedLocking`:
@@ -99,7 +125,7 @@ Das entscheidet der Ersteller eines `StrategizedLocking`-Objekts, in dem er bei 
 eine Realisierung der `ILock`-Schnittstelle bereitstellt.
 
 
-### Mögliche Realisierungen der `ILock`-Schnittstelle
+## Mögliche Realisierungen der `ILock`-Schnittstelle <a name="link7"></a>
 
 Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 
@@ -143,7 +169,7 @@ Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 ```
 
 
-### Ein Beispiel: Klasse `ThreadsafeStack<T>`
+## Ein Beispiel: Klasse `ThreadsafeStack<T>` <a name="link8"></a>
 
 Betrachten wir eine Anpassung der Klasse `ThreadsafeStack<T>` an
 das *Strategized Locking*&ndash;Entwurfsmuster:
@@ -198,21 +224,10 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 47: };
 ```
 
----
-
-#### Quellcode
-
-[*ILock.h*](ILock.h).<br />
-[*StrategizedLock.h*](StrategizedLock.h).<br />
-[*ThreadsafeStack.h*](ThreadsafeStack.h).<br />
-[*PrimeCalculator.h*](PrimeCalculator.h).<br />
-
-[*StrategizedLock.cpp*](StrategizedLock.cpp).<br />
-[*PrimeNumbers.cpp*](PrimeNumbers.cpp).<br />
 
 ---
 
-## Literaturhinweise
+## Literaturhinweise <a name="link9"></a>
 
 Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen aus der Unterlage
 

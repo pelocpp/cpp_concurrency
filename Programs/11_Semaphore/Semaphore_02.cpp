@@ -2,7 +2,7 @@
 // Semaphore // Semaphore_02.cpp
 // ===========================================================================
 
-#include "../../Logger/Logger.h"
+#include "../Logger/Logger.h"
 
 #include <iostream>
 #include <iomanip>
