@@ -20,6 +20,7 @@ namespace Concurrency_Barriers_01
         auto printValues = [&values]() noexcept {
 
             std::thread::id tid{ std::this_thread::get_id() };
+
             std::cout << std::setw(10) << std::setfill(' ') << tid << ' ';
 
             for (auto val : values) {
@@ -45,17 +46,17 @@ namespace Concurrency_Barriers_01
             printValues  // callback to call whenever the counter is 0
         };
 
-        // initialize a thread for each value to compute its square root in a loop:
+        // initialize a thread for each value to compute its square root in a loop
         std::vector<std::jthread> threads;
 
         auto procedure = [&](size_t n) {
 
             for (int i{}; i != 4; ++i) {
 
-                // compute power of 2
+                // compute power of 2);
                 values[n] = static_cast<size_t>(std::pow(values[n], 2));
 
-                // synchronize with other threads to print values:
+                // synchronize with other threads to print values
                 allDone.arrive_and_wait();
             }
         };

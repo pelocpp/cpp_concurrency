@@ -34,22 +34,24 @@ namespace Latches_03 {
 
         std::vector<std::future<void>> tasks;
 
-        std::random_device device;
+        std::random_device device{};
 
-        auto worker = [&](size_t index, size_t msecs, int first, int last) {
+        auto worker {
+            [&] (size_t index, size_t msecs, int first, int last) {
 
-            Logger::log(std::cout, "Calculating from ", first, " up to ", last, "...");
+                Logger::log(std::cout, "Calculating from ", first, " up to ", last, "...");
 
-            int result{ calcSumRange(first, last) };
+                int result{ calcSumRange(first, last) };
 
-            results.at(index) = result;
+                results.at(index) = result;
 
-            // simulating still some calculation time ...
-            std::this_thread::sleep_for(std::chrono::milliseconds{ msecs });
+                // simulating still some calculation time ...
+                std::this_thread::sleep_for(std::chrono::milliseconds{ msecs });
 
-            Logger::log(std::cout, "Done");
+                Logger::log(std::cout, "Done");
 
-            done.count_down();
+                done.count_down();
+            } 
         };
 
         int begin{ 1 };
@@ -60,13 +62,16 @@ namespace Latches_03 {
 
             size_t msecs{ static_cast<size_t>(device()) % MaxDelay };
 
-            std::future<void> future = std::async(
-                worker,
-                i,
-                msecs,
-                begin,
-                end
-            );
+            std::future<void> future{ 
+                std::async(
+                    worker,
+                    i,
+                    msecs,
+                    begin,
+                    end
+                ) 
+            };
+
             tasks.push_back(std::move(future));
 
             begin = end;

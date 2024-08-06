@@ -4,7 +4,20 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Einführung](#link3)
+  * [Klasse `std::latch`](#link4)
+  * [Klasse `std::barrier`](#link5)
+  * [Beispiele zu `std::latch`](#link6)
+  * [Beispiele zu `std::barrier`](#link7)
+  * [Literaturhinweise8](#link8)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -15,7 +28,16 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*Latches_01.cpp*](Latches_01.cpp)<br />
+[*Latches_02.cpp*](Latches_02.cpp)<br />
+[*Barriers_01.cpp*](Barriers_01.cpp)<br />
+[*Barriers_02.cpp*](Barriers_02.cpp)
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 C++ hat weitere Klassen erhalten, um die Synchronisierung von Threads zu vereinfachen: *Latches* und *Barrieren*.
 
@@ -26,7 +48,7 @@ Win32-Betriebssystemfunktionen `WaitForSingleObject` und `WaitForMultipleObjects
 
 ---
 
-## Einführung
+## Einführung <a name="link3"></a>
 
 Ein *Latch* ist eine Art &bdquo;Countdown&rdquo;-Zähler,
 der mit einem Startwert initialisiert wird und beim Eintreten bestimmter Ereignisse heruntergezählt wird.
@@ -52,7 +74,7 @@ dass eine bestimmte Anzahl paralleler Reaktionen erfolgt ist.
 
 ---
 
-## `std::latch`
+## Klasse `std::latch` <a name="link4"></a>
 
 Einen groben Überblick auf die wesentlichen Methoden der Klasse `std::latch` gibt *Tabelle* 1:
 
@@ -74,7 +96,7 @@ Es gibt keine Möglichkeit, den Zähler zwischendurch zu vergrößern oder zurückzus
 
 ---
 
-## `std::barrier`
+## Klasse `std::barrier` <a name="link5"></a>
 
 Einen groben Überblick auf die wesentlichen Methoden der Klasse `std::barrier` gibt *Tabelle* 2:
 
@@ -96,7 +118,7 @@ kann dieselbe Barriere erneut verwendet werden.
 
 ---
 
-## Beispiele zu `std::latch`
+## Beispiele zu `std::latch` <a name="link6"></a>
 
 
 ### Mehrere Tätigkeiten zeitlich aufeinander abstimmen
@@ -145,7 +167,7 @@ vollständig belegt sein muss.
 [5]: Total: 80200
 ```
 
-### Modelliering von Master- und Slave-Threads
+### Modellierung von Master- und Slave-Threads
 
 Im Prinzip ist dieses Beispiel ähnlich gelagert wie das Beispiel zuvor.
 Es wird eine Synchronisation von einem Master-Thread und mehreren Slave-Threads demonstriert.
@@ -189,7 +211,7 @@ und mögliche Aufräumarbeiten (Freigabe von Ressourcen) zum richtigen Zeitpunkt d
 
 ---
 
-## Beispiele zu `std::barrier`
+## Beispiele zu `std::barrier` <a name="link7"></a>
 
 
 ### Potenzen berechnen
@@ -305,18 +327,7 @@ beiden Methoden `arrive_and_wait` und `arrive_and_drop` am `std::barrier`-Objekt
 
 ---
 
-#### Quellcode
-
-Eine Beschreibung der Beispiele folgt weiter unten:
-
-[*Latches_01.cpp*](Latches_01.cpp)<br />
-[*Latches_02.cpp*](Latches_02.cpp)<br />
-[*Barriers_01.cpp*](Barriers_01.cpp)<br />
-[*Barriers_02.cpp*](Barriers_02.cpp)
-
----
-
-## Literaturhinweise:
+## Literaturhinweise <a name="link8"></a>
 
 Die Anregungen zu den Beispielen aus diesem Abschnitt finden sich teilweise unter
 

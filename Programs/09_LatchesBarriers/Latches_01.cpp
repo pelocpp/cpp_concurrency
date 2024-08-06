@@ -13,7 +13,7 @@
 
 namespace Latches_01 {
 
-    static void loopOverChar(char ch) {
+    static void loop(char ch) {
 
         for (int j{}; j != 30; ++j) 
         {
@@ -33,24 +33,25 @@ namespace Latches_01 {
         // start two threads dealing with printing chars
         std::jthread t1 {
             [&] () {
-                loopOverChar('!');
+                loop('!');
 
-                // signal that the task is done:
+                // signal that the task is done
                 allDone.count_down(); // atomically decrement counter of latch
             }
         };
 
         std::jthread t2 {
             [&] () { 
-                loopOverChar('?');
+                loop('?');
 
-                // signal that the task is done:
+                // signal that the task is done
                 allDone.count_down(); // atomically decrement counter of latch            
             }
         };
 
         // wait until all tasks are done
         allDone.wait();
+
         std::cout << std::endl << "All tasks done."<< std::endl;
     }
 }
@@ -59,10 +60,12 @@ namespace Latches_02 {
 
     static void example_latches_02()
     {
+        std::cout.write("Start.\n", 8).flush();
+
         std::ptrdiff_t numThreads{ 10 };
 
-        // initialize latch to start the threads when all of them have been initialized
-        // (initialize countdown with number of threads)
+        // initialize latch to start the threads
+        // when all of them have been initialized
         std::latch allReady{ numThreads };
 
         // start numThreads threads:
@@ -91,8 +94,11 @@ namespace Latches_02 {
 
                     // perform whatever the thread does
                     // (loop printing its index):
+
+                    char ch{ static_cast<char>('0' + i) };
+
                     for (int j{}; j != 10; ++j) {
-                        std::cout.put(static_cast<char>('0' + i));
+                        std::cout.put(ch);
                         std::cout.flush();
                         std::this_thread::sleep_for(std::chrono::milliseconds{ 50 });
                     }
@@ -101,6 +107,8 @@ namespace Latches_02 {
 
             threads.push_back(std::move(t));
         }
+
+        std::cout.write("Done.\n", 7).flush();
     }
 }
 
