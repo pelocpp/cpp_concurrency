@@ -24,7 +24,7 @@
 
 ### [11. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
 
-### [12. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Readme.md)
+### [12. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Resource Files/Readme.md)
 
 ---
 
