@@ -2,6 +2,8 @@
 // Semaphore // Semaphore_02.cpp
 // ===========================================================================
 
+#include "../../Logger/Logger.h"
+
 #include <iostream>
 #include <iomanip>
 #include <sstream>
@@ -10,8 +12,6 @@
 #include <semaphore>
 #include <random>
 #include <array>
-
-#include "../Logger/Logger.h"
 
 namespace ConcurrencyBinarySemaphore
 {

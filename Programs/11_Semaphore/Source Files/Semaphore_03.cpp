@@ -2,14 +2,14 @@
 // Semaphore // Semaphore_03.cpp
 // ===========================================================================
 
+#include "../../Logger/Logger.h"
+
 #include <iostream>
 #include <queue>
 #include <chrono>
 #include <thread>
 #include <mutex>
 #include <semaphore>
-
-#include "../Logger/Logger.h"
 
 namespace ConcurrencyCountingSemaphore {
 
@@ -41,6 +41,7 @@ namespace ConcurrencyCountingSemaphore {
 
                 // get next value from the queue:
                 char ch{};
+
                 {
                     std::lock_guard<std::mutex> guard{ mutex };
                     ch = values.front();

@@ -4,15 +4,36 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
 
-<ins>Klassen</ins>:
-
-  * Klassen `std::binary_semaphore` und `std::counting_semaphore`
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Wie funktionieren Semaphore?](#link3)
+  * [Ein erstes Beispiel](#link4)
+  * [Ein zweites Beispiel](#link5)
+  * [Ein drittes Beispiel](#link6)
+  * [Literaturhinweise](#link7)
 
 ---
 
-### Allgemeines
+## Verwendete Werkzeuge <a name="link1"></a>
+
+<ins>Klassen</ins>:
+
+  * Klasse `std::binary_semaphore`
+  * Klasse `std::counting_semaphore`
+
+---
+
+#### Quellcode
+
+[*Teil 1*: Einfaches Beispiel](Semaphore_01.cpp).<br />
+[*Teil 2*: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
+[*Teil 3*: Ein Beispiel zur Klasse `std::counting_semaphore`](Semaphore_03.cpp).<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Unter einer Semaphore versteht man in der Systemprogrammierung eine Datenstruktur,
 die aus einem ganzzahligen Wert (Zähler) und zwei atomaren Nutzungsoperationen &bdquo;Reservieren&rdquo; und &bdquo;Freigeben&rdquo; besteht.
@@ -24,8 +45,9 @@ Das Konzept der Semaphore als Mechanismus für die Synchronisation wurde von *Eds
 und 1965 in seinem Artikel *Cooperating Sequential Processes* vorgestellt.
 
 Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &bdquo;reservieren&rdquo; und &bdquo;freigeben&rdquo; nicht
-identisch sein, also sind 
-im Gegensatz zu einem `std::mutex`-Objekt ein `std::binary_semaphore`- bzw. ein `std::counting_semaphore`-Objekt nicht an einen Thread gebunden.
+identisch sein.
+
+Im Gegensatz zu einem `std::mutex`-Objekt sind also ein `std::binary_semaphore`- bzw. ein `std::counting_semaphore`-Objekt nicht an einen Thread gebunden.
 Das Anfordern und Freigeben der Semaphore darf in verschiedenen Threads stattfinden.
 
 Intern besitzt die Datenstruktur neben dem Zähler noch eine Warteschlange
@@ -33,7 +55,7 @@ für die Aufnahme blockierter Threads.
 
 ---
 
-### Wie funktionieren Semaphore?
+## Wie funktionieren Semaphore? <a name="link3"></a>
 
 Semaphore besitzen eine Zählervariable, die man erhöhen oder verringern kann.
 
@@ -45,10 +67,9 @@ Wenn der Wert > 0 ist, wird der Zugriff gewährt und der Zähler wird um 1 reduzie
 Die `release`-Methode gibt den zuvor gewährten Zugriff frei
 und erhöht die Variable des Semaphors wieder um 1.
 
-
 ---
 
-#### Ein erstes Beispiel
+## Ein erstes Beispiel <a name="link4"></a>
 
 Semaphore können in Sender-Empfänger-Abläufen verwendet werden.
 
@@ -99,7 +120,6 @@ Damit wartet der Empfänger auf die Benachrichtigung des Senders:
 03: std::jthread t2{ &Worker::executeJob, &worker };
 ```
 
-
 *Ausgabe*:
 
 
@@ -117,12 +137,12 @@ Das `std::binary_semaphore`-Objekt `m_semaphore` (Zeile 4) kann die Werte 0 oder
 
 Im konkreten Anwendungsfall wird es auf `0` (Zeile 7) initialisiert.
 
-Das heißt, dass der Aufruf `release` den Wert auf 1 (Zeile 19) setzt
-und den Aufruf `acquire` in Zeile 28 entblockt.
+Das heißt, dass der Aufruf `release` den Wert auf 1 (Zeile 17) setzt
+und den Aufruf `acquire` in Zeile 24 entblockt.
 
 ---
 
-#### Ein zweites Beispiel
+## Ein zweites Beispiel <a name="link5"></a>
 
 Um die Verwendung von binären Semaphoren zu veranschaulichen, implementieren wir eine Druckerwarteschlange,
 die zum gleichzeitigen Einstellen von Druckaufträgen verwendet werden kann.
@@ -167,7 +187,7 @@ Thread 5068: PrinterQueue: The document has been printed
 
 ---
 
-#### Ein drittes Beispiel
+## Ein drittes Beispiel <a name="link6"></a>
 
 *Ausgabe*:
 
@@ -185,16 +205,7 @@ FGKBJKIJHFGKJKLIMFGKMHKIMFGKLMKIMHFGKMKLIMMHIMLMHLHLLLLL
 
 ---
 
-
-#### Quellcode
-
-[*Teil 1*: Einfaches Beispiel](Semaphore_01.cpp).<br />
-[*Teil 2*: Drucker mit Warteschlange](Semaphore_02.cpp).<br />
-[*Teil 3*: Ein Beispiel zur Klasse `std::counting_semaphore`](Semaphore_03.cpp).<br />
-
----
-
-## Literaturhinweise
+## Literaturhinweise <a name="link7"></a>
 
 Die Idee zu dem Beispiel mit der Druckerwarteschlange stammt aus dem Artikel
 

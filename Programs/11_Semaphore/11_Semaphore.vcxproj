@@ -129,13 +129,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Semaphore_01.cpp" />
-    <ClCompile Include="Semaphore_02.cpp" />
-    <ClCompile Include="Semaphore_03.cpp" />
+    <ClCompile Include="Source Files\Program.cpp" />
+    <ClCompile Include="Source Files\Semaphore_01.cpp" />
+    <ClCompile Include="Source Files\Semaphore_02.cpp" />
+    <ClCompile Include="Source Files\Semaphore_03.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Readme.md" />
+    <None Include="Resource Files\Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
