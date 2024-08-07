@@ -1,16 +1,14 @@
 // ===========================================================================
-// Program.cpp // Thread Pool
+// Program.cpp // Wait and Notify // std::condition_variable
 // ===========================================================================
 
-extern void test_concurrency_thread_pool_01();
-extern void test_concurrency_thread_pool_02();
-extern void test_concurrency_thread_pool_03();
+extern void test_simple_condition_variable_01();
+extern void test_simple_condition_variable_02();
 
 int main()
 {
-    test_concurrency_thread_pool_01();
-    //test_concurrency_thread_pool_02();
-    //test_concurrency_thread_pool_03();
+    test_simple_condition_variable_01();
+    test_simple_condition_variable_02();
     return 0;
 }
 

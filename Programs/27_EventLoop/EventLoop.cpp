@@ -71,7 +71,7 @@ void EventLoop::enqueue(const Event& callable)
     {
         std::lock_guard<std::mutex> guard(m_mutex);
 
-        m_events.emplace_back(callable);
+        m_events.push_back(callable);
     }
 
     m_condition.notify_one();
@@ -82,7 +82,7 @@ void EventLoop::enqueue(Event&& callable) noexcept
     {
         std::lock_guard<std::mutex> guard(m_mutex);
 
-        m_events.emplace_back(std::move(callable));
+        m_events.push_back(std::move(callable));
     }
 
     m_condition.notify_one();

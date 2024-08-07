@@ -50,13 +50,14 @@ public:
         {
             std::lock_guard<std::mutex> guard(m_mutex);
 
-            m_events.emplace_back([=] () mutable { 
+            m_events.push_back([=] () mutable {
                 std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);
                 }
             );
 
             // more simpler, but not "perfect"
-            // m_events.emplace_back( [=] () mutable { callable (args ...); } );
+            // m_events.push_back( [=] () mutable { callable (args ...); } );
+        
         }
 
         m_condition.notify_one();
