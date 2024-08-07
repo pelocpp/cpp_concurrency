@@ -46,10 +46,6 @@
     Die parallele Ausgabe mit `std::cout` kann mit und ohne *Mutex*-Sperre beobachtet werden.<br />
     [*Mutex_01_Simple.cpp*](Mutex_01_Simple.cpp).
 
-  * Elementare Demonstration des `std::condition_variable` Objekts:<br />
-    [*Condition_Variable_01_Simple.cpp*](Condition_Variable_01_Simple.cpp).<br />
-    [*Condition_Variable_02_Simple.cpp*](Condition_Variable_02_Simple.cpp).
-   
   * Fortgeschrittene Demonstration des `std::mutex` Objekts mit Hüllenklassen:<br />
     [*Mutex_02_Advanced.cpp*](Mutex_02_Advanced.cpp).
 
@@ -179,55 +175,6 @@ mit einer umfangreicheren Funktionalität als Klasse `std::lock_guard`.
   * Es wird sowohl der exklusive Besitz (*exclusive ownership*) als auch der gemeinsame Besitz (*shared ownership*) eines Mutexobjekts unterstützt.
   * Unterstützt Verschiebe-Semantik.
   * Unterstützt zeitgesteuertes Sperren sowie Bedingungsvariablen (`std::condition_variable`).
-
-
-### Klasse `std::condition_variable`
-
-Wir gehen noch auf die Klasse `std::condition_variable` ein:
-
-Ein `std::unique_lock`-Objekt muss von der &bdquo;empfangenden&rdquo; Seite
-(der Seite, die benachrichtigt wird) verwendet werden, um bei Gebrauch eines `std::condition_variable`-Objekts
-entsprechende Benachrichtigungen empfangen zu können.
-
-Der Grund, warum ein `std::unique_lock`-Objekt für ein `std::condition_variable`-Objekt erforderlich ist, besteht darin,
-dass dieses das zugrunde liegende `std::mutex`-Objekt jedes Mal sperren kann,
-wenn die Bedingungsvariable (`std::condition_variable`) nach einer gültigen Benachrichtigung
-aus einer Wartephase aufwacht und einen kritischen Codeabschnitt ausführt.
-
-Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes Mal, wenn
-
-  * der Aufruf der `wait`-Methode an der Bedingungsvariablen fälschlicherweise aktiviert wurde, es also erneut gewartet werden muss.
-  * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und schließlich abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
-
-
-#### Hinweis
-
-Siehe das Thema
-
-[Do I have to acquire lock before calling std::condition_variable.notify_one()?](https://stackoverflow.com/questions/17101922/do-i-have-to-acquire-lock-before-calling-condition-variable-notify-one)
-
-Und gleich noch ein zweiter Hinweis:
-
-#### Hinweis
-
-Die Funktionsweise der Methode `wait` der Klasse `std::condition_variable` ist wie folgt definiert:
-
-*Definition* von `wait`:
-
-```cpp
-template< class Predicate >
-void wait(std::unique_lock<std::mutex>& lock, Predicate pred);
-```
-
-*Ablauf*:
-
-```cpp
-while (!pred()) {
-    wait(lock);
-}
-```
-
-Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
 
 
 ### Klasse `std::scoped_lock`

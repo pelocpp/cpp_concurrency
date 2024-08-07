@@ -144,13 +144,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Condition_Variable_01_Simple.cpp" />
     <ClCompile Include="Example_LockingStrategies.cpp" />
     <ClCompile Include="Example_RecursiveMutex.cpp" />
     <ClCompile Include="Example_ScopedLock.cpp" />
     <ClCompile Include="Mutex_02_Advanced.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="Condition_Variable_02_Simple.cpp" />
     <ClCompile Include="Mutex_01_Simple.cpp" />
   </ItemGroup>
   <ItemGroup>

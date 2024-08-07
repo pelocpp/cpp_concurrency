@@ -7,12 +7,6 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Condition_Variable_01_Simple.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Condition_Variable_02_Simple.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mutex_01_Simple.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
