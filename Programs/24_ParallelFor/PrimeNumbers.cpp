@@ -21,9 +21,9 @@ namespace Globals
     // constexpr size_t UpperLimit { 100 };             // Found:  25 prime numbers
     // constexpr size_t UpperLimit { 1000 };            // Found:  168 prime numbers
     // constexpr size_t UpperLimit { 100'000 };         // Found:  9.592 prime numbers
-       constexpr size_t UpperLimit { 1'000'000 };       // Found:  78.498 prime numbers
+    // constexpr size_t UpperLimit { 1'000'000 };       // Found:  78.498 prime numbers
     // constexpr size_t UpperLimit { 10'000'000 };      // Found:  664.579 prime numbers
-    // constexpr size_t UpperLimit { 100'000'000 };     // Found:  5.761.455 prime numbers
+    constexpr size_t UpperLimit { 100'000'000 };     // Found:  5.761.455 prime numbers
 }
 
 // ===========================================================================
@@ -54,7 +54,7 @@ static void test_parallel_for_01(size_t from, size_t to, bool useThreads)
         parallel_for(
             from,
             to,
-            [](size_t start, size_t end) {
+            [] (size_t start, size_t end) {
                 calcPrimesRange(start, end);
             },
             useThreads

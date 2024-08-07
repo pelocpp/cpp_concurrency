@@ -106,7 +106,7 @@ static void test_event_loop_10()
 {
     Logger::log(std::cout, "Start:");
 
-    std::function<void(int)> task{ [](int value) {
+    std::function<void(int)> task{ [] (int value) {
         Logger::log(std::cout, "Value: ", value); }
     };
 
@@ -155,7 +155,7 @@ static void test_event_loop_20()
 
     size_t foundPrimeNumbers{};
 
-    std::function<void(size_t)> primeTask{ [&](size_t value) {
+    std::function<void(size_t)> primeTask{ [&] (size_t value) {
 
             bool primeFound { isPrime(value) };
 
@@ -171,11 +171,11 @@ static void test_event_loop_20()
 
     Logger::log(std::cout, "Enqueuing tasks");
 
-    //const size_t Start = 1000000000001;
-    //const size_t End = Start + 100;
-
-    const size_t Start = 1;
+    const size_t Start = 1000000000001;
     const size_t End = Start + 100;
+
+    //const size_t Start = 1;
+    //const size_t End = Start + 100;
 
     for (size_t i = Start; i < End; i += 2) {
         eventLoop.enqueueTask(primeTask, i);
@@ -198,7 +198,7 @@ static void test_event_loop_21()
 
     size_t foundPrimeNumbers{};
 
-    std::function<void(size_t)> primeTask{ [&](size_t value) {
+    std::function<void(size_t)> primeTask{ [&] (size_t value) {
 
             bool primeFound { isPrime(value) };
 
@@ -234,13 +234,13 @@ static void test_event_loop_21()
 
 void test_event_loop()
 {
-    //test_event_loop_01();
-    //test_event_loop_02();
-    //test_event_loop_03();
-    //test_event_loop_04();
-    test_event_loop_10();
-    //test_event_loop_20();
-    //test_event_loop_21();
+    test_event_loop_01();  // just starting and stopping event loop
+    test_event_loop_02();  // demonstrating event loop with one event
+    test_event_loop_03();  // demonstrating event loop with five events
+    test_event_loop_04();  // demonstrating event loop with five lambdas
+    test_event_loop_10();  // demonstrating enqueuing events with parameters
+    test_event_loop_20();  // searching prime numbers: first enqueuing events, than starting calculations
+    test_event_loop_21();  // searching prime numbers: enqueuing events while event loop is active
 }
 
 // ===========================================================================

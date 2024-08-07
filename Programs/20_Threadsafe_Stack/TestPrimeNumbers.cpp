@@ -32,10 +32,10 @@ namespace Globals
     //constexpr size_t UpperLimit { 1'000'000 };
     // Found:  78.498 prime numbers
 
-    constexpr size_t UpperLimit { 10'000'000 };
+    // constexpr size_t UpperLimit { 10'000'000 };
     // Found:  664.579 prime numbers
 
-    // constexpr size_t UpperLimit { 100'000'000 };
+    constexpr size_t UpperLimit { 100'000'000 };
     // Found:  5.761.455 prime numbers
 }
 
@@ -134,7 +134,7 @@ void test_thread_safe_stack_03()
 
 void test_thread_safe_stack_04()
 {
-    constexpr bool Verbose{ false };
+    constexpr bool Verbose{ true };  // set to 'true'
 
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
@@ -148,10 +148,14 @@ void test_thread_safe_stack_04()
     auto callableWrapper = [] (Callable callable) {
 
         if (Verbose) {
-            Logger::log(std::cout, "TID: ", std::this_thread::get_id());
+            Logger::log(std::cout, "> TID: ", std::this_thread::get_id());
         }
 
         callable();
+
+        if (Verbose) {
+            Logger::log(std::cout, "< TID: ", std::this_thread::get_id());
+        }
     };
 
     ThreadsafeStack<size_t> primes{};

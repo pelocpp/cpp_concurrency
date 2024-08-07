@@ -18,8 +18,7 @@ namespace ProducerConsumerQueue
     class BlockingQueue
     {
     private:
-        // array - considered as a queue
-        std::array<T, QueueSize> m_data;
+        std::array<T, QueueSize> m_data;  // array - considered as a queue
 
         size_t m_pushIndex;
         size_t m_popIndex;
@@ -55,7 +54,7 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this]() -> bool { return m_size < QueueSize; }
+                    [this] () -> bool { return m_size < QueueSize; }
                 );
 
                 // guard
@@ -84,7 +83,7 @@ namespace ProducerConsumerQueue
                 // is stack full? (Note: lost and spurious wakeups)
                 m_conditionIsFull.wait(
                     guard,
-                    [this]() -> bool { return m_size < QueueSize; }
+                    [this] () -> bool { return m_size < QueueSize; }
                     );
 
                 // guard

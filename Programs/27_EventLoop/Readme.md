@@ -4,7 +4,22 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Klasse `std::function`](#link3)
+  * [`std::function` und *Type Erasure*](#link4)
+  * [`std::function` und *Small-Object*-Optimierung](#link5)
+  * [Klasse `std::condition_variable`](#link6)
+  * [Doppelpuffertechnik (*Double Buffering*)](#link7)
+  * [Funktionen mit Parametern in der Ereigniswarteschlange](#link8)
+  * [Beendigung der Ausführung](#link9)
+  * [Literaturhinweise](#link10)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
   * `std::function`
   * `std::mutex`
@@ -15,7 +30,16 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*EventLoop.h*](./EventLoop.h)<br />
+[*EventLoop.cpp*](./EventLoop.cpp)<br />
+[*TestEventLoop.cpp*](TestEventLoop.cpp)<br />
+[*Program.cpp*](Program.cpp)<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 *Kurz gefasst*:
 
@@ -36,10 +60,10 @@ Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismus un
   * Sie entwerfen gerade neue Klassen, möchten diese aber nicht mit gleich mit
 Synchronisationsmechanismen wie `std:mutex`-Objekten überfrachten.
 
+Es folgen einige Hinweise zur Realisierung.
 
-## Realisierung
 
-### Klasse `std::function`
+## Klasse `std::function` <a name="link3"></a>
 
 Um eine Ereigniswarteschlange zu realisieren, benötigt man die Möglichkeit,
 &bdquo;Methodenaufrufe&rdquo; zwischenzuspeichern. Gewisse Ähnlichkeiten zum *Command Pattern*
@@ -48,7 +72,7 @@ aus dem Umfeld der *Design Pattern* sind hier vorhanden.
 Hierzu kommt uns die Klasse `std::function` zur Hilfe.
 Diese Klasse zeichnet sich durch zwei besondere Eigenschaften aus:
 
-#### *Type Erasure*
+## `std::function` und *Type Erasure* <a name="link4"></a>
 
 Auf Grund des *Type Erasure* Features kann man in einem `std::function`-Objekt alles speichern,
 was man in C++ &bdquo;aufrufen&rdquo; kann:
@@ -63,7 +87,7 @@ was pro *Funktion* notwendig ist, wie zum Beispiel die Referenz eines Objekts,
 dessen Methode aufgerufen werden soll oder die Erfassungsklausel (*Capture Clause*) eines Lambda-Objekts.
 
 
-#### *Small-Object*-Optimierung
+## `std::function` und *Small-Object*-Optimierung <a name="link5"></a>
 
 Dies geht einher mit der so genannten *Small-Object*-Optimierung:
 
@@ -88,7 +112,7 @@ da diese letzten Endes doch &bdquo;Nachrichten abarbeitet&rdquo;, aber nicht vor
 konzipiert ist.
 
 
-### Klasse `std::condition_variable`
+## Klasse `std::condition_variable` <a name="link6"></a>
 
 Eine *Bedingungsvariable* ist ein Synchronisationsprimitiv,
 das einen Thread dazu bringt, seine Ausführung über `wait()` zu verschieben (*suspend*),
@@ -131,7 +155,7 @@ Um zusätzliche Synchronisierungen zu vermeiden, stellen Sie einfach sicher, dass
 nachdem Sie den Mutex freigegeben haben.
 
 
-### Doppelpuffertechnik (*Double Buffering*)
+## Doppelpuffertechnik (*Double Buffering*) <a name="link7"></a>
 
 In der Realisierung der Abarbeitung der Nachrichten
 finden Sie eine Umsetzung der *Double Buffering Technik* vor.
@@ -197,7 +221,7 @@ Sinnigerweise ist dieser in der Methode `enqueue` vorhanden, wenn neue Nachricht
 Warteschlange aufgenommen werden.
 
 
-### Funktionen mit Parametern in der Ereigniswarteschlange
+## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link8"></a>
 
 Es lassen sich auch Funktionen mit Parametern in die Ereigniswarteschlange einreihen &ndash; in dies sogar,
 ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
@@ -233,7 +257,7 @@ Der Aufruf der Nachricht `callable` ist im Rumpf der Lambda-Funktion plaziert,
 die Parameter `args` werden via `[=]` in das Lambda-Objekt kopiert!
 
 
-### Beendigung der Ausführung
+## Beendigung der Ausführung <a name="link9"></a>
 
 Wenn die Abarbeitung der Nachrichten beendet werden soll,
 wird dies dadurch erreicht, dass eine spezielle Nachricht in die Warteschlange am Ende eingefügt wird:
@@ -247,16 +271,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-#### Quellcode
-
-[*EventLoop.h*](./EventLoop.h)<br />
-[*EventLoop.cpp*](./EventLoop.cpp)<br />
-[*TestEventLoop.cpp*](TestEventLoop.cpp)<br />
-[*Program.cpp*](Program.cpp)<br />
-
----
-
-## Literaturhinweise
+## Literaturhinweise <a name="link10"></a>
 
 Die Anregungen zur Klasse `EventLoop` stammen im Wesentlichen aus dem Artikel
 

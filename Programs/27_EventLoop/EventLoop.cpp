@@ -39,17 +39,20 @@ void EventLoop::threadProcedure()
     while (m_running)
     {
         {
-            std::unique_lock<std::mutex> guard(m_mutex);
+            std::unique_lock<std::mutex> guard{ m_mutex };
 
             m_condition.wait(
                 guard,
                 [this] () -> bool { return ! m_events.empty(); }
             );
 
-            std::swap(events, m_events);
+            if (!m_events.empty()) {
+
+                std::swap(events, m_events);
+            }
         }
 
-        Logger::log(std::cout, "swapped ", events.size(), " events ...");
+        Logger::log(std::cout, "swapped ", events.size(), " event(s) ...");
 
         for (const Event& callable : events)
         {
@@ -57,7 +60,7 @@ void EventLoop::threadProcedure()
             callable();
         }
 
-        events.clear();
+        events.clear();  // empty container for next loop
     }
 
     Logger::log(std::cout, "< Event Loop");

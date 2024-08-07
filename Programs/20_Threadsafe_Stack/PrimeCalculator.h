@@ -16,15 +16,15 @@ namespace Concurrency_PrimeCalculator
     class PrimeCalculator
     {
     private:
-        ThreadsafeStack<T>& m_stack;
-        size_t m_begin;
-        size_t m_end;
+        ThreadsafeStack<T>&  m_stack;
+        size_t               m_begin;
+        size_t               m_end;
 
     public:
         PrimeCalculator(ThreadsafeStack<T>& stack, size_t begin, size_t end)
             : m_stack{ stack }, m_begin{ begin }, m_end{ end }
         {
-            // Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
+            Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
         }
 
         void operator() ()

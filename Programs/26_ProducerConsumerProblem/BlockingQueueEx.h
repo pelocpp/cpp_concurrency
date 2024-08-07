@@ -18,6 +18,8 @@ namespace ProducerConsumerQueue
     class BlockingQueue
     {
     private:
+        T* m_data;
+
         size_t m_size;
         size_t m_pushIndex;
         size_t m_popIndex;
@@ -26,8 +28,6 @@ namespace ProducerConsumerQueue
         std::counting_semaphore<QueueSize> m_fullSlots;
 
         std::mutex mutable m_mutex;
-
-        T* m_data;
 
     public:
         // default c'tor

@@ -2,13 +2,16 @@
 // ProducerConsumerProblem.cpp
 // ===========================================================================
 
-#include "BlockingQueue.h"
-// #include "BlockingQueueEx.h"
+// #include "BlockingQueue.h"
+#include "BlockingQueueEx.h"
 
 constexpr int NumIterations{ 10 };
 
-constexpr std::chrono::milliseconds SleepTimeConsumer{ 120 };
-constexpr std::chrono::milliseconds SleepTimeProducer{  80 };
+//constexpr std::chrono::milliseconds SleepTimeConsumer{ 120 };
+//constexpr std::chrono::milliseconds SleepTimeProducer{  80 };
+
+constexpr std::chrono::milliseconds SleepTimeConsumer{ 2200 };
+constexpr std::chrono::milliseconds SleepTimeProducer{ 80 };
 
 static void test_thread_safe_blocking_queue_01()
 {
@@ -284,11 +287,11 @@ static void test_thread_safe_blocking_queue_05()
 
 void test_producer_consumer_problem()
 {
-    test_thread_safe_blocking_queue_01();
-    test_thread_safe_blocking_queue_02();
-    test_thread_safe_blocking_queue_03();
-    test_thread_safe_blocking_queue_04();
-    test_thread_safe_blocking_queue_05();
+    // test_thread_safe_blocking_queue_01();   // just testing single push and pop
+    // test_thread_safe_blocking_queue_02();   // testing limited number of push and pop operations
+    // test_thread_safe_blocking_queue_03();   // passing BlockingQueue to separate consumer and producer objects
+    // test_thread_safe_blocking_queue_04();   // testing BlockingQueue with 6 threads
+    // test_thread_safe_blocking_queue_05();   // testing BlockingQueue with real objects
 }
 
 // ===========================================================================

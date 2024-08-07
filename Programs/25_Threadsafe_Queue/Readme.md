@@ -18,7 +18,7 @@
 Die STL stellt mit der Klasse `std::queue<T>` einen leistungsstarken FIFO-Container bereit
 (*First-in, First-out* Datenstruktur).
 
-Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
+Der Zugriff von mehreren Threads auf Objekte dieser Klasse ist jedoch nicht sicher.
 
 
 ### Race Conditions

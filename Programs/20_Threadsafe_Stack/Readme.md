@@ -17,7 +17,7 @@
 Die STL stellt mit der Klasse `std::stack<T>` einen leistungsstarken LIFO-Container bereit
 (*Last-in, First-out* Datenstruktur).
 
-Der Zugriff von mehreren Threads aus auf Objekte dieser Klasse ist jedoch nicht sicher.
+Der Zugriff von mehreren Threads auf Objekte dieser Klasse ist jedoch nicht sicher.
 
 
 ### Race Conditions
@@ -221,7 +221,7 @@ der bei der Erzeugung eines `PrimeCalculator`-Objekts anzugeben ist.
 
 Mehrere Instanzen der `PrimeCalculator`-Klasse berechnen Primzahlen in unterschiedlichen Zahlenbereichen,
 und können dies auch quasi-parallel im Kontext mehrerer Threads tun. Einzig und allein die berechneten Primzahlen
-sind in einem für alle `PrimeCalculator`-Objekte gleichen Ergebniscontainer abzulegen.
+sind in einem für alle `PrimeCalculator`-Objekte zur Verfügung stehenden Ergebniscontainer abzulegen.
 
 An dieser Stelle setzen wir die `ThreadsafeStack`-Klasse ein.
 

@@ -7,7 +7,6 @@ extern void test_event_loop();
 int main()
 {
     test_event_loop();
-
     return 0;
 }
 
