@@ -32,8 +32,8 @@ namespace SimpleMutexDemo
             {
                 {
                     // <== remove comment from next line to demonstrate scattered output
-                    //std::scoped_lock<std::mutex> raii{ s_mutex };
-                    //std::scoped_lock raii{ s_mutex };  // C++ 17 (automatic type deduction)
+                    // std::lock_guard<std::mutex> raii{ s_mutex };
+                    // std::lock_guard raii{ s_mutex };  // C++ 17 (automatic type deduction)
 
                     std::cout << "Counter " << m_id << ": i=" << i << "\n";
                 }

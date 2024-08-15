@@ -357,8 +357,8 @@ Studieren Sie den Quellcode des Beispiels genau.
 077: 
 078:     // generate players from the names using 'std::transform' algorithm
 079:     std::transform(
-080:         std::begin(names),
-081:         std::end(names),
+080:         names.begin(),
+081:         names.end(),
 082:         std::back_inserter(players),
 083:         [&] (std::string_view name) {
 084:             return std::make_unique<Player>(name, device());

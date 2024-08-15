@@ -13,7 +13,7 @@
   * [Klasse `std::barrier`](#link5)
   * [Beispiele zu `std::latch`](#link6)
   * [Beispiele zu `std::barrier`](#link7)
-  * [Literaturhinweise8](#link8)
+  * [Literaturhinweise](#link8)
 
 ---
 

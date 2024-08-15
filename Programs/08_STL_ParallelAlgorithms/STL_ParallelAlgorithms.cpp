@@ -48,7 +48,12 @@ namespace STL_Parallel_Algorithms
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };
-            std::sort(std::begin(copyToSort), std::end(copyToSort));
+            
+            std::sort(
+                copyToSort.begin(),
+                copyToSort.end()
+            );
+            
             const auto endTime{ std::chrono::high_resolution_clock::now() };
             printResults("Serial", startTime, endTime);
         }
@@ -61,8 +66,14 @@ namespace STL_Parallel_Algorithms
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };
+            
             // same sort call as above, but with 'par_unseq' or 'par':
-            std::sort(std::execution::par, std::begin(copyToSort), std::end(copyToSort));
+            std::sort(
+                std::execution::par, 
+                copyToSort.begin(),
+                copyToSort.end()
+            );
+            
             const auto endTime{ std::chrono::high_resolution_clock::now() };
             printResults("Parallel", startTime, endTime);
         }

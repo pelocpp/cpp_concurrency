@@ -115,7 +115,7 @@ um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schü
 14:     ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
 15: 
 16:     // copy and move constructor may be useful
-17:     ThreadsafeStack(const ThreadsafeStack& other) noexcept
+17:     ThreadsafeStack(const ThreadsafeStack& other)
 18:     {
 19:         std::lock_guard<std::mutex> lock{ other.m_mutex };
 20:         m_data = other.m_data;

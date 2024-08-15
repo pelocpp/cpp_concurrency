@@ -57,7 +57,9 @@ public:
 
             // more simpler, but not "perfect"
             // m_events.push_back( [=] () mutable { callable (args ...); } );
-        
+
+            // again more simpler, not "perfect", variables of capture clause explicitely listed
+            // m_events.push_back( [callable, args ... ] () mutable { callable (args ...); } );
         }
 
         m_condition.notify_one();

@@ -27,7 +27,7 @@ namespace Concurrency_ThreadsafeStack
         ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
 
         // copy and move constructor may be useful
-        ThreadsafeStack(const ThreadsafeStack& other) noexcept
+        ThreadsafeStack(const ThreadsafeStack& other)
         {
             std::lock_guard<std::mutex> lock{ other.m_mutex };
             m_data = other.m_data;

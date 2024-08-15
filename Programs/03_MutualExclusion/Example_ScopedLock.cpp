@@ -102,8 +102,8 @@ void example_scoped_lock()
 
     // generate players from the names using 'std::transform' algorithm
     std::transform(
-        std::begin(names),
-        std::end(names),
+        names.begin(),
+        names.end(),
         std::back_inserter(players),
         [&] (std::string_view name) {
             return std::make_unique<Player>(name, device());

@@ -35,7 +35,8 @@ namespace ProducerConsumerQueue
             m_size{},
             m_pushIndex{},
             m_popIndex{},
-            m_emptySlots{ static_cast<std::ptrdiff_t>(QueueSize) },
+        //    m_emptySlots{ static_cast<std::ptrdiff_t>(QueueSize) },
+            m_emptySlots{ QueueSize },
             m_fullSlots{ 0 },
             m_data{ static_cast<T*>(std::malloc(sizeof(T) * QueueSize)) }
         {

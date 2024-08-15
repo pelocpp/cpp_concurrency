@@ -44,7 +44,7 @@
 *Kurz gefasst*:
 
 Eine Ereigniswarteschlange (engl. *Event Loop* ) kann man als Alternative zu einem
-Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf geschützte Objekt bzw. deren Methoden,
+Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf geschützte Objekte bzw. deren Methoden,
 jedoch auf unterschiedliche Weise:
 
   * `std:mutex`-Objekte stellen einen Synchronisationsmechanismus dar, es sind zu diesem Zweck die kritischen Abschnitte

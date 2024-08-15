@@ -14,7 +14,7 @@ namespace Locking_Strategies
     std::mutex g_mutex1{};
     std::mutex g_mutex2{};
 
-    void example01() {
+    static void example01() {
 
         // calling thread locks the mutexes
         std::lock(g_mutex1, g_mutex2);
@@ -27,7 +27,7 @@ namespace Locking_Strategies
         // release of mutexes
     }
 
-    void example02() {
+    static void example02() {
 
         std::unique_lock<std::mutex> lock1{ g_mutex1, std::defer_lock };
         std::unique_lock<std::mutex> lock2{ g_mutex2, std::defer_lock };
