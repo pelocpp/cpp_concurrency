@@ -26,7 +26,8 @@ namespace ThreadPool_ArthurDwyer
     ThreadPool::~ThreadPool() 
     {
         {
-            std::lock_guard guard(m_mutex);
+            std::lock_guard<std::mutex> guard{ m_mutex };
+
             m_aborting = true;
         }
 

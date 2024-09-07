@@ -182,7 +182,7 @@ Eine grobe Skizzierung der Realisierung der Verarbeitung der Nachrichten in der 
 05:     while (m_running)
 06:     {
 07:         {
-08:             std::unique_lock<std::mutex> guard(m_mutex);
+08:             std::unique_lock<std::mutex> guard{ m_mutex };
 09: 
 10:             m_condition.wait(
 11:                 guard,
@@ -209,7 +209,7 @@ Hierzu muss es einen korrespondierenden `notify_one`- oder `notify_all`-Aufruf g
 01: void enqueue (const std::function<void()>& callable)
 02: {
 03:     {
-04:         std::lock_guard<std::mutex> guard(m_mutex);
+04:         std::lock_guard<std::mutex> guard{ m_mutex };
 05:         m_events.emplace_back(callable);
 06:     }
 07: 
@@ -243,7 +243,7 @@ Eine vereinfachende Realisierung könnte so aussehen:
 02: void enqueueTask(TFunc&& callable, TArgs&& ...args)
 03: {
 04:     {
-05:         std::lock_guard<std::mutex> guard(m_mutex);
+05:         std::lock_guard<std::mutex> guard{ m_mutex };
 06: 
 07:         m_events.emplace_back( [=] () mutable { callable (args ...); } );
 08:     }

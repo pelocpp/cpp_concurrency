@@ -36,7 +36,7 @@
 <ins>Sperrstrategien (*Locking Strategies*)</ins>:
 
   * Klasse `std::defer_lock`
-  * Klasse `std::std::adopt_lock`
+  * Klasse `std::adopt_lock`
 
 ---
 

@@ -53,7 +53,8 @@ namespace ThreadPool_ArthurDwyer {
             //}
 
             {
-                std::lock_guard guard(m_mutex);
+                std::lock_guard<std::mutex> guard{ m_mutex };
+
                 m_workQueue.push(std::move(task));
             }
 

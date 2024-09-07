@@ -48,7 +48,7 @@ public:
         Logger::log(std::cout, "enqueueTask ...");
 
         {
-            std::lock_guard<std::mutex> guard(m_mutex);
+            std::lock_guard<std::mutex> guard{ m_mutex };
 
             m_events.push_back([=] () mutable {
                 std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);

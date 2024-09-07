@@ -17,7 +17,7 @@
 <ins>Mutex-Klassen</ins>:
 
   * Klasse `std::mutex`
-  * Klasse `std::std::condition_variable`
+  * Klasse `std::condition_variable`
 
  
 <ins>Hüllen-Klassen für Mutexobjekte</ins>:

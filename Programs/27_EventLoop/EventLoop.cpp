@@ -69,7 +69,7 @@ void EventLoop::threadProcedure()
 void EventLoop::enqueue(const Event& callable)
 {
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
+        std::lock_guard<std::mutex> guard{ m_mutex };
 
         m_events.push_back(callable);
     }
@@ -80,7 +80,7 @@ void EventLoop::enqueue(const Event& callable)
 void EventLoop::enqueue(Event&& callable) noexcept
 {
     {
-        std::lock_guard<std::mutex> guard(m_mutex);
+        std::lock_guard<std::mutex> guard{ m_mutex };
 
         m_events.push_back(std::move(callable));
     }

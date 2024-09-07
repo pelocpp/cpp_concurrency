@@ -31,6 +31,7 @@ namespace JoinableThreadCooperativeInterruptibility {
         };
 
         sleep(5);
+        std::cout << "Leaving main thread ..." << std::endl;
         t.join();
     }
 
@@ -51,7 +52,7 @@ namespace JoinableThreadCooperativeInterruptibility {
         };
 
         sleep(5);
-        jt.join();
+        std::cout << "Leaving main thread ..." << std::endl;
     }
 
     // =============================================
@@ -72,7 +73,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        jt.join();
+        std::cout << "Leaving main thread ..." << std::endl;
     }
 
     // =============================================
@@ -92,12 +93,12 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        jt.join();
+        std::cout << "Leaving main thread ..." << std::endl;
     }
 
     // =============================================
     // Szenario 5:
-    // class std::jthread -- using request_stop -- still endless loop
+    // class std::jthread -- using request_stop
 
     static void jthread_05()
     {
@@ -125,7 +126,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        jt.join();
+        std::cout << "Leaving main thread ..." << std::endl;
     }
 
     // =============================================
@@ -157,11 +158,9 @@ namespace JoinableThreadCooperativeInterruptibility {
         };
 
         sleep(5);
-
         std::stop_source source{ jt.get_stop_source() };
-        
         source.request_stop();  // request stop on stop token of thread 'jt'
-        jt.join();
+        std::cout << "Leaving main thread ..." << std::endl;
     }
 }
 
