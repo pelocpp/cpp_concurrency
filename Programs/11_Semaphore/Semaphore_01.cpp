@@ -2,6 +2,8 @@
 // Semaphore // Semaphore_01.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -18,28 +20,28 @@ namespace ConcurrencyBinarySemaphore {
     public:
         Worker() : m_semaphore{ 0 } {}
 
-        void scheduleJob() {
-
-            std::println("ScheduleJob: Data preparing ...");
+        void scheduleJob()
+        {
+            Logger::log(std::cout, "ScheduleJob: Data preparing ...");
 
             std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 
-            std::println("ScheduleJob: Data prepared!");
+            Logger::log(std::cout, "ScheduleJob: Data prepared!");
 
             m_semaphore.release();
         }
 
-        void executeJob() {
-
-            std::println("ExecuteJob:  Waiting for data ...");
+        void executeJob()
+        {
+            Logger::log(std::cout, "ExecuteJob:  Waiting for data ...");
 
             m_semaphore.acquire();
 
-            std::println("ExecuteJob:  Executing job ...");
+            Logger::log(std::cout, "ExecuteJob:  Executing job ...");
 
             std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
-            std::println("ExecuteJob:  Done.");
+            Logger::log(std::cout, "ExecuteJob:  Done.");
         }
     };
 }
