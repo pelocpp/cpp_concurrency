@@ -10,29 +10,34 @@
 #include <thread>
 #include <mutex>
 #include <semaphore>
+#include <print>
 
 namespace ConcurrencyCountingSemaphore {
 
     static void test_counting_semaphore_01()
     {
-        std::mutex mutex;
+        std::mutex mutex{};
 
         // initialize a queue with multiple sequences from ’A’ to ’Z’
 
-        std::queue<char> values;
+        std::queue<char> values{};
 
         for (size_t i{}; i != 1000; ++i) {
-            values.push(static_cast<char>('A' + (i % ('Z' - 'A'))));
+            char ch{ static_cast < char>('A' + (i % ('Z' - 'A'))) };
+            values.push(ch);
         }
 
-        constexpr int numThreads{ 10 };
+        constexpr int numThreads{ 8 };
 
         std::counting_semaphore<numThreads> enabled{ 0 };
 
         // create a thread pool
-        std::vector<std::jthread> pool;
+        std::vector<std::jthread> pool{};
 
         auto procedure = [&](std::stop_token token, int n) {
+
+            std::thread::id tid{ std::this_thread::get_id() };
+            Logger::log(std::cout, "> tid:  ", tid);
 
             while (!token.stop_requested()) {
 
@@ -48,18 +53,24 @@ namespace ConcurrencyCountingSemaphore {
                     values.pop();
                 }
 
-                // print the value 10 times:
+                // print the value 10 times
                 for (int i{}; i != 10; ++i) {
 
-                    std::cout.put(ch).flush();
+                    if (token.stop_requested()) {
+                        break;
+                    }
 
-                    auto duration = std::chrono::milliseconds{ 300 } *((n % 3) + 1);
+                    std::print("{}", ch);
+
+                    auto duration{ std::chrono::milliseconds{ 300 } *((n % 3) + 1) };
                     std::this_thread::sleep_for(std::chrono::milliseconds{ duration });
                 }
 
                 // remove thread from the set of enabled threads
                 enabled.release();
             }
+
+            Logger::log(std::cout, "< tid:  ", tid);
         };
 
         // create and start all threads of the pool
@@ -70,31 +81,38 @@ namespace ConcurrencyCountingSemaphore {
         }
 
         // now play with the threads
-        std::cout << ">  wait 3 seconds (no thread enabled)\n" << std::flush;
-        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
-        // enable 3 concurrent threads:
-        std::cout << ">  enable 3 parallel threads\n" << std::flush;
-        enabled.release(3);
+        Logger::log(std::cout, "> wait 2 seconds (no thread enabled)");
+
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+
+        // enable 4 concurrent threads:
+        Logger::log(std::cout, "\n> enable 4 parallel threads");
+
+        enabled.release(4);
+
         std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 
-        // enable 2 more concurrent threads:
-        std::cout << "\n>  enable 4 more parallel threads\n" << std::flush;
-        enabled.release(4);
-        std::this_thread::sleep_for(std::chrono::seconds{ 3 });
+        // enable 4 more concurrent threads
+        Logger::log(std::cout, "\n> enable 4 more parallel threads");
 
-        // Normally we would run forever, but let’s end the program here:
-        std::cout << "\n>  stop processing\n" << std::flush;
+        enabled.release(4);
+        std::this_thread::sleep_for(std::chrono::seconds{ 5 });
+
+        // we could run forever, but let’s end the program here:
+        Logger::log(std::cout, "\n> stop processing");
+
         for (auto& t : pool) {
             t.request_stop();
         }
 
-        std::cout << ">  wait for end of threads\n" << std::flush;
+        Logger::log(std::cout, "\n> wait for end of threads");
+
         for (auto& t : pool) {
             t.join();
         }
 
-        std::cout << "\n>  Done.\n" << std::flush;
+        Logger::log(std::cout, "\n>  Done.");
     }
 }
 

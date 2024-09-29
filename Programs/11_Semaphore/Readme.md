@@ -192,14 +192,32 @@ Thread 5068: PrinterQueue: The document has been printed
 *Ausgabe*:
 
 ```
->  wait 3 seconds (no thread enabled)
->  enable 3 parallel threads
-CABACABACAABCAACABACDDBCDDCDBDCD
->  enable 4 more parallel threads
-EFGHDEBCDFGEDHEIJFGEBJEIJFGHEJEBIJFGEJHEIJ
->  stop processing
->  wait for end of threads
-FGKBJKIJHFGKJKLIMFGKMHKIMFGKLMKIMHFGKMKLIMMHIMLMHLHLLLLL
+[1]:    > wait 2 seconds (no thread enabled)
+[2]:    > tid:  4336
+[3]:    > tid:  6440
+[4]:    > tid:  7364
+[5]:    > tid:  4272
+[6]:    > tid:  14944
+[7]:    > tid:  2208
+[8]:    > tid:  10420
+[9]:    > tid:  4452
+[1]:
+> enable 4 parallel threads
+BDACACDABACDAADCBAACDABACDEEBCDEECDEBECDE[1]:
+> enable 4 more parallel threads
+FGHIEHGBCDEFHGEIHGJKLFHGBLGHJKLIFGHLGHBJKLFGHLIGHJKLFMNBLNMJKIFLMNLNMOJKFPNMIPMNJKFPNMO[1]:
+> stop processing
+[1]:
+> wait for end of threads
+[2]:    < tid:  4336
+[6]:    < tid:  14944
+[8]:    < tid:  10420
+[3]:    < tid:  6440
+[5]:    < tid:  4272
+[7]:    < tid:  2208
+[9]:    < tid:  4452
+[4]:    < tid:  7364
+[1]:
 >  Done.
 ```
 
