@@ -2,6 +2,8 @@
 // JThread is cooperatively interruptible // JThread_02.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <thread>
 #include <chrono>
@@ -20,18 +22,20 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_01()
     {
+        Logger::log(std::cout, "Starting main thread ...");
+
         std::thread t {
 
             [] () {
                 while (true) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
         };
 
         sleep(5);
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
         t.join();
     }
 
@@ -41,18 +45,20 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_02()
     {
-        std::jthread jt { 
+        Logger::log(std::cout, "Starting main thread ...");
+
+        std::jthread jt {
 
             [] () {
                 while (true) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
         };
 
         sleep(5);
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
     }
 
     // =============================================
@@ -61,11 +67,13 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_03()
     {
+        Logger::log(std::cout, "Starting main thread ...");
+
         std::jthread jt{
 
             [] () {
                 while (true) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
@@ -73,7 +81,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
     }
 
     // =============================================
@@ -82,10 +90,12 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_04()
     {
+        Logger::log(std::cout, "Starting main thread ...");
+
         std::jthread jt{
             [] (std::stop_token token) {
                 while (!token.stop_requested()) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
@@ -93,7 +103,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
     }
 
     // =============================================
@@ -102,6 +112,8 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_05()
     {
+        Logger::log(std::cout, "Starting main thread ...");
+
         std::jthread jt {
 
             [] (std::stop_token token) {
@@ -112,13 +124,13 @@ namespace JoinableThreadCooperativeInterruptibility {
                 std::stop_callback callback {
                     token, 
                     [&] () {
-                        std::cout << "Stop requested" << std::endl;
+                        Logger::log(std::cout, "Stop requested");
                         running = false;
                     }
                 };
 
                 while (running) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
@@ -126,7 +138,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         sleep(5);
         jt.request_stop();
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
     }
 
     // =============================================
@@ -135,6 +147,8 @@ namespace JoinableThreadCooperativeInterruptibility {
 
     static void jthread_06()
     {
+        Logger::log(std::cout, "Starting main thread ...");
+
         std::jthread jt{
 
             [] (std::stop_token token) {
@@ -145,13 +159,13 @@ namespace JoinableThreadCooperativeInterruptibility {
                 std::stop_callback callback {
                     token,
                     [&] () {
-                        std::cout << "Stop requested" << std::endl;
+                        Logger::log(std::cout, "Stop requested");
                         running = false;
                     }
                 };
 
                 while (running) {
-                    std::cout << "Working ..." << std::endl;
+                    Logger::log(std::cout, "Working ...");
                     sleep(1);
                 }
             }
@@ -160,7 +174,7 @@ namespace JoinableThreadCooperativeInterruptibility {
         sleep(5);
         std::stop_source source{ jt.get_stop_source() };
         source.request_stop();  // request stop on stop token of thread 'jt'
-        std::cout << "Leaving main thread ..." << std::endl;
+        Logger::log(std::cout, "Leaving main thread ...");
     }
 }
 

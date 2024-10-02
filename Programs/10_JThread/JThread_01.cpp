@@ -2,6 +2,8 @@
 // class JThread // JThread_01.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <thread>
 #include <format>
@@ -11,12 +13,12 @@ namespace JoinableThread {
     static void jthread_01()
     {
         std::thread t {
-            [] () { std::cout << "Inside std::thread" << std::endl; }
+            [] () { Logger::log(std::cout, "Inside std::thread"); }
         };
 
-        bool j{ t.joinable() };
-        std::string msg{ std::format("std::thread: joinable={0}\n", j) };
-        std::cout << msg;
+        bool joinable{ t.joinable() };
+
+        Logger::log(std::cout, "std::thread: joinable=", joinable);
 
         t.join();  // <== put into comments -- must not be missing
     }
@@ -24,12 +26,12 @@ namespace JoinableThread {
     static void jthread_02()
     {
         std::jthread t {
-            [] () { std::cout << "Inside std::jthread" << std::endl; }
+            [] () { Logger::log(std::cout, "Inside std::jthread"); }
         };
 
-        bool j{ t.joinable() };
-        std::string msg{ std::format("std::jthread: joinable={0}\n", j) };
-        std::cout << msg;
+        bool joinable{ t.joinable() };
+
+        Logger::log(std::cout, "std::jthread: joinable=", joinable);
 
         t.join();  // <== put into comments -- may be missing
     }

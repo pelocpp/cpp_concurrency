@@ -1,6 +1,8 @@
 // ===========================================================================
-// Exception Handling
+// Exception.cpp // Exception Handling
 // ===========================================================================
+
+#include "../Logger/Logger.h"
 
 #include <iostream>
 #include <thread>
@@ -11,9 +13,9 @@ namespace ExceptionHandling
     /*
      * propagating exception from std::async invocation  
      */
-    int doSomeWorkWithException()
+    static int doSomeWorkWithException()
     {
-        std::cout << "Inside thread  ... working hard ..." << std::endl;
+        Logger::log(std::cout, "Inside thread  ... working hard ...");
 
         std::this_thread::sleep_for(std::chrono::seconds{ 3 });
 
@@ -22,7 +24,7 @@ namespace ExceptionHandling
         return 123;
     }
 
-    void test_01() {
+    static void test_01() {
 
         std::future<int> futureFunction { 
             std::async(std::launch::async, doSomeWorkWithException) 
@@ -30,25 +32,25 @@ namespace ExceptionHandling
 
         try
         {
-            std::cout << "Waiting for Result ... " << std::endl;
+            Logger::log(std::cout, "Waiting for Result ... ");
             int result{ futureFunction.get() };
         }
         catch (std::out_of_range ex) {
-            std::cout << "Main Thread: got exception [" << ex.what() << "]" << std::endl;
+            Logger::log(std::cout, "Main Thread: got exception [", ex.what(), "]");
         }
 
-        std::cout << "Main Thread: Done." << std::endl;
+        Logger::log(std::cout, "Main Thread: Done.");
     }
 
     /*
      * propagating exception from std::thread invocation
      */
 
-    std::exception_ptr g_ep{ nullptr };
+    static std::exception_ptr g_ep{ nullptr };
 
-    int doAnotherWorkWithException()
+    static int doAnotherWorkWithException()
     {
-        std::cout << "Inside another thread  ... working hard ..." << std::endl;
+        Logger::log(std::cout, "Inside another thread  ... working hard ...");
 
         try
         {
@@ -66,9 +68,10 @@ namespace ExceptionHandling
         return -1;
     }
 
-    void test_02() {
+    static void test_02() {
 
         std::thread t{ doAnotherWorkWithException };
+
         t.join();
 
         if (g_ep != nullptr) {
@@ -77,11 +80,11 @@ namespace ExceptionHandling
             }
             catch (const std::exception & ex)
             {
-                std::cerr << "Thread exited with exception: " << ex.what() << std::endl;
+                Logger::log(std::cout, "Thread exited with exception: [", ex.what(), "]");
             }
         }
 
-        std::cout << "Main Thread: Done." << std::endl;
+        Logger::log(std::cout, "Main Thread: Done.");
     }
 }
 
