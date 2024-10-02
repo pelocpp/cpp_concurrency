@@ -2,11 +2,11 @@
 // Future_02.cpp // Promises and Futures
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <thread>
 #include <future>
-
-#include "../Logger/Logger.h"
 
 namespace PromisesAndFutures02 {
 

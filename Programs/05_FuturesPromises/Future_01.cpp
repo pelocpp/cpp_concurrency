@@ -2,6 +2,8 @@
 // Future_01.cpp // Promises and Futures
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <thread>
 #include <future>
@@ -12,11 +14,11 @@ namespace PromisesAndFutures01 {
 
     static void doWorkVersion01(std::promise<int>* promise)
     {
-        std::cout << "Inside Thread (doWork - 01)" << std::endl;
+        Logger::log(std::cout, "Inside Thread - 01");
 
         std::this_thread::sleep_for(3s);
 
-        promise->set_value(35);
+        promise->set_value(123);
     }
 
     static void testVersion01() {
@@ -27,20 +29,21 @@ namespace PromisesAndFutures01 {
 
         std::thread t {doWorkVersion01, &promiseObj };
 
-        std::cout << "Waiting for Result - 01: " << std::endl;
+        Logger::log(std::cout, "Waiting for Result - 01");
+
         int result{ futureObj.get() };
-        std::cout << "Result: " << result << std::endl;
+        Logger::log(std::cout, "Result: ", result);
 
         t.detach();
     }
 
     static void doWorkVersion02(std::promise<int>&& promise)
     {
-        std::cout << "Inside Thread (doWork - 02)" << std::endl;
+        Logger::log(std::cout, "Inside Thread - 02");
 
         std::this_thread::sleep_for(5s);
 
-        promise.set_value(35);
+        promise.set_value(123);
     }
 
     static void testVersion02() {
@@ -51,9 +54,10 @@ namespace PromisesAndFutures01 {
 
         std::thread t{ doWorkVersion02, std::move (promiseObj) };
 
-        std::cout << "Waiting for Result - 02: " << std::endl;
+        Logger::log(std::cout, "Waiting for Result - 02");
+
         int result{ futureObj.get() };
-        std::cout << "Result: " << result << std::endl;
+        Logger::log(std::cout, "Result: ", result);
 
         t.detach();
     }
