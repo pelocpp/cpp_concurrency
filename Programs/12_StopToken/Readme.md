@@ -9,6 +9,9 @@
   * [Verwendete Werkzeuge](#link1)
   * [Allgemeines](#link2)
   * [Ein `std::jthread`-Objekt ist kooperativ unterbrechbar](#link3)
+  * [Stopp Tokens und Bedingungsvariablen (`std::condition_variable_any`)](#link4)
+  * [Stopp Callbacks (`std::stop_callback`)](#link5)
+  * [Stopp Quellen und Stopp Tokens](#link6)
   
 ---
 
@@ -31,8 +34,9 @@
 
 #### Quellcode
 
-[*RequestStop.cpp*: Kooperative Unterbrechung eines Threads](RequestStop.cpp).<br />
-[*ConditionVariableAny.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](ConditionVariableAny.cpp).<br />
+[*01_RequestStop.cpp*: Kooperative Unterbrechung eines Threads](01_RequestStop.cpp).<br />
+[*02_ConditionVariableAny.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](02_ConditionVariableAny.cpp).<br />
+[*03_StopCallback.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](02_ConditionVariableAny.cpp).<br />
 
 ---
 
@@ -91,7 +95,7 @@ so antworten:
 
 ---
 
-## Stopp Tokens und Bedingungsvariablen
+## Stopp Tokens und Bedingungsvariablen (`std::condition_variable_any`) <a name="link4"></a>
 
 Wenn die Beendigung (Anhalten, Stoppen) eines Threads angefordert wird, kann es sein,
 dass zu genau diesem Zeitpunkt der Thread blockiert ist,
@@ -237,7 +241,7 @@ Somit kann das Warten jetzt aus einem von zwei Gründen enden:
 
 ---
 
-### Stopp Callbacks
+## Stopp Callbacks <a name="link5"></a>
 
 Ein *Stop Callback* ist ein Objekt vom Typ `std::stop_callback` mit RAII-Verhaltensweise.
 Der Konstruktor registriert ein *Callable*
@@ -257,12 +261,12 @@ Verlässt das *Stop Callback* den Gültigkeitsbereich, wird das *Callable* abgemel
 08: 
 09:     // ...
 10: 
-11: } // unregisters callback is unregistered
+11: } // unregisters registered callback
 ```
 
 ---
 
-## Stopp Quellen und Stopp Tokens
+## Stopp Quellen und Stopp Tokens <a name="link6"></a>
 
 `std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt.
 Dieses ist automatisch einem Token zugeordnet,

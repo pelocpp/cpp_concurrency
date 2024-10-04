@@ -18,13 +18,16 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ConditionVariableAny.cpp">
+    <ClCompile Include="02_ConditionVariableAny.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="RequestStop.cpp">
+    <ClCompile Include="01_RequestStop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="03_StopCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

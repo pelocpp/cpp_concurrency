@@ -23,7 +23,7 @@
 
 #### Quellcode
 
-[*JThread.cpp*: `std::jthread`-Objekt und `join()`-Aufruf](JThread_01.cpp).<br />
+[*JThread.cpp*: `std::jthread`-Objekt und `join()`-Aufruf](JThread.cpp).<br />
 
 ---
 
@@ -39,7 +39,7 @@ dieses verhält sich dann genau so, wie sich ein entsprechendes `std::thread`-Obj
 
 ---
 
-#### Verhalten der Klassen `std::jthread` und `std::jthread` bzgl. des `join`-Aufrufs <a name="link3"></a>
+## Verhalten der Klassen `std::jthread` und `std::jthread` bzgl. des `join`-Aufrufs <a name="link3"></a>
 
 Wenn ein `std::thread`-Objekt den Zustand *joinable* besitzt
 und dieses auf Grund des Verlassens eines Blocks (Gültigkeitsbereichs) aufgeräumt wird,
