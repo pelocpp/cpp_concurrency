@@ -359,7 +359,7 @@ oder auch
 
 ---
 
-## Literaturhinweise
+## Literaturhinweise <a name="link7"></a>
 
 Die Anregungen zu den Klasse `std::stop_source`, `std::stop_token` und `std::stop_callback` stammen im Wesentlichen aus dem Buch
 
@@ -373,8 +373,6 @@ von Simon Tóth vorgenommen.
 
 ---
 
-
 [Zurück](../../Readme.md)
 
 ---
-
