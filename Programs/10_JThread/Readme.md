@@ -1,4 +1,4 @@
-# Die Klasse `std::jthread`
+# Nochmals nebenläufige Ausführung: Klasse `std::jthread`
 
 [Zurück](../../Readme.md)
 

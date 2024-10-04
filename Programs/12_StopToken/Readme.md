@@ -1,4 +1,4 @@
-# Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`
+# Die Klassen `std::stop_source`, `std::stop_token`, `std::stop_callback` und `std::condition_variable_any`
 
 [Zurück](../../Readme.md)
 
@@ -12,6 +12,7 @@
   * [Stopp Tokens und Bedingungsvariablen (`std::condition_variable_any`)](#link4)
   * [Stopp Callbacks (`std::stop_callback`)](#link5)
   * [Stopp Quellen und Stopp Tokens](#link6)
+  * [Literaturhinweise](#link7)
   
 ---
 
@@ -20,14 +21,11 @@
 <ins>Klassen</ins>:
 
   * Klasse `std::jthread`
-
   * Klasse `std::stop_source`
   * Klasse `std::stop_token`
   * Klasse `std::stop_callback`
   * Klasse `std::stop_source`
-
   * Klasse `std::atomic<bool>`
-
   * Klasse `std::condition_variable_any`
 
 ---
@@ -36,7 +34,7 @@
 
 [*01_RequestStop.cpp*: Kooperative Unterbrechung eines Threads](01_RequestStop.cpp).<br />
 [*02_ConditionVariableAny.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](02_ConditionVariableAny.cpp).<br />
-[*03_StopCallback.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](02_ConditionVariableAny.cpp).<br />
+[*03_StopCallback.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](03_StopCallback.cpp).<br />
 
 ---
 
@@ -241,7 +239,7 @@ Somit kann das Warten jetzt aus einem von zwei Gründen enden:
 
 ---
 
-## Stopp Callbacks <a name="link5"></a>
+## Stopp Callbacks (`std::stop_callback`) <a name="link5"></a>
 
 Ein *Stop Callback* ist ein Objekt vom Typ `std::stop_callback` mit RAII-Verhaltensweise.
 Der Konstruktor registriert ein *Callable*

@@ -22,7 +22,7 @@
 
 ### [10. Nochmals nebenläufige Ausführung: Klasse `std::jthread`](Programs/10_JThread/Readme.md)
 
-### [11. Die Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`](Programs/12_StopToken/Readme.md)
+### [11. Die Klassen `std::stop_source`, `std::stop_token`, `std::stop_callback` und `std::condition_variable_any`](Programs/12_StopToken/Readme.md)
 
 ### [12. Verriegelungen und Barrieren: Klassen `std::latch` und `std::barrier`](Programs/09_LatchesBarriers/Readme.md)
 
