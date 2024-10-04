@@ -1,5 +1,5 @@
 // ===========================================================================
-// JThread is cooperatively interruptible // JThread_02.cpp
+// RequestStop.cpp // JThread is cooperatively interruptible
 // ===========================================================================
 
 #include "../Logger/Logger.h"
@@ -24,9 +24,9 @@ namespace JoinableThreadCooperativeInterruptibility {
     {
         Logger::log(std::cout, "Starting main thread ...");
 
-        std::thread t {
+        std::thread t{
 
-            [] () {
+            []() {
                 while (true) {
                     Logger::log(std::cout, "Working ...");
                     sleep(1);
@@ -47,9 +47,9 @@ namespace JoinableThreadCooperativeInterruptibility {
     {
         Logger::log(std::cout, "Starting main thread ...");
 
-        std::jthread jt {
+        std::jthread jt{
 
-            [] () {
+            []() {
                 while (true) {
                     Logger::log(std::cout, "Working ...");
                     sleep(1);
@@ -71,7 +71,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         std::jthread jt{
 
-            [] () {
+            []() {
                 while (true) {
                     Logger::log(std::cout, "Working ...");
                     sleep(1);
@@ -93,7 +93,7 @@ namespace JoinableThreadCooperativeInterruptibility {
         Logger::log(std::cout, "Starting main thread ...");
 
         std::jthread jt{
-            [] (std::stop_token token) {
+            [](std::stop_token token) {
                 while (!token.stop_requested()) {
                     Logger::log(std::cout, "Working ...");
                     sleep(1);
@@ -114,16 +114,16 @@ namespace JoinableThreadCooperativeInterruptibility {
     {
         Logger::log(std::cout, "Starting main thread ...");
 
-        std::jthread jt {
+        std::jthread jt{
 
-            [] (std::stop_token token) {
+            [](std::stop_token token) {
 
                 std::atomic<bool> running { true };
 
                 // called on a stop request
                 std::stop_callback callback {
-                    token, 
-                    [&] () {
+                    token,
+                    [&]() {
                         Logger::log(std::cout, "Stop requested");
                         running = false;
                     }
@@ -151,14 +151,14 @@ namespace JoinableThreadCooperativeInterruptibility {
 
         std::jthread jt{
 
-            [] (std::stop_token token) {
+            [](std::stop_token token) {
 
                 std::atomic<bool> running { true };
 
                 // called on a stop request
                 std::stop_callback callback {
                     token,
-                    [&] () {
+                    [&]() {
                         Logger::log(std::cout, "Stop requested");
                         running = false;
                     }
@@ -179,7 +179,7 @@ namespace JoinableThreadCooperativeInterruptibility {
 }
 
 
-void test_jthread_02()
+void test_joinable_thread_cooperative_interruptibility()
 {
     using namespace JoinableThreadCooperativeInterruptibility;
 

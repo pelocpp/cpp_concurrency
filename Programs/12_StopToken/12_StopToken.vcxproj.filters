@@ -18,10 +18,13 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StopToken.cpp">
+    <ClCompile Include="ConditionVariableAny.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RequestStop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

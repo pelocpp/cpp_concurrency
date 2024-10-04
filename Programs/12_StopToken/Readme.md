@@ -4,25 +4,90 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Ein `std::jthread`-Objekt ist kooperativ unterbrechbar](#link3)
+  
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
+  * Klasse `std::jthread`
+
   * Klasse `std::stop_source`
-  * Klasse `std::stop_token `
-  * Klasse `std::stop_callback `
- 
- Diese Klassen arbeiten mit `std::jthread` and `std::condition_variable_any` zusammen.
+  * Klasse `std::stop_token`
+  * Klasse `std::stop_callback`
+  * Klasse `std::stop_source`
+
+  * Klasse `std::atomic<bool>`
+
+  * Klasse `std::condition_variable_any`
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*RequestStop.cpp*: Kooperative Unterbrechung eines Threads](RequestStop.cpp).<br />
+[*ConditionVariableAny.cpp*: `std::condition_variable_any`-Objekt und `wait()`-Aufruf](ConditionVariableAny.cpp).<br />
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Einmal gestartet, kann ein Thread nicht ohne Weiteres beendet werden.
 Die einzige Lösung besteht darin, einen &bdquo;seitlichen Kommunikationskanal&rdquo; einzuführen,
 der eine Beendigungsanforderung signalisiert.
 Dieser Kanal wird durch die drei Klassen `std::stop_source`, `std::stop_token` und `std::stop_callback`
 etabliert.
+
+---
+
+## Ein `std::jthread`-Objekt ist kooperativ unterbrechbar <a name="link3"></a>
+
+Wie die Überschrift vermuten lässt, ist ein `std::jthread`-Objekt unterbrechbar,
+es gibt also eine Möglichkeit, den Thread von außen zu stoppen.
+
+Wir legen dabei Wert auf die Beobachtung, dass der Thread *kooperativ* unterbrechbar ist.
+Der beste Weg, dies zu verstehen, besteht darin, einen Blick auf die Funktion `request_stop()` zu werfen:
+Der Name ist sehr sorgfältig ausgewählt,
+wir betrachten dazu im Quellcode eine Reihe von Beispielen:
+
+  * *Szenario* 1:
+   Der Hauptthread erzeugt einen neuen Thread,
+   der jede Sekunde wiederholend etwas tut (eine Ausgabe in der Konsole).
+   Der Hauptthread fährt dann mit einem 5-Sekunden-Job fort und wartet anschließend
+   auf den Abschluss des anderen Threads. Da dieser nie fertig wird, wartet auch der Hauptthread ewig.<br /><br />
+  * *Szenario* 2:
+    Wie Szenario 1, es wurde von der Klasse `std::thread` zur Klasse `std::jthread` gewechselt.<br /><br />
+  * *Szenario* 3:
+     Nach 5 Sekunden erfolgt ein Aufruf von `request_stop()`, dieser ändert aber nichts am Ablauf des
+     Programms: Man kann nicht von &bdquo;außen&rdquo; einen Stopp beantragen, der Thread selbst hat das letzte Wort.<br /><br />
+  * *Szenario* 4:
+   Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
+   Dieses besitzt eine Methode `stop_requested` &ndash; im Zusammenspiel mit `request_stop()` kann nun
+   kooperativ ein Ende des Threads veranlasst werden.<br /><br />
+  * *Szenario* 5:
+   Im Kontext des Threads ist nun ein `std::stop_token`-Objekt verfügbar:
+   Mit diesem Objekt kann man ein `std::stop_callback`-Objekt erzeugen, welches aufgerufen wird, wenn wiederum
+   die `request_stop()`-Methode aufgerufen wird.<br /><br />
+  * *Szenario* 6:
+   Dieses Szenario ist vergleichbar zum letzten Szenario mit dem Unterschied, 
+   dass aufgezeigt wird, dass das `std::stop_source`-Objekt auch über die Instanz eines `std::jthread`-Objekts
+   abgerufen werden kann.<br /><br />
+     
+
+*Bemerkung*:<br />
+In den *Szenarien* 5 und 6 wird auf Grund des konkurrierenden Zugriffs
+zum Schutze einer `bool`-Variablen die `std::atomic<bool>`-Klasse verwendet.
+Für die häufig gestellte Frage &bdquo;*ist das wirklich erforderlich*&rdquo; möchte ich &ndash; mit dieser [Unterstützung](https://stackoverflow.com/questions/16320838/when-do-i-really-need-to-use-atomicbool-instead-of-bool) &ndash;
+so antworten:
+
+> No data type in C++ is &bdquo;Atomic by Nature&rdquo; unless it is an object of kind `std::atomic<T>`.
+  **That's because the standard says so!**
 
 ---
 
@@ -50,19 +115,19 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 *Beispiel*:
 
 ```cpp
-01: static void test()
+01: void test()
 02: {
 03:     std::queue<std::string>     m_messages;
 04:     std::mutex                  m_mutex;
 05:     std::condition_variable_any m_condition_variable;
 06: 
-07:     auto task = [&] (std::stop_token token) {
-08:             
-09:         while (! token.stop_requested()) {
+07:     auto task = [&](std::stop_token token) {
+08: 
+09:         while (!token.stop_requested()) {
 10: 
 11:             std::string msg{};
 12: 
-13:             std::cout << "Waiting  ..." << std::endl;
+13:             Logger::log(std::cout, "Waiting  ...");
 14: 
 15:             {
 16:                 std::unique_lock lock{ m_mutex };
@@ -72,53 +137,67 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 20:                     m_condition_variable.wait(
 21:                         lock,
 22:                         token,
-23:                         [&] () { return ! m_messages.empty(); }
-24:                     )
-25:                 };
-26: 
-27:                 if (!stopRequested) {
-28:                     std::cout << "Stop has been requested!" << std::endl;
-29:                     return;
-30:                 }
+23:                             [&]() {
+24:                             bool b { !m_messages.empty()};
+25:                             Logger::log(std::cout, "Wait: Queue is empty: ", b ? "false" : "true");
+26:                             return b;
+27:                         }
+28: 
+29:                     )
+30:                 };
 31: 
-32:                 // retrieve the next message from the queue
-33:                 msg = m_messages.front();
-34:                 m_messages.pop();
-35:             }
+32:                 if (!stopRequested) {
+33:                     Logger::log(std::cout, "Stop has been requested!");
+34:                     break;
+35:                 }
 36: 
-37:             // print the next message:
-38:             std::cout << "Message: " << msg << std::endl;
-39:         }
-40:     };
+37:                 // retrieve the next message from the queue
+38:                 msg = m_messages.front();
+39:                 m_messages.pop();
+40:             }
 41: 
-42:     std::jthread t { task };
-43: 
-44:     std::cout << "Pushing strings into queue" << std::endl;
+42:             // print the next message:
+43:             Logger::log(std::cout, "Message: ", msg);
+44:         }
 45: 
-46:     // store three messages
-47:     for (std::string s : { std::string{ "Tic" }, std::string{ "Tac" }, std::string{ "Toe" }}) {
+46:         Logger::log(std::cout, "Leaving JThread");
+47:     };
 48: 
-49:         std::lock_guard guard { m_mutex };
-50:         m_messages.push(s);
-51:     }
-52: 
-53:     // notify waiting thread
-54:     m_condition_variable.notify_one();
-55: 
-56:     // after some time, store another message
-57:     std::this_thread::sleep_for(std::chrono::seconds{ 3 });
-58: 
-59:     {
-60:         std::lock_guard guard{ m_mutex };
-61:         m_messages.push("Done");
-62:     }
+49:     Logger::log(std::cout, "Pushing strings into queue ...");
+50: 
+51:     // store three messages
+52:     for (const auto& s : { "Tic" , "Tac", "Toe" }) {
+53: 
+54:         std::lock_guard guard{ m_mutex };
+55:         m_messages.push(s);
+56:     }
+57: 
+58:     Logger::log(std::cout, "Starting JThread");
+59: 
+60:     std::jthread t{ task };
+61: 
+62:     std::this_thread::sleep_for(std::chrono::seconds{ 5 });
 63: 
-64:     // notify waiting thread
-65:     m_condition_variable.notify_one();
-66: 
-67:     // after some time, end program (requests stop, which interrupts wait())
-68:     std::this_thread::sleep_for(std::chrono::seconds{ 3 });
-69: }
+64:     {
+65:         // after some time, store another message
+66:         std::lock_guard guard{ m_mutex };
+67:         m_messages.push("Tic-Tac-Toe Done");
+68:     }
+69: 
+70:     // notify waiting thread
+71:     m_condition_variable.notify_one();
+72: 
+73:     // after some time, end program (requests stop, which interrupts wait())
+74:     std::this_thread::sleep_for(std::chrono::seconds{ 5 });
+75: 
+76:     Logger::log(std::cout, "Main Thread: calling request_stop");
+77: 
+78:     t.request_stop();
+79: 
+80:     std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+81: 
+82:     Logger::log(std::cout, "Leaving Main");
+83: }
 ```
 
 Studieren Sie in dem Beispiel den Aufruf der `wait`-Methode (Zeile 20):
@@ -128,23 +207,33 @@ Somit kann das Warten jetzt aus einem von zwei Gründen enden:
   * Es gab eine Benachrichtigung mit `notify_one` bzw. `notify_all`, um anzuzeigen, dass die Warteschlange nicht mehr leer ist.
   * Es wurde ein Stopp angefordert.
 
-
 *Ausgabe*:
 
 ```
-Pushing strings into queue
-Waiting  ...
-Message: Tic
-Waiting  ...
-Message: Tac
-Waiting  ...
-Message: Toe
-Waiting  ...
-Message: Done
-Waiting  ...
-Stop has been requested!
+[1]:    Pushing strings into queue ...
+[1]:    Starting JThread
+[2]:    Waiting  ...
+[2]:    Wait: Queue is empty: false
+[2]:    Message: Tic
+[2]:    Waiting  ...
+[2]:    Wait: Queue is empty: false
+[2]:    Message: Tac
+[2]:    Waiting  ...
+[2]:    Wait: Queue is empty: false
+[2]:    Message: Toe
+[2]:    Waiting  ...
+[2]:    Wait: Queue is empty: true
+[2]:    Wait: Queue is empty: false
+[2]:    Message: Tic-Tac-Toe Done
+[2]:    Waiting  ...
+[2]:    Wait: Queue is empty: true
+[1]:    Main Thread: calling request_stop
+[2]:    Wait: Queue is empty: true
+[2]:    Wait: Queue is empty: true
+[2]:    Stop has been requested!
+[2]:    Leaving JThread
+[1]:    Leaving Main
 ```
-
 
 ---
 
@@ -175,7 +264,7 @@ Verlässt das *Stop Callback* den Gültigkeitsbereich, wird das *Callable* abgemel
 
 ## Stopp Quellen und Stopp Tokens
 
-`std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt´.
+`std::jthread`-Objekte verfügen über ein integriertes `std::stop_source`-Objekt.
 Dieses ist automatisch einem Token zugeordnet,
 wenn das an `std::jthread` übergebene *Callable* ein `std::stop_token`-Objekt als Parameter besitzt.
 
@@ -194,60 +283,53 @@ Der Rückruf wird
 ```cpp
 01: static void task(std::stop_token token, int num)
 02: {
-03:     Logger::log(std::cout, "Task");
+03:     Logger::log(std::cout, "Enter Task");
 04: 
 05:     auto id{ std::this_thread::get_id() };
 06: 
 07:     // register a stop callback
 08:     std::stop_callback cb{
-09:         token, 
+09:         token,
 10:         [=] {
 11:             auto currentId{ std::this_thread::get_id() };
-12:             if (currentId == id) {
-13:                 Logger::log(std::cout, "Task: Stop requested - Thread Context = Task");
-14:             }
-15:             else {
-16:                 Logger::log(std::cout, "Task: Stop requested - Thread Context = Main");
-17:             }
-18:         }
-19:     };
-20: 
-21:     std::this_thread::sleep_for(std::chrono::seconds{ 4 });
-22: 
-23:     Logger::log(std::cout, "Done Task");
-24: }
-25: 
-26: static void test()
-27: {
-28:     Logger::log(std::cout, "Main");
-29: 
-30:     // create stop source and stop token
-31:     std::stop_source source;
-32:     std::stop_token token{ source.get_token() };
-33: 
-34:     // register callback
-35:     std::stop_callback cb{ 
-36:         token,
-37:         [] {
-38:             Logger::log(std::cout, "Main: Stop requested");
-39:         } 
+12: 
+13:             if (currentId == id) {
+14:                 Logger::log(std::cout, "Task: Stop requested - Thread Context = Task");
+15:             }
+16:             else {
+17:                 Logger::log(std::cout, "Task: Stop requested - Thread Context = Main");
+18:             }
+19:         }
+20:     };
+21: 
+22:     std::this_thread::sleep_for(std::chrono::seconds{ 3 });
+23: 
+24:     Logger::log(std::cout, "Done Task");
+25: }
+26: 
+27: static void test_02()
+28: {
+29:     Logger::log(std::cout, "Main");
+30: 
+31:     // create stop source and stop token
+32:     std::stop_source source;
+33:     std::stop_token token{ source.get_token() };
+34: 
+35:     // A) request stop before task has been created
+36:     source.request_stop();                   // put either this line into comment ...
+37: 
+38:     std::future<void> future{
+39:         std::async(std::launch::async, [token] { task(token, 123); })
 40:     };
 41: 
-42:     // request stop before task has been created
-43:     // source.request_stop();
-44: 
-45:     std::future<void> future {
-46:         std::async(std::launch::async, [token] { task(token, 123); })
-47:     };
-48: 
-49:     std::this_thread::sleep_for(std::chrono::seconds{ 2 });
-50: 
-51:     // request stop after task has been created
-52:     // (runs any associated callbacks on this thread)
-53:     source.request_stop();
-54: 
-55:     Logger::log(std::cout, "Done Main");
-56: }
+42:     std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+43: 
+44:     // B) request stop after task has been created
+45:     // (runs any associated callbacks on this thread)
+46:     // source.request_stop();                  // or put this line into comment
+47: 
+48:     Logger::log(std::cout, "Done Main");
+49: }
 ```
 
 Je nachdem, wann wir die `request_stop`-Methode an einem `std::stop_source`-Objekt aufrufen,
@@ -258,9 +340,8 @@ ausgeführt wird. Folgende Aufgaben lassen sich mit dem letzten Beispiel erzielen
 
 ```
 [1]:    Main
-[2]:    Task
-[1]:    Task: Stop requested - Thread Context = Main
-[1]:    Main: Stop requested
+[2]:    Enter Task
+[2]:    Task: Stop requested - Thread Context = Task
 [1]:    Done Main
 [2]:    Done Task
 ```
@@ -268,9 +349,8 @@ oder auch
 
 ```
 [1]:    Main
-[1]:    Main: Stop requested
-[2]:    Task
-[2]:    Task: Stop requested - Thread Context = Task
+[2]:    Enter Task
+[1]:    Task: Stop requested - Thread Context = Main
 [1]:    Done Main
 [2]:    Done Task
 ```

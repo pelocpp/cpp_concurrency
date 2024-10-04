@@ -129,8 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="JThread_01.cpp" />
-    <ClCompile Include="JThread_02.cpp" />
+    <ClCompile Include="JThread.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 // ===========================================================================
-// class JThread // JThread_01.cpp
+// JThread_01.cpp // class JThread 
 // ===========================================================================
 
 #include "../Logger/Logger.h"
@@ -39,7 +39,7 @@ namespace JoinableThread {
 
 // =================================================================
 
-void test_jthread_01()
+void test_jthread()
 {
     using namespace JoinableThread;
 
