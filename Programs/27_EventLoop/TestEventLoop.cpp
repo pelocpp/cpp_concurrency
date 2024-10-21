@@ -5,12 +5,13 @@
 #include "EventLoop.h"
 
 #include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
 
 // ===========================================================================
 
 static void test_event_loop_01()
 {
-    Logger::log(std::cout, "Start:");
+    Logger::log(std::cout, "Start");
 
     EventLoop eventLoop;
 
@@ -24,7 +25,7 @@ static void test_event_loop_01()
 
 static void test_event_loop_02()
 {
-    Logger::log(std::cout, "Start:");
+    Logger::log(std::cout, "Start");
 
     EventLoop eventLoop;
 
@@ -104,7 +105,7 @@ static void test_event_loop_04()
 
 static void test_event_loop_10()
 {
-    Logger::log(std::cout, "Start:");
+    Logger::log(std::cout, "Start");
 
     std::function<void(int)> task{ [] (int value) {
         Logger::log(std::cout, "Value: ", value); }
@@ -151,7 +152,9 @@ static bool isPrime(size_t number)
 
 static void test_event_loop_20()
 {
-    Logger::log(std::cout, "Start:");
+    Logger::log(std::cout, "Start");
+
+    ScopedTimer clock{};
 
     size_t foundPrimeNumbers{};
 
@@ -171,11 +174,19 @@ static void test_event_loop_20()
 
     Logger::log(std::cout, "Enqueuing tasks");
 
-    const size_t Start = 1000000000001;
-    const size_t End = Start + 100;
+    // 24 prime numbers
+    //constexpr size_t Start = 1;
+    //constexpr size_t End = Start + 100;
 
-    //const size_t Start = 1;
-    //const size_t End = Start + 100;
+    // 4 prime numbers
+    constexpr size_t Start = 1000000000001;
+    constexpr size_t End = Start + 100;
+
+    // 3614 prime numbers
+    //constexpr size_t Start = 1000000000001;
+    //constexpr size_t End = Start + 100000;
+
+    Logger::enableLogging(false);
 
     for (size_t i = Start; i < End; i += 2) {
         eventLoop.enqueueTask(primeTask, i);
@@ -186,6 +197,8 @@ static void test_event_loop_20()
     eventLoop.start();
 
     eventLoop.stop();
+
+    Logger::enableLogging(true);
 
     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
 
@@ -194,7 +207,7 @@ static void test_event_loop_20()
 
 static void test_event_loop_21()
 {
-    Logger::log(std::cout, "Start:");
+    Logger::log(std::cout, "Start");
 
     size_t foundPrimeNumbers{};
 
@@ -210,14 +223,27 @@ static void test_event_loop_21()
         }
     };
 
+    ScopedTimer clock{};
+
     EventLoop eventLoop;
 
     Logger::log(std::cout, "Enqueuing tasks");
 
-    const size_t Start = 1000000000001;
-    const size_t End = Start + 100;
+    // 24 prime numbers
+    //constexpr size_t Start = 1;
+    //constexpr size_t End = Start + 100;
+
+    // 4 prime numbers
+    constexpr size_t Start = 1000000000001;
+    constexpr size_t End = Start + 100;
+
+    // 3614 prime numbers
+    //constexpr size_t Start = 1000000000001;
+    //constexpr size_t End = Start + 100000;
 
     Logger::log(std::cout, "Starting Event Loop:");
+
+    Logger::enableLogging(false);
 
     eventLoop.start();
 
@@ -226,6 +252,8 @@ static void test_event_loop_21()
     }
 
     eventLoop.stop();
+
+    Logger::enableLogging(true);
 
     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
 

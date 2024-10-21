@@ -25,8 +25,10 @@ namespace ThreadPool_ArthurDwyer {
 
     class ThreadPool
     {
-        //using UniqueFunction = std::packaged_task<void()>;
+        // using UniqueFunction = std::packaged_task<void()>;
+        
         using ThreadPoolFunction = FunctionWrapper;
+        // using ThreadPoolFunction = std::packaged_task<void()>;
 
         // KLÄREN: Warum nicht  ThreadsafeQueue<ThreadPoolFunction> m_workQueue;
 
@@ -139,6 +141,7 @@ namespace ThreadPool_ArthurDwyer {
         }
     };
 }
+
 // ===========================================================================
 // End-of-File
 // ===========================================================================

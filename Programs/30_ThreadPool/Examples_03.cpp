@@ -140,7 +140,7 @@ namespace ThreadPool_ArthurDwyer
         return true; // found prime number
     }
 
-    static void test_concurrency_thread_pool_03_04_PrimeNUmbers()
+    static void test_concurrency_thread_pool_03_04_PrimeNumbers()
     {
         Logger::log(std::cout, "Start:");
 
@@ -203,7 +203,7 @@ namespace ThreadPool_ArthurDwyer
         Logger::log(std::cout, "Done.");
     }
 
-    static void test_concurrency_thread_pool_03_05_PrimeNUmbers()
+    static void test_concurrency_thread_pool_03_05_PrimeNumbers()
     {
         Logger::log(std::cout, "Start:");
 
@@ -256,18 +256,15 @@ namespace ThreadPool_ArthurDwyer
     }
 }
 
-
-
-
 void test_concurrency_thread_pool_03()
 {
     using namespace ThreadPool_ArthurDwyer;
-    //test_concurrency_thread_pool_03_01();
-    //test_concurrency_thread_pool_03_02();
-    //test_concurrency_thread_pool_03_03_Aus_Buch();
+    test_concurrency_thread_pool_03_01();
+    test_concurrency_thread_pool_03_02();
+    test_concurrency_thread_pool_03_03_Aus_Buch();
 
-    // test_concurrency_thread_pool_03_04_PrimeNUmbers();
-    test_concurrency_thread_pool_03_05_PrimeNUmbers();
+    test_concurrency_thread_pool_03_04_PrimeNumbers();
+    test_concurrency_thread_pool_03_05_PrimeNumbers();
 }
 // ===========================================================================
 // End-of-File
