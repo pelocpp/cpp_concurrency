@@ -34,27 +34,27 @@ namespace ThreadPool_ZenSepiol
     {
     private:
         mutable std::mutex                               m_mutex;
-        std::condition_variable                          m_condition_variable;
-        std::vector<std::thread>                         m_threads;
+        std::condition_variable                          m_condition;
+        std::vector<std::thread>                         m_pool;
         std::queue<std::move_only_function<void(void)>>  m_queue;
-        bool                                             m_shutdown_requested;
+        size_t                                           m_threads_count;
         size_t                                           m_busy_threads;
+        bool                                             m_shutdown_requested;
 
     public:
-        ThreadPool(size_t size);
+        // c'tors/d'tor
+        ThreadPool();
         ~ThreadPool();
 
-        ThreadPool(const ThreadPool&) = delete;
-        ThreadPool(ThreadPool&&) = delete;
-
-        ThreadPool& operator=(const ThreadPool&) = delete;
-        ThreadPool& operator=(ThreadPool&&) = delete;
-
-        void shutdown();
+        // public interface
+        void start();
+        void stop();
 
         template <typename F, typename... Args>
         auto addTask(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
         {
+            Logger::log(std::cout, "addTask ...");
+
             auto func{ std::bind(std::forward<F>(f), std::forward<Args>(args)...) }; 
 
             auto task{ std::packaged_task<decltype( f(args...)) (void) > { func }};
@@ -70,14 +70,23 @@ namespace ThreadPool_ZenSepiol
                 m_queue.push(std::move(wrapper));
 
                 // wake up one waiting thread if any
-                m_condition_variable.notify_one();
+                m_condition.notify_one();
             }
 
             // return future from packaged_task
             return future;
         }
 
+        // getter
         size_t size();
+
+        // no copying
+        ThreadPool(const ThreadPool&) = delete;
+        ThreadPool& operator=(const ThreadPool&) = delete;
+
+        // no moving
+        ThreadPool(ThreadPool&&) = delete;
+        ThreadPool& operator=(ThreadPool&&) = delete;
 
     private:
         void worker();

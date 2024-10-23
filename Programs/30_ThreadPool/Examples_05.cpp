@@ -12,71 +12,88 @@
 
 namespace ThreadPool_ZenSepiol
 {
-    void test_concurrency_thread_pool_05_01()
+    static void test_concurrency_thread_pool_05_01()
     {
         Logger::log(std::cout, "Start");
 
-        size_t numThreads{ std::thread::hardware_concurrency() };
-
-        ThreadPool pool{ numThreads };
+        ThreadPool pool{};
 
         std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+
+        pool.start();
+
+        std::this_thread::sleep_for(std::chrono::seconds{ 2 });
+
+        pool.stop();
     
         Logger::log(std::cout, "Done.");
     }
 
+    // ===========================================================================
+
     static void emptyTask()
     {
+        Logger::log(std::cout, "Doing nothing :)");
     }
 
-    void test_concurrency_thread_pool_05_02()
+    static void test_concurrency_thread_pool_05_02()
     {
-        size_t numThreads{ std::thread::hardware_concurrency() };
-
-        ThreadPool pool{ numThreads };
+        ThreadPool pool{};
 
         std::queue<std::future<void>> results;
 
-        for (int n = 0; n < 5; ++n)
+        for (size_t n{}; n != 5; ++n)
         {
             auto future = pool.addTask(emptyTask);
 
             results.emplace(std::move(future));
         }
 
+        pool.start();
+
         while (results.size())
         {
             results.front().get();
             results.pop();
         }
+
+        pool.stop();
+
+        Logger::log(std::cout, "Done.");
     }
 
-    void Checksum(const std::uint32_t num, std::atomic_uint64_t* checksum)
+    // ===========================================================================
+
+    static void Checksum(const std::uint32_t num, std::atomic_uint64_t* checksum)
     {
-        *checksum += num;
+        checksum += num;
     }
 
-    void test_concurrency_thread_pool_05_03()
+    static void test_concurrency_thread_pool_05_03()
     {
-        size_t numThreads{ std::thread::hardware_concurrency() };
-
-        ThreadPool pool{ numThreads };
+        ThreadPool pool{};
 
         std::queue<std::future<void>> results;
         std::atomic_uint64_t checksum{ 0 };
         std::uint64_t localChecksum{ 0 };
 
-        for (std::uint32_t n = 0; n < 1000; ++n)
+        for (std::uint32_t n{}; n != 1000; ++n)
         {
             results.emplace(pool.addTask(Checksum, n, &checksum));
             localChecksum += n;
         }
+
+        pool.start();
 
         while (results.size())
         {
             results.front().get();
             results.pop();
         }
+
+        pool.stop();
+
+        Logger::log(std::cout, "Done.");
     }
 
     // ====================================================
@@ -113,27 +130,11 @@ namespace ThreadPool_ZenSepiol
 
         size_t foundPrimeNumbers{};
 
-        //std::function<void(size_t)> primeTask{ [&] (size_t value) {
-
-        //        bool primeFound { isPrime(value) };
-
-        //        if (primeFound) {
-
-        //            Logger::log(std::cout, "> ", value, " IS prime.");
-        //            ++foundPrimeNumbers;
-        //        }
-
-        //        return primeFound;
-        //    }
-        //};
-
-        //EventLoop eventLoop;
-
         std::queue<std::future<bool>> results;
 
-        size_t numThreads{ std::thread::hardware_concurrency() };
+        ThreadPool pool{ };
 
-        ThreadPool pool{ numThreads };
+        // pool.start();
 
         Logger::log(std::cout, "Enqueuing tasks");
 
@@ -145,9 +146,17 @@ namespace ThreadPool_ZenSepiol
         //constexpr size_t Start = 1000000000001;
         //constexpr size_t End = Start + 100;
 
+        // 37 prime numbers
+        //constexpr size_t Start = 1000000000001;
+        //constexpr size_t End = Start + 1000;
+
         // 3614 prime numbers
-        constexpr size_t Start = 1000000000001;
-        constexpr size_t End = Start + 100000;
+        //constexpr size_t Start = 1000000000001;
+        //constexpr size_t End = Start + 100000;
+
+        // 23 prime numbers
+        constexpr size_t Start = 1'000'000'000'000'000'001;
+        constexpr size_t End = Start + 1'000;
 
         for (size_t i{ Start }; i < End; i += 2) {
 
@@ -157,6 +166,8 @@ namespace ThreadPool_ZenSepiol
         }
 
         Logger::log(std::cout, "Enqueuing tasks done.");
+
+        pool.start();
 
         while (results.size() != 0)
         {
@@ -169,60 +180,96 @@ namespace ThreadPool_ZenSepiol
         }
 
         Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
+        
+        pool.stop();
+
         Logger::log(std::cout, "Done.");
     }
 
-    //static void test_concurrency_thread_pool_05_05_PrimeNumbers()
-    //{
-    //    Logger::log(std::cout, "Start:");
+    static void test_concurrency_thread_pool_05_05_PrimeNumbers()
+    {
+        Logger::log(std::cout, "Start:");
 
-    //    size_t foundPrimeNumbers{};
+        ScopedTimer clock{};
 
-    //    //EventLoop eventLoop;
+     //   size_t foundPrimeNumbers{};
+        std::atomic_uint64_t foundPrimeNumbers{ 0 };
 
-    //    std::vector<std::future<std::pair<bool, size_t>>> futures;
+        std::vector<std::future<std::pair<bool, size_t>>> futures;
 
-    //    size_t numThreads{ std::thread::hardware_concurrency() };
-    //    ThreadPool pool{ numThreads };
+        ThreadPool pool{ };
 
-    //    Logger::log(std::cout, "Enqueuing tasks");
+        Logger::log(std::cout, "Enqueuing tasks");
 
-    //    //const size_t Start = 1000000000001;
-    //    //const size_t End = Start + 100000;
+        // 24 prime numbers
+        //constexpr size_t Start = 1;
+        //constexpr size_t End = Start + 100;
 
-    //    const size_t Start = 1;
-    //    const size_t End = Start + 100;
+        // 4 prime numbers
+        //constexpr size_t Start = 1000000000001;
+        //constexpr size_t End = Start + 100;
 
-    //    for (size_t i{ Start }; i < End; i += 2) {
+        // 37 prime numbers
+        //constexpr size_t Start = 1000000000001;
+        //constexpr size_t End = Start + 1000;
 
-    //        auto future = pool.async([i]() {
+        // 3614 prime numbers
+        //constexpr size_t Start = 1000000000001;
+        //constexpr size_t End = Start + 100000;
 
-    //            bool primeFound{ isPrime(i) };
+        // 23 prime numbers
+        constexpr size_t Start = 1'000'000'000'000'000'001;
+        constexpr size_t End = Start + 1'000;
 
-    //            if (primeFound) {
+        std::function<std::pair<bool, size_t>(size_t)> primeTask {
+            
+            [&](size_t value) {
 
-    //                Logger::log(std::cout, "> ", i, " IS prime.");
-    //            }
+                bool primeFound { isPrime(value) };
 
-    //            return std::make_pair(primeFound, i);
-    //            });
+                if (primeFound) {
+                    Logger::log(std::cout, "> ", value, " is prime.");
 
-    //        futures.push_back(std::move(future));
-    //    }
+                    ++foundPrimeNumbers;
+                }
 
-    //    Logger::log(std::cout, "Enqueuing tasks done.");
+                return std::make_pair(primeFound, value);
+            }
+        };
 
-    //    for (auto& future : futures) {
+        Logger::enableLogging(false);
 
-    //        const auto& [found, value] = future.get();
-    //        if (found) {
-    //            ++foundPrimeNumbers;
-    //        }
-    //    }
+        for (size_t i{ Start }; i < End; i += 2) {
 
-    //    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
-    //    Logger::log(std::cout, "Done.");
-    //}
+            std::future<std::pair<bool, size_t>> future{
+                pool.addTask(primeTask, i)
+            };
+
+            futures.push_back(std::move(future));
+        }
+
+        Logger::enableLogging(true);
+
+        Logger::log(std::cout, "Enqueuing tasks done.");
+
+        pool.start();
+
+        for (auto& future : futures) {
+
+            const auto& [found, value] = future.get();
+
+            if (found) {
+                // ++foundPrimeNumbers;
+                Logger::log(std::cout, "Found prime numer ", value);
+            }
+        }
+
+        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
+       
+        pool.stop();
+
+        Logger::log(std::cout, "Done.");
+    }
 }
 
 void test_concurrency_thread_pool_05()

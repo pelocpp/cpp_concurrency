@@ -17,43 +17,45 @@
 
 namespace ThreadPool_ZenSepiol
 {
-    ThreadPool::ThreadPool(size_t size)
-        : m_busy_threads{ size }, m_shutdown_requested{ false }
-    {
-        m_threads.resize(size);
-
-        for (size_t i = 0; i < size; ++i)
-        {
-            m_threads[i] = std::thread(&ThreadPool::worker, this);
-        }
-    }
+    ThreadPool::ThreadPool()
+        : m_busy_threads{ }, m_threads_count{}, m_shutdown_requested {}
+    {}
 
     ThreadPool::~ThreadPool()
     {
-        shutdown();
+        stop();
     }
 
-    size_t ThreadPool::size()
+    void ThreadPool::start()
     {
-        std::unique_lock<std::mutex> guard{ m_mutex };
-        return m_queue.size();
+        size_t size{ std::thread::hardware_concurrency() };
+
+        m_pool.resize(size);
+
+        for (size_t i = 0; i < size; ++i)
+        {
+            m_pool[i] = std::thread(&ThreadPool::worker, this);
+        }
+
+        m_threads_count = size;
+        m_busy_threads = size;
     }
 
-    void ThreadPool::shutdown()
+    void ThreadPool::stop()
     {
         // waits until threads finish their current task and shutdowns the pool
 
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             m_shutdown_requested = true;
-            m_condition_variable.notify_all();
+            m_condition.notify_all();
         }
 
-        for (size_t i{}; i != m_threads.size(); ++i)
+        for (size_t i{}; i != m_pool.size(); ++i)
         {
-            if (m_threads[i].joinable())
+            if (m_pool[i].joinable())
             {
-                m_threads[i].join();
+                m_pool[i].join();
             }
         }
     }
@@ -69,10 +71,9 @@ namespace ThreadPool_ZenSepiol
         {
             m_busy_threads--;
 
-            m_condition_variable.wait(guard, [this] {
+            m_condition.wait(guard, [this] {
                 return m_shutdown_requested || !m_queue.empty();
-                }
-            );
+            });
 
             m_busy_threads++;
 
@@ -89,7 +90,13 @@ namespace ThreadPool_ZenSepiol
             }
         }
 
-        Logger::log(std::cout, "Done [", tid, "]");
+        Logger::log(std::cout, "Worker Done [", tid, "]");
+    }
+
+    size_t ThreadPool::size()
+    {
+        std::unique_lock<std::mutex> guard{ m_mutex };
+        return m_queue.size();
     }
 }
 
