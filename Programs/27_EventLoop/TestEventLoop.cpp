@@ -234,7 +234,11 @@ static void test_event_loop_21()
     //constexpr size_t End = Start + 100;
 
     // 4 prime numbers
-    constexpr size_t Start = 1000000000001;
+    //constexpr size_t Start = 1000000000001;
+    //constexpr size_t End = Start + 100;
+
+    // 4 prime numbers
+    constexpr size_t Start = 1'000'000'000'000'000'001;
     constexpr size_t End = Start + 100;
 
     // 3614 prime numbers
@@ -243,7 +247,7 @@ static void test_event_loop_21()
 
     Logger::log(std::cout, "Starting Event Loop:");
 
-    Logger::enableLogging(false);
+  //  Logger::enableLogging(false);
 
     eventLoop.start();
 
@@ -253,7 +257,7 @@ static void test_event_loop_21()
 
     eventLoop.stop();
 
-    Logger::enableLogging(true);
+ //   Logger::enableLogging(true);
 
     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
 
@@ -262,12 +266,12 @@ static void test_event_loop_21()
 
 void test_event_loop()
 {
-    test_event_loop_01();  // just starting and stopping event loop
-    test_event_loop_02();  // demonstrating event loop with one event
-    test_event_loop_03();  // demonstrating event loop with five events
-    test_event_loop_04();  // demonstrating event loop with five lambdas
-    test_event_loop_10();  // demonstrating enqueuing events with parameters
-    test_event_loop_20();  // searching prime numbers: first enqueuing events, than starting calculations
+    //test_event_loop_01();  // just starting and stopping event loop
+    //test_event_loop_02();  // demonstrating event loop with one event
+    //test_event_loop_03();  // demonstrating event loop with five events
+    //test_event_loop_04();  // demonstrating event loop with five lambdas
+    //test_event_loop_10();  // demonstrating enqueuing events with parameters
+    //test_event_loop_20();  // searching prime numbers: first enqueuing events, than starting calculations
     test_event_loop_21();  // searching prime numbers: enqueuing events while event loop is active
 }
 

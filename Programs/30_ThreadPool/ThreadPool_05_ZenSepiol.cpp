@@ -1,5 +1,5 @@
 // ===========================================================================
-// ThreadPool_05_ZenSepiol.h // Thread Pool
+// ThreadPool_05_ZenSepiol.cpp // Thread Pool
 // ===========================================================================
 
 #pragma once
@@ -93,9 +93,15 @@ namespace ThreadPool_ZenSepiol
         Logger::log(std::cout, "Worker Done [", tid, "]");
     }
 
-    size_t ThreadPool::size()
+    bool ThreadPool::empty() const
     {
-        std::unique_lock<std::mutex> guard{ m_mutex };
+        std::lock_guard<std::mutex> guard{ m_mutex };
+        return m_queue.empty();
+    }
+
+    size_t ThreadPool::size() const
+    {
+        std::lock_guard<std::mutex> guard{ m_mutex };
         return m_queue.size();
     }
 }

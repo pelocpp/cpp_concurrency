@@ -155,8 +155,14 @@ namespace ThreadPool_ZenSepiol
         //constexpr size_t End = Start + 100000;
 
         // 23 prime numbers
+        //constexpr size_t Start = 1'000'000'000'000'000'001;
+        //constexpr size_t End = Start + 1'000;
+
+        // 4 prime numbers
         constexpr size_t Start = 1'000'000'000'000'000'001;
-        constexpr size_t End = Start + 1'000;
+        constexpr size_t End = Start + 100;
+
+        Logger::enableLogging(false);
 
         for (size_t i{ Start }; i < End; i += 2) {
 
@@ -164,6 +170,8 @@ namespace ThreadPool_ZenSepiol
 
             results.emplace(std::move(future));
         }
+
+        Logger::enableLogging(true);
 
         Logger::log(std::cout, "Enqueuing tasks done.");
 

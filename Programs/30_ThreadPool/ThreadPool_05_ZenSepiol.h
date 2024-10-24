@@ -30,16 +30,18 @@
 
 namespace ThreadPool_ZenSepiol
 {
+    using ThreadPoolFunction = std::move_only_function<void(void)>;
+
     class ThreadPool
     {
     private:
-        mutable std::mutex                               m_mutex;
-        std::condition_variable                          m_condition;
-        std::vector<std::thread>                         m_pool;
-        std::queue<std::move_only_function<void(void)>>  m_queue;
-        size_t                                           m_threads_count;
-        size_t                                           m_busy_threads;
-        bool                                             m_shutdown_requested;
+        mutable std::mutex              m_mutex;
+        std::condition_variable         m_condition;
+        std::vector<std::thread>        m_pool;
+        std::queue<ThreadPoolFunction>  m_queue;
+        size_t                          m_threads_count;
+        size_t                          m_busy_threads;
+        bool                            m_shutdown_requested;
 
     public:
         // c'tors/d'tor
@@ -78,7 +80,8 @@ namespace ThreadPool_ZenSepiol
         }
 
         // getter
-        size_t size();
+        bool empty() const;
+        size_t size() const;
 
         // no copying
         ThreadPool(const ThreadPool&) = delete;
