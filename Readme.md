@@ -38,6 +38,8 @@
 
 ### [3. Das Erzeuger-Verbraucher Problem](Programs/26_ProducerConsumerProblem/Readme.md)
 
+### [4. Das *Active Object* Pattern](Programs/28_ActiveObject/Readme.md)
+
 ---
 
 ## Beispiele
