@@ -16,7 +16,7 @@ namespace PackagedTaskComparison {
 
         // create packaged_task object
         std::packaged_task<int(void)> task{
-            []() {
+            [] () {
                 std::this_thread::sleep_for(std::chrono::seconds{ 1 });
                 return 123;
             }
