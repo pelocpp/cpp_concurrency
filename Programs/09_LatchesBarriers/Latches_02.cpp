@@ -112,7 +112,7 @@ namespace Latches_04 {
 
     std::random_device device;
 
-    auto slave = [](std::string name) {
+    auto slave = [] (std::string name) {
         Logger::log(std::cout, name, ": Started working.");
 
         // simulating still some calculation time ...

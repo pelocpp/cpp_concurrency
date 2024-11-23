@@ -14,10 +14,13 @@ namespace Concurrency_Barriers_01
 {
     static void test_barriers()
     {
+        std::cout << "Start:" << std::endl;
+
         std::vector<size_t> values{ 1, 2, 3, 4, 5, 6 };
 
-        // (noexcept needs to be used as barrier callback)
+        
         auto printValues = [&values]() noexcept {
+            // noexcept needs to be used for barrier function object
 
             std::thread::id tid{ std::this_thread::get_id() };
 
@@ -27,6 +30,8 @@ namespace Concurrency_Barriers_01
                 std::cout << std::format("{:15d}", val);
             }
             std::cout << std::endl;
+        
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         };
 
         // print initial values
@@ -42,18 +47,18 @@ namespace Concurrency_Barriers_01
 
         std::barrier allDone
         {
-            count,       // initial value of the counter
-            printValues  // callback to call whenever the counter is 0
+            count,       // initial value of the counter value
+            printValues  // completion function object to be called whenever the counter is 0
         };
 
         // initialize a thread for each value to compute its square root in a loop
         std::vector<std::jthread> threads;
 
-        auto procedure = [&](size_t n) {
+        auto calculate = [&](size_t n) {
 
             for (int i{}; i != 4; ++i) {
 
-                // compute power of 2);
+                // compute powers of 2 );
                 values[n] = static_cast<size_t>(std::pow(values[n], 2));
 
                 // synchronize with other threads to print values
@@ -63,7 +68,8 @@ namespace Concurrency_Barriers_01
 
         for (size_t index{}; index != values.size(); ++index) {
 
-            threads.push_back(std::jthread{ procedure, index });
+            std::jthread t{ calculate, index };
+            threads.push_back(std::move(t));
         }
 
         for (auto& t : threads) {

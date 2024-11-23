@@ -14,7 +14,8 @@
   * [Hüllenklasse `StrategizedLocking`](#link6)
   * [Mögliche Realisierungen der `ILock`-Schnittstelle](#link7)
   * [Ein Beispiel: Klasse `ThreadsafeStack<T>`](#link8)
-  * [Literaturhinweise](#link9)
+  * [Vier Anwendungsbeispiele der Klasse `ThreadsafeStack<T>`](#link9)
+  * [Literaturhinweise](#link10)
 
 ---
 
@@ -41,7 +42,7 @@
 ## Allgemeines <a name="link2"></a>
 
 Das *Strategized Locking*&ndash;Entwurfsmuster
-schützt den kritischen Abschnitt einer Komponente vor gleichzeitigem (konkurriendem) Zugriff.
+schützt den kritischen Abschnitt einer Komponente vor gleichzeitigem (konkurrierendem) Zugriff.
 
 Mit anderen Worten: Wenn ein Objekt Daten benötigt, die in einem anderen Thread erstellt werden,
 müssen die kritischen Abschnitte für den Datenzugriff gesperrt werden.
@@ -107,7 +108,7 @@ sondern einer Wrapper-Klasse `StrategizedLocking`:
 04:     const ILock& m_lock;
 05: 
 06: public:
-07:     StrategizedLocking(const ILock&) : m_lock(lock) {
+07:     StrategizedLocking(const ILock&) : m_lock{ lock } {
 08:         m_lock.lock();
 09:     }
 10: 
@@ -168,9 +169,7 @@ Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 35: };
 ```
 
-
-## Ein Beispiel: Klasse `ThreadsafeStack<T>` <a name="link8"></a>
-
+[Ein Beispiel: Klasse `ThreadsafeStack<T>`](#link8)
 Betrachten wir eine Anpassung der Klasse `ThreadsafeStack<T>` an
 das *Strategized Locking*&ndash;Entwurfsmuster:
 
@@ -224,10 +223,151 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 47: };
 ```
 
+---
+
+## Vier Anwendungsbeispiele zur Klasse `ThreadsafeStack<T>` <a name="link9"></a>
+
+### Zeitvergleich: Klasse `NoLock` versus `ExclusiveLock` 
+
+Wir betrachten eine Instanz der Klasse `ThreadsafeStack<size_t>`.
+
+Zum Schutze des konkurrierenden Zugriffs werden die beiden Klassen `NoLock` bzw. `ExclusiveLock` herangezogen.
+
+Wir messen im *Release*-Modus die Laufzeit mit folgendem Code-Fragment und einem Wert von `1'000'000` für `MaxIterations`:
+
+```cpp
+for (size_t i = 0; i != MaxIterations; ++i) {
+    stack.push(i);
+    size_t value{};
+    stack.pop(value);
+}
+```
+
+*Ergebnis*:
+
+Verwendung der Klasse `NoLock`:
+
+```
+[1]: Calling push 1000000 times:
+[1]: Done:  7.006 msecs.
+```
+
+Verwendung der Klasse `ExclusiveLock`:
+
+```
+[1]: Calling push 1000000 times:
+[1]: Done:  39.0376 msecs.
+```
+
+### Anwendungsvergleich: Klasse `RecursiveLock` versus `ExclusiveLock` 
+
+Wir simulieren einen Vergleich der beiden Klassen `RecursiveLock` und `ExclusiveLock`.
+
+Hierzu bedarf es einer Änderung an der `pop`-Methode &ndash;
+beispielsweise auf folgende Weise:
+
+```cpp
+void pop(T& value)
+{
+    StrategizedLocking m_guard{ m_lock };
+
+    // in case of testing recursive lock 
+    if (empty()) {                          // <== simulating nested locked call (!)
+        std::cout << "Emtpy Stack !";
+    }
+
+    if (m_data.empty()) {
+        throw std::out_of_range{ "Stack is empty!" };
+    }
+    value = m_data.top();
+    m_data.pop();
+}
+```
+
+Welche Beobachtungen machen Sie bei der Ausführung des Programms?
+
+### Anwendungsbeispiel: Primzahlensuche mit einem Thread
+
+Wir führen das folgende Beispiel aus:
+
+```cpp
+01: void test_strategized_locking_03()
+02: {
+03:     NoLock lock;
+04:     // vs.
+05:     // ExclusiveLock lock;
+06: 
+07:     ThreadsafeStack<size_t> primes{ lock };
+08: 
+09:     PrimeCalculator<size_t> calc{ primes, Globals::LowerLimit, Globals::UpperLimit + 1 };
+10: 
+11:     const auto startTime{ std::chrono::high_resolution_clock::now() };
+12: 
+13:     std::thread calculator(calc);
+14:     calculator.join();
+15: }
+```
+
+Es ist offensichtlich, welche der beiden Klassen `RecursiveLock` bzw. `NoLock` 
+zum Einsatz kommen sollte und welche nicht:
+
+
+### Anwendungsbeispiel: Primzahlensuche mit mehreren Threads
+
+Nun betrachten wir das folgende Beispiel:
+
+```cpp
+01: void test_strategized_locking_04()
+02: {
+03: 
+04:     NoLock lock;
+05:     // vs.
+06:     // ExclusiveLock lock;
+07: 
+08:     ThreadsafeStack<size_t> primes{ lock };
+09: 
+10:     std::vector<std::thread> threads;
+11:     threads.reserve(Globals::NumThreads);
+12: 
+13:     size_t range = (Globals::UpperLimit - Globals::LowerLimit) / Globals::NumThreads;
+14:     size_t start = Globals::LowerLimit;
+15:     size_t end = start + range;
+16: 
+17:     const auto startTime{ std::chrono::high_resolution_clock::now() };
+18: 
+19:     // setup threads
+20:     for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
+21: 
+22:         PrimeCalculator<size_t> calc{ primes, start, end };
+23:         threads.emplace_back(calc);
+24: 
+25:         start = end;
+26:         end = start + range;
+27:     }
+28: 
+29:     // setup last thread
+30:     end = Globals::UpperLimit;
+31:     PrimeCalculator<size_t> calc{ primes, start, end + 1 };
+32:     threads.emplace_back(calc);
+33: 
+34:     // wait for end of all threads
+35:     for (size_t i{}; i != Globals::NumThreads; ++i) {
+36:         threads[i].join();
+37:     }
+38: }
+```
+
+
+Wiederum stellt sich die Frage, welche der beiden Klassen
+`NoLock` bzw. `ExclusiveLock` 
+zum Einsatz kommen sollte.
+
+Welche Beobachtung können Sie machen, wenn die falsche Klasse verwendet wird?
 
 ---
 
-## Literaturhinweise <a name="link9"></a>
+
+## Literaturhinweise <a name="link10"></a>
 
 Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen aus der Unterlage
 

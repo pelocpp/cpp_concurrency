@@ -11,11 +11,13 @@
 #include <array>
 #include <vector>
 
+#include "../Logger/Logger.h"
+
 namespace Latches_01 {
 
-    static void loop(char ch) {
+    static void loop(char ch, size_t count) {
 
-        for (int j{}; j != 30; ++j) 
+        for (int j{}; j != count; ++j)
         {
             // loop printing the char ch
             std::cout.put(ch);
@@ -33,34 +35,31 @@ namespace Latches_01 {
         // start two threads dealing with printing chars
         std::jthread t1 {
             [&] () {
-                loop('!');
+                loop('!', 30);
 
-                // signal that the task is done
+                // signal that this task is done
                 allDone.count_down(); // atomically decrement counter of latch
             }
         };
 
         std::jthread t2 {
             [&] () { 
-                loop('?');
+                loop('?', 30);
 
-                // signal that the task is done
+                // signal that this task is done
                 allDone.count_down(); // atomically decrement counter of latch            
             }
         };
 
-        // wait until all tasks are done
+        // wait until all tasks have finished
         allDone.wait();
 
         std::cout << std::endl << "All tasks done."<< std::endl;
     }
-}
-
-namespace Latches_02 {
 
     static void example_latches_02()
     {
-        std::cout.write("Start.\n", 8).flush();
+        Logger::log(std::cout, "Start:");
 
         std::ptrdiff_t numThreads{ 10 };
 
@@ -77,38 +76,30 @@ namespace Latches_02 {
 
                 [i, &allReady]() {
 
+                    Logger::log(std::cout, "JThread ", i, " started (", std::this_thread::get_id(), ")");
+
                     // initialize each thread (simulate to take some time):
-                    std::this_thread::sleep_for(std::chrono::milliseconds{ 300 * i });
+                    std::this_thread::sleep_for(std::chrono::milliseconds{ 700 * i });
 
-                    std::ostringstream ss;
-                    ss << "JThread " << i << " waiting for execution\n";
-                    std::string s{ ss.str() };
-                    std::cout.write(s.c_str(), s.size()).flush();
+                    Logger::log(std::cout, "JThread ", i, " waiting for execution");
 
-                    // synchronize threads so that all start together here:
-                    allReady.arrive_and_wait();
+                    // synchronize threads so that all start together here
+                    allReady.count_down();
+                    allReady.wait();
 
                     // or
-                    //allReady.count_down();
-                    //allReady.wait();
-
-                    // perform whatever the thread does
-                    // (loop printing its index):
-
+                    // allReady.arrive_and_wait();
+                    
+                    // perform whatever the thread does (loop printing its index)
                     char ch{ static_cast<char>('0' + i) };
-
-                    for (int j{}; j != 10; ++j) {
-                        std::cout.put(ch);
-                        std::cout.flush();
-                        std::this_thread::sleep_for(std::chrono::milliseconds{ 50 });
-                    }
+                    loop(ch, 10);
                 }
             };
 
             threads.push_back(std::move(t));
         }
 
-        std::cout.write("Done.\n", 7).flush();
+        Logger::log(std::cout, "Done.");
     }
 }
 
@@ -120,7 +111,7 @@ void test_latches_01()
 
 void test_latches_02()
 {
-    using namespace Latches_02;
+    using namespace Latches_01;
     example_latches_02();
 }
 

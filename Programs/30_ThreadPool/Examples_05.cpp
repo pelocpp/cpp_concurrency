@@ -262,7 +262,7 @@ namespace ThreadPool_ZenSepiol
 
         pool.start();
 
-        for (auto& future : futures) {
+        for (auto& future : futures) { 
 
             const auto& [found, value] = future.get();
 

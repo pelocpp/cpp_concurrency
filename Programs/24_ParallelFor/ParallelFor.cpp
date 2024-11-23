@@ -31,7 +31,7 @@ namespace Concurrency_ParallelFor
         // calculate number of threads to use
         size_t numThreadsHint{ std::thread::hardware_concurrency() };
         size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
-        size_t numElements = to - from + 1;
+        size_t numElements{ to - from + 1 };
         size_t batchSize{ numElements / numThreads };
         size_t batchRemainder{ numElements % numThreads };
 
@@ -46,11 +46,8 @@ namespace Concurrency_ParallelFor
 
                 size_t start{ from + i * batchSize };
                 
-                threads.push_back(
-                    std::move(std::thread { 
-                        callableWrapper, callable, start, start + batchSize 
-                    })
-                );
+                std::thread t{ callableWrapper, callable, start, start + batchSize };
+                threads.push_back(std::move (t));
             }
         }
         else {

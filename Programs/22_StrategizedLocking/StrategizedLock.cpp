@@ -9,7 +9,7 @@
 namespace Concurrency_StrategizedLock
 {
     // class StrategizedLocking
-    StrategizedLocking::StrategizedLocking(const ILock& lock) : m_lock(lock) {
+    StrategizedLocking::StrategizedLocking(const ILock& lock) : m_lock{ lock } {
         m_lock.lock();
     }
 

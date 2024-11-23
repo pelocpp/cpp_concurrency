@@ -30,8 +30,8 @@ void test_strategized_locking_01()
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_StrategizedLock;
 
-    NoLock lock;
-    // ExclusiveLock lock;
+    // NoLock lock;
+    ExclusiveLock lock;
 
     ThreadsafeStack<size_t> stack{ lock };
 
@@ -39,7 +39,7 @@ void test_strategized_locking_01()
 
     constexpr size_t MaxIterations = 1'000'000;
 
-    Logger::log(std::cout, "Calling push: ", MaxIterations);
+    Logger::log(std::cout, "Calling push ", MaxIterations, " times:");
 
     for (size_t i = 0; i != MaxIterations; ++i) {
         stack.push(i);
@@ -61,8 +61,8 @@ void test_strategized_locking_02()
 
     Logger::log(std::cout, "Testing RecursiveLock");
 
-    // ExclusiveLock lock;  // crashes
-    RecursiveLock lock;   // works
+    ExclusiveLock lock;  // crashes
+    // RecursiveLock lock;   // works
 
     ThreadsafeStack<size_t> stack{ lock };
 
@@ -84,7 +84,7 @@ void test_strategized_locking_03()
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
     NoLock lock;
-     //ExclusiveLock lock;
+    // ExclusiveLock lock;
 
     ThreadsafeStack<size_t> primes{ lock };
 
@@ -110,8 +110,8 @@ void test_strategized_locking_04()
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
-    // NoLock lock;   // crashes sporadically
-    ExclusiveLock lock;
+    NoLock lock;   // crashes sporadically
+    // ExclusiveLock lock;
 
     ThreadsafeStack<size_t> primes{ lock };
 

@@ -23,7 +23,7 @@ namespace Globals
     // constexpr size_t UpperLimit { 100'000 };         // Found:  9.592 prime numbers
     // constexpr size_t UpperLimit { 1'000'000 };       // Found:  78.498 prime numbers
     // constexpr size_t UpperLimit { 10'000'000 };      // Found:  664.579 prime numbers
-    constexpr size_t UpperLimit { 100'000'000 };     // Found:  5.761.455 prime numbers
+    constexpr size_t UpperLimit { 100'000'000 };        // Found:  5.761.455 prime numbers
 }
 
 // ===========================================================================
@@ -106,7 +106,7 @@ void test_parallel_for()
 {
     test_parallel_for_01(2, Globals::UpperLimit, true);
     test_parallel_for_02(2, Globals::UpperLimit, true);
-    test_parallel_for_02(2, 50, false);
+    //test_parallel_for_02(2, 50, false);
 }
 
 // ===========================================================================

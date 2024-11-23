@@ -52,11 +52,13 @@ namespace Concurrency_ThreadsafeStack
             StrategizedLocking m_guard{ m_lock };
 
             //// in case of testing recursive lock 
-            // if (empty()) {
-            //     std::cout << "Emtpy Stack !";
-            // }
+            //if (empty()) {
+            //    std::cout << "Emtpy Stack !";
+            //}
 
-            if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+            if (m_data.empty()) {
+                throw std::out_of_range{ "Stack is empty!" };
+            }
             value = m_data.top();
             m_data.pop();
         }
