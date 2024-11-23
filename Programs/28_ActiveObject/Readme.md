@@ -20,6 +20,8 @@
 
 ## Verwendete Werkzeuge <a name="link1"></a>
 
+<ins>Klassen</ins>:
+
   * `std::function`
   * `std::packaged_task`
   * `std::mutex`
