@@ -38,7 +38,7 @@
 
 ### [2. Reader-Writer Lock (Klassen `std::shared_mutex` und `std::shared_lock`)](Programs/21_ReaderWriterLock/Readme.md)
 
-### [3. Das Erzeuger-Verbraucher Problem](Programs/22_ProducerConsumerProblem/Readme.md)
+### [3. Das Erzeuger-Verbraucher Problem (*Producer Consumer Pattern*)](Programs/22_ProducerConsumerProblem/Readme.md)
 
 ### [4. Das *Active Object* Pattern](Programs/23_ActiveObject/Readme.md)
 

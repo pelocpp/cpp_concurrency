@@ -1,4 +1,4 @@
-# Warten und Benachrichtigen
+# Kooperation von Threads: Klasse `std::condition_variable`
 
 [Zurück](../../Readme.md)
 
