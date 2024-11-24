@@ -28,6 +28,8 @@
 
 ### [13. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/11_Semaphore/Readme.md)
 
+### [14. Spinlocks](Programs/29_SpinLock/Readme.md)
+
 ---
 
 ## Entwurfsmuster
