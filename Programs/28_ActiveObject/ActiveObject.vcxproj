@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="ActiveObject_01.cpp" />
     <ClCompile Include="ActiveObject_02.cpp" />
     <ClCompile Include="ActiveObject_03.cpp" />

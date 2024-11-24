@@ -43,7 +43,6 @@
 
 ## Allgemeines <a name="link2"></a>
 
-
 Wenn ein Thread versucht, ein Mutex-Objekt zu sperren (Aufruf von `lock`) und das Mutex-Objekt bereits gesperrt ist,
 wird der aktuelle Thread in einen Ruhezustand versetzt (*suspend*),
 sodass ein anderer Thread ausgeführt werden kann (*resume*).
@@ -54,13 +53,13 @@ und dies geschieht nur, wenn das Mutex-Objekt von dem Thread entsperrt wird, der
 Wenn ein Thread hingegen ein Spinlock-Objekt sperrt und dies fehlschlägt,
 versucht er kontinuierlich erneut, dieses zu sperren, bis das Vorhaben gelingt.
 
-Es kommt als nicht zu einem Thread-Wechsel.
+Es kommt also nicht zu einem Thread-Wechsel!
 
-Natürlich gibt es hier eine Ausnahme: Das das Betriebssystem wechselt dann zu einem anderen Thread,
+Natürlich gibt es hier eine Ausnahme: Das Betriebssystem wechselt dann zu einem anderen Thread,
 wenn das CPU-Laufzeitkontingent des aktuellen Threads überschritten wurde.
 
 Bewirkt ein Mutex-Objekt einen Zustandswechsel eines Threads in den Ruhezustand,
-zieht dies einen Kontextwechsel nach sich, der zu Leistungseinbußen führt.
+zieht dies einen Kontextwechsel auf Betriebssystemebene nach sich, der zu Leistungseinbußen führt.
 
 Wenn Sie diese Einbußen vermeiden und eine kurze Sperrzeit haben möchten,
 ist der Einsatz eines *Spinlock*-Objekts möglicherweise eine gute Alternative.

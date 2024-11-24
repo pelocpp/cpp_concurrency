@@ -5,13 +5,10 @@
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
 
-#include <iostream>
-#include <iomanip>
 #include <thread>
 #include <chrono>
 #include <atomic>
 #include <vector>
-// #include <print>
 #include <mutex>
 
 namespace SpinLocks {
@@ -40,7 +37,7 @@ namespace SpinLocks {
 
 namespace TestSpinLocksCommon
 {
-    const size_t MaxIterations = 1000000;
+    const size_t MaxIterations = 100000;
     const size_t NumWorkers = 10;
 
     using ValueType = unsigned long;
