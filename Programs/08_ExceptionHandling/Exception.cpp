@@ -26,6 +26,8 @@ namespace ExceptionHandling
 
     static void test_01() {
 
+        Logger::log(std::cout, "Main Thread: Start.");
+
         std::future<int> futureFunction { 
             std::async(std::launch::async, doSomeWorkWithException) 
         };
@@ -69,6 +71,8 @@ namespace ExceptionHandling
     }
 
     static void test_02() {
+
+        Logger::log(std::cout, "Main Thread: Start.");
 
         std::thread t{ doAnotherWorkWithException };
 

@@ -24,6 +24,7 @@
     <ProjectGuid>{101d6939-ccb9-43ca-94e9-0997468751b0}</ProjectGuid>
     <RootNamespace>My10JThread</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>10_JThread</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

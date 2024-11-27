@@ -1,16 +1,12 @@
 // ===========================================================================
-// std::async
+// Program.cpp // Exercises
 // ===========================================================================
 
-void test_async_01();
-void test_async_02();
-void test_async_03();
+extern void exercise_comparison();
+extern void exercise_car_parking();
 
 int main()
 {
-    test_async_01();
-    test_async_02();
-    test_async_03();
     return 0;
 }
 

@@ -97,9 +97,8 @@ namespace TestUsingMutex
 
         for (size_t i{}; i != iterations; ++i)
         {
-            mutex.lock();
+            std::lock_guard<std::mutex> guard{ mutex };
             value++;
-            mutex.unlock();
         }
     }
 }

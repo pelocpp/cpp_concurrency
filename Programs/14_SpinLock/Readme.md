@@ -26,12 +26,12 @@
 
 <ins>Konstanten</ins>:
 
-    * `std::memory_order_relaxed`
-    * `std::memory_order_consume`
-    * `std::memory_order_acquire`
-    * `std::memory_order_release`
-    * `std::memory_order_acq_rel`
-    * `std::memory_order_seq_cst`
+ * `std::memory_order_relaxed`
+ * `std::memory_order_consume`
+ * `std::memory_order_acquire`
+ * `std::memory_order_release`
+ * `std::memory_order_acq_rel`
+ * `std::memory_order_seq_cst`
 
 ---
 

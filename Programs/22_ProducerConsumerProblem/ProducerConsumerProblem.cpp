@@ -73,14 +73,15 @@ static void test_thread_safe_blocking_queue_02()
 
 // ===========================================================================
 
+template<size_t QueueSize = 10>
 class Consumer
 {
 private:
-    ProducerConsumerQueue::BlockingQueue<int>& m_queue;
+    ProducerConsumerQueue::BlockingQueue<int, QueueSize>& m_queue;
 
 public:
     // c'tor
-    Consumer(ProducerConsumerQueue::BlockingQueue<int>& queue)
+    Consumer(ProducerConsumerQueue::BlockingQueue<int, QueueSize>& queue)
         : m_queue{ queue }
     {}
 
@@ -100,14 +101,15 @@ public:
     }
 };
 
+template<size_t QueueSize = 10>
 class Producer
 {
 private:
-    ProducerConsumerQueue::BlockingQueue<int>& m_queue;
+    ProducerConsumerQueue::BlockingQueue<int, QueueSize>& m_queue;
 
 public:
     // c'tor
-    Producer(ProducerConsumerQueue::BlockingQueue<int>& queue)
+    Producer(ProducerConsumerQueue::BlockingQueue<int, QueueSize>& queue)
         : m_queue{ queue }
     {}
 

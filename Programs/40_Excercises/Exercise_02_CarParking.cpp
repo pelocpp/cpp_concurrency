@@ -1,17 +1,15 @@
 // ===========================================================================
-// std::async
+// Exercise_02_CarParking.cpp
 // ===========================================================================
 
-void test_async_01();
-void test_async_02();
-void test_async_03();
+namespace Car_Parking {
+}
 
-int main()
+// =================================================================
+
+void exercise_car_parking()
 {
-    test_async_01();
-    test_async_02();
-    test_async_03();
-    return 0;
+    using namespace Car_Parking;
 }
 
 // ===========================================================================

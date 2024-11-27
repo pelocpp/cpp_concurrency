@@ -27,7 +27,7 @@ namespace SimpleConditionVariableDemo01
             condition.wait(
                 guard,
                 [] () {
-                    Logger::log(std::cout, "  ... check for data being present ...", data == true);
+                    Logger::log(std::cout, "  ... check for data being present: ", data == true);
                     return data == true;
                 }
             );

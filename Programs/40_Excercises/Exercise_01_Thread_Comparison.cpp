@@ -1,17 +1,15 @@
 // ===========================================================================
-// std::async
+// Exercise_01_Thread_Comparison.cpp // std::thread vs. std::async
 // ===========================================================================
 
-void test_async_01();
-void test_async_02();
-void test_async_03();
+namespace Thread_Comparison {
+}
 
-int main()
+// =================================================================
+
+void exercise_comparison()
 {
-    test_async_01();
-    test_async_02();
-    test_async_03();
-    return 0;
+    using namespace Thread_Comparison;
 }
 
 // ===========================================================================

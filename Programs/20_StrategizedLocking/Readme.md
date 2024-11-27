@@ -144,11 +144,11 @@ Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 10:     mutable NullObjectMutex m_nullMutex;
 11: 
 12: public:
-13:     void lock() const const {
+13:     void lock() const {
 14:         m_nullMutex.lock();
 15:     }
 16: 
-17:     void unlock() const const {
+17:     void unlock() const {
 18:         m_nullMutex.unlock();
 19:     }
 20: };
@@ -159,7 +159,7 @@ Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
 25:     mutable std::mutex m_mutex;
 26: 
 27: public:
-28:     void lock() const const {
+28:     void lock() const {
 29:         m_mutex.lock();
 30:     }
 31: 
