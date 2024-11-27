@@ -166,7 +166,7 @@ namespace Mutex_And_Locking_Examples {
             // ...
 
             // 'unlock()' is automatically simultaneously called on all mutexes 
-            // here at the destruction of the `std::scoped_lock` object
+            // here at the destruction of the `std::lock_guard` objects
         }
     }
 

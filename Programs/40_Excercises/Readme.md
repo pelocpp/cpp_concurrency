@@ -17,40 +17,51 @@
 
   * Klasse `std::thread`
   * Klasse `std::jthread`
+  * Klasse `std::counting_semaphore`
+
+---
+
+#### Aufgabe 1: Zeitvergleich `std::thread` und `std::async` <a name="link1"></a>
+
+
+Erzeugen Sie 1 Million Threads mit `std::thread` und `std::async`.
+In beiden Fällen sollen die Threads einen Rückgabewert haben.
+
+Im Falle von `std::thread` benötigt man hier zusätzlich ein `std::promise`-Objekt.
+
+Es soll letzten Endes gemessen, wie lange es dauert, mit `std::thread` oder `std::async`
+eine Million Threads zu starten und ein berechnetes Ergebnis abzuholen.
+
+Betrachten Sie im Task Manager den jeweiligen Verbrauch an Betriebssystemresourcen.
+
+---
+
+#### Aufgabe 2: Mehrere Autos und ein Parkplatz <a name="link2"></a>
+
+Wir betrachten eine Simulation von fahrenden Autos und einem Parkplatz.
+Folgende Randbedingungen sind gegeben:
+
+  * Es fahren 10 Autos &ndash; jedes Auto wird durch ein eigenes Thread-Objekt kontrolliert bzw. verwaltet.
+  * Nach 5 Sekunden Fahrzeit möchte ein Auto auf einem Parkplatz parken.
+  * Auf dem Parkplatz können maximal 5 Autos parken.
+  * Ein Auto parkt 3 Sekunden, danach verlässt es den Parkplatz wieder und fährt für 5 weitere Sekunden.
+
+Erstellen Sie eine Simulation, die durch entsprechende Ausgaben in der Konsole
+fahrende Autos und die Belegung des Parkplatzes erkennen lässt.
+
+Verwenden Sie ein `std::counting_semaphore`-Objekt, um damit die Zufahrt zum
+Parkplatz zu kontrollieren.
+
 
 ---
 
 #### Lösungen
 
-[*JThread.cpp*: `std::jthread`-Objekt und `join()`-Aufruf](JThread.cpp).<br />
+[*Exercise_01_Thread_Comparison.cpp*](Exercise_01_Thread_Comparison.cpp)<br />
+[*Exercise_02_CarParking.cpp*](Exercise_02_CarParking.cpp)
 
 ---
 
-## Allgemeines <a name="link2"></a>
-
-Die Implementierung der `std::jthread`-Klasse basiert auf der bereits vorhandenen Klasse `std::thread`.
-
-Die `std::jthread`-Klasse ist eine Wrapper-Klasse um Klasse `std::thread` herum,
-sie stellt dieselben öffentlichen Methoden bereit, die die Aufrufe einfach weiterleiten.
-
-Es kann folglich jedes `std::thread`-Objekt in ein `std::jthread`-Objekt umgewandelt werden,
-dieses verhält sich dann genau so, wie sich ein entsprechendes `std::thread`-Objekt verhalten würde.
-
----
-
-## Verhalten der Klassen `std::jthread` und `std::jthread` bzgl. des `join`-Aufrufs <a name="link3"></a>
-
-Wenn ein `std::thread`-Objekt den Zustand *joinable* besitzt
-und dieses auf Grund des Verlassens eines Blocks (Gültigkeitsbereichs) aufgeräumt wird,
-wird in seinem Destruktor automatisch `std::terminate` aufgerufen.
-
-Ein `std::thread`-Objekt besitzt den Zustand *joinable*,
-wenn am Objekt keine der beiden Methoden `join()` oder `detach()` aufgerufen wurde.
-
-Ein Objekt der Klasse `std::jthread` verhält sich hier anders: Der Destruktor des Objekts ruft automatisch `join` auf,
-wenn sich der Thread noch im Zustand *joinable* befindet.
-
----
 
 [Zurück](../../Readme.md)
 
