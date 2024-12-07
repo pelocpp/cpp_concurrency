@@ -52,7 +52,7 @@ jedoch auf unterschiedliche Weise:
   *Bemerkung*: In der Praxis kommen hier entsprechende Hüllen-Objekte wie z.B. `std::lock_guard` zum Zuge.
   * Reiht man die kritischen Abschnitte in eine Ereigniswarteschlange ein, kann man auf `std:mutex`-Objekte verzichten.
   Die kritischen Abschnitte müssen zu diesem Zweck aber Funktions-(Methoden-)grenzen haben,
-  um die in eine Ereigniswarteschlange einschleusen zu können.
+  um sie in eine Ereigniswarteschlange einschleusen zu können.
 
 Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismus unterschiedlicher Natur sein:
 

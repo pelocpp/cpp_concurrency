@@ -20,10 +20,10 @@ public:
 
     // no copying or moving
     ScopedTimer(const ScopedTimer&) = delete;
-    auto operator=(const ScopedTimer&)->ScopedTimer& = delete;
+    ScopedTimer& operator=(const ScopedTimer&) = delete;
 
     ScopedTimer(ScopedTimer&&) = delete;
-    auto operator=(ScopedTimer&&)->ScopedTimer& = delete;
+    ScopedTimer& operator=(ScopedTimer&&) = delete;
 };
 
 // ===========================================================================
