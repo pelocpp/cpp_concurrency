@@ -105,6 +105,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +132,7 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Exercise_01_Thread_Comparison.cpp" />
     <ClCompile Include="Exercise_02_CarParking.cpp" />
     <ClCompile Include="Program.cpp" />

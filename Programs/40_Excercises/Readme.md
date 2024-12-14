@@ -18,6 +18,7 @@
   * Klasse `std::thread`
   * Klasse `std::jthread`
   * Klasse `std::counting_semaphore`
+  * Klasse `std::stop_token` und Methode `request_stop`
 
 ---
 
@@ -41,16 +42,20 @@ Betrachten Sie im Task Manager den jeweiligen Verbrauch an Betriebssystemresourc
 Wir betrachten eine Simulation von fahrenden Autos und einem Parkplatz.
 Folgende Randbedingungen sind gegeben:
 
-  * Es fahren 10 Autos &ndash; jedes Auto wird durch ein eigenes Thread-Objekt kontrolliert bzw. verwaltet.
-  * Nach 5 Sekunden Fahrzeit möchte ein Auto auf einem Parkplatz parken.
-  * Auf dem Parkplatz können maximal 5 Autos parken.
-  * Ein Auto parkt 3 Sekunden, danach verlässt es den Parkplatz wieder und fährt für 5 weitere Sekunden.
+  * Es fahren 6 Autos &ndash; jedes Auto wird durch ein eigenes Thread-Objekt kontrolliert bzw. verwaltet.
+  * Nach ca. 5 Sekunden Fahrzeit möchten die Autos auf einem Parkplatz parken.
+  * Auf dem Parkplatz können maximal nur 3 Autos parken.
+  * Ein Auto parkt 3 Sekunden, danach verlässt es den Parkplatz und fährt wiederum für ca. 5 weitere Sekunden.
+  * Nach 20 Sekunden soll die Simulation kontrolliert beendet werden.
 
 Erstellen Sie eine Simulation, die durch entsprechende Ausgaben in der Konsole
 fahrende Autos und die Belegung des Parkplatzes erkennen lässt.
 
 Verwenden Sie ein `std::counting_semaphore`-Objekt, um damit die Zufahrt zum
 Parkplatz zu kontrollieren.
+
+*Zusatzaufgabe*:<br/>
+Realisieren Sie zum Vergleich eine Parkplatz-Klasse, die die Klasse `std::condition_variable` verwendet. 
 
 
 ---

@@ -4,13 +4,14 @@
 
 #pragma once
 
-#include <iostream>
-#include <sstream>
 #include <chrono>
 #include <ctime>
-#include <thread> 
-#include <mutex>
+#include <iostream>
 #include <map>
+#include <mutex>
+#include <sstream>
+#include <syncstream>
+#include <thread> 
 
 class Logger {
 public:
@@ -27,11 +28,8 @@ public:
     template<typename ... TArgs>
     static void logInternal(std::ostream& os, TArgs&& ...args)
     {
-        std::stringstream ss;
-        ss << getPrefix();
-        ss << '\t';
-        (ss << ... << std::forward<TArgs>(args)) << std::endl;
-        os << ss.str();
+        std::osyncstream syncStream{ os };
+        ((syncStream << getPrefix() << '\t') << ... << std::forward<TArgs>(args)) << '\n';
     }
 
     // log conditionally

@@ -2,10 +2,10 @@
 // Logger.cpp
 // ===========================================================================
 
+#include "Logger.h"
+
 #include <chrono>
 #include <mutex>
-
-#include "Logger.h"
 
 std::chrono::steady_clock::time_point Logger::s_begin;
 bool Logger::s_loggingEnabled{ true };

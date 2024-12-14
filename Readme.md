@@ -59,3 +59,11 @@
 ### [6. Das Problem der dinierenden Philosophen](Programs/50_DiningPhilosophers/Readme.md)
 
 ---
+
+## Aufgaben
+
+### [1. Aufgabe: Zeitvergleich (`std::thread` vs. `std::async`)](Programs/40_Excercises/Readme.md)
+
+### [2. Aufgabe: Simulation eines Parkplatzes (`std::counting_semaphore`)](Programs/40_Excercises/Readme.md)
+
+---

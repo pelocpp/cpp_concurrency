@@ -2,12 +2,14 @@
 // Exercise_01_Thread_Comparison.cpp // std::thread vs. std::async
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 namespace Thread_Comparison {
 }
 
 // =================================================================
 
-void exercise_comparison()
+void exercise_thread_comparison()
 {
     using namespace Thread_Comparison;
 }
