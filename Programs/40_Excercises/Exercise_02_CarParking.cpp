@@ -184,7 +184,7 @@ namespace Car_Parking {
             for (auto& thread : m_threads) {
                 thread.join();
             }
-            Logger::log(std::cout, "Stopped Simulation:");
+            Logger::log(std::cout, "Stopped Simulation.");
         }
     };
 

@@ -6,8 +6,8 @@
 
 ## Inhalt
 
-  * [Aufgabe 1](#link1)
-  * [Aufgabe 2](#link2)
+  * [Aufgabe 1: Zeitvergleich `std::thread` und `std::async`](#link1)
+  * [Aufgabe 2: Mehrere Autos und ein Parkplatz](#link2)
 
 ---
 
@@ -25,13 +25,15 @@
 #### Aufgabe 1: Zeitvergleich `std::thread` und `std::async` <a name="link1"></a>
 
 
-Erzeugen Sie 1 Million Threads mit `std::thread` und `std::async`.
-In beiden Fällen sollen die Threads einen Rückgabewert haben.
+Erzeugen Sie 100.000 Threads mit `std::thread` und `std::async`.
+In beiden Fällen sollen die Threads einen Wert berechnen und auf eine Variable
+in der Umgebung (*Scope*) zugreifen.
 
-Im Falle von `std::thread` benötigt man hier zusätzlich ein `std::promise`-Objekt.
+Auf diese Weise soll vermieden werden, dass der *Optimizer* bei der Code-Generierung
+zu sehr Einfluss nehmen kann.
 
-Es soll letzten Endes gemessen, wie lange es dauert, mit `std::thread` oder `std::async`
-eine Million Threads zu starten und ein berechnetes Ergebnis abzuholen.
+Letzten Endes soll gemessen werden, wie lange es dauert, mit `std::thread` oder `std::async`
+mehrere Threads zu starten und ein berechnetes Ergebnis abzuholen.
 
 Betrachten Sie im Task Manager den jeweiligen Verbrauch an Betriebssystemresourcen.
 
@@ -57,6 +59,65 @@ Parkplatz zu kontrollieren.
 *Zusatzaufgabe*:<br/>
 Realisieren Sie zum Vergleich eine Parkplatz-Klasse, die die Klasse `std::condition_variable` verwendet. 
 
+###### Ausgabe 
+
+Eine mögliche Ausgabe des Programms könnte so aussehen:
+
+```
+[1]:    FirstParkingArea has 3 empty lots.
+[1]:    Starting Simulation:
+[2]:    Car 1 is driving
+[3]:    Car 2 is driving
+[4]:    Car 5 is driving
+[5]:    Car 6 is driving
+[6]:    Car 3 is driving
+[7]:    Car 4 is driving
+[3]:    Want to park car 2 now
+[3]:    Car 2 is parking now!
+[7]:    Want to park car 4 now
+[7]:    Car 4 is parking now!
+[3]:    Want to leave parking area with car 2
+[3]:    Car2 has left parking area
+[3]:    Car 2 is driving
+[6]:    Want to park car 3 now
+[6]:    Car 3 is parking now!
+[5]:    Want to park car 6 now
+[5]:    Car 6 is parking now!
+[2]:    Want to park car 1 now
+[4]:    Want to park car 5 now
+[7]:    Want to leave parking area with car 4
+[7]:    Car4 has left parking area
+[2]:    Car 1 is parking now!
+[7]:    Car 4 is driving
+...
+...
+...
+[1]:    Issuing Stop Requests ...
+[5]:    Want to leave parking area with car 6
+[5]:    Car6 has left parking area
+[2]:    Car 1 is parking now!
+[5]:    Car 6 finished driving!
+[6]:    Want to leave parking area with car 3
+[6]:    Car3 has left parking area
+[6]:    Car 3 finished driving!
+[4]:    Want to leave parking area with car 5
+[4]:    Car5 has left parking area
+[4]:    Car 5 finished driving!
+[2]:    Want to leave parking area with car 1
+[2]:    Car1 has left parking area
+[2]:    Car 1 finished driving!
+[7]:    Want to park car 4 now
+[7]:    Car 4 is parking now!
+[3]:    Want to park car 2 now
+[3]:    Car 2 is parking now!
+[7]:    Want to leave parking area with car 4
+[7]:    Car4 has left parking area
+[7]:    Car 4 finished driving!
+[3]:    Want to leave parking area with car 2
+[3]:    Car2 has left parking area
+[3]:    Car 2 finished driving!
+[1]:    Stopped Simulation.
+```
 
 ---
 
