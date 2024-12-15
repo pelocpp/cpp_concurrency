@@ -188,13 +188,13 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 12:     // public interface
 13:     void push(const T& value)
 14:     {
-15:         StrategizedLocking m_guard{ m_lock };
+15:         StrategizedLocking guard{ m_lock };
 16:         m_data.push(value);
 17:     }
 18: 
 19:     void pop(T& value)
 20:     {
-21:         StrategizedLocking m_guard{ m_lock };
+21:         StrategizedLocking guard{ m_lock };
 22:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
 23:         value = m_data.top();
 24:         m_data.pop();
@@ -202,7 +202,7 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 26: 
 27:     T tryPop()
 28:     {
-29:         StrategizedLocking m_guard{ m_lock };
+29:         StrategizedLocking guard{ m_lock };
 30:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
 31:         T value = m_data.top();
 32:         m_data.pop();
@@ -211,13 +211,13 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 35: 
 36:     size_t size() const
 37:     {
-38:         StrategizedLocking m_guard{ m_lock };
+38:         StrategizedLocking guard{ m_lock };
 39:         return m_data.size();
 40:     }
 41: 
 42:     bool empty() const
 43:     {
-44:         StrategizedLocking m_guard{ m_lock };
+44:         StrategizedLocking guard{ m_lock };
 45:         return m_data.empty();
 46:     }
 47: };
@@ -269,7 +269,7 @@ beispielsweise auf folgende Weise:
 ```cpp
 void pop(T& value)
 {
-    StrategizedLocking m_guard{ m_lock };
+    StrategizedLocking guard{ m_lock };
 
     // in case of testing recursive lock 
     if (empty()) {                          // <== simulating nested locked call (!)

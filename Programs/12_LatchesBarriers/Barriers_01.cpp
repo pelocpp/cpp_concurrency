@@ -2,13 +2,14 @@
 // Barriers_01.cpp
 // ===========================================================================
 
-#include <iostream>
-#include <iomanip>
-#include <format>
-#include <vector>
-#include <thread>
-#include <cmath>
 #include <barrier>
+#include <cmath>
+#include <format>
+#include <iomanip>
+#include <iostream>
+#include <print>
+#include <thread>
+#include <vector>
 
 namespace Concurrency_Barriers_01
 {
@@ -18,19 +19,18 @@ namespace Concurrency_Barriers_01
 
         std::vector<size_t> values{ 1, 2, 3, 4, 5, 6 };
 
-        
         auto printValues = [&values]() noexcept {
+
             // noexcept needs to be used for barrier function object
 
             std::thread::id tid{ std::this_thread::get_id() };
 
-            std::cout << std::setw(10) << std::setfill(' ') << tid << ' ';
-
+            std::print("{:10}", tid);
             for (auto val : values) {
-                std::cout << std::format("{:15d}", val);
+                std::print("{:15}", val);
             }
-            std::cout << std::endl;
-        
+            std::println("");
+
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         };
 
@@ -42,8 +42,9 @@ namespace Concurrency_Barriers_01
 
         // initialize a barrier that prints the values
         // when all threads have done their computations.
+        // 
         // Note: when zero is reached, the counter of the barrier
-        // reinitializes to the initial count again.
+        // reinitializes to the initial count again!
 
         std::barrier allDone
         {
@@ -51,15 +52,16 @@ namespace Concurrency_Barriers_01
             printValues  // completion function object to be called whenever the counter is 0
         };
 
-        // initialize a thread for each value to compute its square root in a loop
+        // Initialize a thread for each value to compute its square root in a loop
+        // Note: Each thread deals with a column in the calculation / display
         std::vector<std::jthread> threads;
 
-        auto calculate = [&](size_t n) {
+        auto calculate = [&](size_t column) {
 
-            for (int i{}; i != 4; ++i) {
+            for (size_t i{}; i != 4; ++i) {
 
                 // compute powers of 2 );
-                values[n] = static_cast<size_t>(std::pow(values[n], 2));
+                values[column] = static_cast<size_t>(std::pow(values[column], 2));
 
                 // synchronize with other threads to print values
                 allDone.arrive_and_wait();

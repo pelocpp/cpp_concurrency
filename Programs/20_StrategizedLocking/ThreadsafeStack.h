@@ -36,20 +36,20 @@ namespace Concurrency_ThreadsafeStack
         // move constructor may be useful
         ThreadsafeStack(const ThreadsafeStack&& other) noexcept
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
             m_data = other.m_data;
         }
 
         // public interface
         void push(const T& value)
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
             m_data.push(value);
         }
 
         void pop(T& value)
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
 
             //// in case of testing recursive lock 
             //if (empty()) {
@@ -65,7 +65,7 @@ namespace Concurrency_ThreadsafeStack
 
         T tryPop()
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
             if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
             T value = m_data.top();
             m_data.pop();
@@ -74,13 +74,13 @@ namespace Concurrency_ThreadsafeStack
 
         size_t size() const
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
             return m_data.size();
         }
 
         bool empty() const
         {
-            StrategizedLocking m_guard{ m_lock };
+            StrategizedLocking guard{ m_lock };
             return m_data.empty();
         }
     };
