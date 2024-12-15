@@ -2,13 +2,12 @@
 // ActiveObject_01.cpp // Active Object Pattern
 // ===========================================================================
 
-#include <iostream>
-#include <thread>
-#include <future>
-#include <mutex>
-#include <algorithm>
-#include <tuple>
 #include <chrono>
+#include <future>
+#include <iostream>
+#include <mutex>
+#include <thread>
+#include <tuple>
 
 // ===========================================================================
 // 

@@ -2,18 +2,15 @@
 // ActiveObject_03.cpp // Active Object Pattern
 // ===========================================================================
 
-#include <iostream>
-#include <string>
-#include <utility>
-#include <thread>
-#include <future>
-#include <mutex>
-#include <deque>
-#include <vector>
-#include <random>
 #include <algorithm>
-#include <iterator>
+#include <deque>
+#include <future>
+#include <iostream>
+#include <mutex>
+#include <string>
+#include <thread>
 #include <tuple>
+#include <vector>
 
 // ===========================================================================
 // 
