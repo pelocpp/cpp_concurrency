@@ -27,9 +27,9 @@ void Table::demandForks(size_t seat)
     Logger::log(std::cout, "demand forks at seat ", seat);
     {
         // RAII idiom
-        std::unique_lock<std::mutex> raii{ m_mutex };
+        std::unique_lock<std::mutex> guard{ m_mutex };
 
-        m_condition.wait(raii, [&] {
+        m_condition.wait(guard, [&] {
             return (*this)[seat] == false && (*this)[seat + 1] == false;
             }
         );
