@@ -8,9 +8,9 @@ void test_simple_threading_03();
 
 int main()
 {
-    test_simple_threading_01();
+    //test_simple_threading_01();
     test_simple_threading_02();
-    test_simple_threading_03();
+    //test_simple_threading_03();
     return 0;
 }
 

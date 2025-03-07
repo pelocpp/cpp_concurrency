@@ -112,6 +112,27 @@ namespace SimpleThreading02 {
         t.join();
         Logger::log(std::cout, "Done Version 4.");
     }
+
+    // --------------------------------------------
+
+    // Hints for Error Handling:
+    static void test_05() {
+
+        AnotherRunnable runnable{ 4, NumIterations };
+
+        std::thread t1{ &AnotherRunnable::run, runnable }; // works
+        
+        std::thread t2{ &AnotherRunnable::run, std::move(runnable) }; // works too
+
+        AnotherRunnable* pRunnable = new AnotherRunnable{ 4, NumIterations };  // delete is missing
+        std::thread t3{ &AnotherRunnable::run, pRunnable }; // works again too
+
+        t1.join();
+        t2.join();
+        t3.join();
+
+        Logger::log(std::cout, "Done Version 5.");
+    }
 }
 
 void test_simple_threading_02()
@@ -121,6 +142,7 @@ void test_simple_threading_02()
     test_02();
     test_03();
     test_04();
+    // test_05();
 }
 
 // ===========================================================================
