@@ -28,6 +28,7 @@ namespace SimpleThreading02 {
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         }
+        Logger::log(std::cout, "Done.");
     }
 
     static void test_01() {
@@ -54,6 +55,7 @@ namespace SimpleThreading02 {
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds{ 1 });
             }
+            Logger::log(std::cout, "Done.");
         }
     };
 
@@ -77,6 +79,7 @@ namespace SimpleThreading02 {
                     Logger::log(std::cout, "in thread ", value);
                     std::this_thread::sleep_for(std::chrono::seconds{ 1 });
                 }
+                Logger::log(std::cout, "Done.");
             }
         };
 
@@ -102,6 +105,7 @@ namespace SimpleThreading02 {
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds{ 1 });
             }
+            Logger::log(std::cout, "Done.");
         }
     };
 
@@ -118,18 +122,18 @@ namespace SimpleThreading02 {
     // Hints for Error Handling:
     static void test_05() {
 
-        AnotherRunnable runnable{ 4, NumIterations };
+        AnotherRunnable runnable{ 5, NumIterations };
 
         std::thread t1{ &AnotherRunnable::run, runnable }; // works
         
         std::thread t2{ &AnotherRunnable::run, std::move(runnable) }; // works too
 
-        AnotherRunnable* pRunnable = new AnotherRunnable{ 4, NumIterations };  // delete is missing
+        AnotherRunnable* pRunnable = new AnotherRunnable{ 5, NumIterations };  // delete is missing
         std::thread t3{ &AnotherRunnable::run, pRunnable }; // works again too
 
-        t1.join();
-        t2.join();
-        t3.join();
+        t1.detach();
+        t2.detach();
+        t3.detach();
 
         Logger::log(std::cout, "Done Version 5.");
     }
@@ -142,7 +146,7 @@ void test_simple_threading_02()
     test_02();
     test_03();
     test_04();
-    // test_05();
+    test_05();
 }
 
 // ===========================================================================
