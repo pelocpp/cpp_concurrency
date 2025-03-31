@@ -52,7 +52,7 @@ namespace Concurrency_PrimeCalculator
             }
 
             // check odd divisors from 3 to the square root of the number
-            size_t end{ static_cast<size_t>(ceil(std::sqrt(number))) };
+            size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
             for (size_t i{ 3 }; i <= end; i += 2) {
 
                 if (number % i == 0) {
