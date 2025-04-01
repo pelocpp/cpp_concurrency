@@ -4,25 +4,30 @@
 
 #include <cmath>
 
-//extern const size_t Start = 1'000'000'000'000'000'001;
-//extern const size_t End = Start + 100;
 
 // 24 prime numbers
 //extern const size_t Start = 1;
 //extern const size_t End = Start + 100;
 
-//// 4 prime numbers
-//extern const size_t Start = 1000000000001;
+// 6 prime numbers
+//extern const size_t Start = 100'000'001;
 //extern const size_t End = Start + 100;
 
 // 4 prime numbers
-extern const size_t Start = 1'000'000'000'000'000'001;
-extern const size_t End = Start + 100;
+//extern const size_t Start = 1000000000001;
+//extern const size_t End = Start + 100;
+
+// 3614 prime numbers
+extern const size_t Start = 1'000'000'000'001;
+extern const size_t End = Start + 100'000;
+
+// 4 prime numbers
+//extern const size_t Start = 1'000'000'000'000'000'001;
+//extern const size_t End = Start + 100;
 
 // 3614 prime numbers
 //extern const size_t Start = 1000000000001;
 //extern const size_t End = Start + 100000;
-
 
 
 namespace Globals

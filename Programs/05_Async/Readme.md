@@ -154,18 +154,6 @@ fib(40): 102334155
 Elapsed time in milliseconds = 5655 [milliseconds]
 ```
 
-#### Quellcode
-
-[*Async_03.cpp*](Async_03.cpp).
-
----
-
-#### Quellcode
-
-[Einfache Beispiele zu `std::async`](Async_01.cpp)<br />
-[Unterschiedliche *Launch Policies*](Async_02.cpp)<br />
-[Nochmal *Launch Policies*](Async_03.cpp)<br />
-
 ---
 
 [Zurück](../../Readme.md)

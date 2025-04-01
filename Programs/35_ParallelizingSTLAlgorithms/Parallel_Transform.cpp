@@ -2,6 +2,9 @@
 // Parallel_Transform.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
+
 #include <algorithm>
 #include <future>
 #include <numeric>
@@ -15,7 +18,7 @@ extern const size_t End;
 
 extern bool isPrime(size_t number);
 
-const size_t ChunkSize = 5;
+const size_t ChunkSize = 500;
 
 // ===========================================================================
 
@@ -43,6 +46,7 @@ static auto parallel_transform(SrcIt first, SrcIt last, DstIt dst, Func func) {
                     std::launch::async,
                     [=]() {
                         // std::println("Chunk: {} to {}", start, stop);
+                     //   Logger::log(std::cout, "Chunk: ", start, " to ", stop);
                         std::transform(first + start, first + stop, dst + start, func);
                     }
                 )
@@ -60,6 +64,8 @@ static auto parallel_transform(SrcIt first, SrcIt last, DstIt dst, Func func) {
 
 template <typename SrcIt, typename DstIt, typename Func>
 static auto parallel_transform (SrcIt first, SrcIt last, DstIt dst, Func func, size_t chunkSize) {
+
+ //   Logger::log(std::cout, "parallel_transform (divide-conquer)");
 
     const auto n = static_cast<size_t>(std::distance(first, last));
     if (n <= chunkSize) {
@@ -179,6 +185,8 @@ static void test_transform_primes_parallel(size_t from, size_t to) {
 
     auto [src, dst, func] = setup_primes_calculation(from, to);
 
+    ScopedTimer timer{};
+
     parallel_transform(
         src.begin(),
         src.end(),
@@ -192,12 +200,15 @@ static void test_transform_primes_parallel(size_t from, size_t to) {
         [](int elem) { return elem; }
     );
 
-    std::println("Found {} primes parallel", count);
+    // std::println("Found {} primes parallel", count);
+    Logger::log(std::cout, "Found ", count, " primes parallel");
 }
 
 static void test_transform_primes_parallel_div_con(size_t from, size_t to, size_t chunkSize) {
 
     auto [src, dst, func] = setup_primes_calculation(from, to);
+
+    ScopedTimer timer{};
 
     parallel_transform(
         src.begin(),
@@ -213,8 +224,81 @@ static void test_transform_primes_parallel_div_con(size_t from, size_t to, size_
         [](int elem) { return elem; }
     );
 
-    std::println("Found {} primes parallel (divide-conquer)", count);
+  //  std::println("Found {} primes parallel (divide-conquer)", count);
+    Logger::log(std::cout, "Found ", count, " primes parallel (divide-conquer)");
 }
+
+// ===========================================================================
+// Snippets for Benchmark.com
+
+#ifdef BENCHMARK
+
+#include <thread>
+#include <future>
+#include <numeric>
+#include <cmath>
+
+const size_t From = 1000000000001;
+const size_t To = From + 100;
+
+bool isPrime(size_t number)
+{
+   ...
+}
+
+template <typename SrcIt, typename DstIt, typename Func>
+static auto parallel_transform(SrcIt first, SrcIt last, DstIt dst, Func func) {
+...
+
+template <typename SrcIt, typename DstIt, typename Func>
+static auto parallel_transform(SrcIt first, SrcIt last, DstIt dst, Func func, size_t chunkSize) {
+...
+
+static void bm_parallel(benchmark::State& state) {
+
+    auto [src, dst, func] = setup_primes_calculation(From, To);
+
+    for (auto _ : state) {
+        parallel_transform(
+            src.begin(),
+            src.end(),
+            dst.begin(),
+            func
+        );
+    }
+}
+
+// Naive version
+static void bm_parallel_div_com(benchmark::State& state) {
+
+    auto [src, dst, func] = setup_primes_calculation(From, To);
+
+    auto n = state.range(0);
+
+    for (auto _ : state) {
+        parallel_transform(
+            src.begin(),
+            src.end(),
+            dst.begin(),
+            func,
+            n
+        );
+    }
+}
+
+static void CustomArguments(benchmark::internal::Benchmark* b) {
+    b->MeasureProcessCPUTime()
+    ->UseRealTime()
+    ->Unit(benchmark::kMillisecond);
+}
+
+BENCHMARK(bm_parallel)->Apply(CustomArguments);
+
+BENCHMARK(bm_parallel_div_com)->Apply(CustomArguments)
+  ->RangeMultiplier(10)        // Chunk size goes from
+  ->Range(10, 10'000'000);     // 1k to 10M
+
+#endif
 
 // ===========================================================================
 
@@ -227,14 +311,14 @@ static void test_transform_simple() {
 
 static void test_transform_primes() {
 
-    test_transform_primes_sequential(Start, End);
+    //test_transform_primes_sequential(Start, End);
     test_transform_primes_parallel(Start, End);
     test_transform_primes_parallel_div_con(Start, End, ChunkSize);
 }
 
 void test_transform() {
 
-    test_transform_simple();
+//    test_transform_simple();
     test_transform_primes();
 }
 
