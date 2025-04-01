@@ -18,8 +18,8 @@
 //extern const size_t End = Start + 100;
 
 // 3614 prime numbers
-extern const size_t Start = 1'000'000'000'001;
-extern const size_t End = Start + 100'000;
+//extern const size_t Start = 1'000'000'000'001;
+//extern const size_t End = Start + 100'000;
 
 // 4 prime numbers
 //extern const size_t Start = 1'000'000'000'000'000'001;
