@@ -130,6 +130,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
+    <ClCompile Include="Parallel_Count_If.cpp" />
     <ClCompile Include="Parallel_Transform.cpp" />
     <ClCompile Include="Prime.cpp" />
     <ClCompile Include="Program.cpp" />

@@ -10,6 +10,7 @@
 #include <numeric>
 #include <print>
 #include <vector>
+#include <chrono>
 
 // ===========================================================================
 
@@ -90,18 +91,19 @@ static auto parallel_transform (SrcIt first, SrcIt last, DstIt dst, TFunc&& func
 }
 
 // ===========================================================================
+// simple test
 
 static auto setup_simple_test(int n) {
     auto src = std::vector<size_t>(n);
     std::iota(src.begin(), src.end(), 1);       // Values from 1.0 to n
     auto dst = std::vector<size_t>(src.size());
-    auto transform_function = [](size_t v) {
+    auto transformFunction = [](size_t v) {
         auto sum = v;
         sum = 2 * v + 1;
         return sum;
         };
 
-    return std::tuple{ src, dst, transform_function };
+    return std::tuple{ src, dst, transformFunction };
 }
 
 static void test_transform_sequential() {
@@ -139,6 +141,79 @@ static void test_transform_parallel_div_con() {
         func,
         5
     );
+}
+
+// ===========================================================================
+// using sleeps
+
+static auto setup_test_using_sleep(size_t n) {
+    auto src = std::vector<size_t>(n);
+    std::iota(src.begin(), src.end(), 1);          // Values from 1 to n
+    auto dst = std::vector<size_t>(src.size());
+    auto transformFunction = [](size_t value) {
+
+        Logger::log(std::cout, "Starting ... Sleeping ", 10 * value, " milli seconds ...");
+        std::this_thread::sleep_for(std::chrono::milliseconds{ 10 * value });
+        Logger::log(std::cout, "Stopping ...");
+        return value;   // nicht sehr einfallsreich................
+    };
+
+    return std::tuple{ src, dst, transformFunction };
+}
+
+static void test_transform_sequential_using_sleeps() {
+
+    Logger::log(std::cout, "Start:");
+
+    auto [src, dst, func] = setup_test_using_sleep(20);
+
+    ScopedTimer watch;
+
+    std::transform(
+        src.begin(),
+        src.end(),
+        dst.begin(),
+        func
+    );
+
+    Logger::log(std::cout, "Done.");
+}
+
+static void test_transform_parallel_using_sleeps(size_t size) {
+
+    Logger::log(std::cout, "Start:");
+
+    auto [src, dst, func] = setup_test_using_sleep(size);
+
+    ScopedTimer watch;
+
+    parallel_transform(
+        src.begin(),
+        src.end(),
+        dst.begin(),
+        func
+    );
+
+    Logger::log(std::cout, "Done.");
+}
+
+static void test_transform_parallel_div_con_using_sleeps(size_t size, size_t chunkSize) {
+
+    Logger::log(std::cout, "Start (Divide-Conquer):");
+
+    auto [src, dst, func] = setup_test_using_sleep(size);
+
+    ScopedTimer watch;
+
+    parallel_transform(
+        src.begin(),
+        src.end(),
+        dst.begin(),
+        func,
+        chunkSize
+    );
+
+    Logger::log(std::cout, "Done (Divide-Conquer).");
 }
 
 // ===========================================================================
@@ -328,26 +403,15 @@ static void test_transform_simple() {
 
 static void test_transform_primes_01() {
 
-    //test_transform_primes_sequential(Start, End);
+    test_transform_primes_sequential(Start, End);
     test_transform_primes_parallel(Start, End);
     test_transform_primes_parallel_div_con(Start, End, ChunkSize);
 }
 
-// constexpr size_t UpperLimit { 100 };             // Found:  25 prime numbers
-// constexpr size_t UpperLimit { 1000 };            // Found:  168 prime numbers
-// constexpr size_t UpperLimit { 100'000 };         // Found:  9.592 prime numbers
-// constexpr size_t UpperLimit { 1'000'000 };       // Found:  78.498 prime numbers
-// constexpr size_t UpperLimit { 10'000'000 };      // Found:  664.579 prime numbers
-//  constexpr size_t UpperLimit{ 100'000'000 };        // Found:  5.761.455 prime numbers
-
 static void test_transform_primes_02() {
 
-    //test_transform_primes_sequential(Start, End);
-
     const size_t End = 10'000'000;
-   
     test_transform_primes_parallel(1, End);
-
     test_transform_primes_parallel_div_con(1, End, 128);
     test_transform_primes_parallel_div_con(1, End, 64);
     test_transform_primes_parallel_div_con(1, End, 32);
@@ -355,25 +419,31 @@ static void test_transform_primes_02() {
     test_transform_primes_parallel_div_con(1, End, 8);
 }
 
-static void test_transform_primes_03() {
+static void test_transform_using_sleeps() {
 
-    //test_transform_primes_sequential(Start, End);
+    size_t const Size = 100;
+    size_t const ChunkSize = 3;
 
-    const size_t End = 10'000'000;
-
-    test_transform_primes_parallel(1, End);
-
-    test_transform_primes_parallel_div_con(1, End, End / 16);
+    //test_transform_sequential_using_sleeps();
+    test_transform_parallel_using_sleeps(Size);
+    test_transform_parallel_div_con_using_sleeps(Size, ChunkSize);
 }
 
+static void test_transform_example_from_book() {
 
+    size_t const Size = 16;
+    size_t const ChunkSize = 4;
+
+    test_transform_parallel_div_con_using_sleeps(Size, ChunkSize);
+}
 
 void test_transform() {
 
-    //test_transform_simple();
-    //test_transform_primes_01();
-    //test_transform_primes_02();
-    test_transform_primes_03();  // ENDLOS ??????????????????????????????????????
+    // test_transform_simple();
+    // test_transform_primes_01();
+    // test_transform_primes_02();
+    // test_transform_using_sleeps();
+    test_transform_example_from_book();
 }
 
 // ===========================================================================

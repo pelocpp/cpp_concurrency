@@ -3,10 +3,12 @@
 // ===========================================================================
 
 extern void test_transform();
+extern void test_count_if();
 
 int main()
 {
-    test_transform();
+    // test_transform();
+    test_count_if();
     return 0;
 }
 
