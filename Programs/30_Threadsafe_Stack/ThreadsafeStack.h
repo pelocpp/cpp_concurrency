@@ -80,12 +80,25 @@ namespace Concurrency_ThreadsafeStack
         {
             std::lock_guard<std::mutex> lock{ m_mutex };
             if (m_data.empty()) {
-                return std::nullopt;
+                return std::optional<T>(std::nullopt);
             }
+            else {
+                std::optional<T> result{ m_data.top() };
+                m_data.pop();
+                return result;
+            }
+        }
 
-            std::optional<T> result{ m_data.top() };
-            m_data.pop();
-            return result;
+        std::optional<T> top() const
+        {
+            std::lock_guard<std::mutex> lock{ m_mutex };
+            if (m_data.empty()) {
+                return std::optional<T>(std::nullopt);
+            }
+            else {
+                std::optional<T> result(m_data.top());
+                return result;
+            }
         }
 
         size_t size() const
