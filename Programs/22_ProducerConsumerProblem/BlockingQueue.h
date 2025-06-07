@@ -4,13 +4,13 @@
 
 #pragma once
 
-#include <iostream>
-#include <thread>
-#include <chrono>
-#include <array>
-#include <mutex>
-
 #include "../Logger/Logger.h"
+
+#include <array>
+#include <chrono>
+#include <iostream>
+#include <mutex>
+#include <thread>
 
 namespace ProducerConsumerQueue
 {

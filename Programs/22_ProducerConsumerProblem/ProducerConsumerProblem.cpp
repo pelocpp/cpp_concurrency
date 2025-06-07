@@ -73,15 +73,15 @@ static void test_thread_safe_blocking_queue_02()
 
 // ===========================================================================
 
-template<size_t QueueSize = 10>
+template<typename T, size_t QueueSize = 10>
 class Consumer
 {
 private:
-    ProducerConsumerQueue::BlockingQueue<int, QueueSize>& m_queue;
+    ProducerConsumerQueue::BlockingQueue<T, QueueSize>& m_queue;
 
 public:
     // c'tor
-    Consumer(ProducerConsumerQueue::BlockingQueue<int, QueueSize>& queue)
+    Consumer(ProducerConsumerQueue::BlockingQueue<T, QueueSize>& queue)
         : m_queue{ queue }
     {}
 
@@ -93,7 +93,7 @@ public:
                 std::chrono::milliseconds{ SleepTimeConsumer }
             );
 
-            int value;
+            T value;
             m_queue.pop(value);
 
             Logger::log(std::cout, "Popped ", value);
@@ -101,21 +101,21 @@ public:
     }
 };
 
-template<size_t QueueSize = 10>
+template<typename T, size_t QueueSize = 10>
 class Producer
 {
 private:
-    ProducerConsumerQueue::BlockingQueue<int, QueueSize>& m_queue;
+    ProducerConsumerQueue::BlockingQueue<T, QueueSize>& m_queue;
 
 public:
     // c'tor
-    Producer(ProducerConsumerQueue::BlockingQueue<int, QueueSize>& queue)
+    Producer(ProducerConsumerQueue::BlockingQueue<T, QueueSize>& queue)
         : m_queue{ queue }
     {}
 
     void produce()
     {
-        int nextNumber{};
+        T elem{};
 
         while (true) {
 
@@ -123,10 +123,9 @@ public:
                 std::chrono::milliseconds{ SleepTimeProducer }
             );
 
-            nextNumber++;
-            m_queue.push(nextNumber);
+            m_queue.push(elem);
 
-            Logger::log(std::cout, "Pushed ", nextNumber);
+            Logger::log(std::cout, "Pushed ", elem);
         }
     }
 };
@@ -166,7 +165,6 @@ static void test_thread_safe_blocking_queue_03()
 
 static void test_thread_safe_blocking_queue_04()
 {
-
     constexpr int QueueSize{ 10 };
 
     ProducerConsumerQueue::BlockingQueue<int, QueueSize> queue{ };
@@ -230,6 +228,8 @@ static void test_thread_safe_blocking_queue_04()
 
 // ===========================================================================
 
+constexpr bool Verbose{ true };
+
 class Person
 {
 private:
@@ -237,37 +237,66 @@ private:
 
 public:
     Person() {}
-    Person(const std::string& name) 
-        : m_name{ name }
-    { std::cout << "c'tor Person" << std::endl; }
 
-    Person(const Person& person)
-        : m_name{ person.m_name }
-    { std::cout << "copy c'tor Person" << std::endl; }
+    Person(const std::string& name) : m_name{ name }
+    { 
+        if (Verbose) {
+            std::cout << "c'tor Person" << std::endl;
+        }
+    }
+
+    Person(const Person& person) : m_name{ person.m_name }
+    {
+        if (Verbose) {
+            std::cout << "copy c'tor Person" << std::endl;
+        }
+    }
     
-    Person(Person&& person) noexcept
-        : m_name{ std::move(person.m_name) }
-    { std::cout << "move c'tor Person" << std::endl; }
+    Person(Person&& person) noexcept : m_name{ std::move(person.m_name) }
+    { 
+        if (Verbose) {
+            std::cout << "move c'tor Person" << std::endl;
+        }
+    }
 
-    ~Person() { std::cout << "d'tor Person" << std::endl; }
+    ~Person()
+    {
+        if (Verbose) {
+            std::cout << "d'tor Person" << std::endl;
+        }
+    }
 
     Person& operator= (const Person& person) {
-        std::cout << "Person copy operator=" << std::endl;
+        if (Verbose) {
+            std::cout << "Person copy operator=" << std::endl;
+        }
+
         m_name = person.m_name;
         return *this;
     }
 
     Person& operator= (Person&& person) noexcept {
-        std::cout << "Person move operator=" << std::endl;
+        if (Verbose) {
+            std::cout << "Person move operator=" << std::endl;
+        }
+
         m_name = std::move(person.m_name);
         return *this;
     }
+
+    // getter
+    const std::string& getName() const { return m_name; }
 };
 
+static std::ostream& operator<< (std::ostream& os, const Person& p) {
+    os << "Person: " << p.getName();
+    return os;
+}
+
+// ===========================================================================
 
 static void test_thread_safe_blocking_queue_05()
 {
-
     constexpr int QueueSize{ 5 };
 
     ProducerConsumerQueue::BlockingQueue<Person, QueueSize> queue{ };
@@ -282,15 +311,79 @@ static void test_thread_safe_blocking_queue_05()
     queue.pop(p);
 }
 
+static void test_thread_safe_blocking_queue_06()
+{
+    constexpr int QueueSize{ 10 };
+
+    ProducerConsumerQueue::BlockingQueue<Person, QueueSize> queue{ };
+
+    Consumer<Person> c{ queue };
+    Producer<Person> p{ queue };
+
+    std::thread producer1([&]() {
+
+        Logger::log(std::cout, "Producer");
+        p.produce();
+        Logger::log(std::cout, "Producer Done.");
+        });
+
+    std::thread producer2([&]() {
+
+        Logger::log(std::cout, "Producer");
+        p.produce();
+        Logger::log(std::cout, "Producer Done.");
+        });
+
+    std::thread producer3([&]() {
+
+        Logger::log(std::cout, "Producer");
+        p.produce();
+        Logger::log(std::cout, "Producer Done.");
+        });
+
+
+    std::thread consumer1([&]() {
+
+        Logger::log(std::cout, "Consumer");
+        c.consume();
+        Logger::log(std::cout, "Consumer Done.");
+        });
+
+    std::thread consumer2([&]() {
+
+        Logger::log(std::cout, "Consumer");
+        c.consume();
+        Logger::log(std::cout, "Consumer Done.");
+        });
+
+    std::thread consumer3([&]() {
+
+        Logger::log(std::cout, "Consumer");
+        c.consume();
+        Logger::log(std::cout, "Consumer Done.");
+        });
+
+    producer1.join();
+    producer2.join();
+    producer3.join();
+
+    consumer1.join();
+    consumer2.join();
+    consumer3.join();
+
+    Logger::log(std::cout, "Done.");
+}
+
 // ===========================================================================
 
 void test_producer_consumer_problem()
 {
-    test_thread_safe_blocking_queue_01();   // just testing single push and pop
-    test_thread_safe_blocking_queue_02();   // testing limited number of push and pop operations
-    test_thread_safe_blocking_queue_03();   // passing BlockingQueue to separate consumer and producer objects
-    test_thread_safe_blocking_queue_04();   // testing BlockingQueue with 6 threads
-    test_thread_safe_blocking_queue_05();   // testing BlockingQueue with real objects
+    //test_thread_safe_blocking_queue_01();   // just testing single push and pop
+    //test_thread_safe_blocking_queue_02();   // testing limited number of push and pop operations
+    //test_thread_safe_blocking_queue_03();   // passing BlockingQueue to separate consumer and producer objects
+    //test_thread_safe_blocking_queue_04();   // testing BlockingQueue with 6 threads
+    //test_thread_safe_blocking_queue_05();   // testing BlockingQueue with real objects
+    test_thread_safe_blocking_queue_06();  // testing BlockingQueue with 6 threads and Person objects
 }
 
 // ===========================================================================
