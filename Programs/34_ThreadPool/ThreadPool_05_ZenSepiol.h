@@ -9,6 +9,10 @@
  *
  * https://www.youtube.com/watch?v=6re5U82KwbY
  * 
+ * und
+ * 
+ * https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s
+ * 
  * Sources:
  * 
  * https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp
@@ -55,11 +59,12 @@ namespace ThreadPool_ZenSepiol
         void stop();
 
         template <typename F, typename... Args>
+        
         auto addTask(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
         {
             Logger::log(std::cout, "addTask ...");
 
-            auto func{ std::bind(std::forward<F>(f), std::forward<Args>(args)...) }; 
+            auto func{ std::bind(std::forward<F>(f), std::forward<Args>(args)...) };
 
             auto task{ std::packaged_task<decltype( f(args...)) (void) > { func }};
 

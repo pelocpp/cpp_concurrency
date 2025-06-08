@@ -336,10 +336,10 @@ void test_concurrency_thread_pool_05()
 {
     using namespace ThreadPool_ZenSepiol;
 
-    //test_concurrency_thread_pool_05_01();     // just starting ... and stopping the thread pool
-    //test_concurrency_thread_pool_05_02();     // launching 5 almost empty tasks
-    //test_concurrency_thread_pool_05_03();     // launching many tasks ... and working on an atomic variable (using a pointer)
-    //test_concurrency_thread_pool_05_04();     // launching many tasks ... and working on an atomic variable (using a reference)
+    test_concurrency_thread_pool_05_01();     // just starting ... and stopping the thread pool
+    test_concurrency_thread_pool_05_02();     // launching 5 almost empty tasks
+    test_concurrency_thread_pool_05_03();     // launching many tasks ... and working on an atomic variable (using a pointer)
+    test_concurrency_thread_pool_05_04();     // launching many tasks ... and working on an atomic variable (using a reference)
 
     test_concurrency_thread_pool_05_10_PrimeNumbers();    // computing prime numbers, using free function
     test_concurrency_thread_pool_05_11_PrimeNumbers();    // computing prime numbers, using lambda
