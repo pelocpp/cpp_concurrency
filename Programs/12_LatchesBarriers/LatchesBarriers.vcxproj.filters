@@ -27,15 +27,18 @@
     <Filter Include="Resource Files">
       <UniqueIdentifier>{9c163385-9e1f-45e1-a906-ef9248928002}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Logger\Logger.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{998d7955-325c-48a2-8311-2ac3bce4b5a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md">
       <Filter>Resource Files</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Logger\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
