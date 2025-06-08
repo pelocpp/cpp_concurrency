@@ -7,11 +7,10 @@
 
 #include "ThreadPool_05_ZenSepiol.h"
 
-#include <thread>
-#include <chrono>
-
 namespace ThreadPool_ZenSepiol
 {
+    // =======================================================================
+
     static void test_concurrency_thread_pool_05_01()
     {
         Logger::log(std::cout, "Start");
@@ -29,7 +28,7 @@ namespace ThreadPool_ZenSepiol
         Logger::log(std::cout, "Done.");
     }
 
-    // ===========================================================================
+    // =======================================================================
 
     static void emptyTask()
     {
@@ -40,11 +39,11 @@ namespace ThreadPool_ZenSepiol
     {
         ThreadPool pool{};
 
-        std::queue<std::future<void>> results;
+        std::queue<std::future<void>> results{};
 
         for (size_t n{}; n != 5; ++n)
         {
-            auto future = pool.addTask(emptyTask);
+            auto future{ pool.addTask(emptyTask) };
 
             results.emplace(std::move(future));
         }
@@ -62,24 +61,33 @@ namespace ThreadPool_ZenSepiol
         Logger::log(std::cout, "Done.");
     }
 
-    // ===========================================================================
+    // =======================================================================
 
-    static void Checksum(const std::uint32_t num, std::atomic_uint64_t* checksum)
+    static void calcChecksum(std::size_t num, std::atomic<size_t>* checksum)
     {
-        checksum += num;
+        (*checksum) += num;
+
+        auto currentValue = checksum->load();
+
+        Logger::log(std::cout, "     Adding ", num, " to ===> ", currentValue);
     }
 
     static void test_concurrency_thread_pool_05_03()
     {
+        constexpr size_t NumThreads{ 1'000 };
+
         ThreadPool pool{};
 
         std::queue<std::future<void>> results;
-        std::atomic_uint64_t checksum{ 0 };
-        std::uint64_t localChecksum{ 0 };
+        std::atomic<size_t> checksum{ 0 };
+        std::size_t localChecksum{ 0 };
 
-        for (std::uint32_t n{}; n != 1000; ++n)
+        for (std::uint32_t n{}; n != NumThreads; ++n)
         {
-            results.emplace(pool.addTask(Checksum, n, &checksum));
+            auto future{ pool.addTask(calcChecksum, n, &checksum) };
+
+            results.emplace(std::move(future));
+
             localChecksum += n;
         }
 
@@ -93,51 +101,67 @@ namespace ThreadPool_ZenSepiol
 
         pool.stop();
 
+        auto atomicValue{ checksum.load() };
+
+        Logger::log(std::cout, "Atomic Checksum: ", atomicValue);
+        Logger::log(std::cout, "Local Checksum:  ", localChecksum);
         Logger::log(std::cout, "Done.");
     }
 
-    // ====================================================
+    // =======================================================================
 
-    // Primzahlenberechnung
-
-    static bool isPrime(size_t number)
+    static void calcChecksumRef(std::size_t num, std::atomic<size_t>& checksum)
     {
-        if (number <= 2) {
-            return number == 2;
-        }
+        checksum += num;
 
-        if (number % 2 == 0) {
-            return false;
-        }
+        auto currentValue = checksum.load();
 
-        // check odd divisors from 3 to the square root of the number
-        size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
-        for (size_t i{ 3 }; i <= end; i += 2) {
-
-            if (number % i == 0) {
-                return false;  // number not prime
-            }
-        }
-
-        return true; // found prime number
+        Logger::log(std::cout, "     Adding ", num, " to ===> ", currentValue);
     }
 
-    static void test_concurrency_thread_pool_05_04_PrimeNumbers()
+    static void test_concurrency_thread_pool_05_04()
     {
-        Logger::log(std::cout, "Start");
+        constexpr size_t NumThreads{ 1'000 };
 
-        ScopedTimer clock{};
+        ThreadPool pool{};
 
-        size_t foundPrimeNumbers{};
+        std::queue<std::future<void>> results;
+        std::atomic<size_t> checksum{ 0 };
+        std::size_t localChecksum{ 0 };
 
-        std::queue<std::future<bool>> results;
+        for (std::uint32_t n{}; n != NumThreads; ++n)
+        {   
+            auto future{ pool.addTask(calcChecksumRef, n, std::ref(checksum)) };
 
-        ThreadPool pool{ };
+            results.emplace(std::move(future));
+            
+            localChecksum += n;
+        }
 
-        // pool.start();
+        pool.start();
 
-        Logger::log(std::cout, "Enqueuing tasks");
+        while (results.size())
+        {
+            results.front().get();
+            results.pop();
+        }
 
+        pool.stop();
+
+        auto atomicValue{ checksum.load() };
+
+        Logger::log(std::cout, "Atomic Checksum: ", atomicValue);
+        Logger::log(std::cout, "Local Checksum:  ", localChecksum);
+        Logger::log(std::cout, "Done.");
+    }
+
+    // =======================================================================
+    // Primzahlenberechnung
+
+    namespace Globals
+    {
+        // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
+ 
         // 24 prime numbers
         //constexpr size_t Start = 1;
         //constexpr size_t End = Start + 100;
@@ -161,10 +185,49 @@ namespace ThreadPool_ZenSepiol
         // 4 prime numbers
         constexpr size_t Start = 1'000'000'000'000'000'001;
         constexpr size_t End = Start + 100;
+    }
+
+    static bool isPrime(size_t number)
+    {
+        if (number <= 2) {
+            return number == 2;
+        }
+
+        if (number % 2 == 0) {
+            return false;
+        }
+
+        // check odd divisors from 3 to the square root of the number
+        size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
+        for (size_t i{ 3 }; i <= end; i += 2) {
+
+            if (number % i == 0) {
+                return false;  // number not prime
+            }
+        }
+
+        return true; // found prime number
+    }
+
+    static void test_concurrency_thread_pool_05_10_PrimeNumbers()
+    {
+        Logger::log(std::cout, "Start");
+
+        ScopedTimer clock{};
+
+        size_t foundPrimeNumbers{};
+
+        std::queue<std::future<bool>> results;
+
+        ThreadPool pool{};
+
+        // pool.start();         // <=== add/remove comment
+
+        Logger::log(std::cout, "Enqueuing tasks");
 
         Logger::enableLogging(false);
 
-        for (size_t i{ Start }; i < End; i += 2) {
+        for (size_t i{ Globals::Start }; i < Globals::End; i += 2) {
 
             std::future<bool> future{ pool.addTask(isPrime, i) };
 
@@ -175,7 +238,7 @@ namespace ThreadPool_ZenSepiol
 
         Logger::log(std::cout, "Enqueuing tasks done.");
 
-        pool.start();
+        pool.start();            // <=== add/remove comment
 
         while (results.size() != 0)
         {
@@ -187,20 +250,21 @@ namespace ThreadPool_ZenSepiol
             results.pop();
         }
 
-        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
+        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
         
         pool.stop();
 
         Logger::log(std::cout, "Done.");
     }
 
-    static void test_concurrency_thread_pool_05_05_PrimeNumbers()
+    // =======================================================================
+
+    static void test_concurrency_thread_pool_05_11_PrimeNumbers()
     {
         Logger::log(std::cout, "Start:");
 
         ScopedTimer clock{};
 
-     //   size_t foundPrimeNumbers{};
         std::atomic_uint64_t foundPrimeNumbers{ 0 };
 
         std::vector<std::future<std::pair<bool, size_t>>> futures;
@@ -209,48 +273,37 @@ namespace ThreadPool_ZenSepiol
 
         Logger::log(std::cout, "Enqueuing tasks");
 
-        // 24 prime numbers
-        //constexpr size_t Start = 1;
-        //constexpr size_t End = Start + 100;
+        //std::function<std::pair<bool, size_t>(size_t)> primeTask {
+        //    
+        //    [&](size_t value) {
+        //        bool primeFound { isPrime(value) };
+        //        if (primeFound) {
+        //            Logger::log(std::cout, "> ", value, " is prime.");
+        //            ++foundPrimeNumbers;
+        //        }
+        //        return std::make_pair(primeFound, value);
+        //    }
+        //};
 
-        // 4 prime numbers
-        //constexpr size_t Start = 1000000000001;
-        //constexpr size_t End = Start + 100;
+        auto primeLambda = [&](size_t value) {
 
-        // 37 prime numbers
-        //constexpr size_t Start = 1000000000001;
-        //constexpr size_t End = Start + 1000;
+            bool primeFound{ isPrime(value) };
 
-        // 3614 prime numbers
-        //constexpr size_t Start = 1000000000001;
-        //constexpr size_t End = Start + 100000;
+            if (primeFound) {
+                Logger::log(std::cout, "> ", value, " is prime.");
 
-        // 23 prime numbers
-        constexpr size_t Start = 1'000'000'000'000'000'001;
-        constexpr size_t End = Start + 1'000;
-
-        std::function<std::pair<bool, size_t>(size_t)> primeTask {
-            
-            [&](size_t value) {
-
-                bool primeFound { isPrime(value) };
-
-                if (primeFound) {
-                    Logger::log(std::cout, "> ", value, " is prime.");
-
-                    ++foundPrimeNumbers;
-                }
-
-                return std::make_pair(primeFound, value);
+                ++foundPrimeNumbers;
             }
+
+            return std::make_pair(primeFound, value);
         };
 
         Logger::enableLogging(false);
 
-        for (size_t i{ Start }; i < End; i += 2) {
+        for (size_t i{ Globals::Start }; i < Globals::End; i += 2) {
 
             std::future<std::pair<bool, size_t>> future{
-                pool.addTask(primeTask, i)
+                pool.addTask(primeLambda, i)
             };
 
             futures.push_back(std::move(future));
@@ -267,12 +320,11 @@ namespace ThreadPool_ZenSepiol
             const auto& [found, value] = future.get();
 
             if (found) {
-                // ++foundPrimeNumbers;
                 Logger::log(std::cout, "Found prime numer ", value);
             }
         }
 
-        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Start, " and ", End, '.');
+        Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
        
         pool.stop();
 
@@ -283,14 +335,16 @@ namespace ThreadPool_ZenSepiol
 void test_concurrency_thread_pool_05()
 {
     using namespace ThreadPool_ZenSepiol;
-    //test_concurrency_thread_pool_05_01();
-    //test_concurrency_thread_pool_05_02();
-    //test_concurrency_thread_pool_05_03();
 
-    test_concurrency_thread_pool_05_04_PrimeNumbers();
-    //test_concurrency_thread_pool_05_05_PrimeNumbers();
+    //test_concurrency_thread_pool_05_01();     // just starting ... and stopping the thread pool
+    //test_concurrency_thread_pool_05_02();     // launching 5 almost empty tasks
+    //test_concurrency_thread_pool_05_03();     // launching many tasks ... and working on an atomic variable (using a pointer)
+    //test_concurrency_thread_pool_05_04();     // launching many tasks ... and working on an atomic variable (using a reference)
+
+    test_concurrency_thread_pool_05_10_PrimeNumbers();    // computing prime numbers, using free function
+    test_concurrency_thread_pool_05_11_PrimeNumbers();    // computing prime numbers, using lambda
 }
+
 // ===========================================================================
 // End-of-File
 // ===========================================================================
-

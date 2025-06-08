@@ -5,7 +5,7 @@
 #pragma once
 
 /*
- * Aus dem Buch Youtube Channel "How to write Thread Pools in C++"
+ * Aus dem Youtube Channel "How to write Thread Pools in C++"
  *
  * https://www.youtube.com/watch?v=6re5U82KwbY
  *
@@ -13,12 +13,10 @@
 
 #include "ThreadPool_05_ZenSepiol.h"
 
-#include <iostream>
-
 namespace ThreadPool_ZenSepiol
 {
     ThreadPool::ThreadPool()
-        : m_busy_threads{ }, m_threads_count{}, m_shutdown_requested {}
+        : m_threads_count{}, m_busy_threads{ }, m_shutdown_requested {}
     {}
 
     ThreadPool::~ThreadPool()
@@ -32,7 +30,7 @@ namespace ThreadPool_ZenSepiol
 
         m_pool.resize(size);
 
-        for (size_t i = 0; i < size; ++i)
+        for (size_t i{}; i != size; ++i)
         {
             m_pool[i] = std::thread(&ThreadPool::worker, this);
         }
@@ -48,8 +46,9 @@ namespace ThreadPool_ZenSepiol
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             m_shutdown_requested = true;
-            m_condition.notify_all();
         }
+
+        m_condition.notify_all();
 
         for (size_t i{}; i != m_pool.size(); ++i)
         {
@@ -63,6 +62,7 @@ namespace ThreadPool_ZenSepiol
     void ThreadPool::worker()
     {
         std::thread::id tid{ std::this_thread::get_id() };
+
         Logger::log(std::cout, "Started worker [", tid, "]");
 
         std::unique_lock<std::mutex> guard{ m_mutex };

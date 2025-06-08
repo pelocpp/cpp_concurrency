@@ -5,7 +5,7 @@
 #pragma once
 
 /*
- * Aus dem Buch Youtube Channel "How to write Thread Pools in C++"
+ * Aus dem Youtube Channel "How to write Thread Pools in C++"
  *
  * https://www.youtube.com/watch?v=6re5U82KwbY
  * 
@@ -17,16 +17,12 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
 #include <functional>
 #include <future>
 #include <mutex>
 #include <queue>
 #include <thread>
-#include <utility>
 #include <vector>
-#include <future>
-#include <type_traits>
 
 namespace ThreadPool_ZenSepiol
 {
@@ -48,6 +44,12 @@ namespace ThreadPool_ZenSepiol
         ThreadPool();
         ~ThreadPool();
 
+        // no copying or moving
+        ThreadPool(const ThreadPool&) = delete;
+        ThreadPool& operator=(const ThreadPool&) = delete;
+        ThreadPool(ThreadPool&&) = delete;
+        ThreadPool& operator=(ThreadPool&&) = delete;
+
         // public interface
         void start();
         void stop();
@@ -68,12 +70,11 @@ namespace ThreadPool_ZenSepiol
 
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };
-
                 m_queue.push(std::move(wrapper));
-
-                // wake up one waiting thread if any
-                m_condition.notify_one();
             }
+
+            // wake up one waiting thread if any
+            m_condition.notify_one();
 
             // return future from packaged_task
             return future;
@@ -82,14 +83,6 @@ namespace ThreadPool_ZenSepiol
         // getter
         bool empty() const;
         size_t size() const;
-
-        // no copying
-        ThreadPool(const ThreadPool&) = delete;
-        ThreadPool& operator=(const ThreadPool&) = delete;
-
-        // no moving
-        ThreadPool(ThreadPool&&) = delete;
-        ThreadPool& operator=(ThreadPool&&) = delete;
 
     private:
         void worker();
