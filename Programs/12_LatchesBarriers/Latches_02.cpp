@@ -2,6 +2,8 @@
 // Latches_02.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <sstream>
 #include <future>
@@ -10,8 +12,6 @@
 #include <array>
 #include <random>
 #include <deque>
-
-#include "../Logger/Logger.h"
 
 namespace Latches_03 {
 

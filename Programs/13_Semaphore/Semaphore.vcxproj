@@ -137,7 +137,7 @@
     <ClCompile Include="Semaphore_03.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Readme.md" />
+    <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

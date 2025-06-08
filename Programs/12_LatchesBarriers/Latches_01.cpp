@@ -2,6 +2,8 @@
 // Latches_01.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -10,8 +12,6 @@
 #include <latch>
 #include <array>
 #include <vector>
-
-#include "../Logger/Logger.h"
 
 namespace Latches_01 {
 
