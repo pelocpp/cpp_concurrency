@@ -27,7 +27,7 @@ namespace Concurrency_PrimeCalculator
             Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
         }
 
-        void operator() ()
+        void operator() () const
         {
             std::thread::id tid{ std::this_thread::get_id() };
             Logger::log(std::cout, "TID: ", tid);

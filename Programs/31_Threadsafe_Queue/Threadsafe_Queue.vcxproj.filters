@@ -18,7 +18,7 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Examples.cpp">
+    <ClCompile Include="TestThreadSafeQueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">

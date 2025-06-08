@@ -2,23 +2,21 @@
 // TestPrimeNumbers.cpp
 // ===========================================================================
 
-#include <iostream>
-#include <vector>
-#include <optional>
-#include <functional>
-#include <chrono>
-
-#include "ThreadsafeStack.h"
-#include "PrimeCalculator.h"
-
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
+
+#include "PrimeCalculator.h"
+#include "ThreadsafeStack.h"
+
+#include <functional>
+#include <iostream>
+#include <vector>
 
 namespace Globals
 {
     // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
 
-    constexpr size_t NumThreads = 16;
+    auto NumThreads = [] { return std::thread::hardware_concurrency(); }();
 
     // constexpr size_t UpperLimit { 100 };
     // Found:  25 prime numbers
@@ -29,13 +27,16 @@ namespace Globals
     // constexpr size_t UpperLimit { 100'000 };
     // Found:  9.592 prime numbers
 
-    //constexpr size_t UpperLimit { 1'000'000 };
+    // constexpr size_t UpperLimit { 1'000'000 };
     // Found:  78.498 prime numbers
 
-    // constexpr size_t UpperLimit { 10'000'000 };
+    constexpr size_t UpperLimit { 10'000'000 };
     // Found:  664.579 prime numbers
 
-    constexpr size_t UpperLimit { 100'000'000 };
+    // constexpr size_t UpperLimit { 50'000'000 };
+    // Found:  3.001.134 prime numbers
+
+    // constexpr size_t UpperLimit{ 100'000'000 };
     // Found:  5.761.455 prime numbers
 }
 
@@ -53,14 +54,16 @@ void test_thread_safe_stack_01()
     stack.pop(n);
     std::cout << "got " << n << std::endl;
 
+    bool result{ stack.tryPop(n) };
+    std::cout << "got " << n << std::boolalpha << " [" << result << "]" << std::endl;
+
     std::optional<int> m;
-    m = stack.tryPopOptional();
-    std::cout << "got " << m.value() << std::endl;
+    m = stack.tryPop();
+    if (m.has_value()) {
+        std::cout << "got " << m.value() << std::endl;
+    }
 
-    n = stack.tryPop();
-    std::cout << "got " << n << std::endl;
-
-    // n = stack.tryPop();  // crashes
+    // stack.pop(n);  // crashes
 }
 
 void test_thread_safe_stack_02()
@@ -93,8 +96,8 @@ void test_thread_safe_stack_03()
     using namespace Concurrency_PrimeCalculator;
 
     Logger::log(std::cout,
-        "Calcalating Prime Numbers from ", 2, 
-        " up to ", Globals::UpperLimit, ':');
+        "Calcalating Prime Numbers from ", 2, " up to ",
+        Globals::UpperLimit, " [", Globals::NumThreads, " threads]:");
 
     ThreadsafeStack<size_t> primes{};
 
@@ -140,8 +143,8 @@ void test_thread_safe_stack_04()
     using namespace Concurrency_PrimeCalculator;
 
     Logger::log(std::cout,
-        "Calcalating Prime Numbers from ", 2,
-        " up to ", Globals::UpperLimit, ':');
+        "Calcalating Prime Numbers from ", 2, " up to ",
+        Globals::UpperLimit, " [", Globals::NumThreads, " threads]:");
 
     using Callable = std::function<void()>;
 

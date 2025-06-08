@@ -29,61 +29,65 @@ namespace Concurrency_ThreadsafeStack
         // copy and move constructor may be useful
         ThreadsafeStack(const ThreadsafeStack& other)
         {
-            std::lock_guard<std::mutex> lock{ other.m_mutex };
+            std::lock_guard<std::mutex> guard{ other.m_mutex };
             m_data = other.m_data;
         }
         
         ThreadsafeStack(ThreadsafeStack&& other) noexcept
         {
-            std::lock_guard<std::mutex> lock{ other.m_mutex };
+            std::lock_guard<std::mutex> guard{ other.m_mutex };
             m_data = std::move(other.m_data);
         }
 
         // public interface
         void push(const T& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             m_data.push(value);
         }
 
         void push(T&& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             m_data.push(std::move(value));
         }
 
-        template<class... TArgs>
+        template<typename... TArgs>
         void emplace(TArgs&&... args)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             m_data.emplace(std::forward<TArgs>(args) ...);
         }
 
         void pop(T& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
             value = m_data.top();
             m_data.pop();
         }
 
-        T tryPop()
+        bool tryPop(T& value)
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
-            if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-            T value = m_data.top();
-            m_data.pop();
-            return value;
+            std::lock_guard<std::mutex> guard{ m_mutex };
+            if (m_data.empty()) {
+                return false;
+            }
+            else {
+                value = std::move(m_data.top());
+                m_data.pop();
+                return true;
+            }
         }
 
-        std::optional<T> tryPopOptional()
+        std::optional<T> tryPop()
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) {
                 return std::optional<T>(std::nullopt);
             }
             else {
-                std::optional<T> result{ m_data.top() };
+                std::optional<T> result{ std::move(m_data.top()) };
                 m_data.pop();
                 return result;
             }
@@ -91,7 +95,7 @@ namespace Concurrency_ThreadsafeStack
 
         std::optional<T> top() const
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) {
                 return std::optional<T>(std::nullopt);
             }
@@ -103,13 +107,13 @@ namespace Concurrency_ThreadsafeStack
 
         size_t size() const
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             return m_data.size();
         }
 
         bool empty() const
         {
-            std::lock_guard<std::mutex> lock{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             return m_data.empty();
         }
     };

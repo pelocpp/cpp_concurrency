@@ -53,14 +53,21 @@ besitzt folgende öffentliche Schnittstelle:
 02: class ThreadsafeStack
 03: {
 04: public:
-05:     void push(const T& value);
-06:     void push(T&& value);
-07:     void pop(T& value);
-08:     T tryPop();
-09:     std::optional<T> tryPopOptional();
-10:     size_t size() const;
-11:     bool empty() const;
-12: };
+05:     ThreadsafeStack();
+06:     ThreadsafeStack& operator= (const ThreadsafeStack&) = delete;
+07:     ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
+08:     ThreadsafeStack(const ThreadsafeStack& other);
+09:     ThreadsafeStack(ThreadsafeStack&& other) noexcept;
+10:     void push(const T& value);
+11:     void push(T&& value);
+12:     template<typename... TArgs> void emplace(TArgs&&... args);
+13:     void pop(T& value);
+14:     bool tryPop(T& value);
+15:     std::optional<T> tryPop();
+16:     std::optional<T> top() const;
+17:     size_t size() const;
+18:     bool empty() const;
+19: };
 ```
 
 Das Hinzufügen eines Elements zum Stapel (Methode `push`) kann als trivial betrachtet werden,
@@ -69,7 +76,6 @@ auch vor dem Hintergrund der *Concurrency*.
 Problematischer sieht es mit der `pop`-Operation aus:
 Hier ist es &ndash; auf Grund von *Race Conditions* &ndash; nicht ganz einfach,
 entsprechende Methodensignaturen zu definieren:
-
 Zwei mögliche Signaturen sind
 
 ```cpp
@@ -79,16 +85,18 @@ void pop(T& value);
 oder 
 
 ```cpp
-T tryPop();
+bool tryPop(T& value);
 ```
 
+Die erste Methode muss allerdings eine Ausnahme werfen, wenn der Stapel leer ist.
+Die zweite Methode umgeht dies, indem sie einen `bool`-Rückgabetyp besitzt.
+Ein mögliches Ergebnis wird dann über den Parameter `value` zurückgeliefert, es handelt sich um eine Referenz einer Variablen (eines Objekts),
+die (das) beim Aufruf bereitzustellen ist.
 
-Beide Methoden müssen allerdings eine Ausnahme werfen, wenn der Stapel leer ist.
-
-Möchte man das Exception-Handling umgehen, wäre der Datentyp `std::optional<T>` eine Option:
+Möchte man das Exception-Handling umgehen, wäre auch der Datentyp `std::optional<T>` eine Option:
 
 ```cpp
-std::optional<T> tryPopOptional();
+std::optional<T> tryPop();
 ```
 
 ### Thread Sicherheit
@@ -99,95 +107,112 @@ dass nahezu alle Methoden ein `std::mutex`-Objekt verwenden,
 um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::stack<T>`-Objekt zu schützen:
 
 ```cpp
-01: template<typename T>
-02: class ThreadsafeStack
-03: {
-04: private:
-05:     std::stack<T>      m_data;
-06:     mutable std::mutex m_mutex;
-07: 
-08: public:
-09:     // c'tors
-10:     ThreadsafeStack() {}
-11: 
-12:     // prohibit assignment operator and move assignment
-13:     ThreadsafeStack& operator= (const ThreadsafeStack&) = delete;
-14:     ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
-15: 
-16:     // copy and move constructor may be useful
-17:     ThreadsafeStack(const ThreadsafeStack& other)
-18:     {
-19:         std::lock_guard<std::mutex> lock{ other.m_mutex };
-20:         m_data = other.m_data;
-21:     }
-22:         
-23:     ThreadsafeStack(ThreadsafeStack&& other) noexcept
-24:     {
-25:         std::lock_guard<std::mutex> lock{ other.m_mutex };
-26:         m_data = std::move(other.m_data);
-27:     }
-28: 
-29:     // public interface
-30:     void push(const T& value)
-31:     {
-32:         std::lock_guard<std::mutex> lock{ m_mutex };
-33:         m_data.push(value);
-34:     }
-35: 
-36:     void push(T&& value)
-37:     {
-38:         std::lock_guard<std::mutex> lock{ m_mutex };
-39:         m_data.push(std::move(value));
-40:     }
-41: 
-42:     template<class... TArgs>
-43:     void emplace(TArgs&&... args)
-44:     {
-45:         std::lock_guard<std::mutex> lock{ m_mutex };
-46:         m_data.emplace(std::forward<TArgs>(args) ...);
-47:     }
-48: 
-49:     void pop(T& value)
-50:     {
-51:         std::lock_guard<std::mutex> lock{ m_mutex };
-52:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-53:         value = m_data.top();
-54:         m_data.pop();
-55:     }
-56: 
-57:     T tryPop()
-58:     {
-59:         std::lock_guard<std::mutex> lock{ m_mutex };
-60:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-61:         T value = m_data.top();
-62:         m_data.pop();
-63:         return value;
-64:     }
-65: 
-66:     std::optional<T> tryPopOptional()
-67:     {
-68:         std::lock_guard<std::mutex> lock{ m_mutex };
-69:         if (m_data.empty()) {
-70:             return std::nullopt;
-71:         }
-72: 
-73:         std::optional<T> result{ m_data.top() };
-74:         m_data.pop();
-75:         return result;
-76:     }
-77: 
-78:     size_t size() const
-79:     {
-80:         std::lock_guard<std::mutex> lock{ m_mutex };
-81:         return m_data.size();
-82:     }
-83: 
-84:     bool empty() const
-85:     {
-86:         std::lock_guard<std::mutex> lock{ m_mutex };
-87:         return m_data.empty();
-88:     }
-89: };
+001: template<typename T>
+002: class ThreadsafeStack
+003: {
+004: private:
+005:     std::stack<T>       m_data;
+006:     mutable std::mutex  m_mutex;
+007: 
+008: public:
+009:     // c'tors
+010:     ThreadsafeStack() {}
+011: 
+012:     // prohibit assignment operator and move assignment
+013:     ThreadsafeStack& operator= (const ThreadsafeStack&) = delete;
+014:     ThreadsafeStack& operator= (ThreadsafeStack&&) noexcept = delete;
+015: 
+016:     // copy and move constructor may be useful
+017:     ThreadsafeStack(const ThreadsafeStack& other)
+018:     {
+019:         std::lock_guard<std::mutex> guard{ other.m_mutex };
+020:         m_data = other.m_data;
+021:     }
+022:         
+023:     ThreadsafeStack(ThreadsafeStack&& other) noexcept
+024:     {
+025:         std::lock_guard<std::mutex> guard{ other.m_mutex };
+026:         m_data = std::move(other.m_data);
+027:     }
+028: 
+029:     // public interface
+030:     void push(const T& value)
+031:     {
+032:         std::lock_guard<std::mutex> guard{ m_mutex };
+033:         m_data.push(value);
+034:     }
+035: 
+036:     void push(T&& value)
+037:     {
+038:         std::lock_guard<std::mutex> guard{ m_mutex };
+039:         m_data.push(std::move(value));
+040:     }
+041: 
+042:     template<typename... TArgs>
+043:     void emplace(TArgs&&... args)
+044:     {
+045:         std::lock_guard<std::mutex> guard{ m_mutex };
+046:         m_data.emplace(std::forward<TArgs>(args) ...);
+047:     }
+048: 
+049:     void pop(T& value)
+050:     {
+051:         std::lock_guard<std::mutex> guard{ m_mutex };
+052:         if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
+053:         value = m_data.top();
+054:         m_data.pop();
+055:     }
+056: 
+057:     bool tryPop(T& value)
+058:     {
+059:         std::lock_guard<std::mutex> guard{ m_mutex };
+060:         if (m_data.empty()) {
+061:             return false;
+062:         }
+063:         else {
+064:             value = std::move(m_data.top());
+065:             m_data.pop();
+066:             return true;
+067:         }
+068:     }
+069: 
+070:     std::optional<T> tryPop()
+071:     {
+072:         std::lock_guard<std::mutex> guard{ m_mutex };
+073:         if (m_data.empty()) {
+074:             return std::optional<T>(std::nullopt);
+075:         }
+076:         else {
+077:             std::optional<T> result{ std::move(m_data.top()) };
+078:             m_data.pop();
+079:             return result;
+080:         }
+081:     }
+082: 
+083:     std::optional<T> top() const
+084:     {
+085:         std::lock_guard<std::mutex> guard{ m_mutex };
+086:         if (m_data.empty()) {
+087:             return std::optional<T>(std::nullopt);
+088:         }
+089:         else {
+090:             std::optional<T> result(m_data.top());
+091:             return result;
+092:         }
+093:     }
+094: 
+095:     size_t size() const
+096:     {
+097:         std::lock_guard<std::mutex> guard{ m_mutex };
+098:         return m_data.size();
+099:     }
+100: 
+101:     bool empty() const
+102:     {
+103:         std::lock_guard<std::mutex> guard{ m_mutex };
+104:         return m_data.empty();
+105:     }
+106: };
 ```
 
 Wir erkennen an der Realisierung,
@@ -205,7 +230,7 @@ wiederum mit `const` markieren zu können.
 
 Interessanterweise lässt sich die gezeigte Realisierung auch ohne Verwendung von `mutable` übersetzen &ndash;
 bei Gebrauch des *Visual C++* Compilers.
-Der Gcc-Compiler reagiert an dieser Stelle empfindlicher:
+Der GCC-Compiler reagiert an dieser Stelle empfindlicher:
 
 ```
 error: binding reference of type 'std::lock_guard<std::mutex>::mutex_type&' {aka 'std::mutex&'} to 'const std::mutex' 
@@ -325,7 +350,7 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
 
 [*ThreadsafeStack.h*](ThreadsafeStack.h).<br />
-[*PrimeCalculator.h*](TPrimeCalculator.h).<br />
+[*PrimeCalculator.h*](PrimeCalculator.h).<br />
 [*TestPrimeNumbers.cpp*](TestPrimeNumbers.cpp).<br />
 
 ---

@@ -50,22 +50,23 @@ Die von mir vorgestellt Klasse `ThreadsafeQueue<T>`
 besitzt folgende öffentliche Schnittstelle:
 
 ```cpp
-01: template<typename T>
+01: template <typename T>
 02: class ThreadsafeQueue
 03: {
 04: public:
-05:     ThreadsafeQueue() {}
-06:     ThreadsafeQueue(const ThreadsafeQueue& other);
-07:     ThreadsafeQueue(ThreadsafeQueue&& other) noexcept;
-08:     ThreadsafeQueue& operator= (const ThreadsafeQueue& other);
-09:     ThreadsafeQueue& operator= (ThreadsafeQueue&& other) noexcept;
-10:     void push(const T& value);
-11:     void push(T&& value);
-12:     void wait_and_pop(T& value);
-13:     bool try_pop(T& value);
-14:     bool empty() const;
-15:     size_t size() const;
-16: };
+05:     ThreadsafeQueue();
+06:     ThreadsafeQueue(const ThreadsafeQueue & other);
+07:     ThreadsafeQueue(ThreadsafeQueue && other) noexcept;
+08:     ThreadsafeQueue & operator= (const ThreadsafeQueue& other);
+09:     ThreadsafeQueue & operator= (ThreadsafeQueue&& other) noexcept;
+10:     void push(const T & value);
+11:     void push(T && value);
+12:     bool tryPop(T& value);
+13:     std::optional<T> tryPop();
+14:     void waitAndPop(T& value);
+15:     bool empty() const;
+16:     size_t size() const;
+17: };
 ```
 
 Das Hinzufügen eines Elements zur Warteschlange (Methode `push`) kann als trivial betrachtet werden,
@@ -77,9 +78,9 @@ Desweiteren gilt es in der Realisierung eine Feinheit zu beachten:
 ```cpp
 01: void push(const T& value)
 02: {
-03:     std::unique_lock<std::mutex> lock{ m_mutex };
+03:     std::unique_lock<std::mutex> guard{ m_mutex };
 04:     m_data.push(value);
-05:     lock.unlock();
+05:     guard.unlock();
 06:     m_condition.notify_one();
 07: }
 ```
@@ -92,20 +93,28 @@ Aus diesem Grund ist das Hüllenobjekt vom Typ `std::unique_lock`,
 es steht dann eine Methode `unlock` (siehe Zeile 5) zur Freigabe des kritischen Abschnitts zur Verfügung.
 
 Die `pop`-Operation ist auf Grund von *Race Conditions* nicht ganz einfach zu definieren.
-Zwei mögliche Signaturen sind
-
-```cpp
-void waitAndPop(T& value);
-```
-
-oder 
+Drei mögliche Signaturen sind
 
 ```cpp
 bool tryPop(T& value);
 ```
 
-Von der Laufzeit her gesehen bedeutet das zunächst, dass `tryPop` nicht wartet, bei Erfolg den Wert `true`
-zurückliefert und der gesuchte Wert im Argument des Referenz-Parameters `value` abgelegt ist.
+oder 
+
+```cpp
+std::optional<T> tryPop();
+```
+
+oder 
+
+```cpp
+void waitAndPop(T& value);
+```
+
+Von der Laufzeit her gesehen bedeutet das zunächst, dass die beiden Überladungen der `tryPop`-Methode
+nicht warten, bei Erfolg den Wert `true`
+zurückliefern (auf direkte Weise oder in einem `std::optional<T>`-Objekt)
+und der gesuchte Wert im Argument des Referenz-Parameters `value` bzw. im `std::optional<T>`-Objekt abgelegt ist.
 
 Die Methode `waitAndPop` hingegen blockiert solange, bis in der Warteschlange ein Wert vorhanden ist.
 
@@ -119,102 +128,116 @@ um den Zugriff auf das &bdquo;umschlossene&rdquo; `std::queue<T>`-Objekt zu schü
 
 
 ```cpp
-01: template<typename T>
-02: class ThreadsafeQueue
-03: {
-04: private:
-05:     std::queue<T>            m_data;
-06:     mutable std::mutex       m_mutex;
-07:     std::condition_variable  m_condition;
-08: 
-09: public:
-10:     ThreadsafeQueue() {}
-11: 
-12:     // copy and move constructor may be useful
-13:     ThreadsafeQueue(const ThreadsafeQueue& other)
-14:     {
-15:         std::lock_guard<std::mutex> lock{ other.m_mutex };
-16:         m_data = other.m_data;
-17:     }
-18: 
-19:     ThreadsafeQueue(ThreadsafeQueue&& other) noexcept
-20:     {
-21:         std::lock_guard<std::mutex> lock{ other.m_mutex };
-22:         m_data = std::move(other.m_data);
-23:     }
-24: 
-25:     ThreadsafeQueue& operator= (const ThreadsafeQueue& other)
-26:     {
-27:         if (&other == this)
-28:             return *this;
-29: 
-30:         std::scoped_lock<std::mutex> lock{ m_mutex, other.m_mutex };
-31:         m_data = other.m_data;
-32:         return *this;
-33:     }
-34: 
-35:     ThreadsafeQueue& operator= (ThreadsafeQueue&& other) noexcept
-36:     {
-37:         if (&other == this)
-38:             return *this;
-39: 
-40:         std::scoped_lock<std::mutex> lock{ m_mutex, other.m_mutex };
-41:         m_data = std::move (other.m_data);
-42:         return *this;
-43:     }
-44: 
-45:     void push(const T& value)
-46:     {
-47:         std::unique_lock<std::mutex> lock{ m_mutex };
-48:         m_data.push(value);
-49:         lock.unlock();
-50:         m_condition.notify_one();
-51:     }
-52: 
-53:     void push(T&& value)
-54:     {
-55:         std::unique_lock<std::mutex> lock{ m_mutex };
-56:         m_data.push(std::move(value));
-57:         lock.unlock();
-58:         m_condition.notify_one();
-59:     }
-60: 
-61:     void waitAndPop(T& value)
-62:     {
-63:         std::unique_lock<std::mutex> lock{ m_mutex };
-64:         m_condition.wait(lock, [this] () {
-65:             return !m_data.empty(); 
-66:             }
-67:         );
-68: 
-69:         value = m_data.front();
-70:         m_data.pop();
-71:     }
-72: 
-73:     bool tryPop(T& value)
-74:     {
-75:         std::lock_guard<std::mutex> lock{ m_mutex };
-76:         if (m_data.empty()) {
-77:             return false;
-78:         }
-79: 
-80:         value = m_data.front();
-81:         m_data.pop();
-82:         return true;
-83:     }
-84: 
-85:     bool empty() const
-86:     {
-87:         std::lock_guard<std::mutex> lock{ m_mutex };
-88:         return m_data.empty();
-89:     }
-90: 
-91:     size_t size() const
-92:     {
-93:         std::lock_guard<std::mutex> lock{ m_mutex };
-94:         return m_data.size();
-95:     }
-96: };
+001: template<typename T>
+002: class ThreadsafeQueue
+003: {
+004: private:
+005:     std::queue<T>            m_data;
+006:     mutable std::mutex       m_mutex;
+007:     std::condition_variable  m_condition;
+008: 
+009: public:
+010:     ThreadsafeQueue() {}
+011: 
+012:     // copy and move constructor may be useful
+013:     ThreadsafeQueue(const ThreadsafeQueue& other)
+014:     {
+015:         std::lock_guard<std::mutex> guard{ other.m_mutex };
+016:         m_data = other.m_data;
+017:     }
+018: 
+019:     ThreadsafeQueue(ThreadsafeQueue&& other) noexcept
+020:     {
+021:         std::lock_guard<std::mutex> guard{ other.m_mutex };
+022:         m_data = std::move(other.m_data);
+023:     }
+024: 
+025:     ThreadsafeQueue& operator= (const ThreadsafeQueue& other)
+026:     {
+027:         if (&other == this)
+028:             return *this;
+029: 
+030:         std::scoped_lock<std::mutex> guard{ m_mutex, other.m_mutex };
+031:         m_data = other.m_data;
+032:         return *this;
+033:     }
+034: 
+035:     ThreadsafeQueue& operator= (ThreadsafeQueue&& other) noexcept
+036:     {
+037:         if (&other == this)
+038:             return *this;
+039: 
+040:         std::scoped_lock<std::mutex> guard{ m_mutex, other.m_mutex };
+041:         m_data = std::move (other.m_data);
+042:         return *this;
+043:     }
+044: 
+045:     void push(const T& value)
+046:     {
+047:         std::unique_lock<std::mutex> guard{ m_mutex };
+048:         m_data.push(value);
+049:         guard.unlock();
+050:         m_condition.notify_one();
+051:     }
+052: 
+053:     void push(T&& value)
+054:     {
+055:         std::unique_lock<std::mutex> guard{ m_mutex };
+056:         m_data.push(std::move(value));
+057:         guard.unlock();
+058:         m_condition.notify_one();
+059:     }
+060: 
+061:     bool tryPop(T& value)
+062:     {
+063:         std::lock_guard<std::mutex> guard{ m_mutex };
+064:         if (m_data.empty()) {
+065:             return false;
+066:         }
+067:         else {
+068:             value = std::move(m_data.front());
+069:             m_data.pop();
+070:             return true;
+071:         }
+072:     }
+073: 
+074:     std::optional<T> tryPop()
+075:     {
+076:         std::lock_guard<std::mutex> guard{ m_mutex };
+077:         if (m_data.empty()) {
+078:             return std::optional<T>(std::nullopt);
+079:         }
+080:         else {
+081:             std::optional<T> result{ std::move(m_data.front()) };
+082:             m_data.pop();
+083:             return result;
+084:         }
+085:     }
+086: 
+087:     void waitAndPop(T& value)
+088:     {
+089:         std::unique_lock<std::mutex> guard{ m_mutex };
+090:         m_condition.wait(guard, [this]() {
+091:             return !m_data.empty();
+092:             }
+093:         );
+094: 
+095:         value = std::move(m_data.front());
+096:         m_data.pop();
+097:     }
+098: 
+099:     bool empty() const
+100:     {
+101:         std::lock_guard<std::mutex> guard{ m_mutex };
+102:         return m_data.empty();
+103:     }
+104: 
+105:     size_t size() const
+106:     {
+107:         std::lock_guard<std::mutex> guard{ m_mutex };
+108:         return m_data.size();
+109:     }
+110: };
 ```
 
 Wir erkennen an der Realisierung,
@@ -354,26 +377,43 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 
 
 ```cpp
-01: void example()
+01: void test()
 02: {
-03:     ThreadsafeQueue<int> queue;
+03:     using namespace Concurrency_ThreadsafeQueue;
 04: 
-05:     std::thread producer{ produce, std::ref(queue) };
+05:     ThreadsafeQueue<size_t> queue;
 06: 
-07:     std::vector<std::thread> consumers;
-08: 
-09:     for (int i{}; i != NumConsumers; ++i) {
-10: 
-11:         std::thread consumer{ consume, std::ref(queue), i + 1 };
-12:         consumers.push_back(std::move(consumer));
-13:     }
-14: 
-15:     producer.join();
-16: 
-17:     for (auto& consumer : consumers) {
-18:         consumer.join();
-19:     }
-20: }
+07:     auto produce = [&] () {
+08:         for (int i{ 1 }; i <= NumToProduce; ++i) {
+09:             Logger::log(std::cout, "--> ", i);
+10:             queue.push(i);
+11:         }
+12:     };
+13: 
+14:     auto consume = [&](size_t id) {
+15:         for (size_t i{}; i != NumToConsume; ++i) {
+16:             size_t value{};
+17:             queue.waitAndPop(value);
+18:             Logger::log(std::cout, "        ", value, " <== Consumer [", id, ']');
+19:         }
+20:     };
+21: 
+22:     std::thread producer{ produce };
+23: 
+24:     std::vector<std::thread> consumers;
+25: 
+26:     for (size_t i{}; i != NumConsumers; ++i) {
+27: 
+28:         std::thread consumer{ consume, i + 1 };
+29:         consumers.push_back(std::move(consumer));
+30:     }
+31:     
+32:     producer.join();
+33: 
+34:     for (auto& consumer : consumers) {
+35:         consumer.join();
+36:     }
+37: }
 ```
 
 ---
