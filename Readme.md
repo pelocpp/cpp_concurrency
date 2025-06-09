@@ -30,6 +30,8 @@
 
 ### [14. Spinlocks](Programs/14_SpinLock/Readme.md)
 
+### [15. Thread Local Storage](Programs/15_Thread_Local_Storage/Readme.md)
+
 ---
 
 ## Entwurfsmuster
