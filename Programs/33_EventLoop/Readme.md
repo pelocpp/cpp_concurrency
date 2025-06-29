@@ -54,7 +54,7 @@ jedoch auf unterschiedliche Weise:
   Die kritischen Abschnitte müssen zu diesem Zweck aber Funktions-(Methoden-)grenzen haben,
   um sie in eine Ereigniswarteschlange einschleusen zu können.
 
-Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismus unterschiedlicher Natur sein:
+Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismen unterschiedlicher Natur sein:
 
   * Möglicherweise wurden die Klassen von einem alten Teil eines Softwaresystems geerbt.
   * Sie entwerfen gerade neue Klassen, möchten diese aber nicht mit gleich mit
@@ -91,7 +91,6 @@ dessen Methode aufgerufen werden soll oder die Erfassungsklausel (*Capture Claus
 
 Dies geht einher mit der so genannten *Small-Object*-Optimierung:
 
-  * *Small-Object*-Optimierung<br />
   * Um Heap-Zuweisungen zu vermeiden oder zumindest zu minimieren, speichert ein `std::function`-Objekt seine Daten im Objekt selbst ab, wenn es klein genug ist.
   * Was &bdquo;klein genug&rdquo; ist, hängt von der Umsetzung ab.
   * Was nicht unmittelbar in das `std::function`-Objekt passt, wird auf dem Heap abgelegt.
@@ -223,7 +222,7 @@ Warteschlange aufgenommen werden.
 
 ## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link8"></a>
 
-Es lassen sich auch Funktionen mit Parametern in die Ereigniswarteschlange einreihen &ndash; in dies sogar,
+Es lassen sich auch Funktionen mit Parametern in die Ereigniswarteschlange einreihen &ndash; und dies sogar,
 ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
 
 Wie könnte dieser Trick aussehen?<br />

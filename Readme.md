@@ -69,3 +69,11 @@
 ### [2. Aufgabe: Simulation eines Parkplatzes (`std::counting_semaphore`)](Programs/40_Excercises/Readme.md)
 
 ---
+
+## Literatur
+
+### [Einige Literaturhinweise](./Resources/Literature.md)
+
+
+---
+

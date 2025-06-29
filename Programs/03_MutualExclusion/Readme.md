@@ -131,7 +131,7 @@ die es einem Thread ermöglicht, mehrere Sperren zu halten.
 Erst wenn alle Sperren aufgehoben sind, können andere Threads dieses Mutexobjekt erwerben.
 
 Ein Anwendungsfall für die `std::recursive_mutex`-Klasse wird in dem Entwurfsmuster
-[Strategisches Locking (Strategized Locking)](../../Programs/22_StrategizedLocking/Readme.md)
+[Strategisches Locking (Strategized Locking)](../../Programs/20_StrategizedLocking/Readme.md)
 aufgezeigt.
 
 Der Einsatz der Klasse `std::recursive_mutex` ist dann erforderlich, wenn Sie zum einen
@@ -204,7 +204,7 @@ auf dieselbe Datenstruktur benötigen, Schreibvorgänge jedoch nicht häufig auftre
   * Ähnlich wie `std::lock_guard` wird kein manuelles Entsperren oder erneutes Sperren unterstützt.
 
 Eine genauere Beschreibung der beiden Klassen `std::shared_mutex` und `std::shared_lock` wird in dem Entwurfsmuster
-[Reader-Writer Lock](../../Programs/23_ReaderWriterLock/Readme.md)
+[Reader-Writer Lock](../../Programs/21_ReaderWriterLock/Readme.md)
 aufgezeigt.
 
 ---
@@ -607,7 +607,7 @@ Folgende wichtige Passagen in dem Beispiel sind anzusprechen:
   * Desweiteren besitzt diese Klasse zwei öffentliche Methoden `push_back` und `reserve`.
     Beide Methoden sperren das Mutexobjekt.
 
-  * *Achtung*: In Methode `push_back` kommt es &ndash; dabei Bedarf &ndash; zu einem Aufruf der `reserve` Methode.
+  * *Achtung*: In Methode `push_back` kommt es &ndash; bei Bedarf &ndash; zu einem Aufruf der `reserve` Methode.
     Dies führt *nicht* zu einem Absturz, da das Mutexobjekt vom Typ `std::recursive` ist!
     Eine separate Methode `allocate` ist in dieser Realisierung überflüssig!
 

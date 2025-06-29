@@ -18,6 +18,12 @@
 
   * `thread_local`
 
+<ins>Klassen</ins>:
+
+  * Klasse `std::jthread`
+  * Klasse `std::mutex>`
+  * Klasse `std::lock_guard`
+
 ---
 
 #### Quellcode

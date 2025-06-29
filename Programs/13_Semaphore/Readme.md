@@ -44,10 +44,11 @@ auf den mehrere Prozesse/Threads zugreifen wollen.
 Das Konzept der Semaphore als Mechanismus für die Synchronisation wurde von *Edsger W. Dijkstra* erfunden
 und 1965 in seinem Artikel *Cooperating Sequential Processes* vorgestellt.
 
-Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &bdquo;reservieren&rdquo; und &bdquo;freigeben&rdquo; nicht
+Im Gegensatz zu einem Mutex-Objekt müssen die Threads, die &bdquo;reservieren&rdquo; und &bdquo;freigeben&rdquo;, nicht
 identisch sein.
 
-Im Gegensatz zu einem `std::mutex`-Objekt sind also ein `std::binary_semaphore`- bzw. ein `std::counting_semaphore`-Objekt nicht an einen Thread gebunden.
+Anders als `std::mutex`-Objekte sind `std::binary_semaphore`- bzw. `std::counting_semaphore`-Objekte
+nicht an einen Thread gebunden.
 Das Anfordern und Freigeben der Semaphore darf in verschiedenen Threads stattfinden.
 
 Intern besitzt die Datenstruktur neben dem Zähler noch eine Warteschlange
