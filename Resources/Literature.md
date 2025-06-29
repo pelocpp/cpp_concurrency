@@ -9,9 +9,11 @@
 
     <img src="Buch_Williams_Anthony_Cpp_Concurrency_in_Action.png" width="150">
 
+   Siehe auch [hier](http://www.cplusplusconcurrencyinaction.com/).
+
 ---
 
-  * Grimm, Rainer &bdquo;*Modern C++ &ndash; Concurrency meistern*&rdquo;.</br>
+  * Grimm, Rainer &bdquo;*Modernes C++ &ndash; Concurrency meistern*&rdquo;.</br>
     Carl Hanser Verlag GmbH & Co. KG (11. Juni 2018), 288 Seiten. Sprache: Deutsch. ISBN-13: 978-3446455900, ISBN-10: 3446455906.
 
     <img src="Buch_Grimm_Rainer_Modernes_Cpp_Concurrency_Meistern.png" width="150">

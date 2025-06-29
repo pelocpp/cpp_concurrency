@@ -29,7 +29,7 @@ namespace Concurrency_Barriers_01
             for (auto val : values) {
                 std::print("{:15}", val);
             }
-            std::println("");
+            std::println();
 
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         };
