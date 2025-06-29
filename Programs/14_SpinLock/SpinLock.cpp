@@ -5,11 +5,12 @@
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
 
-#include <thread>
-#include <chrono>
 #include <atomic>
-#include <vector>
+#include <chrono>
+#include <latch>
 #include <mutex>
+#include <thread>
+#include <vector>
 
 namespace SpinLocks {
 
@@ -37,8 +38,14 @@ namespace SpinLocks {
 
 namespace TestSpinLocksCommon
 {
-    const size_t MaxIterations = 100000;
+
+#ifdef _DEBUG
+    const size_t MaxIterations = 100'000;
     const size_t NumWorkers = 10;
+#else
+    const size_t MaxIterations = 1'000'000;
+    const size_t NumWorkers = 10;
+#endif
 
     using ValueType = unsigned long;
 
@@ -47,6 +54,10 @@ namespace TestSpinLocksCommon
     std::atomic<ValueType> valueAtomic;
 
     std::mutex mutex;
+
+    std::latch initSpinlocksDone{ NumWorkers };
+    std::latch initAtomicDone{ NumWorkers };
+    std::latch initMutexDone{ NumWorkers };
 }
 
 namespace TestUsingSpinLocks
@@ -60,6 +71,9 @@ namespace TestUsingSpinLocks
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
+
+        // signal that this task is waiting for working
+        initSpinlocksDone.count_down();
 
         for (size_t i{}; i != iterations; ++i)
         {
@@ -79,6 +93,9 @@ namespace TestUsingAtomics
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
 
+        // signal that this task is waiting for working
+        initAtomicDone.count_down();
+
         for (size_t i{}; i != iterations; ++i)
         {
             valueAtomic++;
@@ -94,6 +111,9 @@ namespace TestUsingMutex
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
+
+        // signal that this task is waiting for working
+        initMutexDone.count_down();
 
         for (size_t i{}; i != iterations; ++i)
         {
@@ -115,13 +135,16 @@ void test_using_spinlocks() {
     
     value = 0;
     
+    for (size_t i{}; i != NumWorkers; ++i) {
+        std::thread thread{ task, MaxIterations };
+        threads.push_back(std::move(thread));
+    }
+
+    // wait until all tasks have been initialized
+    initSpinlocksDone.wait();
+
     {
         ScopedTimer watch{};
-
-        for (size_t i{}; i != NumWorkers; ++i) {
-            std::thread thread{ task, MaxIterations };
-            threads.push_back(std::move(thread));
-        }
 
         for (auto& thread : threads) {
             thread.join();
@@ -152,13 +175,16 @@ void test_using_atomics() {
 
     valueAtomic = 0;
 
+    for (size_t i{}; i != NumWorkers; ++i) {
+        std::thread thread{ atomicTask, MaxIterations };
+        threads.push_back(std::move(thread));
+    }
+
+    // wait until all tasks have been initialized
+    initAtomicDone.wait();
+
     {
         ScopedTimer watch{};
-
-        for (size_t i{}; i != NumWorkers; ++i) {
-            std::thread thread{ atomicTask, MaxIterations };
-            threads.push_back(std::move(thread));
-        }
 
         for (auto& thread : threads) {
             thread.join();
@@ -191,13 +217,16 @@ void test_using_mutex() {
 
     value = 0;
 
+    for (size_t i{}; i != NumWorkers; ++i) {
+        std::thread thread{ mutexTask, MaxIterations };
+        threads.push_back(std::move(thread));
+    }
+
+    // wait until all tasks have been initialized
+    initMutexDone.wait();
+
     {
         ScopedTimer watch{};
-
-        for (size_t i{}; i != NumWorkers; ++i) {
-            std::thread thread{ mutexTask, MaxIterations };
-            threads.push_back(std::move(thread));
-        }
 
         for (auto& thread : threads) {
             thread.join();
