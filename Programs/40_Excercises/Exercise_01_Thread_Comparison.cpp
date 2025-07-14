@@ -20,7 +20,7 @@ namespace Thread_Comparison {
 
         ScopedTimer watch{};
 
-        size_t result{};
+        std::atomic<size_t> result;
 
         std::vector<std::thread> threads{};
 
@@ -49,7 +49,7 @@ namespace Thread_Comparison {
 
         ScopedTimer watch{};
 
-        size_t result{};
+        std::atomic<size_t> result;
 
         std::vector<std::future<void>> futures{};
 
