@@ -45,14 +45,15 @@ namespace ThreadPool_ZenSepiol
         {
             auto future{ pool.addTask(emptyTask) };
 
-            results.emplace(std::move(future));
+            results.push(std::move(future));
         }
 
         pool.start();
 
         while (results.size())
         {
-            results.front().get();
+            auto& future = results.front();
+            future.get();
             results.pop();
         }
 
@@ -86,7 +87,7 @@ namespace ThreadPool_ZenSepiol
         {
             auto future{ pool.addTask(calcChecksum, n, &checksum) };
 
-            results.emplace(std::move(future));
+            results.push(std::move(future));
 
             localChecksum += n;
         }
@@ -133,7 +134,7 @@ namespace ThreadPool_ZenSepiol
         {   
             auto future{ pool.addTask(calcChecksumRef, n, std::ref(checksum)) };
 
-            results.emplace(std::move(future));
+            results.push(std::move(future));
             
             localChecksum += n;
         }
@@ -183,8 +184,16 @@ namespace ThreadPool_ZenSepiol
         //constexpr size_t End = Start + 1'000;
 
         // 4 prime numbers
+        //constexpr size_t Start = 1'000'000'000'000'000'001;
+        //constexpr size_t End = Start + 100;
+    
+        // 23 prime numbers
+        //constexpr size_t Start = 1'000'000'000'000'000'001;
+        //constexpr size_t End = Start + 1'000;
+
+        // 114 prime numbers
         constexpr size_t Start = 1'000'000'000'000'000'001;
-        constexpr size_t End = Start + 100;
+        constexpr size_t End = Start + 5'000;
     }
 
     static bool isPrime(size_t number)
@@ -211,6 +220,10 @@ namespace ThreadPool_ZenSepiol
 
     static void test_concurrency_thread_pool_05_10_PrimeNumbers()
     {
+        Logger::log(std::cout, "Press any key to start ...");
+        char ch;
+        std::cin >> ch;
+
         Logger::log(std::cout, "Start");
 
         ScopedTimer clock{};
@@ -221,24 +234,24 @@ namespace ThreadPool_ZenSepiol
 
         ThreadPool pool{};
 
-        // pool.start();         // <=== add/remove comment
+        pool.start();         // <=== add/remove comment
 
         Logger::log(std::cout, "Enqueuing tasks");
 
-        Logger::enableLogging(false);
+        Logger::enableLogging(true);
 
         for (size_t i{ Globals::Start }; i < Globals::End; i += 2) {
 
             std::future<bool> future{ pool.addTask(isPrime, i) };
 
-            results.emplace(std::move(future));
+            results.push(std::move(future));
         }
 
         Logger::enableLogging(true);
 
         Logger::log(std::cout, "Enqueuing tasks done.");
 
-        pool.start();            // <=== add/remove comment
+       // pool.start();            // <=== add/remove comment
 
         while (results.size() != 0)
         {
@@ -261,6 +274,10 @@ namespace ThreadPool_ZenSepiol
 
     static void test_concurrency_thread_pool_05_11_PrimeNumbers()
     {
+        Logger::log(std::cout, "Press any key to start ...");
+        char ch;
+        std::cin >> ch;
+
         Logger::log(std::cout, "Start:");
 
         ScopedTimer clock{};
@@ -336,12 +353,12 @@ void test_concurrency_thread_pool_05()
 {
     using namespace ThreadPool_ZenSepiol;
 
-    test_concurrency_thread_pool_05_01();     // just starting ... and stopping the thread pool
-    test_concurrency_thread_pool_05_02();     // launching 5 almost empty tasks
-    test_concurrency_thread_pool_05_03();     // launching many tasks ... and working on an atomic variable (using a pointer)
-    test_concurrency_thread_pool_05_04();     // launching many tasks ... and working on an atomic variable (using a reference)
+    //test_concurrency_thread_pool_05_01();     // just starting ... and stopping the thread pool
+    //test_concurrency_thread_pool_05_02();     // launching 5 almost empty tasks
+    //test_concurrency_thread_pool_05_03();     // launching many tasks ... and working on an atomic variable (using a pointer)
+    //test_concurrency_thread_pool_05_04();     // launching many tasks ... and working on an atomic variable (using a reference)
 
-    test_concurrency_thread_pool_05_10_PrimeNumbers();    // computing prime numbers, using free function
+   // test_concurrency_thread_pool_05_10_PrimeNumbers();      // computing prime numbers, using free function
     test_concurrency_thread_pool_05_11_PrimeNumbers();    // computing prime numbers, using lambda
 }
 

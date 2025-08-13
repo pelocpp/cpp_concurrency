@@ -59,7 +59,6 @@ namespace ThreadPool_ZenSepiol
         void stop();
 
         template <typename F, typename... Args>
-        
         auto addTask(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
         {
             Logger::log(std::cout, "addTask ...");
