@@ -22,14 +22,14 @@ namespace SpinLocks {
     public:
         Spinlock() : m_atomic_flag{} {}    // ATOMIC_FLAG_INIT
 
-        void lock()
+        void lock() noexcept
         {
             while (m_atomic_flag.test_and_set(std::memory_order_acquire))
             {
             }
         }
 
-        void unlock()
+        void unlock() noexcept
         {
             m_atomic_flag.clear(std::memory_order_release);
         }

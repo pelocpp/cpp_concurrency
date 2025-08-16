@@ -2,15 +2,18 @@
 // ProducerConsumerProblem.cpp
 // ===========================================================================
 
+
 #include "BlockingQueue.h"
 // #include "BlockingQueueEx.h"
+
+#include <iostream>
 
 constexpr int NumIterations{ 10 };
 
 constexpr std::chrono::milliseconds SleepTimeConsumer{ 120 };
 constexpr std::chrono::milliseconds SleepTimeProducer{  80 };
 
-static void test_thread_safe_blocking_queue_01()
+void test_thread_safe_blocking_queue_01()
 {
     using namespace ProducerConsumerQueue;
 
@@ -31,7 +34,7 @@ static void test_thread_safe_blocking_queue_01()
 
 // ===========================================================================
 
-static void test_thread_safe_blocking_queue_02()
+void test_thread_safe_blocking_queue_02()
 {
     using namespace ProducerConsumerQueue;
 
@@ -132,7 +135,7 @@ public:
 
 // ===========================================================================
 
-static void test_thread_safe_blocking_queue_03()
+void test_thread_safe_blocking_queue_03()
 {
     constexpr int QueueSize{ 10 };
 
@@ -163,57 +166,34 @@ static void test_thread_safe_blocking_queue_03()
 
 // ===========================================================================
 
-static void test_thread_safe_blocking_queue_04()
+void test_thread_safe_blocking_queue_04()
 {
     constexpr int QueueSize{ 10 };
 
     ProducerConsumerQueue::BlockingQueue<int, QueueSize> queue{ };
 
-    Consumer c{ queue };
-    Producer p{ queue };
+    Consumer<int> consumer{ queue };
+    Producer<int> producer{ queue };
 
-    std::thread producer1([&]() {
-
+    auto producerProcedure = [&]() {
         Logger::log(std::cout, "Producer");
-        p.produce();
+        producer.produce();
         Logger::log(std::cout, "Producer Done.");
-    });
+        };
 
-    std::thread producer2([&]() {
-
-        Logger::log(std::cout, "Producer");
-        p.produce();
-        Logger::log(std::cout, "Producer Done.");
-    });
-
-    std::thread producer3([&]() {
-
-        Logger::log(std::cout, "Producer");
-        p.produce();
-        Logger::log(std::cout, "Producer Done.");
-    });
-
-
-    std::thread consumer1([&]() {
-
+    auto consumerProcedure = [&]() {
         Logger::log(std::cout, "Consumer");
-        c.consume();
+        consumer.consume();
         Logger::log(std::cout, "Consumer Done.");
-    });
+        };
 
-    std::thread consumer2([&]() {
+    std::thread producer1(producerProcedure);
+    std::thread producer2(producerProcedure);
+    std::thread producer3(producerProcedure);
 
-        Logger::log(std::cout, "Consumer");
-        c.consume();
-        Logger::log(std::cout, "Consumer Done.");
-    });
-
-    std::thread consumer3([&]() {
-
-        Logger::log(std::cout, "Consumer");
-        c.consume();
-        Logger::log(std::cout, "Consumer Done.");
-    });
+    std::thread consumer1(consumerProcedure);
+    std::thread consumer2(consumerProcedure);
+    std::thread consumer3(consumerProcedure);
 
     producer1.join();
     producer2.join();
@@ -295,7 +275,7 @@ static std::ostream& operator<< (std::ostream& os, const Person& p) {
 
 // ===========================================================================
 
-static void test_thread_safe_blocking_queue_05()
+void test_thread_safe_blocking_queue_05()
 {
     constexpr int QueueSize{ 5 };
 
@@ -311,57 +291,34 @@ static void test_thread_safe_blocking_queue_05()
     queue.pop(p);
 }
 
-static void test_thread_safe_blocking_queue_06()
+void test_thread_safe_blocking_queue_06()
 {
     constexpr int QueueSize{ 10 };
 
     ProducerConsumerQueue::BlockingQueue<Person, QueueSize> queue{ };
 
-    Consumer<Person> c{ queue };
-    Producer<Person> p{ queue };
+    Consumer<Person> consumer{ queue };
+    Producer<Person> producer{ queue };
 
-    std::thread producer1([&]() {
-
+    auto producerProcedure = [&]() {
         Logger::log(std::cout, "Producer");
-        p.produce();
+        producer.produce();
         Logger::log(std::cout, "Producer Done.");
-        });
+        };
 
-    std::thread producer2([&]() {
-
-        Logger::log(std::cout, "Producer");
-        p.produce();
-        Logger::log(std::cout, "Producer Done.");
-        });
-
-    std::thread producer3([&]() {
-
-        Logger::log(std::cout, "Producer");
-        p.produce();
-        Logger::log(std::cout, "Producer Done.");
-        });
-
-
-    std::thread consumer1([&]() {
-
+    auto consumerProcedure = [&]() {
         Logger::log(std::cout, "Consumer");
-        c.consume();
+        consumer.consume();
         Logger::log(std::cout, "Consumer Done.");
-        });
+        };
 
-    std::thread consumer2([&]() {
+    std::thread producer1(producerProcedure);
+    std::thread producer2(producerProcedure);
+    std::thread producer3(producerProcedure);
 
-        Logger::log(std::cout, "Consumer");
-        c.consume();
-        Logger::log(std::cout, "Consumer Done.");
-        });
-
-    std::thread consumer3([&]() {
-
-        Logger::log(std::cout, "Consumer");
-        c.consume();
-        Logger::log(std::cout, "Consumer Done.");
-        });
+    std::thread consumer1(consumerProcedure);
+    std::thread consumer2(consumerProcedure);
+    std::thread consumer3(consumerProcedure);
 
     producer1.join();
     producer2.join();
@@ -375,16 +332,6 @@ static void test_thread_safe_blocking_queue_06()
 }
 
 // ===========================================================================
-
-void test_producer_consumer_problem()
-{
-    //test_thread_safe_blocking_queue_01();   // just testing single push and pop
-    //test_thread_safe_blocking_queue_02();   // testing limited number of push and pop operations
-    //test_thread_safe_blocking_queue_03();   // passing BlockingQueue to separate consumer and producer objects
-    //test_thread_safe_blocking_queue_04();   // testing BlockingQueue with 6 threads
-    //test_thread_safe_blocking_queue_05();   // testing BlockingQueue with real objects
-    test_thread_safe_blocking_queue_06();  // testing BlockingQueue with 6 threads and Person objects
-}
 
 // ===========================================================================
 // End-of-File

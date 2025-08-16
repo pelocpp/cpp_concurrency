@@ -42,7 +42,22 @@ Ein `thread_local`-Objekt kann lokal oder global deklariert werden.
 In beiden Fällen ist seine Initialisierung an einen Thread gebunden,
 und die Speicherung erfolgt im *Thread Local Storage*.
 
-Jeder Thread, der dieses Objekt verwendet, erstellt eine Kopie davon.
+Jeder Thread, der dieses Objekt verwendet, besitzt eine eigene Instanz des originalen Objekts.
+
+---
+
+Der Begriff des thread-lokalen Speichers ist ein Feature, 
+der sich auf Daten bezieht, die scheinbar global oder statisch gespeichert sind (aus Sicht der sie verwendenden Funktionen),
+die tatsächlich aber nur in Gestalt einer Kopie jeweils einmal pro Thread vorhanden sind.
+
+Das Feature ergänzt folgende bestehenden Optionen:
+
+  * *automatisch*: Existiert während eines Blocks oder einer Funktion (Schlüsselwort `auto`).
+  * *statisch*: Existiert für die gesamte Programmdauer (Schlüsselwort `static` / File-Scope).
+  * *global*: Existiert für die gesamte Programmdauer.
+  * *dynamisch*: Existiert auf dem Heap in zeitlicher Existenz zwischen Allokation und Freigabe (mit Hilfe der Operatoren `new` und `delete`).
+
+Threadlokale Daten werden bei der Thread-Erstellung erstellt und nach Beendigung des Threads gelöscht.
 
 ---
 
@@ -53,29 +68,36 @@ Jeder Thread, der dieses Objekt verwendet, erstellt eine Kopie davon.
 02: 
 03: thread_local int x{};
 04: 
-05: void function()
+05: static void function()
 06: {
 07:     thread_local int y{};
 08: 
-09:     std::lock_guard<std::mutex> guard{ mutex };
-10: 
-11:     std::println("TID:  {} ", std::this_thread::get_id());
-12:     std::println("  &x: {:#010x} ", reinterpret_cast<intptr_t>(&x));
-13:     std::println("  &y: {:#010x} ", reinterpret_cast<intptr_t>(&y));
-14: }
-15: 
-16: void test() {
-17: 
-18:     std::println("Main: {} ", std::this_thread::get_id());
-19:     std::println("  &x: {:#010x} ", reinterpret_cast<intptr_t>(&x));
+09:     {
+10:         std::lock_guard<std::mutex> guard{ mutex };
+11: 
+12:         x++;
+13:         y++;
+14: 
+15:         std::println("TID:  {} ", std::this_thread::get_id());
+16:         std::println("  &x: {:#010x} => {}", reinterpret_cast<intptr_t>(&x), x);
+17:         std::println("  &y: {:#010x} => {}", reinterpret_cast<intptr_t>(&y), y);
+18:     }
+19: }
 20: 
-21:     std::jthread worker1{ function };
-22:     function();
-23:     std::jthread worker2{ function };
-24:     function();
-25: }
+21: void test() {
+22: 
+23:     using namespace ThreadLocalStorage;
+24: 
+25:     std::println("Main: {} ", std::this_thread::get_id());
+26:     std::println("  &x: {:#010x} => {}", reinterpret_cast<intptr_t>(&x), x);
+27: 
+28:     function();
+29:     std::jthread worker1{ function };
+30:     function();
+31:     std::jthread worker2{ function };
+32:     function();
+33: }
 ```
-
 
 Ausgabe:
 
