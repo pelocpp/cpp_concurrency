@@ -12,6 +12,9 @@ extern void test_lock_free_programming();
 
 // https://www.youtube.com/watch?v=56Q4Ty4hfMM        Object Pool  // Multithreaded
 
+// https://preshing.com/20120612/an-introduction-to-lock-free-programming/
+// Guter Text
+
 int main()
 {
     test_lock_free_programming();
