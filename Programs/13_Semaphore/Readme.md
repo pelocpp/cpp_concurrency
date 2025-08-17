@@ -1,4 +1,4 @@
-#  Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore<>`
+# Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore<>`
 
 [Zurück](../../Readme.md)
 

@@ -75,6 +75,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "35_ParallelizingSTLAlgorith
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_ThreadLocalStorage", "Programs\15_Thread_Local_Storage\15_Thread_Local_Storage.vcxproj", "{A1842123-61C8-4E6D-8E95-64052664ACFF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_LockFreeProgramming", "Programs\16_LockFreeProgramming\16_LockFreeProgramming.vcxproj", "{CC6779B2-EF18-48BA-99F3-AF9D5794C133}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -307,6 +309,14 @@ Global
 		{A1842123-61C8-4E6D-8E95-64052664ACFF}.Release|x64.Build.0 = Release|x64
 		{A1842123-61C8-4E6D-8E95-64052664ACFF}.Release|x86.ActiveCfg = Release|Win32
 		{A1842123-61C8-4E6D-8E95-64052664ACFF}.Release|x86.Build.0 = Release|Win32
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Debug|x64.ActiveCfg = Debug|x64
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Debug|x64.Build.0 = Debug|x64
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Debug|x86.ActiveCfg = Debug|Win32
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Debug|x86.Build.0 = Debug|Win32
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Release|x64.ActiveCfg = Release|x64
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Release|x64.Build.0 = Release|x64
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Release|x86.ActiveCfg = Release|Win32
+		{CC6779B2-EF18-48BA-99F3-AF9D5794C133}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
