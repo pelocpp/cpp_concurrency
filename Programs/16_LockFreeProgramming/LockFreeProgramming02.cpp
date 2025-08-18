@@ -2,72 +2,114 @@
 // LockFreeProgramming02.cpp // Lock-Free Programming
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
+
 #include <atomic>
-#include <print>
+#include <thread>
 
-//#include <print>
-//#include <thread>
+namespace LockFreeProgrammingIncrementDecrement {
 
-namespace LockFreeProgramming {
+#ifdef _DEBUG
+    static constexpr size_t NumIterations = 10'000'000;     // debug
+#else
+    static constexpr size_t NumIterations = 10'000'000;     // release
+#endif
 
-    static void test_lock_free_programming_03()
+    static void test_lock_free_programming_01()
     {
-        std::atomic<int> value{ 123 };
+        std::atomic<long> value{};
 
-        int expectedValue = 123;
+        Logger::log(std::cout, "std::atomic: before: ", value.load());
 
-        std::println("Previous expected value: {}", expectedValue);
+        ScopedTimer watch{};
 
-        bool b = value.compare_exchange_weak(expectedValue, 456);
+        std::jthread t1 { 
+            [&]() {
+                for (size_t n{}; n != NumIterations; ++n) {
+                    ++value;
+                }
+            }
+        };
 
-        std::println("Return Value:            {}", b);
-        std::println("Current expected Value:  {}", expectedValue);
-        std::println("Current Value:           {}", value.load());
+        std::jthread t2{
+        [&]() {
+            for (size_t n{}; n != NumIterations; ++n) {
+                --value;
+            }
+            }
+        };
+
+        t1.join();
+        t2.join();
+
+        Logger::log(std::cout, "std::atomic: after: ", value.load());
     }
 
-    //std::atomic<size_t> count;
-    //… on the threads …
-    //    size_t c = count.load(std::memory_order_relaxed);
-    //while (!count.compare_exchange_strong(c, c + 1,
-    //    std::memory_order_relaxed, std::memory_order_relaxed)) {
-    //}
+    // =======================================================================
 
-    void increment(std::atomic<size_t> count)
+    template <typename T>
+    static void increment(std::atomic<T>& count)
     {
-        size_t value = count.load(std::memory_order_relaxed);
+        T value{ count.load(std::memory_order_relaxed) };
 
         while (!count.compare_exchange_weak(
             value,
             value + 1,
-            std::memory_order_relaxed, 
-            std::memory_order_relaxed)) 
+            std::memory_order_release,
+            std::memory_order_relaxed))
         {
         }
     }
 
-
-
-
-    static void test_lock_free_programming_04()
+    template <typename T>
+    static void decrement(std::atomic<T>& count)
     {
-        std::atomic<int> value{ 123 };
+        T value{ count.load(std::memory_order_relaxed) };
 
-        int expectedValue = 124;
+        while (!count.compare_exchange_weak(
+            value,
+            value - 1,
+            std::memory_order_release,
+            std::memory_order_relaxed))
+        {
+        }
+    }
 
-        std::println("Previous expected value: {}", expectedValue);
+    static void test_lock_free_programming_02()
+    {
+        std::atomic<long> value{};
 
-        bool b = value.compare_exchange_weak(expectedValue, 456);
+        Logger::log(std::cout, "compare_exchange_weak: before: ", value.load());
 
-        std::println("Return Value:            {}", b);
-        std::println("Current expected Value:  {}", expectedValue);
-        std::println("Current Value:           {}", value.load());
-        std::println();
+        ScopedTimer watch{};
+
+        std::jthread t1{
+            [&]() mutable {
+                for (size_t n{}; n != NumIterations; ++n) {
+                    increment(value);
+                }
+            }
+        };
+
+        std::jthread t2{
+        [&]() mutable {
+            for (size_t n{}; n != NumIterations; ++n) {
+                decrement(value);
+            }
+            }
+        };
+
+        t1.join();
+        t2.join();
+
+        Logger::log(std::cout, "compare_exchange_weak: after: ", value.load());
     }
 }
 
-void test_lock_free_programming() {
+void test_lock_free_programming_increment_decrement() {
 
-    using namespace LockFreeProgramming;
+    using namespace LockFreeProgrammingIncrementDecrement;
 
     test_lock_free_programming_01();
     test_lock_free_programming_02();

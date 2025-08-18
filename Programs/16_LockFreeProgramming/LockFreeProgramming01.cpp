@@ -5,9 +5,6 @@
 #include <atomic>
 #include <print>
 
-//#include <print>
-//#include <thread>
-
 namespace LockFreeProgramming {
 
     static void test_lock_free_programming_01()

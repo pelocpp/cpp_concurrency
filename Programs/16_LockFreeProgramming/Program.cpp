@@ -2,7 +2,8 @@
 // Program.cpp // Lock-Free Programming
 // ===========================================================================
 
-extern void test_lock_free_programming();
+extern void test_lock_free_programming_increment();
+extern void test_lock_free_programming_increment_decrement();
 
 // TO BE DONE:
 
@@ -17,7 +18,8 @@ extern void test_lock_free_programming();
 
 int main()
 {
-    test_lock_free_programming();
+   // test_lock_free_programming_increment();
+    test_lock_free_programming_increment_decrement();
 
     return 0;
 }
