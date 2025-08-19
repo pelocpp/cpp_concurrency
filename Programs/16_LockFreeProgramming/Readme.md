@@ -1,4 +1,4 @@
-# LockFreeProgramming
+# Lock-Free Programming
 
 [Zurück](../../Readme.md)
 
