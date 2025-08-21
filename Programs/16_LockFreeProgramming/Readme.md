@@ -7,8 +7,10 @@
 ## Inhalt
 
   * [Verwendete Werkzeuge](#link1)
-  * [Verwendete Werkzeuge](#link2)
-  * [Literaturhinweise](#link3)
+  * [CAS / Compare-and-Swap-Idiom](#link2)
+  * [Zwei Beispiele](#link3)
+  * [Ein Vergleich: Atomares Inkrement versus CAS](#link4)
+  * [Literaturhinweise](#link5)
 
 ---
 
@@ -22,13 +24,14 @@
 
 #### Quellcode
 
-[*LockFreeProgramming.cpp*](LockFreeProgramming.cpp).
+[*LockFreeProgramming01.cpp*](LockFreeProgramming01.cpp)<br />
+[*LockFreeProgramming02.cpp*](LockFreeProgramming02.cpp).
 
 ---
 
 ## CAS / Compare-and-Swap-Idiom <a name="link2"></a>
 
-Die beiden Methoden `compare_exchange_weak` / `compare_exchange_strong` (auch als CAS / Compare-and-Swap-Idiom bezeichnet)
+Die beiden Methoden `compare_exchange_weak` / `compare_exchange_strong` (auch als *CAS* / *Compare-and-Swap*-Idiom bezeichnet)
 führen eine atomare Anweisung aus, die zur Synchronisierung verwendet wird.
 
 Sie vergleicht den Inhalt eines Speicherorts mit einem gegebenen (dem vorherigen) Wert und ändert den Inhalt dieses Speicherorts
@@ -36,14 +39,14 @@ nur bei Übereinstimmung auf einen neuen gegebenen Wert.
 
 Dies geschieht als einzelne atomare Operation.
 
-Die Atomizität garantiert, dass der neue Wert auf Basis aktueller Informationen berechnet wird;
-wäre der Wert in der Zwischenzeit von einem anderen Thread aktualisiert worden, würde der Schreibvorgang fehlschlagen.
+Die Atomizität garantiert, dass der neue Wert auf Basis aktueller Informationen berechnet wird.
+Wäre der Wert in der Zwischenzeit von einem anderen Thread aktualisiert worden, würde der Schreibvorgang fehlschlagen.
 
 Das Ergebnis der Operation, gegeben durch einen boolesche Rückgabewert, gibt an, ob die Ersetzung durchgeführt wurde oder nicht.
 
 ---
 
-## Beispiele <a name="link2"></a>
+## Zwei Beispiele <a name="link3"></a>
 
 ### Erstes Beispiel: Erfolgreiche Ausführung
 
@@ -105,7 +108,38 @@ Current Value:           123
 
 ---
 
-## Literaturhinweise <a name="link3"></a>
+## Ein Vergleich: Atomares Inkrement versus CAS <a name="link4"></a>
+
+Die atomare Inkrement-Operation kann man auch mit einer CAS-Anweisung formulieren.
+Die folgenden beiden Code-Fragment sind bzgl. ihrer Funktionalität identisch:
+
+```cpp
+std::atomic<long> count{};
+...
+++count;
+```
+
+und 
+
+
+```cpp
+std::atomic<long> count{};
+...
+T value{ count.load(std::memory_order_relaxed) };
+
+while (!count.compare_exchange_weak(
+    value,
+    value + 1,
+    std::memory_order_release,
+    std::memory_order_relaxed))
+{
+}
+```
+
+
+---
+
+## Literaturhinweise <a name="link5"></a>
 
 ---
 
