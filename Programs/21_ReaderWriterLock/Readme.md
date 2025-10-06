@@ -1,4 +1,4 @@
-# Reader-Writer Lock<br />(Klassen `std::shared_mutex` und `std::shared_lock`)
+# Reader-Writer Lock:<br />Klassen `std::shared_mutex` und `std::shared_lock`
 
 [Zurück](../../Readme.md)
 
@@ -388,7 +388,7 @@ korrekt ausgeführt wird:
 
 Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen  aus dem Aufsatz
 
-[Daily bit(e) of C++ | std::shared_mutex](https://medium.com/@simontoth/daily-bit-e-of-c-std-shared-mutex-ebe7477a7589) von Šimon Tóth.
+[Daily bit(e) of C++ | std::shared_mutex](https://medium.com/@simontoth/daily-bit-e-of-c-std-shared-mutex-ebe7477a7589) von Simon Toth.
 
 ---
 

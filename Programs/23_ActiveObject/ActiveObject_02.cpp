@@ -2,14 +2,17 @@
 // ActiveObject_02.cpp // Active Object Pattern
 // ===========================================================================
 
-#include <iostream>
-#include <thread>
+// #include <iostream>
+
+#include "../Logger/Logger.h"
+
+#include <algorithm>
+#include <deque>
 #include <future>
 #include <mutex>
-#include <deque>
-#include <vector>
-#include <algorithm>
+#include <thread>
 #include <tuple>
+#include <vector>
 
 // ===========================================================================
 // 
@@ -34,7 +37,7 @@ namespace ActivatorObject02
 
         std::tuple<size_t, size_t, size_t> operator() () {
 
-            std::cout << "   calculating range [" << m_a << "," << m_b << "]" << std::endl;
+            Logger::log(std::cout, "   calculating range [ ", m_a, ",", m_b, "]");
 
             size_t sum{};
             for (size_t i{ m_a }; i != m_b; ++i) {
@@ -61,7 +64,7 @@ namespace ActivatorObject02
 
             std::future<std::tuple<size_t, size_t, size_t>> future{ task.get_future() };
 
-            std::cout << "   queueing task [" << a << "," << b << "]" << std::endl;
+            Logger::log(std::cout, "   queueing task [", a, ",", b, "]");
 
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };
@@ -105,7 +108,7 @@ namespace ActivatorObject02
         }
     };
 
-    std::vector<std::future<std::tuple<size_t, size_t, size_t>>>
+    static std::vector<std::future<std::tuple<size_t, size_t, size_t>>>
     enqueueTasksSynchronously(ActiveObject& activeObject, size_t start, size_t length, size_t count) {
 
         std::vector<std::future<std::tuple<size_t, size_t, size_t>>> futures{};
@@ -129,12 +132,12 @@ void test_active_object_02()
 {
     using namespace ActivatorObject02;
 
-    std::cout << "Active Object Demo (Synchron)" << std::endl;
+    Logger::log(std::cout, "Active Object Demo (Synchron)");
 
     ActiveObject activeObject{};
 
     // enqueue work concurrently
-    std::cout << "Enqueue tasks synchronously ..." << std::endl;
+    Logger::log(std::cout, "Enqueue tasks synchronously ...");
 
     // range from 1 to 3000
     std::vector<std::future<std::tuple<size_t, size_t, size_t>>> futures {
@@ -142,7 +145,7 @@ void test_active_object_02()
     };
 
     // activate the active object
-    std::cout << "Run ..." << std::endl;                     
+    Logger::log(std::cout, "Run ...");
     activeObject.run();
 
     // get the results from the futures
@@ -166,7 +169,7 @@ void test_active_object_02()
         }
     );
 
-    std::cout << "TotalSum: " << totalSum << std::endl;  // expecting 4'501'500
+    Logger::log(std::cout, "TotalSum: ", totalSum);   // expecting 4'501'500
 }
 
 // ===========================================================================

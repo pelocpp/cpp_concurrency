@@ -2,10 +2,12 @@
 // ActiveObject_03.cpp // Active Object Pattern
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <algorithm>
 #include <deque>
 #include <future>
-#include <iostream>
+// #include <iostream>
 #include <mutex>
 #include <string>
 #include <thread>
@@ -35,7 +37,7 @@ namespace ActivatorObject03
 
         std::tuple<size_t, size_t, size_t> operator() () {
 
-            std::cout << "   calculating range [" << m_a << "," << m_b << "]" << std::endl;
+            Logger::log(std::cout, "   calculating range [ ", m_a, ",", m_b, "]");
 
             size_t sum{};
             for (size_t i{ m_a }; i != m_b; ++i) {
@@ -62,9 +64,7 @@ namespace ActivatorObject03
 
             auto future = task.get_future();
 
-            // std::cout << "   queueing task [" << a << "," << b << "]" << std::endl;
-            std::string s{ "   queueing task [" + std::to_string(a) + "," + std::to_string(b) + "]\n" };
-            std::cout << s;
+            Logger::log(std::cout, "   queueing task [", a, ",", b, "]");
 
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };
@@ -134,12 +134,12 @@ void test_active_object_03()
 {
     using namespace ActivatorObject03;
 
-    std::cout << "Active Object Demo (Asynchron)" << std::endl;
+    Logger::log(std::cout, "Active Object Demo (Asynchron)");
 
     ActiveObject activeObject{};
 
     // enqueue work concurrently
-    std::cout << "Enqueue tasks asynchronously ..." << std::endl;
+    Logger::log(std::cout, "Enqueue tasks asynchronously ...");
 
     auto client1 { enqueueTasksAsynchronously(activeObject,    1, 100, 10) }; // range from 1    to 1000
     auto client2 { enqueueTasksAsynchronously(activeObject, 1001, 100, 10) }; // range from 1000 to 2000
@@ -178,7 +178,7 @@ void test_active_object_03()
     );
 
     // activate the active object
-    std::cout << "Run ..." << std::endl;
+    Logger::log(std::cout, "Run ...");
     activeObject.run();
 
     // get the results from the futures
@@ -202,7 +202,7 @@ void test_active_object_03()
         }
     );
 
-    std::cout << "TotalSum: " << totalSum << std::endl;  // expecting 4'501'500
+    Logger::log(std::cout, "TotalSum: ", totalSum);   // expecting 4'501'500
 }
 
 // ===========================================================================

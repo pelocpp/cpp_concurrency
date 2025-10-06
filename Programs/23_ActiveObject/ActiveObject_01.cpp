@@ -2,9 +2,10 @@
 // ActiveObject_01.cpp // Active Object Pattern
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <chrono>
 #include <future>
-#include <iostream>
 #include <mutex>
 #include <thread>
 #include <tuple>
@@ -28,7 +29,7 @@ namespace ActivatorObject01
 
         auto operator() () {
 
-            std::cout << "adding " << m_a << " and " << m_b << " ... " << std::endl;
+            Logger::log(std::cout, "adding ", m_a, " and ", m_b, " ... ");
 
             auto result{ std::make_tuple(m_a, m_b, m_a + m_b) };
 
@@ -89,7 +90,7 @@ void test_active_object_01()
 {
     using namespace ActivatorObject01;
 
-    std::cout << "Active Object - Simple Approach" << std::endl;
+    Logger::log(std::cout, "Active Object - Simple Approach");
 
     ActiveObject activeObject;
 
@@ -104,8 +105,8 @@ void test_active_object_01()
     // get the result from the future
     auto [first, second, sum] = future.get();
 
-    std::cout << first << " + " << second << " = " << sum << std::endl;
-    std::cout << "Done." << std::endl;
+    Logger::log(std::cout, first, " + ", second, " = ", sum);
+    Logger::log(std::cout, "Done.");
 }
 
 // ===========================================================================

@@ -2,7 +2,7 @@
 // ConceptualExample.cpp // Active Object Pattern
 // ===========================================================================
 
-#include <iostream>
+// #include <iostream>
 #include <functional>
 #include <thread>
 #include <queue>
@@ -57,12 +57,15 @@ public:
 
     Operation take()
     {
-        std::unique_lock<std::mutex> guard{ m_mutex };
+        Operation op;
 
-        m_empty.wait(guard, [&] { return ! m_queue.empty(); });
+        {
+            std::unique_lock<std::mutex> guard{ m_mutex };
+            m_empty.wait(guard, [&] { return !m_queue.empty(); });
+            op = m_queue.front();
+            m_queue.pop();
+        }
 
-        Operation op = m_queue.front();
-        m_queue.pop();
         return op;
     }
 
@@ -98,6 +101,8 @@ public:
     // public interface
     void run()
     {
+        Logger::log(std::cout, "> run");
+
         while (! m_done) 
         {
             Operation operation = m_dispatchQueue.take();
@@ -106,6 +111,8 @@ public:
 
             operation();
         }
+
+        Logger::log(std::cout, "< run");
     }
 
     // This is part of the public interface of this class.
@@ -117,12 +124,10 @@ public:
 
         // Actual code to be executed is stored in a lambda
         // and pushed to the 'activation list' queue
-        auto task{ [this] () {
+        m_dispatchQueue.put({ [this]() {
             Logger::log(std::cout, "doSomething");
             m_value = 1.0; }
-        };
-
-        m_dispatchQueue.put(task);
+        });
     }
 
     void doSomethingElse()
@@ -136,7 +141,7 @@ public:
     }
 };
 
-static void test_conceptual_example_00()
+static void test_conceptual_example_01()
 {
     Logger::log(std::cout, "OriginalClass Object");
 
@@ -147,11 +152,11 @@ static void test_conceptual_example_00()
     Logger::log(std::cout, "Done.");
 }
 
-static void test_conceptual_example_01()
+static void test_conceptual_example_02()
 {
     Logger::log(std::cout, "Active Object");
 
-    ActiveObject activeObject;
+    ActiveObject activeObject{};
     activeObject.doSomething();
     activeObject.doSomethingElse();
 
@@ -160,8 +165,8 @@ static void test_conceptual_example_01()
 
 void test_conceptual_example()
 {
-    test_conceptual_example_00();
     test_conceptual_example_01();
+    test_conceptual_example_02();
 }
 
 // ===========================================================================

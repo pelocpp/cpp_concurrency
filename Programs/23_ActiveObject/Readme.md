@@ -50,8 +50,8 @@ In einem Satz:
 &bdquo;*Active Object* ist ein *Concurrency Pattern*, bei dem man versucht, den Aufruf einer Methode von ihrer Ausführung zu trennen.&rdquo;
 
 Das *Active Object* entkoppelt den Methodenaufruf von der Methodenausführung.
-Der Methodenaufruf wird im Kontext des Client-Threads ausgeführt,
-die Methodenausführung selbst in einem Thread des *Active Objects*.
+Der Methodenaufruf wird im Kontext des Client-Threads angestoßen,
+die Ausführung selbst in einem Thread des *Active Objects* durchgeführt.
 
 Das *Active Object* verwaltet (mindestens) einen Thread (Kontrollthread) und eine Liste (Warteschlange)
 von Objekten, die einen Methodenaufruf beschreiben.
@@ -124,7 +124,7 @@ Das konzeptionelle Beispiel besitzt &ndash; in Folge seiner vereinfachenden Dars
   * Client (Proxy) und *Active Object* werden durch dasselbe Objekt dargestellt.
   * Die Methodenaufrufe liefern keinen Ergebniswert zurück.
 
-[Quellcode](../ConceptualExample.cpp)
+[Quellcode](./ConceptualExample.cpp)
 
 ---
 
@@ -153,9 +153,9 @@ An dieser Stelle kommen nun viele Teilaufgaben (*Tasks*) und ein *Active Object*
 
 Das Beispiel liegt in 2 Versionen vor:
 
-[Client in synchroner Ausführung](../ActiveObject_02.cpp)
+[Client in synchroner Ausführung](./ActiveObject_02.cpp)
 
-[Client in asynchroner Ausführung](../ActiveObject_03.cpp)
+[Client in asynchroner Ausführung](./ActiveObject_03.cpp)
 
 Das Beispiel gewinnt dann an Charme, wenn die vielen Tasks (Teilaufgaben) an das *Active Object* von unterschiedlichen
 Threads aus initiiert werden. Man vergleiche zu diesem Zweck die Ausgaben in der Konsole.
