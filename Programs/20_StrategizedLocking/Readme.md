@@ -218,7 +218,7 @@ das *Strategized Locking*&ndash;Entwurfsmuster:
 
 ## Vier Anwendungsbeispiele zur Klasse `ThreadsafeStack<T>` <a name="link9"></a>
 
-### Zeitvergleich: Klasse `NoLock` versus `ExclusiveLock` 
+### 1. Zeitvergleich: Klasse `NoLock` versus `ExclusiveLock` 
 
 Wir betrachten eine Instanz der Klasse `ThreadsafeStack<size_t>`.
 
@@ -250,7 +250,7 @@ Verwendung der Klasse `ExclusiveLock`:
 [1]: Done:  39.0376 msecs.
 ```
 
-### Anwendungsvergleich: Klasse `RecursiveLock` versus `ExclusiveLock` 
+### 2. Anwendungsvergleich: Klasse `RecursiveLock` versus `ExclusiveLock` 
 
 Wir simulieren einen Vergleich der beiden Klassen `RecursiveLock` und `ExclusiveLock`.
 
@@ -277,7 +277,7 @@ void pop(T& value)
 
 Welche Beobachtungen machen Sie bei der Ausführung des Programms?
 
-### Anwendungsbeispiel: Primzahlensuche mit einem Thread
+### 3. Anwendungsbeispiel: Primzahlensuche mit einem Thread
 
 Wir führen das folgende Beispiel aus:
 
@@ -303,7 +303,7 @@ Es ist offensichtlich, welche der beiden Klassen `RecursiveLock` bzw. `NoLock`
 zum Einsatz kommen sollte und welche nicht:
 
 
-### Anwendungsbeispiel: Primzahlensuche mit mehreren Threads
+### 4. Anwendungsbeispiel: Primzahlensuche mit mehreren Threads
 
 Nun betrachten wir das folgende Beispiel:
 
