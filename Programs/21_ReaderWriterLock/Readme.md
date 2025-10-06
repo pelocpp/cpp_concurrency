@@ -4,7 +4,18 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Beteiligte Klassen und Objekte](#link3)
+  * [Erstes Beispiel](#link4)
+  * [Zweites Beispiel](#link5)
+  * [Literaturhinweise](#link6)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
   * Klasse `std::shared_mutex`
 
@@ -15,7 +26,7 @@
 
 ---
 
-### Allgemeines
+## Allgemeines <a name="link2"></a>
 
 Das *Reader-Writer Lock*&ndash;Entwurfsmuster dient der
 Synchronisation mehrerer Threads auf eine gemeinsam genutzte Ressource.
@@ -25,7 +36,9 @@ dass das Pattern entweder den Zugriff einem einzelnen Schreiber
 oder mehreren Lesern ermöglicht, wodurch es auf diese Weise zu
 einem besseren Durchsatz im Programmablauf kommt.
 
-### Beteiligte Klassen und Objekte
+---
+
+## Beteiligte Klassen und Objekte <a name="link3"></a>
 
 Um das *Reader-Writer Lock*&ndash;Entwurfsmuster umzusetzen,
 werden folgende Klassen und Objekte benötigt:
@@ -40,7 +53,125 @@ werden folgende Klassen und Objekte benötigt:
     `std::shared_lock<std::shared_mutex> lock{ m_mutex };`
 
 
-### Beispiel
+
+## Erstes Beispiel <a name="link4"></a>
+
+Wir betrachten das klassische Beispiel eines Datenproviders:
+Ein Produzent erzeugt Daten (stark vereinfacht: es wird eine Variable hochgezählt).
+Mehrere Konsumenten lesen den aktuellen Wert dieser Variablen.
+
+Natürlich müssen der Schreib- und Lesevorgang vor dem konkurrierenden Zugriff mehrerer Threads geschützt werden.
+
+Das Beispiel kann in zwei Modi ausgeführt werden:
+
+  * Klassische Vorgehensweise: Es kommt die Mutex-Klasse `std::mutex` zum Einsatz.
+  * Optimierte Vorgehensweise: Es kommt die Mutex-Klasse `std::shared_mutex` zum Einsatz.
+
+```cpp
+01: class DataContainer
+02: {
+03: private:
+04:     size_t m_data;
+05: 
+06:     mutable std::mutex m_mutex;
+07:     mutable std::shared_mutex m_shared_mutex;
+08: 
+09: public:
+10:     DataContainer() : m_data{} {}
+11: 
+12:     size_t getValue() const { return m_data; }
+13: 
+14:     void write() {
+15: 
+16:         Logger::log(std::cout, "Start Writing ...");
+17: 
+18:         for (size_t i{}; i != NumIterations; ++i) {
+19: 
+20:             if constexpr (LockingMode == RegularLocking) {
+21: 
+22:                 std::lock_guard guard{ m_mutex };
+23:                 ++m_data;
+24:             }
+25: 
+26:             if constexpr (LockingMode == SharedLocking) {
+27: 
+28:                 std::unique_lock guard{ m_shared_mutex };
+29:                 ++m_data;
+30:             }
+31:         }
+32: 
+33:         Logger::log(std::cout, "Writing Done.");
+34:     }
+35: 
+36:     void read() {
+37: 
+38:         Logger::log(std::cout, "Start Reading ...");
+39: 
+40:         size_t copy{};
+41: 
+42:         while (copy < NumIterations) {
+43: 
+44:             if constexpr (LockingMode == RegularLocking) {
+45: 
+46:                 std::lock_guard guard{ m_mutex };
+47:                 copy = m_data;
+48:             }
+49: 
+50:             if constexpr (LockingMode == SharedLocking) {
+51: 
+52:                 std::shared_lock<std::shared_mutex> guard{ m_shared_mutex };
+53:                 copy = m_data;
+54:             }
+55:         }
+56: 
+57:         Logger::log(std::cout, "Reading Done.");
+58:     }
+59: };
+```
+
+Die Ausführungszeiten des Testrahmens vaiieren stark auf meinem Rechner.
+Es lassen gemittelt in etwa folgende Ausführungszeiten erkennen:
+
+Mit Klasse `std::mutex`:
+
+```
+[1]:    Start
+[2]:    Start Reading ...
+[3]:    Start Reading ...
+[4]:    Start Reading ...
+[5]:    Start Writing ...
+[6]:    Start Reading ...
+[5]:    Writing Done.
+[3]:    Reading Done.
+[4]:    Reading Done.
+[6]:    Reading Done.
+[2]:    Reading Done.
+[1]:    Value: 10000000
+[1]:    Done.
+[1]:    Elapsed time: 3760 [milliseconds]
+```
+
+Mit Klasse `std::shared_mutex`:
+
+```
+[1]:    Start
+[2]:    Start Writing ...
+[3]:    Start Reading ...
+[4]:    Start Reading ...
+[5]:    Start Reading ...
+[6]:    Start Reading ...
+[2]:    Writing Done.
+[4]:    Reading Done.
+[6]:    Reading Done.
+[5]:    Reading Done.
+[3]:    Reading Done.
+[1]:    Value: 10000000
+[1]:    Done.
+[1]:    Elapsed time: 2112 [milliseconds]
+```
+
+
+## Zweites Beispiel <a name="link5"></a>
 
 Wir betrachten ein Beispiel, dass ein Feld mit Daten befüllt.
 Der Befüller, also der Schreiber, benötigt exklusiven Zugriff auf das Feld.
@@ -253,7 +384,7 @@ korrekt ausgeführt wird:
 
 ---
 
-## Literaturhinweise
+## Literaturhinweise <a name="link6"></a>
 
 Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen  aus dem Aufsatz
 
@@ -264,4 +395,3 @@ Die Anregungen zu diesen Erläuterungen stammen im Wesentlichen  aus dem Aufsatz
 [Zurück](../../Readme.md)
 
 ---
-

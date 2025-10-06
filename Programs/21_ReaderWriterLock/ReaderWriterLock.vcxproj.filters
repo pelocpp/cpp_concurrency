@@ -7,7 +7,10 @@
     <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ReaderWriterLock.cpp">
+    <ClCompile Include="ReaderWriterLock02.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ReaderWriterLock01.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

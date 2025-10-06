@@ -2,11 +2,13 @@
 // Program.cpp // Reader Writer Lock
 // ===========================================================================
 
-extern void test_reader_writer_lock();
+extern void test_reader_writer_lock_01();
+extern void test_reader_writer_lock_02();
 
 int main()
 {
-    test_reader_writer_lock();
+    test_reader_writer_lock_01();
+ //   test_reader_writer_lock_02();
     return 0;
 }
 

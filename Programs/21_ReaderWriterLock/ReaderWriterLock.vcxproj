@@ -132,7 +132,8 @@
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="ReaderWriterLock.cpp" />
+    <ClCompile Include="ReaderWriterLock01.cpp" />
+    <ClCompile Include="ReaderWriterLock02.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />

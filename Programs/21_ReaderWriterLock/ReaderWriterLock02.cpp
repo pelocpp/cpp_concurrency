@@ -1,3 +1,7 @@
+// ===========================================================================
+// ReaderWriterLock02.cpp // Reader Writer Lock
+// ===========================================================================
+
 #include <iostream>
 #include <string>
 #include <thread>
@@ -140,9 +144,13 @@ namespace Reader_Writer
         thread.request_stop();
     }
 
-void test_reader_writer_lock()
+void test_reader_writer_lock_02()
 {
     using namespace Reader_Writer;
 
     test_reader_writer_lock_01();
 }
+
+// ===========================================================================
+// End-of-File
+// ===========================================================================
