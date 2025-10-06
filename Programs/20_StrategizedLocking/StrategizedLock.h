@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include <mutex>
-
 #include "ILock.h"
+
+#include <mutex>
 
 namespace Concurrency_StrategizedLock
 {
@@ -16,24 +16,15 @@ namespace Concurrency_StrategizedLock
         const ILock& m_lock;
 
     public:
-        StrategizedLocking(const ILock&);
-        ~StrategizedLocking();
-    };
-
-    struct NullObjectMutex
-    {
-        void lock();
-        void unlock();
+        StrategizedLocking(const ILock& lock) : m_lock{ lock } { m_lock.lock(); }
+        ~StrategizedLocking() { m_lock.unlock(); };
     };
 
     class NoLock : public ILock
     {
-    private:
-        mutable NullObjectMutex m_nullMutex;
-
     public:
-        void lock() const override;
-        void unlock() const override;
+        void lock() const override {};
+        void unlock() const override {};
     };
 
     class ExclusiveLock : public ILock
@@ -42,8 +33,8 @@ namespace Concurrency_StrategizedLock
         mutable std::mutex m_mutex;
 
     public:
-        void lock() const override;
-        void unlock() const override;
+        void lock() const override { m_mutex.lock(); };
+        void unlock() const override { m_mutex.unlock(); };
     };
 
     class RecursiveLock : public ILock
@@ -52,8 +43,8 @@ namespace Concurrency_StrategizedLock
         mutable std::recursive_mutex m_recursive_mutex;
 
     public:
-        void lock() const override;
-        void unlock() const override;
+        void lock() const override { m_recursive_mutex.lock(); };
+        void unlock() const override { m_recursive_mutex.unlock(); };
     };
 }
 

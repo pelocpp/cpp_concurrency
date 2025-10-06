@@ -51,8 +51,8 @@ Hierbei können sich allerdings Unterschiede in der Notwendigkeit des Datenschutz
 
 Laufen die kritischen Routinen (Abschnitte) in einer *Single-Threaded*-Umgebung,
 ist ein Datenschutz überhaupt nicht erforderlich und es entsteht ein Performanzproblem,
-wenn laufzeitintensive Synchronisationsmechanismen zum Einsatz kommen,
-die hier unnötig sind.
+wenn laufzeitintensive Synchronisationsmechanismen zum Einsatz kämen,
+die hier unnötig wären.
 
 Werden die kritischen Abschnitte hingegen im Kontext mehrerer Threads ausgeführt (*Multi-Threaded*-Umgebung),
 müssen diese geschützt werden.
@@ -128,48 +128,39 @@ eine Realisierung der `ILock`-Schnittstelle bereitstellt.
 
 ## Mögliche Realisierungen der `ILock`-Schnittstelle <a name="link7"></a>
 
-Wir betrachten zwei Realisierungen der `ILock`-Schnittstelle:
-
+Wir betrachten drei mögliche Realisierungen der `ILock`-Schnittstelle:
 
 ```cpp
-01: struct NullObjectMutex
+01: class NoLock : public ILock
 02: {
-03:     void lock() {}
-04:     void unlock() {}
-05: };
-06: 
-07: class NoLock : public ILock
-08: {
-09: private:
-10:     mutable NullObjectMutex m_nullMutex;
-11: 
-12: public:
-13:     void lock() const {
-14:         m_nullMutex.lock();
-15:     }
-16: 
-17:     void unlock() const {
-18:         m_nullMutex.unlock();
-19:     }
-20: };
-21: 
-22: class ExclusiveLock : public ILock
-23: {
-24: private:
-25:     mutable std::mutex m_mutex;
-26: 
-27: public:
-28:     void lock() const {
-29:         m_mutex.lock();
-30:     }
-31: 
-32:     void unlock() const  const {
-33:         m_mutex.unlock();
-34:     }
-35: };
+03: public:
+04:     void lock() const override {};
+05:     void unlock() const override {};
+06: };
+07: 
+08: class ExclusiveLock : public ILock
+09: {
+10: private:
+11:     mutable std::mutex m_mutex;
+12: 
+13: public:
+14:     void lock() const override { m_mutex.lock(); };
+15:     void unlock() const override { m_mutex.unlock(); };
+16: };
+17: 
+18: class RecursiveLock : public ILock
+19: {
+20: private:
+21:     mutable std::recursive_mutex m_recursive_mutex;
+22: 
+23: public:
+24:     void lock() const override { m_recursive_mutex.lock(); };
+25:     void unlock() const override { m_recursive_mutex.unlock(); };
+26: };
 ```
 
 [Ein Beispiel: Klasse `ThreadsafeStack<T>`](#link8)
+
 Betrachten wir eine Anpassung der Klasse `ThreadsafeStack<T>` an
 das *Strategized Locking*&ndash;Entwurfsmuster:
 
@@ -365,7 +356,6 @@ zum Einsatz kommen sollte.
 Welche Beobachtung können Sie machen, wenn die falsche Klasse verwendet wird?
 
 ---
-
 
 ## Literaturhinweise <a name="link10"></a>
 

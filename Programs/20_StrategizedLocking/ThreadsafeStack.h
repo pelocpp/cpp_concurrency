@@ -2,16 +2,16 @@
 // ThreadsafeStack.h
 // ===========================================================================
 
-// Adapted from Project "20_Threadsafe_Stack"
+// Adopted from Project "20_Threadsafe_Stack"
 
 #pragma once
+
+#include "StrategizedLock.h"
 
 #include <exception>
 #include <stack>
 #include <mutex>
 #include <optional>
-
-#include "StrategizedLock.h"
 
 using namespace Concurrency_StrategizedLock;
 
@@ -51,7 +51,7 @@ namespace Concurrency_ThreadsafeStack
         {
             StrategizedLocking guard{ m_lock };
 
-            //// in case of testing recursive lock 
+            // in case of testing recursive lock 
             //if (empty()) {
             //    std::cout << "Emtpy Stack !";
             //}

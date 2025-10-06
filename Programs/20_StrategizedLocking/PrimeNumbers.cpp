@@ -2,23 +2,27 @@
 // PrimeNumbers.cpp
 // ===========================================================================
 
-#include <iostream>
-#include <vector>
-#include <optional>
-#include <chrono>
-
-#include "ThreadsafeStack.h"
 #include "PrimeCalculator.h"
+#include "ThreadsafeStack.h"
 
 #include "StrategizedLock.h"
 
 #include "../Logger/Logger.h"
+#include "../Logger/ScopedTimer.h"
+
+#include <iostream>
+#include <optional>
+#include <vector>
+
+#ifdef _DEBUG
+static constexpr size_t MaxIterations = 10'000'000;     // debug
+#else
+static constexpr size_t MaxIterations = 10'000'000;     // release
+#endif
 
 namespace Globals
 {
     // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
-
-    constexpr size_t NumThreads = 8;
 
     constexpr size_t LowerLimit = 1;
     constexpr size_t UpperLimit = 10'000'000;
@@ -30,16 +34,14 @@ void test_strategized_locking_01()
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_StrategizedLock;
 
-    // NoLock lock;
-    ExclusiveLock lock;
+    NoLock lock;
+    // ExclusiveLock lock;
 
     ThreadsafeStack<size_t> stack{ lock };
 
-    const auto startTime{ std::chrono::high_resolution_clock::now() };
-
-    constexpr size_t MaxIterations = 1'000'000;
-
     Logger::log(std::cout, "Calling push ", MaxIterations, " times:");
+
+    ScopedTimer watch{};
 
     for (size_t i = 0; i != MaxIterations; ++i) {
         stack.push(i);
@@ -47,11 +49,6 @@ void test_strategized_locking_01()
         size_t value{};
         stack.pop(value);
     }
-
-    const auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
-
-    Logger::log(std::cout, "Done:  ", msecs, " msecs.");
 }
 
 void test_strategized_locking_02()
@@ -61,13 +58,12 @@ void test_strategized_locking_02()
 
     Logger::log(std::cout, "Testing RecursiveLock");
 
-    ExclusiveLock lock;  // crashes
-    // RecursiveLock lock;   // works
+    // ExclusiveLock lock;      // crashes // need to modify pop method, calling size or empty method
+    RecursiveLock lock;         // works
 
     ThreadsafeStack<size_t> stack{ lock };
 
-    // just want to test recursive lock - need to modify pop method, calling size or empty method
-
+    // just want to test recursive lock
     stack.push(123);
     size_t value{};
     stack.pop(value);
@@ -83,6 +79,7 @@ void test_strategized_locking_03()
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
+    // compare these two Lock objects // which one should be used in this example
     NoLock lock;
     // ExclusiveLock lock;
 
@@ -90,16 +87,12 @@ void test_strategized_locking_03()
 
     PrimeCalculator<size_t> calc{ primes, Globals::LowerLimit, Globals::UpperLimit + 1 };
 
-    const auto startTime{ std::chrono::high_resolution_clock::now() };
+    ScopedTimer watch{};
 
-    std::thread calculator(calc);
+    std::thread calculator{ calc };
     calculator.join();
 
-    const auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
-
     Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
-    Logger::log(std::cout, "Done:  ", msecs, " msecs.");
 }
 
 void test_strategized_locking_04()
@@ -110,22 +103,25 @@ void test_strategized_locking_04()
 
     Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
 
-    NoLock lock;   // crashes sporadically
-    // ExclusiveLock lock;
+    // NoLock lock;   // crashes sporadically // Access Violation // 0xc0000005 
+    ExclusiveLock lock;
 
     ThreadsafeStack<size_t> primes{ lock };
 
-    std::vector<std::thread> threads;
-    threads.reserve(Globals::NumThreads);
+    unsigned int NumThreads = std::thread::hardware_concurrency();
+    Logger::log(std::cout, "Number of concurrent threads currently supported: ", NumThreads, ':');
 
-    size_t range = (Globals::UpperLimit - Globals::LowerLimit) / Globals::NumThreads;
+    std::vector<std::thread> threads;
+    threads.reserve(NumThreads);
+
+    size_t range = (Globals::UpperLimit - Globals::LowerLimit) / NumThreads;
     size_t start = Globals::LowerLimit;
     size_t end = start + range;
 
-    const auto startTime{ std::chrono::high_resolution_clock::now() };
+    ScopedTimer watch{};
 
     // setup threads
-    for (size_t i{}; i != Globals::NumThreads - 1; ++i) {
+    for (size_t i{}; i != NumThreads - 1; ++i) {
 
         PrimeCalculator<size_t> calc{ primes, start, end };
         threads.emplace_back(calc);
@@ -140,15 +136,11 @@ void test_strategized_locking_04()
     threads.emplace_back(calc);
 
     // wait for end of all threads
-    for (size_t i{}; i != Globals::NumThreads; ++i) {
+    for (size_t i{}; i != NumThreads; ++i) {
         threads[i].join();
     }
 
-    const auto endTime{ std::chrono::high_resolution_clock::now() };
-    double msecs = std::chrono::duration_cast<std::chrono::duration<double, std::milli>>(endTime - startTime).count();
-
     Logger::log(std::cout, "Found: ", primes.size(), " prime numbers.");
-    Logger::log(std::cout, "Done:  ", msecs, " msecs.");
 }
 
 // ===========================================================================
