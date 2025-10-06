@@ -47,15 +47,15 @@ Jeder Thread, der dieses Objekt verwendet, besitzt eine eigene Instanz des origi
 ---
 
 Der Begriff des thread-lokalen Speichers ist ein Feature, 
-der sich auf Daten bezieht, die scheinbar global oder statisch gespeichert sind (aus Sicht der sie verwendenden Funktionen),
+das sich auf Daten bezieht, die scheinbar global oder statisch gespeichert sind (aus Sicht der sie verwendenden Funktionen),
 die tatsächlich aber nur in Gestalt einer Kopie jeweils einmal pro Thread vorhanden sind.
 
 Das Feature ergänzt folgende bestehenden Optionen:
 
-  * *automatisch*: Existiert während eines Blocks oder einer Funktion (Schlüsselwort `auto`).
-  * *statisch*: Existiert für die gesamte Programmdauer (Schlüsselwort `static` / File-Scope).
-  * *global*: Existiert für die gesamte Programmdauer.
-  * *dynamisch*: Existiert auf dem Heap in zeitlicher Existenz zwischen Allokation und Freigabe (mit Hilfe der Operatoren `new` und `delete`).
+  * *automatisch*: Daten existieren während eines Blocks oder einer Funktion (Schlüsselwort `auto`).
+  * *statisch*: Daten existieren für die gesamte Programmdauer (Schlüsselwort `static` / *File-Scope*).
+  * *global*: Daten existieren für die gesamte Programmdauer (*Global-Scope*).
+  * *dynamisch*: Daten existieren auf dem Heap in zeitlicher Existenz zwischen Reservierung und Freigabe (Operatoren `new` und `delete`).
 
 Threadlokale Daten werden bei der Thread-Erstellung erstellt und nach Beendigung des Threads gelöscht.
 

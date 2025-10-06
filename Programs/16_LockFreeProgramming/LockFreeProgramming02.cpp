@@ -8,35 +8,47 @@
 #include <atomic>
 #include <thread>
 
+#ifdef _DEBUG
+static constexpr size_t NumIterations = 10'000'000;     // debug
+#else
+static constexpr size_t NumIterations = 10'000'000;     // release
+#endif
+
 namespace LockFreeProgrammingIncrementDecrement {
 
-#ifdef _DEBUG
-    static constexpr size_t NumIterations = 10'000'000;     // debug
-#else
-    static constexpr size_t NumIterations = 10'000'000;     // release
-#endif
+    template <typename T>
+    static void increment(std::atomic<T>& value)
+    {
+        ++value;
+    }
+
+    template <typename T>
+    static void decrement(std::atomic<T>& value)
+    {
+        --value;
+    }
 
     static void test_lock_free_programming_01()
     {
-        std::atomic<long> value{};
+        std::atomic<size_t> value{};
 
         Logger::log(std::cout, "std::atomic: before: ", value.load());
 
         ScopedTimer watch{};
 
-        std::jthread t1 { 
+        std::jthread t1 {
             [&]() {
                 for (size_t n{}; n != NumIterations; ++n) {
-                    ++value;
+                    increment(value);
                 }
             }
         };
 
-        std::jthread t2{
-        [&]() {
-            for (size_t n{}; n != NumIterations; ++n) {
-                --value;
-            }
+        std::jthread t2 {
+            [&]() {
+                for (size_t n{}; n != NumIterations; ++n) {
+                    decrement(value);
+                }
             }
         };
 
@@ -49,7 +61,7 @@ namespace LockFreeProgrammingIncrementDecrement {
     // =======================================================================
 
     template <typename T>
-    static void increment(std::atomic<T>& count)
+    static void incrementCAS(std::atomic<T>& count)
     {
         T value{ count.load(std::memory_order_relaxed) };
 
@@ -63,7 +75,7 @@ namespace LockFreeProgrammingIncrementDecrement {
     }
 
     template <typename T>
-    static void decrement(std::atomic<T>& count)
+    static void decrementCAS(std::atomic<T>& count)
     {
         T value{ count.load(std::memory_order_relaxed) };
 
@@ -78,7 +90,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
     static void test_lock_free_programming_02()
     {
-        std::atomic<long> value{};
+        std::atomic<size_t> value{};
 
         Logger::log(std::cout, "compare_exchange_weak: before: ", value.load());
 
@@ -87,16 +99,16 @@ namespace LockFreeProgrammingIncrementDecrement {
         std::jthread t1{
             [&]() mutable {
                 for (size_t n{}; n != NumIterations; ++n) {
-                    increment(value);
+                    incrementCAS(value);
                 }
             }
         };
 
         std::jthread t2{
-        [&]() mutable {
-            for (size_t n{}; n != NumIterations; ++n) {
-                decrement(value);
-            }
+            [&]() mutable {
+                for (size_t n{}; n != NumIterations; ++n) {
+                    decrementCAS(value);
+                }
             }
         };
 

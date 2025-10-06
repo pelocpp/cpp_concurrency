@@ -42,7 +42,7 @@ Dies geschieht als einzelne atomare Operation.
 Die Atomizität garantiert, dass der neue Wert auf Basis aktueller Informationen berechnet wird.
 Wäre der Wert in der Zwischenzeit von einem anderen Thread aktualisiert worden, würde der Schreibvorgang fehlschlagen.
 
-Das Ergebnis der Operation, gegeben durch einen boolesche Rückgabewert, gibt an, ob die Ersetzung durchgeführt wurde oder nicht.
+Das Ergebnis der Operation, gegeben durch einen booleschen Rückgabewert, gibt an, ob die Ersetzung durchgeführt wurde oder nicht.
 
 ---
 
@@ -136,10 +136,12 @@ while (!count.compare_exchange_weak(
 }
 ```
 
-
 ---
 
 ## Literaturhinweise <a name="link5"></a>
+
+Einen weiterführenden Artikel mit dem Thema &bdquo;*An Introduction to Lock-Free Programming*&rdquo;
+findet man [hier](https://preshing.com/20120612/an-introduction-to-lock-free-programming).
 
 ---
 

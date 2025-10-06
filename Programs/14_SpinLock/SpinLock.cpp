@@ -55,9 +55,9 @@ namespace TestSpinLocksCommon
 
     std::mutex mutex;
 
-    std::latch initSpinlocksDone{ NumWorkers };
-    std::latch initAtomicDone{ NumWorkers };
-    std::latch initMutexDone{ NumWorkers };
+    std::latch spinlocksDone{ NumWorkers };
+    std::latch atomicDone{ NumWorkers };
+    std::latch mutexDone{ NumWorkers };
 }
 
 namespace TestUsingSpinLocks
@@ -67,13 +67,13 @@ namespace TestUsingSpinLocks
 
     Spinlock spinlock;
 
-    static void task(size_t iterations)
+    static void spinlockTask(size_t iterations)
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
 
         // signal that this task is waiting for working
-        initSpinlocksDone.count_down();
+        spinlocksDone.count_down();
 
         for (size_t i{}; i != iterations; ++i)
         {
@@ -94,7 +94,7 @@ namespace TestUsingAtomics
         Logger::log(std::cout, "Task ", tid, " started ...");
 
         // signal that this task is waiting for working
-        initAtomicDone.count_down();
+        atomicDone.count_down();
 
         for (size_t i{}; i != iterations; ++i)
         {
@@ -113,7 +113,7 @@ namespace TestUsingMutex
         Logger::log(std::cout, "Task ", tid, " started ...");
 
         // signal that this task is waiting for working
-        initMutexDone.count_down();
+        mutexDone.count_down();
 
         for (size_t i{}; i != iterations; ++i)
         {
@@ -136,12 +136,12 @@ void test_using_spinlocks() {
     value = 0;
     
     for (size_t i{}; i != NumWorkers; ++i) {
-        std::thread thread{ task, MaxIterations };
+        std::thread thread{ spinlockTask, MaxIterations };
         threads.push_back(std::move(thread));
     }
 
     // wait until all tasks have been initialized
-    initSpinlocksDone.wait();
+    spinlocksDone.wait();
 
     {
         ScopedTimer watch{};
@@ -181,7 +181,7 @@ void test_using_atomics() {
     }
 
     // wait until all tasks have been initialized
-    initAtomicDone.wait();
+    atomicDone.wait();
 
     {
         ScopedTimer watch{};
@@ -223,7 +223,7 @@ void test_using_mutex() {
     }
 
     // wait until all tasks have been initialized
-    initMutexDone.wait();
+    mutexDone.wait();
 
     {
         ScopedTimer watch{};

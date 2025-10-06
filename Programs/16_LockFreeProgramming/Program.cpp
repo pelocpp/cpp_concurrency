@@ -2,23 +2,12 @@
 // Program.cpp // Lock-Free Programming
 // ===========================================================================
 
-extern void test_lock_free_programming_increment();
+extern void test_lock_free_programming();
 extern void test_lock_free_programming_increment_decrement();
-
-// TO BE DONE:
-
-// https://www.youtube.com/watch?v=EfmxxeXSzAo
-// 
-// https://www.youtube.com/watch?v=37VhkrOiE8M       Object Pool
-
-// https://www.youtube.com/watch?v=56Q4Ty4hfMM        Object Pool  // Multithreaded
-
-// https://preshing.com/20120612/an-introduction-to-lock-free-programming/
-// Guter Text
 
 int main()
 {
-   // test_lock_free_programming_increment();
+   // test_lock_free_programming();
     test_lock_free_programming_increment_decrement();
 
     return 0;
