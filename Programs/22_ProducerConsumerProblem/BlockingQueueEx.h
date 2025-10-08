@@ -52,15 +52,14 @@ namespace ProducerConsumerQueue
         // destructor
         ~BlockingQueue()
         {
-            size_t n{ 0 };
-            while (n != m_size)
+            while (0 != m_size)
             {
                 m_data[m_popIndex].~T();
 
                 ++m_popIndex;
                 m_popIndex = m_popIndex % QueueSize;
 
-                ++n;
+                --m_size;
             }
 
             std::free(m_data);
