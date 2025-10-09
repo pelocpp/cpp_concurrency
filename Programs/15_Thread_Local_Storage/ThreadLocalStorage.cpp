@@ -12,7 +12,7 @@ namespace ThreadLocalStorage {
 
     std::mutex mutex{};
 
-    thread_local int x{};
+    extern thread_local int x;
 
     static void function()
     {
@@ -31,11 +31,11 @@ namespace ThreadLocalStorage {
     }
 }
 
-void test_thread_local_storage_01() {
+void test_thread_local_storage() {
 
     using namespace ThreadLocalStorage;
 
-    std::println("Main: {} ", std::this_thread::get_id());
+    std::println("Test: {} ", std::this_thread::get_id());
     std::println("  &x: {:#010x} => {}", reinterpret_cast<intptr_t>(&x), x);
 
     function();

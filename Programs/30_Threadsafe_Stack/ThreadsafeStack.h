@@ -63,7 +63,7 @@ namespace Concurrency_ThreadsafeStack
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) throw std::out_of_range{ "Stack is empty!" };
-            value = m_data.top();
+            value = std::move(m_data.top());
             m_data.pop();
         }
 
