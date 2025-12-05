@@ -11,11 +11,11 @@
 
 namespace SimpleConditionVariableDemo02
 {
-    constexpr long NumIterations{ 5 };
+    static constexpr long NumIterations{ 5 };
 
-    std::mutex mutex;
+    static std::mutex mutex;
 
-    std::condition_variable condition;
+    static std::condition_variable condition;
 
     static void function()
     {

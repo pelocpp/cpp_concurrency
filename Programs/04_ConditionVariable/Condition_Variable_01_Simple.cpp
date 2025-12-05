@@ -11,11 +11,11 @@
 
 namespace SimpleConditionVariableDemo01
 {
-    std::mutex mutex{};
+    static std::mutex mutex{};
 
-    std::condition_variable condition{};
+    static std::condition_variable condition{};
 
-    bool data{ false };
+    static bool data{ false };
 
     static void consume()
     {
