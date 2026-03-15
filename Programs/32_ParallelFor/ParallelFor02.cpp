@@ -1,3 +1,7 @@
+// ===========================================================================
+// ParallelFor02.cpp // Parallel For
+// ===========================================================================
+
 #include <iostream>
 #include <string>
 #include <algorithm>
@@ -7,9 +11,9 @@
 
 #include "../Logger/Logger.h"
 
-#include "ParallelFor.h"
+#include "ParallelFor02.h"
 
-namespace Concurrency_ParallelFor
+namespace Concurrency_ParallelFor_Legacy
 {
     constexpr bool Verbose{ false };
 

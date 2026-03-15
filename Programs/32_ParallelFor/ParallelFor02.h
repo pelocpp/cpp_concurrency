@@ -1,12 +1,12 @@
 // ===========================================================================
-// ParallelFor.h
+// ParallelFor02.h
 // ===========================================================================
 
 #pragma once
 
 #include <functional>
 
-namespace Concurrency_ParallelFor
+namespace Concurrency_ParallelFor_Legacy
 {
     using Callable = std::function<void(size_t start, size_t end)>;
 

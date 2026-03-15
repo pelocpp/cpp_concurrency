@@ -2,11 +2,12 @@
 // Program.cpp // Parallel For
 // ===========================================================================
 
-extern void test_parallel_for();
+extern void test_parallel_for_01();
+extern void test_parallel_for_02();
 
 int main()
 {
-    test_parallel_for();
+    test_parallel_for_01();
     return 0;
 }
 

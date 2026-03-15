@@ -131,15 +131,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="ParallelFor.cpp" />
-    <ClCompile Include="PrimeNumbers.cpp" />
+    <ClCompile Include="ParallelFor02.cpp" />
+    <ClCompile Include="PrimeNumbers01.cpp" />
+    <ClCompile Include="PrimeNumbers02.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ParallelFor.h" />
+    <ClInclude Include="ParallelFor01.h" />
+    <ClInclude Include="ParallelFor02.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
