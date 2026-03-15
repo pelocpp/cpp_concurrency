@@ -28,18 +28,18 @@
 Wir zeigen in diesem Abschnitt, wie man eine `for`-Wiederholungsschleife parallelisieren kann.
 In vielen Bibliotheken gibt es eine solche Funktion unter dem Namen `parallel_for`.
 In der STL gibt es eine derartige Funktion nicht, 
-aber es bereitet keine große Mühe, sie selber zu schreiben.
+aber es bereitet keine große Mühe, sie selbst zu schreiben.
 
 Eine einfache Realisierung verwendet die so genannten *Execution Policies*, mit der man ab C++17 viele der STL-Algorithmen
 parallelisieren kann. In unserem Fall bietet sich der Algorithmus `std::for_each` an.
 
 Das einzige Problem in der Realisierung besteht darin, wie wir den Schleifenindex nachahmen.
-Wenn wir `std::for_each` verwenden wollen, dann iterieren wir über einen Bereich &ndash; oder eine *View* bei Verwendung der *Ranges*-Bibliotkek &ndash;,
+Wenn wir `std::for_each` verwenden wollen, dann iterieren wir über einen Bereich &ndash; oder eine *View* bei Verwendung der *Ranges*-Bibliothek &ndash;,
 sprich wir haben keine Index-Variable zur Verfügung.
 
 Des Rätsels Lösung besteht in einer Kombination des `std::for_each`-Algorithmus mit entweder `std::iota` (STL)
 oder mit `std::views::iota` (*Ranges*). Wir befüllen vor der Ausführung des `std::for_each`-Algorithmus einen Bereich (*Range*)
-mit den gewünschten Indices und können auf diesem Bereich den `std::for_each`-Algorithmus ausführen.
+mit den gewünschten Indizes und können auf diesem Bereich den `std::for_each`-Algorithmus ausführen.
 Der eigentliche Rumpf der  `for`-Wiederholungsschleife kann durch ein Callable oder ein Lambda-Objekt bereitgestellt werden.
 
 Wenn wir für den Index verschiedene ganzzahlige Typen zulassen wollen (z. B. `int`, `std::size_t`),
@@ -63,7 +63,7 @@ dann müssen wir im Funktionstemplate einen entsprechenden Template-Parameter def
 14: }
 ```
 
-Oder mit der STL-Ranges Bibliothek:
+Oder mit der STL-Ranges-Bibliothek:
 
 ```cpp
 01: template <typename TIndex, typename TFunc>
@@ -105,7 +105,7 @@ auf 22 Threads aufgeteilt wurde:
 
 ## Literaturhinweise
 
-Die Anregungen zur Klasse stammen im Wesentlichen aus dem Buch &bdquo;*C++ High Performance*&rdquo;
+Die Anregungen zu dieser Funktion stammen im Wesentlichen aus dem Buch &bdquo;*C++ High Performance*&rdquo;
 von Björn Andrist und Viktor Sehr.
 
 Eine ältere Realisierung einer `parallel_for`-Funktion stammt im Wesentlichen aus einer *Stackoverflow*-Frage:
