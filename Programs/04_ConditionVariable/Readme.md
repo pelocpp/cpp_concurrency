@@ -9,6 +9,7 @@
   * [Verwendete Werkzeuge](#link1)
   * [Allgemeines](#link2)
   * [Klasse `std::condition_variable`](#link3)
+  * [Zur Abgrenzung: Klasse `std::atomic<T>`](#link4)
 
 ---
 
@@ -18,7 +19,6 @@
 
   * Klasse `std::mutex`
   * Klasse `std::condition_variable`
-
  
 <ins>Hüllen-Klassen für Mutexobjekte</ins>:
 
@@ -37,6 +37,10 @@
   * Methode `join` und `detach`
   * Methode `sleep_for`
 
+
+<ins>Weitere Klassen</ins>:
+
+  * Klasse `std::atomic<T>`
 
 ---
 
@@ -80,7 +84,7 @@ Das `std::unique_lock`-Objekt entsperrt das zugrunde liegende Mutexobjekt jedes 
   * bei automatischer Zerstörung des `std::unique_lock`-Objekts. Dies ist der Fall, wenn der kritische Abschnitt ausgeführt und schließlich abgelaufen ist und der Gültigkeitsbereich des `std::unique_lock`-Objekts verlassen wird.
 
 
-#### Hinweis
+#### Erster Hinweis
 
 Siehe das Thema
 
@@ -88,7 +92,7 @@ Siehe das Thema
 
 Und gleich noch ein zweiter Hinweis:
 
-#### Hinweis
+#### Zweiter Hinweis
 
 Die Funktionsweise der Methode `wait` der Klasse `std::condition_variable` ist wie folgt definiert:
 
@@ -108,6 +112,92 @@ while (!pred()) {
 ```
 
 Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
+
+---
+
+## Zur Abgrenzung: Klasse `std::atomic<T>` <a name="link4"></a>
+
+Auch an der (den) Klasse(n) `std::atomic<T>` gibt es die drei Methoden `wait`, `notify_one` und `notify_all`.
+Der Unterschied zur Klasse `std::condition_variable` besteht darin, dass die Methode `std::atomic::wait`
+auf eine Wertänderung wartet, die `wait`-Methode an einem `std::condition_variable`-Objekt hingegen 
+eine komplexere Bedingung hantieren kann. Hierzu ist zusätzlich der Einsatz eines Mutex-Objekts erforderlich,
+um die beteiligten Variablen vor dem konkurrierenden Zugriff zu schützen.
+
+**Hauptmerkmale** der `std::condition_variable::wait`-Methode:<br />
+  * Erfordert ein `std::mutex`-Objekt
+  * Die Wartebedingung kann von mehreren Variablen abhängen
+  * Behandelt unerwartete Aktivierungen (&bdquo;Unexpected WakeUps&rdquo;)
+  * Typische Einsatzgebiete sind Warteschlangen, Pipelines und Ressourcenpools
+
+
+**Hauptmerkmale** der `std::atomic::wait`-Methode:<br />
+  * Kein `std::mutex`-Objekt erforderlich
+  * Wartet auf den Wechsel des Werts einer einzelnen (atomaren) Variable
+  * Sehr geringer Overhead
+  * Ideal für die Hantierung von Flags und Zustandsübergängen
+
+
+*Beispiel*:
+
+```cpp
+01: std::atomic<bool> g_ready{ false };
+02: 
+03: static void func_01()
+04: {
+05:     Logger::log(std::cout, "Before Wait");
+06: 
+07:     g_ready.wait(false); // blocks, as long  the value is 'false'
+08: 
+09:     Logger::log(std::cout, "After Wait");
+10: }
+11: 
+12: static void func_02()
+13: {
+14:     Logger::log(std::cout, "Another Thread");
+15: 
+16:     std::this_thread::sleep_for(std::chrono::seconds{ 5 });
+17: 
+18:     Logger::log(std::cout, "Storing value 'false'");
+19: 
+20:     g_ready = false;
+21:     g_ready.notify_one();
+22: 
+23:     std::this_thread::sleep_for(std::chrono::seconds{ 5 });
+24: 
+25:     Logger::log(std::cout, "Storing value 'true'");
+26: 
+27:     g_ready = true;
+28:     g_ready.notify_one();
+29: 
+30:     Logger::log(std::cout, "Done Thread.");
+31: }
+32: 
+33: void test_atomic_variable_01()
+34: {
+35:     Logger::log(std::cout, "Start:");
+36: 
+37:     std::thread t1{ func_01 };
+38:     std::thread t2{ func_02 };
+39: 
+40:     t1.join();
+41:     t2.join();
+42: 
+43:     Logger::log(std::cout, "Done.");
+44: }
+```
+
+*Ausgabe*:
+
+```
+[1]:    Start:
+[2]:    Before Wait
+[3]:    Another Thread
+[3]:    Storing value 'false'
+[3]:    Storing value 'true'
+[2]:    After Wait
+[3]:    Done Thread.
+[1]:    Done.
+```
 
 
 ---
