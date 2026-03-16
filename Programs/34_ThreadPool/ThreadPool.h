@@ -1,23 +1,8 @@
 // ===========================================================================
-// ThreadPool_05_ZenSepiol.h // Thread Pool
+// ThreadPool.h // Thread Pool
 // ===========================================================================
 
 #pragma once
-
-/*
- * Aus dem Youtube Channel "How to write Thread Pools in C++"
- *
- * https://www.youtube.com/watch?v=6re5U82KwbY
- * 
- * und
- * 
- * https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s
- * 
- * Sources:
- * 
- * https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp
- * 
- */
 
 #include "../Logger/Logger.h"
 

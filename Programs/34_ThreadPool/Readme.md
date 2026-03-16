@@ -32,14 +32,23 @@ Ein *Thread Pool* ermöglicht es, Threads wiederzuverwenden.
 Auf diese Weise wird verhindert, dass zur Laufzeit neue Threads erstellt werden müssen.
 Das Erstellen neuer Threads ist zeit- und ressourcenintensiv. 
 
-Wir stellen in diesem Projekt einige Thread Pool Realisierungen vor.
+In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread Pools:
+
+  * Buch von Anthony Williams: &bdquo;Concurrency in Action &ndash; 2nd Edition&rdquo;,<br />Kapitel 9: &bdquo;Thread Pools&rdquo;.
+
+  * Buch von  Arthur O'Dwyer: &bdquo;Mastering the C++17 STL&rdquo;,<br />Kapitel 7: &bdquo;Building your own thread pool&rdquo;.
+  
+  * Zwei Artikel von Martin Vorbrodt: &bdquo;Vorbrodt's C++ Blog&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
+
+Wir stellen in diesem Projekt eine Thread Pool Realisierung von Zen Sepiol vor,
+die nur in Youtube verfügbar ist: 
+[How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
+und
+[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s).
 
 ---
 
-## Eine sehr einfache Thread Pool Realisierung
-
-> Literaturhinweis: Diese Realisierung stammt aus dem Buch &bdquo;Concurrency in Action - 2nd Edition&rdquo; von
-Anthony Williams, Kapitel 9.1.
+## Einige Details in der Thread Pool Realisierung
 
 In dieser Realisierung besteht der Thread Pool aus einer festen Anzahl von Worker Threads.
 Typischerweise wird diese Anzahl von der Funktion `std::thread::hardware_concurrency()` festgelegt.

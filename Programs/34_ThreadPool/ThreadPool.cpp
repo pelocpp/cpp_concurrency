@@ -1,17 +1,8 @@
 // ===========================================================================
-// ThreadPool_05_ZenSepiol.cpp // Thread Pool
+// ThreadPool.cpp // Thread Pool
 // ===========================================================================
 
-#pragma once
-
-/*
- * Aus dem Youtube Channel "How to write Thread Pools in C++"
- *
- * https://www.youtube.com/watch?v=6re5U82KwbY
- *
- */
-
-#include "ThreadPool_05_ZenSepiol.h"
+#include "ThreadPool.h"
 
 namespace ThreadPool_ZenSepiol
 {

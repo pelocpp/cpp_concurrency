@@ -134,26 +134,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Logger\Logger.cpp" />
-    <ClCompile Include="Examples_01.cpp" />
-    <ClCompile Include="Examples_02.cpp" />
-    <ClCompile Include="Examples_03.cpp" />
-    <ClCompile Include="Examples_04.cpp" />
-    <ClCompile Include="Examples_05.cpp" />
+    <ClCompile Include="Examples.cpp" />
     <ClCompile Include="Program.cpp" />
-    <ClCompile Include="ThreadPool_01_Simple.cpp" />
-    <ClCompile Include="ThreadPool_02_Simple_Improved.cpp" />
-    <ClCompile Include="ThreadPool_03_ArthurDwyer.cpp" />
-    <ClCompile Include="ThreadPool_04_Vorbrodt.cpp" />
-    <ClCompile Include="ThreadPool_05_ZenSepiol.cpp" />
+    <ClCompile Include="ThreadPool.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FunctionWrapper.h" />
-    <ClInclude Include="JoinThreads.h" />
-    <ClInclude Include="ThreadPool_01_Simple.h" />
-    <ClInclude Include="ThreadPool_02_Simple_Improved.h" />
-    <ClInclude Include="ThreadPool_03_ArthurDwyer.h" />
-    <ClInclude Include="ThreadPool_04_Vorbrodt.h" />
-    <ClInclude Include="ThreadPool_05_ZenSepiol.h" />
+    <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

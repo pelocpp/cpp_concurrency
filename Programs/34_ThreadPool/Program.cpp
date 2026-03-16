@@ -2,19 +2,27 @@
 // Program.cpp // Thread Pool
 // ===========================================================================
 
-extern void test_concurrency_thread_pool_01();
-extern void test_concurrency_thread_pool_02();
-extern void test_concurrency_thread_pool_03();
-extern void test_concurrency_thread_pool_04();
-extern void test_concurrency_thread_pool_05();
+/*
+ * Aus dem Youtube Channel "How to write Thread Pools in C++"
+ *
+ * https://www.youtube.com/watch?v=6re5U82KwbY
+ *
+ * und
+ *
+ * https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s
+ *
+ * Sources:
+ *
+ * https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp
+ *
+ */
+
+extern void test_concurrency_thread_pool();
 
 int main()
 {
-    //test_concurrency_thread_pool_01();    // using implementation from Anthony Williams
-    //test_concurrency_thread_pool_02();    // using implementation from Anthony Williams (improved version)
-    //test_concurrency_thread_pool_03();    // using implementation from Arthur Dwyer
-    //test_concurrency_thread_pool_04();    // using implementation from Martin Vorbrodt
-    test_concurrency_thread_pool_05();      // using implementation from Zen Sepiol
+    test_concurrency_thread_pool();
+
     return 0;
 }
 
