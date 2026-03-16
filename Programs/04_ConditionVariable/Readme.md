@@ -111,7 +111,7 @@ while (!pred()) {
 }
 ```
 
-Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
+Das heißt insbesondere, dass vor dem ersten eigentlichen Warten das Prädikat ausgewertet wird!
 
 ---
 
@@ -120,7 +120,7 @@ Das heißt inbesondere, dass vor dem ersten eigentlichen Warten das Prädikat au
 Auch an der (den) Klasse(n) `std::atomic<T>` gibt es die drei Methoden `wait`, `notify_one` und `notify_all`.
 Der Unterschied zur Klasse `std::condition_variable` besteht darin, dass die Methode `std::atomic::wait`
 auf eine Wertänderung wartet, die `wait`-Methode an einem `std::condition_variable`-Objekt hingegen 
-eine komplexere Bedingung hantieren kann. Hierzu ist zusätzlich der Einsatz eines Mutex-Objekts erforderlich,
+eine komplexere Bedingung handhaben kann. Hierzu ist zusätzlich der Einsatz eines Mutex-Objekts erforderlich,
 um die beteiligten Variablen vor dem konkurrierenden Zugriff zu schützen.
 
 **Hauptmerkmale** der `std::condition_variable::wait`-Methode:<br />
@@ -134,7 +134,7 @@ um die beteiligten Variablen vor dem konkurrierenden Zugriff zu schützen.
   * Kein `std::mutex`-Objekt erforderlich
   * Wartet auf den Wechsel des Werts einer einzelnen (atomaren) Variable
   * Sehr geringer Overhead
-  * Ideal für die Hantierung von Flags und Zustandsübergängen
+  * Ideal für die Handhabung von Flags und Zustandsübergängen
 
 
 *Beispiel*:
