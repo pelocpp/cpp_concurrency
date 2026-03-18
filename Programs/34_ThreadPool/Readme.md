@@ -43,7 +43,8 @@ Wir stellen in diesem Projekt eine Überarbeitung einer Thread Pool Realisierung 
 die in Youtube verfügbar ist:<br />
 [How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
 und
-[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s).
+[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s),<br />
+[Sources](https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp).
 
 ---
 
@@ -64,7 +65,7 @@ Typischerweise wird die Größe dieses Containers, also die Anzahl der zur Verfügu
 von der Funktion `std::thread::hardware_concurrency()` beeinflusst.
 
 
-Nun kommen wir auf die zweite Warteschlangen mit den *Callables* (auszuführenden Funktionen) zu sprechen.
+Nun kommen wir auf die zweite Warteschlange mit den *Callables* (auszuführenden Funktionen) zu sprechen.
 Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `addTask`),
 die die dazugehörige Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
 
@@ -77,7 +78,26 @@ mit der *Universal Function* Wrapperklasse `std::function` als Variablen in eine
 std::function<void()> func;
 ```
 
-Unser Anspruch besteht darin, beliebige Funktionen mit unterschiedlichen Signaturen als Threadprozeduren verwalten zu können.
+`std::function<>`-Objekte sind kopierbar.
+Dies kann in der täglichen Arbeit jedoch hinderlich sein
+(z. B. wenn in den gekapselten Funktionen `std::unique_ptr`-Objekte zum Einsatz kommen),
+deshalb wurde mit C++ 23 der Typ `std::move_only_function` eingeführt.
+Objekte dieses Typs sind, wie der Name sagt, nur verschiebbar (&bdquo;*move-only*&rdquo;)
+und können daher auch nicht-kopierbare Funktionsobjekte speichern.
+
+Damit sollten wir unsere Funktionen in Variablen des Typs 
+
+```cpp
+std::move_only_function<void()> func;
+```
+
+abspeichern. Die Warteschlenge für die *Tasks* könnte damit so definiert werden:
+
+```cpp
+std::queue<std::move_only_function<void()>> m_queue;
+```
+
+Unser Anspruch an *Tasks* besteht allerdings darin, Funktionen mit beliebigen Signaturen als Threadprozeduren verwalten zu können.
 Dazu müssen wir zunächst einmal eine &bdquo;flexible&rdquo; `addTask`-Methode definieren.
 Die Flexibilität gewinnen wir mit variadischen Parametern:
 
@@ -93,7 +113,7 @@ auto addTask(TFunc&& func, TArgs&&... args)
 Der Parameter `func` nimmt ein *Callable* entgegen, die Parameter zum Aufruf dieses  *Callables* wiederum
 folgen in einer variablen Anzahl von Parametern, die als *Parameter Pack* `args` beschrieben werden. 
 
-Wie lassen sich der Werte dieser Parameter in einem Hüllenobjekt zwischenspeichern?
+Wie lassen sich die Werte dieser Parameter in einem Hüllenobjekt zwischenspeichern?
 Dazu bietet sich ein Lambda-Objekt an, das die Parameter über den *Closure* in das Lambda-Objekt kopiert.
 
 Jetzt haben wir aber nicht eine feste Anzahl von Parametern, sondern variabel viele.
@@ -135,7 +155,7 @@ beim Transport der Daten in das Lambda-Objekt Anwendung finden, zum Beispiel so:
 ```
 
 Der Ergebnistyp des Hüllenobjekts ließe sich vom Compiler mit *Automatic Type Deduction* herleiten,
-zu Demonstationszwecken können wir ihn aber auch explizit hinschreiben:
+zu Demonstrationszwecken können wir ihn aber auch explizit hinschreiben:
 
 ```cpp
 std::invoke_result<TFunc, TArgs...>::type
@@ -151,7 +171,7 @@ Hier kommt das Template `std::invoke_result_t` zum Zuge, das genau für diesen Ve
 
 
 Wozu legen wir eigentlich ein `std::packaged_task`-Objekt an?
-Für den von mir gewählten Lösungsansatz will ich Ergebnisse von den Thread-Prozeduren zurück erhalten,
+Für den von mir gewählten Lösungsansatz will ich Ergebnisse von den Thread-Prozeduren zurückerhalten,
 sprich wir benötigen pro asynchroner Funktionsausführung ein `std::future`-Objekt.
 Dieses erhalten wir wiederum von einem `std::packaged_task`-Objekt mit der Methode `get_future`:
 
@@ -170,7 +190,7 @@ Wir müssen die *Task*-Objekte in einer Warteschlange ablegen:
 std::queue<std::move_only_function<void()>> m_queue;
 ```
 
-Der Hüllentyp `std::move_only_function<>` ist der Typ schechthin, um *Callable*-Objekte performant verschieben zu können.
+Der Hüllentyp `std::move_only_function<>` ist der Typ schlechthin, um *Callable*-Objekte performant verschieben zu können.
 Nur ist die Schnittstelle `void()>` wieder etwas &bdquo;eng gefasst&rdquo;, wir wollten doch Threadprozeduren 
 mit variabler Anzahl von Parametern unterschiedlichen Datentyps verwalten können.
 
@@ -188,13 +208,13 @@ Dieses Hüllenobjekt können wir nun in unsere Warteschlange für Threadprozeduren 
 m_queue.push(std::move(wrapper));
 ```
 
-Damit haben wir die zentralen Stellen der Methode `addTask` betrachtet,
+Damit haben wir die zentralen Stellen der Methode `addTask` der `ThreadPool`Klasse betrachtet,
 ein zugegebenermaßen nicht ganz leichtes Unterfangen.
 Die Methode im Ganzen sieht so aus:
 
 ```cpp
 01: template <typename TFunc, typename... TArgs>
-02: auto ThreadPool::addTask(TFunc&& func, TArgs&&... args)
+02: auto addTask(TFunc&& func, TArgs&&... args)
 03:     -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
 04: {
 05:     using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
@@ -224,7 +244,6 @@ Die Methode im Ganzen sieht so aus:
 29:     return future;
 30: }
 ```
-
 
 Jetzt vollziehen wir einen Wechsel von der Warteschlange der Threadprozeduren zur Warteschlange der Workerthreads.
 Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang der Warteschlange der *Tasks* und führt die hierin gekapselte Funktion aus.
@@ -264,15 +283,104 @@ da der Quellcode nicht so komplex geraten ist:
 27: }
 ```
 
+Um es noch einmal zusammenzufassen: Für Funktionen, die wird als Threadprozeduren verwenden wollen,
+benötigen wir zwei Hüllenobjekte, um diese in einem `std::queue`-Objekt ablegen zu können:
 
+  * Ein erstes Lambda-Objekt, das die Funktion `func` und deren Parameter `args` kapselt.
+  * Ein zweites Lambda-Objekt, das das `std::packaged_task` kapselt.
+
+
+Dies ist im Grunde das minimale Design, wenn wir ein `std::future`-Objekt zurückgeben wollen (Notwendigkeit eines `std::packaged_task`-Objekts).
+
+Das zweite Lambda-Objekt ist auch aus einem zweiten Grund unumgänglich:
+Da unsere Warteschlange für *Tasks* die Definition
+
+```cpp
+std::queue<std::move_only_function<void()>> m_queue;
+```
+
+besitzt, müssen wir Funktionen mit einer anderen Schnittstellen adäquat umschließen.
+`std::packaged_task<ReturnType(...TArgs)>`-Objekte sind nicht implizit in `std::packaged_task<void()>`-Objekte konvertierbar.
+
+Dennoch gibt es einen anderen modernen Ansatz für Thread-Pools, der ohne `std::packaged_task`-Objekt auskommt
+trotzdem `std::future`-Objekte zurückgibt.
+
+Der Trick ist simpel, aber wirkungsvoll, siehe dazu den nächsten Abschnitt.
 
 ---
 
 ### Ein zweiter Ansatz in der Realisierung der `addTask`-Methode
 
 
+In diesem Ansatz tauschen wir den Datentyp `std::packaged_task` durch den Datentyp `std::promise` aus.
+Auf Grund der bisherigen Vorbereitungen können wir den Quellcode der überarbeiteten `addTask`-Methode gleich direkt anschauen:
+
+```cpp
+01: template <typename TFunc, typename... TArgs>
+02: auto addTaskEx(TFunc&& func, TArgs&&... args)
+03:     -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
+04: {
+05:     using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
+06: 
+07:     std::shared_ptr<std::promise<ReturnType>> promise{
+08:         std::make_shared<std::promise<ReturnType>>() 
+09:     };
+10: 
+11:     std::future<ReturnType> future{ promise->get_future() };
+12: 
+13:     m_queue.push(
+14:         [promise,
+15:         func = std::forward<TFunc>(func),
+16:         ... args = std::forward<TArgs>(args)] () mutable
+17:         {
+18:             try
+19:             {
+20:                 if constexpr (std::is_void_v<ReturnType>)
+21:                 {
+22:                     std::invoke(std::move(func), std::move(args)...);
+23:                     promise->set_value();
+24:                 }
+25:                 else
+26:                 {
+27:                     auto result{ std::invoke(std::move(func), std::move(args)...) };
+28:                     promise->set_value(std::move(result));
+29:                 }
+30:             }
+31:             catch (...)
+32:             {
+33:                 promise->set_exception(std::current_exception());
+34:             }
+35:         }
+36:     );
+37: 
+38:     return future;
+39: }
+```
+
+Ja, in der Tat haben nun nur noch ein Lambda-Objekt (siehe Zeile 14 ff.).
+Die Version ist außerdem &bdquo;Exception-safe&rdquo;,
+es werden Ausnahmen korrekt weitergeleitet:
+
+```cpp
+promise->set_exception(std::current_exception());
+```
+
+*Bemerkung*:
+Die &bdquo;Exception-Safety&rdquo; hat aber für die ursprüngliche Version mit der Klasse `std::packaged_task` ebenfalls gegolten,
+da `std::future`-Objekte ebenfalls Ausnahmen werfen, wenn diese eintreten.
 
 
+Wenn es der Beobachtung einer Einschränkung bedarf, dann wäre es die Zeilen
+
+```cpp
+std::shared_ptr<std::promise<ReturnType>> promise{
+    std::make_shared<std::promise<ReturnType>>() 
+};
+```
+
+Wir legen das `std::promise<ReturnType>>`-Objekt auf dem Heap an.
+Warum? Die in der Warteschlange gespeicherte Lambda-Funktion müssen sicher kopierbar/verschiebbar sein muss und wir wollen keine Lebensdauerprobleme haben.
+Man beachte, dass die `promise`-Variable in das Lambda-Objekt kopiert wird.
 
 ---
 
