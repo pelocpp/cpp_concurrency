@@ -50,8 +50,21 @@ public:
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
 
-            m_events.push_back([=] () mutable {
-                std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);
+            // Note: THIS does not behave as intended because:
+            // a) You captured everything with[=], so callable and args... are now copies inside the lambda, not forwarding references anymore.
+            // b) std::forward here is misleading and unnecessary.
+            
+            //m_events.push_back([=] () mutable {
+            //    std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);
+            //    }
+            //);
+
+            // Using init-capture to preserve move semantics:
+            m_events.push_back(
+                [func = std::forward<TFunc>(callable),
+                ... capturedArgs = std::forward<TArgs>(args)]() mutable   // Hmmm, geht auch ohne mutable
+                {
+                    std::invoke(std::move(func), std::move(capturedArgs)...);
                 }
             );
 

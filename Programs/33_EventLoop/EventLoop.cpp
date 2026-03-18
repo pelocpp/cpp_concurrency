@@ -60,6 +60,13 @@ void EventLoop::threadProcedure()
             callable();
         }
 
+        //for (const auto& callable : events)
+        //{
+        //    Logger::log(std::cout, "! invoking next event");
+        //    callable();
+        //}
+
+
         events.clear();  // empty container for next loop
     }
 
