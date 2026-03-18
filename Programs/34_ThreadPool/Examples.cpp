@@ -7,6 +7,8 @@
 
 #include "ThreadPool.h"
 
+#include <vector>
+
 // ===========================================================================
 
 static void test_concurrency_thread_pool01()
@@ -64,140 +66,102 @@ static void test_concurrency_thread_pool02()
 
 static void calcChecksumWeak(std::size_t num, std::size_t* checksum)
 {
-    (*checksum) += num;
-
-    //auto currentValue{ checksum->load() };
-
-    //Logger::log(std::cout, "     Adding ", num, " to ===> ", currentValue);
+    *checksum += num;
 }
 
-static void calcChecksum(std::size_t num, std::atomic<std::size_t>* checksum)
+static void calcChecksumPtr(std::size_t num, std::atomic<std::size_t>* checksum)
 {
-    (*checksum) += num;
-
-    auto currentValue{ checksum->load() };
-
-    Logger::log(std::cout, "     Adding ", num, " to ===> ", currentValue);
+    *checksum += num;
 }
-
-static void test_concurrency_thread_pool03_weak()
-{
-     constexpr std::size_t NumThreads{ 1'000 };
-    //constexpr std::size_t NumThreads{ 10 };
-
-    ThreadPool pool{};
-
-    std::queue<std::future<void>> results;
-  //  std::atomic<std::size_t> checksum{ 0 };
-    std::size_t checksum{ 0 };
-    std::size_t localChecksum{ 0 };
-
-    for (std::uint32_t n{}; n != NumThreads; ++n)
-    {
-        auto future{ pool.addTask(calcChecksumWeak, n, &checksum) };
-
-        results.push(std::move(future));
-
-        localChecksum += n;
-    }
-
-    pool.start();
-
-    while (results.size())
-    {
-        results.front().get();
-        results.pop();
-    }
-
-    pool.stop();
-
- //   auto atomicValue{ checksum.load() };
-
-    Logger::log(std::cout, "Parallel Checksum: ", checksum);
-    Logger::log(std::cout, "Local Checksum:  ", localChecksum);
-    Logger::log(std::cout, "Done.");
-}
-
-static void test_concurrency_thread_pool03()
-{
-    // constexpr std::size_t NumThreads{ 1'000 };
-    constexpr std::size_t NumThreads{ 10 };
-
-    ThreadPool pool{};
-
-    std::queue<std::future<void>> results;
-    std::atomic<std::size_t> checksum{ 0 };
-    std::size_t localChecksum{ 0 };
-
-    for (std::uint32_t n{}; n != NumThreads; ++n)
-    {
-        auto future{ pool.addTask(calcChecksum, n, &checksum) };
-
-        results.push(std::move(future));
-
-        localChecksum += n;
-    }
-
-    pool.start();
-
-    while (results.size())
-    {
-        results.front().get();
-        results.pop();
-    }
-
-    pool.stop();
-
-    auto atomicValue{ checksum.load() };
-
-    Logger::log(std::cout, "Atomic Checksum: ", atomicValue);
-    Logger::log(std::cout, "Local Checksum:  ", localChecksum);
-    Logger::log(std::cout, "Done.");
-}
-
-// ===========================================================================
 
 static void calcChecksumRef(std::size_t num, std::atomic<std::size_t>& checksum)
 {
     checksum += num;
+}
 
-    auto currentValue = checksum.load();
+static constexpr std::size_t NumThreads{ 2'000 };
 
-    Logger::log(std::cout, "     Adding ", num, " to ===> ", currentValue);
+static void test_concurrency_thread_pool03()
+{
+    // Testing threads accessing thread-global variable / not atomar
+    // Note: error occurs sporadically
+
+    ThreadPool pool{};
+
+    std::vector<std::future<void>> results;
+    std::size_t checksum{ 0 };
+    std::size_t localChecksum{ 0 };
+
+    Logger::enableLogging(false);
+    for (std::uint32_t n{}; n != NumThreads; ++n)
+    {
+        auto future{ pool.addTask(calcChecksumWeak, n, &checksum) };
+        results.push_back(std::move(future));
+        localChecksum += n;
+    }
+    Logger::enableLogging(true);
+
+    pool.start();
+    results.clear();
+    pool.stop();
+
+    Logger::log(std::cout, "Weak Checksum:   ", checksum);
+    Logger::log(std::cout, "Local Checksum:  ", localChecksum);
+    Logger::log(std::cout, "Done.");
 }
 
 static void test_concurrency_thread_pool04()
 {
-    constexpr std::size_t NumThreads{ 1'000 };
+    // Testing threads accessing thread-global variable / atomar
 
     ThreadPool pool{};
 
-    std::queue<std::future<void>> results;
-    std::atomic<std::size_t> checksum{ 0 };
+    std::vector<std::future<void>> results;
+    std::atomic<std::size_t> atomicChecksum{ 0 };
     std::size_t localChecksum{ 0 };
 
+    Logger::enableLogging(false);
     for (std::uint32_t n{}; n != NumThreads; ++n)
-    {   
-        auto future{ pool.addTask(calcChecksumRef, n, std::ref(checksum)) };
-
-        results.push(std::move(future));
-            
+    {
+        auto future{ pool.addTask(calcChecksumPtr, n, &atomicChecksum) };
+        results.push_back(std::move(future));
         localChecksum += n;
     }
+    Logger::enableLogging(true);
 
     pool.start();
-
-    while (results.size())
-    {
-        results.front().get();
-        results.pop();
-    }
-
+    results.clear();
     pool.stop();
 
-    auto atomicValue{ checksum.load() };
+    Logger::log(std::cout, "Safe Checksum:   ", atomicChecksum.load());
+    Logger::log(std::cout, "Local Checksum:  ", localChecksum);
+    Logger::log(std::cout, "Done.");
+}
 
-    Logger::log(std::cout, "Atomic Checksum: ", atomicValue);
+static void test_concurrency_thread_pool05()
+{
+    // Testing threads accessing thread-global variable / atomar
+
+    ThreadPool pool{};
+
+    std::vector<std::future<void>> results;
+    std::atomic<std::size_t> atomicChecksum{ 0 };
+    std::size_t localChecksum{ 0 };
+
+    Logger::enableLogging(false);
+    for (std::uint32_t n{}; n != NumThreads; ++n)
+    {
+        auto future{ pool.addTask(calcChecksumRef, n, std::ref(atomicChecksum)) };
+        results.push_back(std::move(future));
+        localChecksum += n;
+    }
+    Logger::enableLogging(true);
+
+    pool.start();
+    results.clear();
+    pool.stop();
+
+    Logger::log(std::cout, "Safe Checksum:   ", atomicChecksum.load());
     Logger::log(std::cout, "Local Checksum:  ", localChecksum);
     Logger::log(std::cout, "Done.");
 }
@@ -399,11 +363,9 @@ void test_concurrency_thread_pool()
     // test_concurrency_thread_pool01();     // just launching ... and stopping the thread pool
     // test_concurrency_thread_pool02();     // launching 5 almost empty tasks
     
-    
-    test_concurrency_thread_pool03_weak();
-//    test_concurrency_thread_pool03();     // launching many tasks ... and working on an atomic variable (using a pointer)
-    
-    //test_concurrency_thread_pool04();     // launching many tasks ... and working on an atomic variable (using a reference)
+    test_concurrency_thread_pool03();  // launching many tasks ... and working on the same global variable (by address)
+    test_concurrency_thread_pool04();  // launching many tasks ... and working on an atomic variable (by address)
+    test_concurrency_thread_pool05();  // launching many tasks ... and working on an atomic variable (by reference)
 
    // test_concurrency_thread_pool10_PrimeNumbers();      // computing prime numbers, using free function
     //test_concurrency_thread_pool11_PrimeNumbers();    // computing prime numbers, using lambda
