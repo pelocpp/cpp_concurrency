@@ -22,7 +22,6 @@
 <ins>Funktionen</ins>:
 
   * Funktion `std::thread::hardware_concurrency`
-  * Funktion `std::bind`
 
 ---
 
@@ -32,7 +31,7 @@ Ein *Thread Pool* ermöglicht es, Threads wiederzuverwenden.
 Auf diese Weise wird verhindert, dass zur Laufzeit neue Threads erstellt werden müssen.
 Das Erstellen neuer Threads ist zeit- und ressourcenintensiv. 
 
-In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread Pools:
+In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread Pools vor:
 
   * Buch von Anthony Williams: &bdquo;Concurrency in Action &ndash; 2nd Edition&rdquo;,<br />Kapitel 9: &bdquo;Thread Pools&rdquo;.
 
@@ -40,8 +39,8 @@ In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread
   
   * Zwei Artikel von Martin Vorbrodt: &bdquo;Vorbrodt's C++ Blog&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
 
-Wir stellen in diesem Projekt eine Thread Pool Realisierung von Zen Sepiol vor,
-die in Youtube verfügbar ist: 
+Wir stellen in diesem Projekt eine Überarbeitung einer Thread Pool Realisierung von Zen Sepiol vor,
+die in Youtube verfügbar ist:<br />
 [How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
 und
 [How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s).
@@ -50,28 +49,37 @@ und
 
 ## Einige Details in der Thread Pool Realisierung
 
-In dieser Realisierung besteht der Thread Pool aus einer festen Anzahl von Worker Threads.
-Typischerweise wird diese Anzahl von der Funktion `std::thread::hardware_concurrency()` festgelegt:
+In der vorliegenden Realisierung besteht der Thread Pool aus zwei Warteschlangen:
+
+  * Warteschlangen mit Worker Threads
+  * Warteschlangen mit *Tasks* bzw. *Callables* (auszuführenden Funktionen)
+
+Für die Warteschlangen der Worker Threads greifen wir auf den STL-Container zurück:
 
 ```cpp
 std::vector<std::thread> m_pool;
 ```
 
-Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `addTask`),
-die diese Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
+Typischerweise wird die Größe dieses Containers, also die Anzahl der zur Verfügung stehenden Worker-Threads,
+von der Funktion `std::thread::hardware_concurrency()` beeinflusst.
 
-Wie legen wir den Datentyp für eine *Task* fest?
+
+Nun kommen wir auf die zweite Warteschlangen mit den *Callables* (auszuführenden Funktionen) zu sprechen.
+Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `addTask`),
+die die dazugehörige Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
+
+Wie legen wir den Datentyp für eine solche *Task* fest?
 Ein sehr einfacher Ansatz würde hierzu *Callables* mit einer festen Signatur festlegen,
-zum Beispiel Funktionen ohne Paramater mit Rückgabetyp `void`. Derartige Funktionen könnte man mit der Universal Function Wrapperklasse `std::function`
-dann  als Variablen in einem Programm hantieren:
+zum Beispiel Funktionen ohne Parameter und mit Rückgabetyp `void`. Derartige Funktionen könnte man dann
+mit der *Universal Function* Wrapperklasse `std::function` als Variablen in einem Programm hantieren:
 
 ```cpp
 std::function<void()> func;
 ```
 
-Unser Anspruch besteht darin, beliebige Funtktionen mit unterschiedlichen Signaturen als Threadprozeduren verwalten zu können.
-Dazu müssen wir zunächst einmal eine &bdquo;flexible&rdquo; `addTask`-Methode definieren,
-die Flexibilität gewinnen wir mit variadischen Parametern:
+Unser Anspruch besteht darin, beliebige Funktionen mit unterschiedlichen Signaturen als Threadprozeduren verwalten zu können.
+Dazu müssen wir zunächst einmal eine &bdquo;flexible&rdquo; `addTask`-Methode definieren.
+Die Flexibilität gewinnen wir mit variadischen Parametern:
 
 ```cpp
 template <typename TFunc, typename... TArgs>
@@ -82,21 +90,21 @@ auto addTask(TFunc&& func, TArgs&&... args)
 }
 ```
 
-Der Parameter `func` nimmt ein *Callable* entgegen, die Paramter zum Aufruf dieses  *Callables* wiederum
+Der Parameter `func` nimmt ein *Callable* entgegen, die Parameter zum Aufruf dieses  *Callables* wiederum
 folgen in einer variablen Anzahl von Parametern, die als *Parameter Pack* `args` beschrieben werden. 
 
 Wie lassen sich der Werte dieser Parameter in einem Hüllenobjekt zwischenspeichern?
 Dazu bietet sich ein Lambda-Objekt an, das die Parameter über den *Closure* in das Lambda-Objekt kopiert.
 
 Jetzt haben wir aber nicht eine feste Anzahl von Parametern, sondern variabel viele.
-An dieser Stelle kommt eie &bdquo;*variadische Capture Clause*&rdquo; ins Spiel,
+An dieser Stelle kommt eine &bdquo;*variadische Capture Clause*&rdquo; ins Spiel,
 also syntaktisch gesehen ein Ausdruck der Gestalt
 
 ```cpp
 [...args = std::forward<Args>(args)]
 ```
 
-Damit werden das Callable und die Parameter durch einen Aufruf von `addTask`
+Damit werden das *Callable* und die Parameter durch einen Aufruf von `addTask`
 wie folgt in einem Hüllenobjekt abgelegt:
 
 ```cpp
@@ -127,7 +135,7 @@ beim Transport der Daten in das Lambda-Objekt Anwendung finden, zum Beispiel so:
 ```
 
 Der Ergebnistyp des Hüllenobjekts ließe sich vom Compiler mit *Automatic Type Deduction* herleiten,
-zum Zwecke des Demonstratrierens können wir ihn aber auch explizit hinschreiben:
+zu Demonstationszwecken können wir ihn aber auch explizit hinschreiben:
 
 ```cpp
 std::invoke_result<TFunc, TArgs...>::type
@@ -142,42 +150,37 @@ std::invoke_result_t<TFunc, TArgs...>
 Hier kommt das Template `std::invoke_result_t` zum Zuge, das genau für diesen Verwendungszweck in der STL vorhanden ist.
 
 
-Wozu legen wir eingentlich ein `std::packaged_task`-Objekt an?
+Wozu legen wir eigentlich ein `std::packaged_task`-Objekt an?
 Für den von mir gewählten Lösungsansatz will ich Ergebnisse von den Thread-Prozeduren zurück erhalten,
 sprich wir benötigen pro asynchroner Funktionsausführung ein `std::future`-Objekt.
-Dieses erhalten wir wiederum von einem `std::packaged_task`-Objekt:
+Dieses erhalten wir wiederum von einem `std::packaged_task`-Objekt mit der Methode `get_future`:
 
 ```cpp
-    auto task = std::packaged_task<ReturnType()>{
-        ...
-    };
+auto task = std::packaged_task<ReturnType()>{
+    ...
+};
 
-    auto future{ task.get_future() };
+auto future{ task.get_future() };
 ```
 
 Noch sind wir nicht am Ziel:
 Wir müssen die *Task*-Objekte in einer Warteschlange ablegen:
 
 ```cpp
-std::queue<std::move_only_function<void()>>  m_queue;
+std::queue<std::move_only_function<void()>> m_queue;
 ```
 
 Der Hüllentyp `std::move_only_function<>` ist der Typ schechthin, um *Callable*-Objekte performant verschieben zu können.
-Nur ist die Schnittstelle `void()>` etwas &bdquo;eng gefasst&rdquo;, wir wollten doch Threadprozeduren 
+Nur ist die Schnittstelle `void()>` wieder etwas &bdquo;eng gefasst&rdquo;, wir wollten doch Threadprozeduren 
 mit variabler Anzahl von Parametern unterschiedlichen Datentyps verwalten können.
 
-Okay, auf eine Hülle mehr oder weniger kommt es jetzt auch nicht an:
+Okay, auf eine Hülle mehr oder weniger kommt es jetzt auch nicht mehr an:
 
 ```cpp
 auto wrapper{ [task = std::move(task)] () mutable -> void { task(); } };
-
-{
-    std::lock_guard<std::mutex> guard{ m_mutex };
-    m_queue.push(std::move(wrapper));
-}
 ```
 
-Ja, Sie haben es richtig gelesen: Mit dem Lamda aus dem letzten Code-Snippet definieren wir ein *Callable*,
+Ja, Sie haben es richtig gesehen: Mit dem Lambda aus dem letzten Code-Snippet definieren wir ein *Callable*,
 dass die Signatur `void()` hat! 
 Dieses Hüllenobjekt können wir nun in unsere Warteschlange für Threadprozeduren einreihen:
 
@@ -224,9 +227,9 @@ Die Methode im Ganzen sieht so aus:
 
 
 Jetzt vollziehen wir einen Wechsel von der Warteschlange der Threadprozeduren zur Warteschlange der Workerthreads.
-Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang der Warteschlange der Threadprozeduren und führt die gekapselte Funktion aus.
-Nach der Ausführung der Funktion entnimmt der Worker Thread die nächste Task aus der Warteschlange der Threadprozeduren
-oder er begibt sich in einen *Idle*-Zustand, wenn die Warteschlange leer ist.
+Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang der Warteschlange der *Tasks* und führt die hierin gekapselte Funktion aus.
+Nach der Ausführung der Funktion entnimmt der Worker Thread die nächste Task aus der Warteschlange
+oder er begibt sich in einen *Idle*-Zustand, wenn die Warteschlange mit den *Tasks* leer ist.
 
 Die Betrachtungen zur Warteschlange der Workerthreads fassen wir hier etwas kürzer,
 da der Quellcode nicht so komplex geraten ist:
@@ -263,79 +266,13 @@ da der Quellcode nicht so komplex geraten ist:
 
 
 
-
 ---
 
-### Weitere Hinweise zur Realisierung
-
-Die `worker_thread`-Funktion selbst ist recht einfach:
-Sie befindet sich in einer Wiederholungsschleife und wartet, bis das `m_done`-Flag gesetzt ist,
-entnimmt Tasks aus der Warteschlange und führt sie in der Zwischenzeit aus:
+### Ein zweiter Ansatz in der Realisierung der `addTask`-Methode
 
 
-```cpp
-01: void ThreadPool::worker_thread()
-02: {
-03:     while (!m_done)
-04:     {
-05:         std::function<void()> task{};
-06: 
-07:         if (m_workQueue.tryPop(task))
-08:         {
-09:             task();
-10:         }
-11:         else
-12:         {
-13:             std::this_thread::yield();
-14:         }
-15:     }
-16: }
-```
 
-Die Ursache des *Busy Pollings* ist in der Methode `tryPop` verborgen:
 
-```cpp
-01: bool tryPop(T& value)
-02: {
-03:     std::lock_guard<std::mutex> lock{ m_mutex };
-04:     if (m_data.empty()) {
-05:         return false;
-06:     }
-07: 
-08:     value = m_data.front();
-09:     m_data.pop();
-10:     return true;
-11: }
-```
-
-Die `tryPop`-Methode verwendet keinerlei Koordinierungsmechanismen (wie z.B. ein `std::condition_variable`-Objekt),
-um mit entsprechenden `wait`- und `notify_one`-Aufrufen das *Busy Polling* zu umgehen.
-
-Wenn sich keine Tasks in der Warteschlange befinden, ruft die Funktion `std::this_thread::yield()` auf,
-um zumindest eine kleine Pause einzulegen und einem anderen Thread die Möglichkeit zu geben,
-etwas Arbeit in die Warteschlange zu stellen, bevor er beim nächsten Mal wieder versucht, etwas zu entnehmen.
-
-Beachten Sie, dass die Reihenfolge der Deklarationen der Instanzvariablen von Klasse `ThreadPool` wichtig ist:
-
-```cpp
-01: class ThreadPool
-02: {
-03: private:
-04:     std::atomic_bool                        m_done;
-05:     ThreadsafeQueue<std::function<void()>>  m_workQueue;
-06:     std::vector<std::thread>                m_threads;
-07:     JoinThreads                             m_joiner;
-08: 
-09: ...
-```
-
-Sowohl das `m_done`-Flag als auch das Objekt `m_workQueue` müssen vor dem Vektor der Threads `m_threads` deklariert werden,
-der wiederum vor dem Objekt des Typs `JoinThreads` deklariert werden muss:
-
-Dadurch wird sichergestellt, dass die Instanzvariablen in der richtigen Reihenfolge zerstört werden.
-Das `m_joiner`-Objekt ist in seinem Destruktor dafür verantwortlich, auf das Ende aller Threads zu warten.
-Erst danach kann man die beiden Objekte mit den Threads und den Tasks sicher zerstören,
-wenn alle Worker Threads gestoppt worden sind.
 
 ---
 
