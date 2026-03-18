@@ -15,7 +15,7 @@
 
 namespace ThreadPool_ZenSepiol
 {
-    using ThreadPoolFunction = std::move_only_function<void(void)>;
+    using ThreadPoolFunction = std::move_only_function<void()>;
 
     class ThreadPool
     {
@@ -43,19 +43,52 @@ namespace ThreadPool_ZenSepiol
         void start();
         void stop();
 
-        template <typename F, typename... Args>
-        auto addTask(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
+        //template <typename F, typename... Args>
+        //auto addTask(F&& f, Args&&... args) -> std::future<decltype(f(args...))>
+        //{
+        //    Logger::log(std::cout, "addTask ...");
+
+        //    auto func{ std::bind(std::forward<F>(f), std::forward<Args>(args)...) };
+
+        //    auto task{ std::packaged_task<decltype( f(args...)) (void) > { func }};
+
+        //    auto future = task.get_future();
+
+        //    // generalized lambda capture
+        //    auto wrapper = [task = std::move(task)]() mutable { task(); };
+
+        //    {
+        //        std::lock_guard<std::mutex> guard{ m_mutex };
+        //        m_queue.push(std::move(wrapper));
+        //    }
+
+        //    // wake up one waiting thread if any
+        //    m_condition.notify_one();
+
+        //    // return future from packaged_task
+        //    return future;
+        //}
+
+        template <typename TFunc, typename... TArgs>
+        auto addTask(TFunc&& func, TArgs&&... args)
+            -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
         {
             Logger::log(std::cout, "addTask ...");
 
-            auto func{ std::bind(std::forward<F>(f), std::forward<Args>(args)...) };
+            using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
 
-            auto task{ std::packaged_task<decltype( f(args...)) (void) > { func }};
+            auto task = std::packaged_task<ReturnType()>{
+                [func = std::forward<TFunc>(func),
+                ... args = std::forward<TArgs>(args)]() mutable -> ReturnType
+                {
+                    return std::invoke(std::move(func), std::move(args) ...);
+                }
+            };
 
-            auto future = task.get_future();
+            auto future{ task.get_future() };
 
             // generalized lambda capture
-            auto wrapper = [task = std::move(task)]() mutable { task(); };
+            auto wrapper{ [task = std::move(task)]() mutable -> void { task(); } };
 
             {
                 std::lock_guard<std::mutex> guard{ m_mutex };

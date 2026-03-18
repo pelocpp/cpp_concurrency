@@ -41,7 +41,7 @@ In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread
   * Zwei Artikel von Martin Vorbrodt: &bdquo;Vorbrodt's C++ Blog&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
 
 Wir stellen in diesem Projekt eine Thread Pool Realisierung von Zen Sepiol vor,
-die nur in Youtube verfügbar ist: 
+die in Youtube verfügbar ist: 
 [How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
 und
 [How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s).
@@ -51,24 +51,218 @@ und
 ## Einige Details in der Thread Pool Realisierung
 
 In dieser Realisierung besteht der Thread Pool aus einer festen Anzahl von Worker Threads.
-Typischerweise wird diese Anzahl von der Funktion `std::thread::hardware_concurrency()` festgelegt.
+Typischerweise wird diese Anzahl von der Funktion `std::thread::hardware_concurrency()` festgelegt:
 
-Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `submit`),
+```cpp
+std::vector<std::thread> m_pool;
+```
+
+Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `addTask`),
 die diese Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
 
-Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang dieser Warteschlange und führt die Funktion aus.
-Nach Ausführung der Funktion entnimmt der Worker Thread die nächste Task aus der Warteschlange
+Wie legen wir den Datentyp für eine *Task* fest?
+Ein sehr einfacher Ansatz würde hierzu *Callables* mit einer festen Signatur festlegen,
+zum Beispiel Funktionen ohne Paramater mit Rückgabetyp `void`. Derartige Funktionen könnte man mit der Universal Function Wrapperklasse `std::function`
+dann  als Variablen in einem Programm hantieren:
+
+```cpp
+std::function<void()> func;
+```
+
+Unser Anspruch besteht darin, beliebige Funtktionen mit unterschiedlichen Signaturen als Threadprozeduren verwalten zu können.
+Dazu müssen wir zunächst einmal eine &bdquo;flexible&rdquo; `addTask`-Methode definieren,
+die Flexibilität gewinnen wir mit variadischen Parametern:
+
+```cpp
+template <typename TFunc, typename... TArgs>
+auto addTask(TFunc&& func, TArgs&&... args)
+    -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
+{
+    ...
+}
+```
+
+Der Parameter `func` nimmt ein *Callable* entgegen, die Paramter zum Aufruf dieses  *Callables* wiederum
+folgen in einer variablen Anzahl von Parametern, die als *Parameter Pack* `args` beschrieben werden. 
+
+Wie lassen sich der Werte dieser Parameter in einem Hüllenobjekt zwischenspeichern?
+Dazu bietet sich ein Lambda-Objekt an, das die Parameter über den *Closure* in das Lambda-Objekt kopiert.
+
+Jetzt haben wir aber nicht eine feste Anzahl von Parametern, sondern variabel viele.
+An dieser Stelle kommt eie &bdquo;*variadische Capture Clause*&rdquo; ins Spiel,
+also syntaktisch gesehen ein Ausdruck der Gestalt
+
+```cpp
+[...args = std::forward<Args>(args)]
+```
+
+Damit werden das Callable und die Parameter durch einen Aufruf von `addTask`
+wie folgt in einem Hüllenobjekt abgelegt:
+
+```cpp
+template <typename TFunc, typename... TArgs>
+auto addTask(TFunc&& func, TArgs&&... args)
+    -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
+{
+    using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
+
+    auto task = std::packaged_task<ReturnType()>{
+        [func = std::forward<TFunc>(func),
+        ... args = std::forward<TArgs>(args)]() mutable -> ReturnType
+        {
+            return std::invoke(std::move(func), std::move(args) ...);
+        }
+    };
+
+    ...
+}
+```
+
+Mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; kann die Move-Semantik
+beim Transport der Daten in das Lambda-Objekt Anwendung finden, zum Beispiel so:
+
+```cpp
+[func = std::forward<TFunc>(func),
+...
+```
+
+Der Ergebnistyp des Hüllenobjekts ließe sich vom Compiler mit *Automatic Type Deduction* herleiten,
+zum Zwecke des Demonstratrierens können wir ihn aber auch explizit hinschreiben:
+
+```cpp
+std::invoke_result<TFunc, TArgs...>::type
+```
+
+oder noch kürzer als
+
+```cpp
+std::invoke_result_t<TFunc, TArgs...>
+```
+
+Hier kommt das Template `std::invoke_result_t` zum Zuge, das genau für diesen Verwendungszweck in der STL vorhanden ist.
+
+
+Wozu legen wir eingentlich ein `std::packaged_task`-Objekt an?
+Für den von mir gewählten Lösungsansatz will ich Ergebnisse von den Thread-Prozeduren zurück erhalten,
+sprich wir benötigen pro asynchroner Funktionsausführung ein `std::future`-Objekt.
+Dieses erhalten wir wiederum von einem `std::packaged_task`-Objekt:
+
+```cpp
+    auto task = std::packaged_task<ReturnType()>{
+        ...
+    };
+
+    auto future{ task.get_future() };
+```
+
+Noch sind wir nicht am Ziel:
+Wir müssen die *Task*-Objekte in einer Warteschlange ablegen:
+
+```cpp
+std::queue<std::move_only_function<void()>>  m_queue;
+```
+
+Der Hüllentyp `std::move_only_function<>` ist der Typ schechthin, um *Callable*-Objekte performant verschieben zu können.
+Nur ist die Schnittstelle `void()>` etwas &bdquo;eng gefasst&rdquo;, wir wollten doch Threadprozeduren 
+mit variabler Anzahl von Parametern unterschiedlichen Datentyps verwalten können.
+
+Okay, auf eine Hülle mehr oder weniger kommt es jetzt auch nicht an:
+
+```cpp
+auto wrapper{ [task = std::move(task)] () mutable -> void { task(); } };
+
+{
+    std::lock_guard<std::mutex> guard{ m_mutex };
+    m_queue.push(std::move(wrapper));
+}
+```
+
+Ja, Sie haben es richtig gelesen: Mit dem Lamda aus dem letzten Code-Snippet definieren wir ein *Callable*,
+dass die Signatur `void()` hat! 
+Dieses Hüllenobjekt können wir nun in unsere Warteschlange für Threadprozeduren einreihen:
+
+```cpp
+m_queue.push(std::move(wrapper));
+```
+
+Damit haben wir die zentralen Stellen der Methode `addTask` betrachtet,
+ein zugegebenermaßen nicht ganz leichtes Unterfangen.
+Die Methode im Ganzen sieht so aus:
+
+```cpp
+01: template <typename TFunc, typename... TArgs>
+02: auto ThreadPool::addTask(TFunc&& func, TArgs&&... args)
+03:     -> std::future<typename std::invoke_result<TFunc, TArgs...>::type>
+04: {
+05:     using ReturnType = std::invoke_result<TFunc, TArgs...>::type;
+06: 
+07:     auto task = std::packaged_task<ReturnType()>{
+08:         [func = std::forward<TFunc>(func),
+09:         ... args = std::forward<TArgs>(args)]() mutable -> ReturnType
+10:         {
+11:             return std::invoke(std::move(func), std::move(args) ...);
+12:         }
+13:     };
+14: 
+15:     auto future{ task.get_future() };
+16: 
+17:     // generalized lambda capture
+18:     auto wrapper{ [task = std::move(task)]() mutable -> void { task(); } };
+19: 
+20:     {
+21:         std::lock_guard<std::mutex> guard{ m_mutex };
+22:         m_queue.push(std::move(wrapper));
+23:     }
+24: 
+25:     // wake up one waiting thread if any
+26:     m_condition.notify_one();
+27: 
+28:     // return future from packaged_task
+29:     return future;
+30: }
+```
+
+
+Jetzt vollziehen wir einen Wechsel von der Warteschlange der Threadprozeduren zur Warteschlange der Workerthreads.
+Jeder Worker Thread entnimmt, wenn er nichts zu tun hat, eine Task vom Anfang der Warteschlange der Threadprozeduren und führt die gekapselte Funktion aus.
+Nach der Ausführung der Funktion entnimmt der Worker Thread die nächste Task aus der Warteschlange der Threadprozeduren
 oder er begibt sich in einen *Idle*-Zustand, wenn die Warteschlange leer ist.
 
-In der aktuellen Realisierung haben die Tasks in der Warteschlange alle den Rückgabetyp `void`,
-es gibt also keine direkte Möglichkeit, ein Ergebnis zurückzuliefern.
+Die Betrachtungen zur Warteschlange der Workerthreads fassen wir hier etwas kürzer,
+da der Quellcode nicht so komplex geraten ist:
 
-Auch gibt es keine Möglichkeit, auf das Ende der Ausführung einer Task zu warten.
+```cpp
+01: void ThreadPool::worker()
+02: {
+03:     std::unique_lock<std::mutex> guard{ m_mutex };
+04: 
+05:     while (!m_shutdown_requested || (m_shutdown_requested && !m_queue.empty()))
+06:     {
+07:         m_busy_threads--;
+08: 
+09:         m_condition.wait(guard, [this] {
+10:             return m_shutdown_requested || !m_queue.empty();
+11:         });
+12: 
+13:         m_busy_threads++;
+14: 
+15:         if (!this->m_queue.empty())
+16:         {
+17:             auto func{ std::move(m_queue.front()) };
+18:             m_queue.pop();
+19: 
+20:             guard.unlock();
+21: 
+22:             func();
+23: 
+24:             guard.lock();
+25:         }
+26:     }
+27: }
+```
 
-Der größte Nachteil in dieser ersten Realisierung besteht jedoch darin,
-dass die Worker Threads, die sich im *Idle*-Zustand befinden, aktiv den Zustand der Warteschlange überprüfen.
-Wir haben es also mit dem so genannten &bdquo;*Busy Polling*&rdquo; zu tun.
-Diesen Nachteil werden wir in einer nachfolgenden Variation beheben.
+
+
 
 ---
 
@@ -308,7 +502,7 @@ Wir stellen die Realisierung komplett vor:
 *Header-Datei*:
 
 ```cpp
-01: using ThreadPoolFunction = std::move_only_function<void(void)>;
+01: using ThreadPoolFunction = std::move_only_function<void()>;
 02: 
 03: class ThreadPool
 04: {
