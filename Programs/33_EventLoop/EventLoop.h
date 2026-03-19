@@ -4,14 +4,14 @@
 
 #pragma once
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
 #include <condition_variable>
 #include <functional>
 #include <future>
 #include <thread>
 #include <mutex>
-
-#include "../Logger/Logger.h"
 
 class EventLoop
 {
@@ -39,41 +39,31 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
-    //void enqueue(Event& callable);
-    //void enqueue(Event&& callable) noexcept;
     void enqueue(Event callable);
 
+    template <typename F>
+    void enqueue(F&& func) {
+        // I want to allow any callable (not just Event), so I template it
+        m_events.emplace_back(std::forward<F>(func));
+    }
+
     template<typename TFunc, typename ... TArgs>
-    void enqueueTask(TFunc&& callable, TArgs&& ...args)
+    void enqueueTask(TFunc&& func, TArgs&& ...args)
     {
         Logger::log(std::cout, "enqueueTask ...");
 
+        // using "generalized Lambda Capture" to preserve move semantics
+        auto callable{
+            [func = std::forward<TFunc>(func),
+            ... capturedArgs = std::forward<TArgs>(args)]() {
+                std::invoke(std::move(func), std::move(capturedArgs)...);
+            } 
+        };
+
         {
+            // RAII guard
             std::lock_guard<std::mutex> guard{ m_mutex };
-
-            // Note: THIS does not behave as intended because:
-            // a) You captured everything with[=], so callable and args... are now copies inside the lambda, not forwarding references anymore.
-            // b) std::forward here is misleading and unnecessary.
-            
-            //m_events.push_back([=] () mutable {
-            //    std::forward<TFunc>(callable) (std::forward<TArgs>(args) ...);
-            //    }
-            //);
-
-            // Using init-capture to preserve move semantics:
-            m_events.push_back(
-                [func = std::forward<TFunc>(callable),
-                ... capturedArgs = std::forward<TArgs>(args)]() mutable   // Hmmm, geht auch ohne mutable
-                {
-                    std::invoke(std::move(func), std::move(capturedArgs)...);
-                }
-            );
-
-            // more simpler, but not "perfect"
-            // m_events.push_back( [=] () mutable { callable (args ...); } );
-
-            // again more simpler, not "perfect", variables of capture clause explicitely listed
-            // m_events.push_back( [callable, args ... ] () mutable { callable (args ...); } );
+            m_events.push_back(std::move(callable));
         }
 
         m_condition.notify_one();

@@ -62,9 +62,9 @@ void test_event_loop_03()
 
     for (size_t i{}; i != 5; ++i) {
 
-        std::function<void()> worker{ function };
+        std::move_only_function<void()> worker{ function };
 
-        eventLoop.enqueue(worker);
+        eventLoop.enqueue(std::move(worker));
     }
 
     eventLoop.start();
@@ -107,15 +107,22 @@ void test_event_loop_10()
 {
     Logger::log(std::cout, "Start");
 
-    std::function<void(int)> task{ [] (int value) {
-        Logger::log(std::cout, "Value: ", value); }
-    };
-
     EventLoop eventLoop;
 
-    eventLoop.enqueueTask(task, 123);
-    eventLoop.enqueueTask(task, 456);
-    eventLoop.enqueueTask(task, 789);
+    eventLoop.enqueueTask(
+        [] (int value) { Logger::log(std::cout, "Value: ", value); }, 
+        123
+    );
+
+    eventLoop.enqueueTask(
+        [](int value) { Logger::log(std::cout, "Value: ", value); },
+        456
+    );
+
+    eventLoop.enqueueTask(
+        [](int value) { Logger::log(std::cout, "Value: ", value); },
+        789
+    );
 
     Logger::log(std::cout, "Starting Event Loop:");
 

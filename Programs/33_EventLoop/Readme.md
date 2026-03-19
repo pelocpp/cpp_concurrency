@@ -9,17 +9,16 @@
   * [Verwendete Werkzeuge](#link1)
   * [Allgemeines](#link2)
   * [Klasse `std::function` oder `std::std::move_only_function`](#link3)
-  * [Doppelpuffertechnik (*Double Buffering*)](#link7)
-  * [Funktionen mit Parametern in der Ereigniswarteschlange](#link8)
-  * [Beendigung der Ausführung](#link9)
-  * [Literaturhinweise](#link10)
+  * [Doppelpuffertechnik (*Double Buffering*)](#link4)
+  * [Funktionen mit Parametern in der Ereigniswarteschlange](#link5)
+  * [Beendigung der Ausführung](#link6)
+  * [Literaturhinweise](#link7)
 
 ---
 
 ## Verwendete Werkzeuge <a name="link1"></a>
 
-  * `std::function`
-  * `std::move_only_function`
+  * `std::function` und `std::move_only_function`
   * `std::mutex`
   * `std::lock_guard` und `std::unique_lock`
   * `std::condition_variable`
@@ -88,9 +87,60 @@ Alle Ereignisse
   * werden konzeptionell verbraucht, sie müssen nicht aufgeheoben werden.
 
 Das entspricht perfekt der *Move-Only*-Semantik.
-Damit sollten wir in der Realisierung auf die `std::move_only_function<void()>`-Klasse zurückgreifen.
+Damit sollten wir in der Realisierung auf die `std::move_only_function<void()>`-Klasse zurückgreifen:
 
-## Doppelpuffertechnik (*Double Buffering*) <a name="link7"></a>
+```cpp
+using Event = std::move_only_function<void()>;
+```
+
+
+Wie sieht es mit der Definition einer `enqueue`-Methode aus?
+Welche der folgenden Schnittstellen würden Sie bevorzugen &ndash; technisch gesehen sind sie alle realisierbar:
+
+
+```cpp
+void enqueue(Event& callable);
+```
+
+Diese Methode erwartet eine nicht-konstante *LValue*-Referenz.
+
+WEITER WEITER 
+
+
+Problem:
+
+  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch geshen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen
+  * Temporäre Werte (R-Werte) werden nicht akzeptiert.
+
+Daher ist die naheliegendste Verwendung nicht möglich.
+
+
+
+
+oder
+
+```cpp
+void enqueue(Event&& callable);
+```
+
+oder
+
+```cpp
+void enqueue(Event& callable);
+void enqueue(Event&& callable);
+```
+
+Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
+Die idiomatische Lösung in modernem C++ lautet:
+
+```cpp
+void enqueue(Event callable);  // pass by value
+```
+
+
+
+
+## Doppelpuffertechnik (*Double Buffering*) <a name="link4"></a>
 
 In der Realisierung der Abarbeitung der Nachrichten
 finden Sie eine Umsetzung der *Double Buffering Technik* vor.
@@ -156,9 +206,10 @@ Sinnigerweise ist dieser in der Methode `enqueue` vorhanden, wenn neue Nachricht
 Warteschlange aufgenommen werden.
 
 
-## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link8"></a>
+## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link5"></a>
 
-Es lassen sich auch Funktionen mit Parametern in die Ereigniswarteschlange einreihen &ndash; und dies sogar,
+Welche Funktionen (Rückgabetyp, Parameter) lassen sich in der Ereigniswarteschlange einreihen?
+Es sind dies Funktionen mit beliebig vielen Parametern und auch einem beliebigen Rückgabetyp &ndash; und dies sogar,
 ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
 
 Wie könnte dieser Trick aussehen?<br />
@@ -168,31 +219,49 @@ Wir greifen auf das C++ Sprachfeature von Lambda-Objekten zurück.
 Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen,
 und diese mittels `[=]` in das Lambda-Objekt kopieren!
 
-Der realisierende Quellcode mag noch etwas schwerer zu lesen sein, da er mit Hilfe *variadischer Templates*
-eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-Objekt aufnehmen kann.
-Eine vereinfachende Realisierung könnte so aussehen:
+Ab C++ 14 kann man sogar auf das unnötige Kopieren verzichten,
+mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; können die Parameter auch verschoben werden,
+also die Move-Semantik Anwendung finden!
+
+Der realisierende Quellcode mag nicht ganz einfach zu lesen zu sein, da er mit Hilfe *variadischer Templates*
+eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-Objekt aufnimmt:
 
 
 ```cpp
 01: template<typename TFunc, typename ... TArgs>
-02: void enqueueTask(TFunc&& callable, TArgs&& ...args)
+02: void enqueueTask(TFunc&& func, TArgs&& ...args)
 03: {
-04:     {
-05:         std::lock_guard<std::mutex> guard{ m_mutex };
-06: 
-07:         m_events.emplace_back( [=] () mutable { callable (args ...); } );
-08:     }
-09: 
-10:     m_condition.notify_one();
-11: }
+04:     Logger::log(std::cout, "enqueueTask ...");
+05: 
+06:     // using "generalized Lambda Capture" to preserve move semantics
+07:     auto callable{
+08:         [func = std::forward<TFunc>(func),
+09:         ... capturedArgs = std::forward<TArgs>(args)]() {
+10:             std::invoke(std::move(func), std::move(capturedArgs)...);
+11:         } 
+12:     };
+13: 
+14:     {
+15:         // RAII guard
+16:         std::lock_guard<std::mutex> guard{ m_mutex };
+17:         m_events.push_back(std::move(callable));
+18:     }
+19: 
+20:     m_condition.notify_one();
+21: }
 ```
 
-In Zeile 7 des Listings finden wir einen Lambda-Ausdruck vor:
-Der Aufruf der Nachricht `callable` ist im Rumpf der Lambda-Funktion plaziert,
-die Parameter `args` werden via `[=]` in das Lambda-Objekt kopiert!
+In Zeile 8 des Listings finden wir einen Lambda-Ausdruck vor:
+Der Aufruf der Nachricht `func` ist im Rumpf der Lambda-Funktion plaziert &ndash; mit `std::invoke`,
+das Funktionsobjekt selbst (`func`) wird via `[func = std::forward<TFunc>(func)]` in das Lambda-Objekt verschoben!
+Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch gesehen das so genannte *Variadic Capture* hinzu:
+
+```cpp
+[... args = std::forward<TArgs>(args)]
+```
 
 
-## Beendigung der Ausführung <a name="link9"></a>
+## Beendigung der Ausführung <a name="link6"></a>
 
 Wenn die Abarbeitung der Nachrichten beendet werden soll,
 wird dies dadurch erreicht, dass eine spezielle Nachricht in die Warteschlange am Ende eingefügt wird:
@@ -206,7 +275,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-## Literaturhinweise <a name="link10"></a>
+## Literaturhinweise <a name="link7"></a>
 
 Die Anregungen zur Klasse `EventLoop` stammen im Wesentlichen aus dem Artikel
 
