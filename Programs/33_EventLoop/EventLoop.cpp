@@ -54,7 +54,7 @@ void EventLoop::threadProcedure()
 
         Logger::log(std::cout, "swapped ", events.size(), " event(s) ...");
 
-        for (const Event& callable : events)
+        for (auto& callable : events)
         {
             Logger::log(std::cout, "! invoking next event");
             callable();
@@ -73,18 +73,7 @@ void EventLoop::threadProcedure()
     Logger::log(std::cout, "< Event Loop");
 }
 
-void EventLoop::enqueue(const Event& callable)
-{
-    {
-        std::lock_guard<std::mutex> guard{ m_mutex };
-
-        m_events.push_back(callable);
-    }
-
-    m_condition.notify_one();
-}
-
-void EventLoop::enqueue(Event&& callable) noexcept
+void EventLoop::enqueue(Event callable)
 {
     {
         std::lock_guard<std::mutex> guard{ m_mutex };

@@ -9,7 +9,6 @@
   * [Verwendete Werkzeuge](#link1)
   * [Allgemeines](#link2)
   * [Klasse `std::function` oder `std::std::move_only_function`](#link3)
-  * [Klasse `std::condition_variable`](#link6)
   * [Doppelpuffertechnik (*Double Buffering*)](#link7)
   * [Funktionen mit Parametern in der Ereigniswarteschlange](#link8)
   * [Beendigung der Ausführung](#link9)
@@ -90,50 +89,6 @@ Alle Ereignisse
 
 Das entspricht perfekt der *Move-Only*-Semantik.
 Damit sollten wir in der Realisierung auf die `std::move_only_function<void()>`-Klasse zurückgreifen.
-
-
-## Klasse `std::condition_variable` <a name="link6"></a>
-
-Eine *Bedingungsvariable* ist ein Synchronisationsprimitiv,
-das einen Thread dazu bringt, seine Ausführung über `wait()` zu verschieben (*suspend*),
-bis ein anderer Thread ihn über `notify_one()` aufweckt (*resume*).
-
-Was aber, wenn der zweite Thread `notify_one()` aufgerufen hat, kurz bevor der erste Thread `wait()` aufruft?
-
-Dazu wird das `std::condition_variable`-Objekt mit einem Mutex-Objekt kombiniert:
-Das Mutex-Objekt ist zu sperren, wenn auf den Zustand (*die Bedingung*) des Szenarios zugegriffen wird.
-
-Ist das Mutex-Objekt gesperrt, erwartet ein `std::condition_variable`-Objekt,
-dass der Status (die Bedingung) überprüft wird, ob der erste Thread in den Ruhezustand fallen muss
-oder die Bedingung bereits erfüllt wurde und der Thread einfach weiterarbeiten kann.
-
-Wenn sich herausstellt, dass der Thread zu blockieren ist, tritt folgender Ablauf ein:
-
-Die `wait()`-Methode bekommt ein gesperrtes Mutex-Objekt als Parameter übergeben:
-
-Mit diesem Mutex-Objekt geht folgende Arbeitsweise einher:
-
-  * Das Mutex-Objekt wird im Kontext der `wait()`-Methode entsperrt, damit die Ausführung anderer Threads weiter erfolgen kann.
-  * Es wird zu bestimmten Zeitpunkten eine &bdquo;Kontrollfunktion&rdquo; aufgerufen, die überprüft, ob die Suspendierung des wartenden Threads weiter aufrecht zu erhalten ist oder nicht.
-  * Zu diesem Zweck wird das Mutex-Objekt gesperrt und nach dem Aufruf der Kontrollfunktion wieder entsperrt.
-  * Kommt die Kontrollfunktion zu der Erkenntnis, dass die Bedingung für eine Weiterarbeit gegeben ist, sperrt sie das Mutex-Objekt wieder und setzt die Ausführung fort.
-  Dies geht im Regelfall damit einher, dass ein Aufruf von `notify_one()` / `notify_all()` erfolgte.
-
-
-Es gibt also einen gemeinsamen Zustand, der durch das Mutex-Objekt geschützt wird.
-
-Daher sollte der zweite, benachrichtigende Thread Folgendes tun:
-
-  * Das Mutex-Objekt sperren, den gemeinsamen Status ändern und das Mutex-Objekt wieder entsperren.
-  * Den ersten Thread mit `notify_one()` / `notify_all()` benachrichtigen.
-
-
-*Bemerkung*:<br />
-Einige Entwickler rufen `notify_one()` auf, während sie das Mutex-Objekt sperren.
-Das ist nicht falsch, aber es macht das System ineffizient.
-Um zusätzliche Synchronisierungen zu vermeiden, stellen Sie einfach sicher, dass Sie `notify_one()` aufrufen,
-nachdem Sie den Mutex freigegeben haben.
-
 
 ## Doppelpuffertechnik (*Double Buffering*) <a name="link7"></a>
 

@@ -29,13 +29,13 @@ void test_event_loop_02()
 
     EventLoop eventLoop;
 
-    std::function<void()> event{
-        [] () {
-            Logger::log(std::cout, "Message from Function"); 
-        } 
+    std::move_only_function<void()> event{
+        []() {
+            Logger::log(std::cout, "Message from Function");
+        }
     };
 
-    eventLoop.enqueue(event);
+    eventLoop.enqueue(std::move(event));
 
     eventLoop.start();
 

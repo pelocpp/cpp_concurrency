@@ -16,7 +16,7 @@
 class EventLoop
 {
 private:
-    using Event = std::function<void()>;
+    using Event = std::move_only_function<void()>;
 
 private:
     std::vector<Event>        m_events;
@@ -39,8 +39,9 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
-    void enqueue(const Event& callable);
-    void enqueue(Event&& callable) noexcept;
+    //void enqueue(Event& callable);
+    //void enqueue(Event&& callable) noexcept;
+    void enqueue(Event callable);
 
     template<typename TFunc, typename ... TArgs>
     void enqueueTask(TFunc&& callable, TArgs&& ...args)
