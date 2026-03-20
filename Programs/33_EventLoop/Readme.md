@@ -9,10 +9,11 @@
   * [Verwendete Werkzeuge](#link1)
   * [Allgemeines](#link2)
   * [Klasse `std::function` oder `std::std::move_only_function`](#link3)
-  * [Doppelpuffertechnik (*Double Buffering*)](#link4)
-  * [Funktionen mit Parametern in der Ereigniswarteschlange](#link5)
-  * [Beendigung der Ausführung](#link6)
-  * [Literaturhinweise](#link7)
+  * [Konzeption einer `enqueue`-Methode an der Klasse `EventLoop`](#link4)
+  * [Doppelpuffertechnik (*Double Buffering*)](#link5)
+  * [Funktionen mit Parametern in der Ereigniswarteschlange](#link6)
+  * [Beendigung der Ausführung](#link7)
+  * [Literaturhinweise](#link8)
 
 ---
 
@@ -71,8 +72,8 @@ Was ist der Unterschied zwischen diesen beiden Klassen?
 
 | `std::function<void()>` | `std::move_only_function<void()>` |
 |:-|:-|
-| Kopierbar | Nur verschiebbar | 
-| Erfordert, dass die gespeicherte Funktion kopierbar ist (es dürfen in der Funktion z. B. keine `std::unique_ptr`-Variablen verwendet werden). | Kann nur verschiebbare Funktionen speichern (z. B. `std::unique_ptr`- oder `std::packaged_task`-Objekte sind erlaubt). | 
+| Kopierbar. | Nur verschiebbar. | 
+| Erfordert, dass die gespeicherte Funktion kopierbar ist (es dürfen in der Funktion z. B. keine `std::unique_ptr`-Variablen verwendet werden). | Kann nur verschiebbare Funktionen speichern (z. B. sind `std::unique_ptr`- oder `std::packaged_task`-Objekte erlaubt). | 
 | Kann Speicher auf der Halde anlegen. | Vermeidet unnötige Kopien.| 
 | Flexibler, aber ressourcenintensiver.| Bessere semantische Eignung für einmalige Aufgaben. | 
 
@@ -84,23 +85,30 @@ Alle Ereignisse
 
   * werden einmalig ausgeführt. 
   * sind sinnvollerweise nicht zu kopieren.
-  * werden konzeptionell verbraucht, sie müssen nicht aufgeheoben werden.
+  * werden konzeptionell &bdquo;verarbeitet&rdquo;, sie müssen nicht aufgehoben werden.
 
-Das entspricht perfekt der *Move-Only*-Semantik.
+Dies entspricht perfekt der *Move-Only*-Semantik.
 Damit sollten wir in der Realisierung auf die `std::move_only_function<void()>`-Klasse zurückgreifen:
 
 ```cpp
 using Event = std::move_only_function<void()>;
 ```
 
+## Konzeption einer `enqueue`-Methode an der Klasse `EventLoop` <a name="link4"></a>
 
-Wie sieht es mit der Definition einer `enqueue`-Methode aus?
+Wie sieht es mit der Definition der Schnittstelle einer `enqueue`-Methode aus?
 Welche der folgenden Schnittstellen würden Sie bevorzugen &ndash; technisch gesehen sind sie alle realisierbar:
 
-
 ```cpp
+void enqueue(Event callable);
 void enqueue(Event& callable);
+void enqueue(Event&& callable);
+void enqueue(const Event& callable);
 ```
+
+Wir studieren die Möglichkeiten nun im Detail.
+
+#### Schnittstelle `void enqueue(Event& callable)`
 
 Diese Methode erwartet eine nicht-konstante *LValue*-Referenz.
 
@@ -115,15 +123,7 @@ Damit wären die naheliegendsten Verwendungszwecke nicht möglich, zum Beispiel
 m_events.enqueue([] () { /* ... */ });  // ERROR: initial value of reference to non-const must be an lvalue
 ```
 
-
-
-
-
-
-
-
-
-oder
+#### Schnittstelle `void enqueue(Event&& callable)`
 
 ```cpp
 void enqueue(Event&& callable);
@@ -151,21 +151,8 @@ eventLoop.enqueue(std::move(event));   // Works !!!
 Das ist zwar korrekt und sauber, aber etwas weniger ergonomisch.
 
 
+#### Zwei Methoden `void enqueue(Event& callable)` und `void enqueue(Event&& callable)`
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-oder
 
 ```cpp
 void enqueue(Event& callable);
@@ -180,12 +167,16 @@ Warum?
 
 Dies führt zu verwirrender Semantik und sollte vermieden werden.
 
+#### Schnittstelle `void enqueue(const Event& )`
+
+Ein Move-Only Datentyp kann nicht mit `const` qualifiziert werden,
+da der Parameter `callable` sonst nicht verschiebbar ist.
+Also diese Variante kommt überhaupt nicht in Betracht.
 
 
 
 
-
-Bewährte Vorgehensweise: *Pass-by-Value*
+## Bewährte Vorgehensweise: *Pass-by-Value*
 
 Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
 Die idiomatische Lösung in modernem C++ lautet:
@@ -197,19 +188,14 @@ void enqueue(Event callable);  // pass by value
 Was ist an dieser Lösung so gut?
 
 
-  * Funktioniert effizient mit R-Werten
-
+  * Funktioniert effizient mit R-Werten<br />
 ```cpp
 eventLoop.enqueue([] () { /* ... */ });  // Works !!! Lamda wird erst in den Parameter,
                                          // und dann in den std::vector verschoben!
 ```
 
 
-
-
-  * Funktioniert mit LValues (allerdings ist explizites Verschieben erforderlich)
-
-
+  * Funktioniert mit LValues (allerdings ist explizites Verschieben erforderlich)<br />
 ```cpp
 Event event = [] { /* ... */ };
 eventLoop.enqueue(std::move(event));   // Works !!! Klare Absicht
@@ -219,7 +205,6 @@ eventLoop.enqueue(std::move(event));   // Works !!! Klare Absicht
     * Keine Überladungen
     * Keine Überraschungen
     * Entspricht modernen C++-Konventionen
-
 
 
 *Hinweis*:
@@ -247,9 +232,7 @@ Aber:<br />
   * Kann unerwartete Typen akzeptieren (normalerweise unproblematisch)
 
 
-
-
-## Doppelpuffertechnik (*Double Buffering*) <a name="link4"></a>
+## Doppelpuffertechnik (*Double Buffering*) <a name="link5"></a>
 
 In der Realisierung der Abarbeitung der Nachrichten
 finden Sie eine Umsetzung der *Double Buffering Technik* vor.
@@ -315,7 +298,7 @@ Sinnigerweise ist dieser in der Methode `enqueue` vorhanden, wenn neue Nachricht
 Warteschlange aufgenommen werden.
 
 
-## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link5"></a>
+## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link6"></a>
 
 Welche Funktionen (Rückgabetyp, Parameter) lassen sich in der Ereigniswarteschlange einreihen?
 Es sind dies Funktionen mit beliebig vielen Parametern und auch einem beliebigen Rückgabetyp &ndash; und dies sogar,
@@ -369,8 +352,7 @@ Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch ges
 [... args = std::forward<TArgs>(args)]
 ```
 
-
-## Beendigung der Ausführung <a name="link6"></a>
+## Beendigung der Ausführung <a name="link7"></a>
 
 Wenn die Abarbeitung der Nachrichten beendet werden soll,
 wird dies dadurch erreicht, dass eine spezielle Nachricht in die Warteschlange am Ende eingefügt wird:
@@ -384,7 +366,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-## Literaturhinweise <a name="link7"></a>
+## Literaturhinweise <a name="link8"></a>
 
 Die Anregungen zur Klasse `EventLoop` stammen im Wesentlichen aus dem Artikel
 

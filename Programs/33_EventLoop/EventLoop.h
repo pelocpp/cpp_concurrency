@@ -39,7 +39,7 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
-    void enqueue(Event&& callable);
+    void enqueue(Event callable);
 
     template <typename TFunc>
     void enqueue(TFunc&& func) {

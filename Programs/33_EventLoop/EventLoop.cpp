@@ -30,6 +30,17 @@ void EventLoop::stop()
     }
 }
 
+void EventLoop::enqueue(Event callable)
+{
+    {
+        std::lock_guard<std::mutex> guard{ m_mutex };
+
+        m_events.push_back(std::move(callable));
+    }
+
+    m_condition.notify_one();
+}
+
 void EventLoop::threadProcedure()
 {
     Logger::log(std::cout, "> Event Loop");
@@ -64,17 +75,6 @@ void EventLoop::threadProcedure()
     }
 
     Logger::log(std::cout, "< Event Loop");
-}
-
-void EventLoop::enqueue(Event&& callable)
-{
-    {
-        std::lock_guard<std::mutex> guard{ m_mutex };
-
-        m_events.push_back(std::move(callable));
-    }
-
-    m_condition.notify_one();
 }
 
 // ===========================================================================

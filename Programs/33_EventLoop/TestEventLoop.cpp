@@ -37,11 +37,13 @@ void test_event_loop_02()
         }
     };
 
-    eventLoop.enqueue([] () { /* ... */ });
-
-    Event event = [] { /* ... */ };
+    
     eventLoop.enqueue(event);
-    eventLoop.enqueue(std::move(event));
+    //
+    //eventLoop.enqueue([] () { /* ... */ });
+    //Event event = [] { /* ... */ };
+
+    //eventLoop.enqueue(std::move(event));
 
     eventLoop.start();
 
