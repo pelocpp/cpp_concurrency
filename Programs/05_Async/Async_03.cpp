@@ -2,10 +2,10 @@
 // std::async // eager (std::launch::async) vs lazy (std::launch::deferred)
 // ===========================================================================
 
-#include <iostream>
-#include <future>
-
 #include "../Logger/Logger.h"
+
+#include <future>
+#include <iostream>
 
 namespace SomeAsyncScenarios {
 

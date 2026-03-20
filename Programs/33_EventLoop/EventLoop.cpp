@@ -57,8 +57,10 @@ void EventLoop::threadProcedure()
                 [this] () -> bool { return ! m_events.empty() || !m_running; }
             );
 
-            if (!m_running && m_events.empty())
+            if (!m_running && m_events.empty()) {
+                Logger::log(std::cout, "< Event Loop");
                 return;
+            }
 
             std::swap(events, m_events);
         }
@@ -73,8 +75,6 @@ void EventLoop::threadProcedure()
 
         events.clear();  // empty container for next loop
     }
-
-    Logger::log(std::cout, "< Event Loop");
 }
 
 // ===========================================================================

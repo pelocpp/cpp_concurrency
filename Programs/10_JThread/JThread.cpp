@@ -4,9 +4,9 @@
 
 #include "../Logger/Logger.h"
 
+#include <format>
 #include <iostream>
 #include <thread>
-#include <format>
 
 namespace JoinableThread {
 

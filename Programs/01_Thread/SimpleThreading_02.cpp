@@ -2,11 +2,12 @@
 // Simple Threading Demo (4 ways to create threads) // SimpleThreading_02.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
+#include <chrono>
+#include <cstddef>
 #include <iostream>
 #include <thread> 
-#include <chrono>
-
-#include "../Logger/Logger.h"
 
 /*
  *  4 ways to create a thread:
@@ -19,11 +20,11 @@
 
 namespace SimpleThreading02 {
 
-    constexpr size_t NumIterations{ 5 };
+    constexpr std::size_t NumIterations{ 5 };
 
-    static void function(int value, size_t iterations) {
+    static void function(int value, std::size_t iterations) {
 
-        for (size_t i{}; i != iterations; ++i) {
+        for (std::size_t i{}; i != iterations; ++i) {
 
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
@@ -43,15 +44,15 @@ namespace SimpleThreading02 {
     class Runnable {
     private:
         int m_value;
-        size_t m_iterations;
+        std::size_t m_iterations;
 
     public:
-        Runnable (int value, size_t iterations)
+        Runnable (int value, std::size_t iterations)
             : m_value{ value }, m_iterations{iterations } {}
 
         void operator () () const {
 
-            for (size_t i{}; i != m_iterations; ++i) {
+            for (std::size_t i{}; i != m_iterations; ++i) {
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds{ 1 });
             }
@@ -71,11 +72,11 @@ namespace SimpleThreading02 {
     static void test_03() {
 
         int value{ 3 };
-        size_t iterations{ NumIterations };
+        std::size_t iterations{ NumIterations };
 
         std::thread t {
             [=] () {
-                for (size_t i{}; i != iterations; ++i) {
+                for (std::size_t i{}; i != iterations; ++i) {
                     Logger::log(std::cout, "in thread ", value);
                     std::this_thread::sleep_for(std::chrono::seconds{ 1 });
                 }
@@ -92,15 +93,15 @@ namespace SimpleThreading02 {
     class AnotherRunnable {
     private:
         int m_value;
-        size_t m_iterations;
+        std::size_t m_iterations;
 
     public:
-        AnotherRunnable(int value, size_t iterations)
+        AnotherRunnable(int value, std::size_t iterations)
             : m_value{ value }, m_iterations{ iterations } {}
 
         void run() const {
 
-            for (size_t i{}; i != m_iterations; ++i) {
+            for (std::size_t i{}; i != m_iterations; ++i) {
 
                 Logger::log(std::cout, "in thread ", m_value);
                 std::this_thread::sleep_for(std::chrono::seconds{ 1 });

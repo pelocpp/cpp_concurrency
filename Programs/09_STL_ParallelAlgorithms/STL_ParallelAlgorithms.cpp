@@ -2,19 +2,20 @@
 // STL and Parallel Algorithms
 // ===========================================================================
 
-#include <iostream>
-#include <iomanip>
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
+#include <execution>
+#include <iomanip>
+#include <iostream>
 #include <random>
 #include <vector>
-#include <execution>
 
 namespace STL_Parallel_Algorithms
 {
-    constexpr size_t TestSize{ 1'000'000 };
+    constexpr std::size_t TestSize{ 1'000'000 };
 
-    constexpr size_t IterationCount{ 4 };
+    constexpr std::size_t IterationCount{ 4 };
 
     void printResults (
         std::string tag, 
@@ -44,7 +45,7 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testSeq(const std::vector<T>& numbers)
     {
-        for (size_t i{}; i != IterationCount; ++i)
+        for (std::size_t i{}; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };
@@ -62,7 +63,7 @@ namespace STL_Parallel_Algorithms
     template <typename T>
     void testPar(const std::vector<T>& numbers)
     {
-        for (size_t i{}; i != IterationCount; ++i)
+        for (std::size_t i{}; i != IterationCount; ++i)
         {
             std::vector<T> copyToSort{ numbers };
             const auto startTime{ std::chrono::high_resolution_clock::now() };

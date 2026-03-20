@@ -4,9 +4,9 @@
 
 #include "../Logger/Logger.h"
 
+#include <future>
 #include <iostream>
 #include <thread>
-#include <future>
 
 namespace ExceptionHandling
 {

@@ -130,6 +130,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Globals\IsPrime.cpp" />
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="ParallelFor02.cpp" />
     <ClCompile Include="PrimeNumbers01.cpp" />

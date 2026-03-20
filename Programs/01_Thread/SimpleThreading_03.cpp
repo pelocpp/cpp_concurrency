@@ -2,19 +2,20 @@
 // Moving a Thread object // SimpleThreading_03.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
+#include <chrono>
+#include <cstddef>
 #include <iostream>
 #include <thread> 
-#include <chrono>
-
-#include "../Logger/Logger.h"
 
 namespace SimpleThreading03 {
 
-    constexpr size_t NumIterations{ 5 };
+    constexpr std::size_t NumIterations{ 5 };
 
     static void function(int value) {
 
-        for (size_t i{}; i != NumIterations; ++i) {
+        for (std::size_t i{}; i != NumIterations; ++i) {
 
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });

@@ -19,11 +19,11 @@ private:
     using Event = std::move_only_function<void()>;
 
 private:
-    std::vector<Event>        m_events;
-    std::mutex                m_mutex;
-    std::condition_variable   m_condition;
-    std::jthread              m_thread;
-    bool                      m_running;
+    std::vector<Event>       m_events;
+    std::mutex               m_mutex;
+    std::condition_variable  m_condition;
+    std::jthread             m_thread;
+    bool                     m_running;
 
 public:
     // c'tor(s) / d'tor
@@ -43,8 +43,6 @@ public:
 
     template <typename TFunc>
     void enqueue(TFunc&& func) {
-        // I want to allow any callable (not just 'Event'),
-        // therefore this templated variant
         m_events.emplace_back(std::forward<TFunc>(func));
     }
 
@@ -53,11 +51,11 @@ public:
     {
         Logger::log(std::cout, "enqueueTask ...");
 
-        // using "generalized Lambda Capture" to preserve move semantics
-        auto callable{
+        // using "Generalized Lambda Capture" to preserve move semantics
+        auto callable {
             [func = std::forward<TFunc>(func),
-            ... capturedArgs = std::forward<TArgs>(args)]() {
-                std::invoke(std::move(func), std::move(capturedArgs)...);
+            ... capturedArgs = std::forward<TArgs>(args)] () {
+                std::invoke(std::move(func), std::move(capturedArgs) ...);
             } 
         };
 

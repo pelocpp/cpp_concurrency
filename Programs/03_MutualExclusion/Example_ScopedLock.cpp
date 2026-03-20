@@ -2,16 +2,17 @@
 // Examples_RecursiveMutex.cpp // std::recursive_mutex
 // ===========================================================================
 
+#include <algorithm>
+#include <cstddef>
+#include <functional>
 #include <iostream>
+#include <memory>
+#include <mutex>
 #include <print>
+#include <random>
 #include <string>
 #include <string_view>
 #include <thread>
-#include <mutex>
-#include <random>
-#include <algorithm>
-#include <memory>
-#include <functional>
 
 #include "../Logger/Logger.h"
 
@@ -25,8 +26,8 @@ namespace Scoped_Lock_Example
         std::string_view                      m_name;
         std::mutex                            m_mutex;
         std::default_random_engine            m_random_engine;
-        std::uniform_int_distribution<size_t> m_dist;
-        size_t                                m_score;
+        std::uniform_int_distribution<std::size_t> m_dist;
+        std::size_t                                m_score;
 
     public:
         // c'tor
@@ -37,10 +38,10 @@ namespace Scoped_Lock_Example
         // getter
         std::string_view name() const { return m_name; }
 
-        size_t getScore() const { return m_score; }
+        std::size_t getScore() const { return m_score; }
 
         // public interface
-        void incrementScore(size_t points) {
+        void incrementScore(std::size_t points) {
 
             m_score += points;
 
@@ -59,8 +60,8 @@ namespace Scoped_Lock_Example
             Logger::log(std::cout, name(), " plays against ", other.name());
 
             // roll dice until one player wins, then increase the score of the winner
-            size_t points{};
-            size_t otherPoints{};
+            std::size_t points{};
+            std::size_t otherPoints{};
 
             while (points == otherPoints)
             {
@@ -80,7 +81,7 @@ namespace Scoped_Lock_Example
 
     private:
         // roll a six-sided dice
-        size_t roll() {
+        std::size_t roll() {
             return m_dist(m_random_engine);
         }
     };

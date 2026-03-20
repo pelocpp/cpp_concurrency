@@ -79,6 +79,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_ThreadLocalStorage", "Pr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_LockFreeProgramming", "Programs\16_LockFreeProgramming\16_LockFreeProgramming.vcxproj", "{CC6779B2-EF18-48BA-99F3-AF9D5794C133}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Globals", "Globals", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		Programs\Globals\GlobalPrimes.h = Programs\Globals\GlobalPrimes.h
+		Programs\Globals\IsPrime.cpp = Programs\Globals\IsPrime.cpp
+		Programs\Globals\IsPrime.h = Programs\Globals\IsPrime.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

@@ -5,6 +5,9 @@
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
 
+#include "../Globals/GlobalPrimes.h"
+#include "../Globals/IsPrime.h"
+
 #include "EventLoop.h"
 
 // ===========================================================================
@@ -23,8 +26,6 @@ void test_event_loop_01()
 
 // ===========================================================================
 
-using Event = std::move_only_function<void()>;
-
 void test_event_loop_02()
 {
     Logger::log(std::cout, "Start");
@@ -37,13 +38,7 @@ void test_event_loop_02()
         }
     };
 
-    
-    eventLoop.enqueue(event);
-    //
-    //eventLoop.enqueue([] () { /* ... */ });
-    //Event event = [] { /* ... */ };
-
-    //eventLoop.enqueue(std::move(event));
+    eventLoop.enqueue(std::move(event));
 
     eventLoop.start();
 
@@ -68,10 +63,9 @@ void test_event_loop_03()
 
     EventLoop eventLoop;
 
-    for (size_t i{}; i != 5; ++i) {
+    for (std::size_t i{}; i != 5; ++i) {
 
         std::move_only_function<void()> worker{ function };
-
         eventLoop.enqueue(std::move(worker));
     }
 
@@ -92,7 +86,7 @@ void test_event_loop_04()
 
     eventLoop.start();
 
-    for (size_t i{}; i != 5; ++i) {
+    for (std::size_t i{}; i != 5; ++i) {
 
         eventLoop.enqueue([](){
             std::thread::id tid{ std::this_thread::get_id() };
@@ -118,17 +112,26 @@ void test_event_loop_10()
     EventLoop eventLoop;
 
     eventLoop.enqueueTask(
-        [] (int value) { Logger::log(std::cout, "Value: ", value); }, 
+        [] (int value) { 
+            Logger::log(std::cout, "Value: ", value); 
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+        }, 
         123
     );
 
     eventLoop.enqueueTask(
-        [](int value) { Logger::log(std::cout, "Value: ", value); },
+        [](int value) { 
+            Logger::log(std::cout, "Value: ", value);
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+        },
         456
     );
 
     eventLoop.enqueueTask(
-        [](int value) { Logger::log(std::cout, "Value: ", value); },
+        [](int value) { 
+            Logger::log(std::cout, "Value: ", value);
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+        },
         789
     );
 
@@ -143,86 +146,38 @@ void test_event_loop_10()
 
 // ===========================================================================
 
-static bool isPrime(size_t number)
-{
-    if (number <= 2) {
-        return number == 2;
-    }
-
-    if (number % 2 == 0) {
-        return false;
-    }
-
-    // check odd divisors from 3 to the square root of the number
-    size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
-    for (size_t i{ 3 }; i <= end; i += 2) {
-
-        if (number % i == 0) {
-            return false;  // number not prime
-        }
-    }
-
-    return true; // found prime number
-}
-
-namespace Globals
-{
-    // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
-
-    // 24 prime numbers
-    //constexpr size_t Start = 1;
-    //constexpr size_t End = Start + 100;
-
-    // 4 prime numbers
-    //constexpr size_t Start = 1000000000001;
-    //constexpr size_t End = Start + 100;
-
-    // 37 prime numbers
-    //constexpr size_t Start = 1000000000001;
-    //constexpr size_t End = Start + 1000;
-
-    // 3614 prime numbers
-    //constexpr size_t Start = 1000000000001;
-    //constexpr size_t End = Start + 100000;
-
-    // 23 prime numbers
-    //constexpr size_t Start = 1'000'000'000'000'000'001;
-    //constexpr size_t End = Start + 1'000;
-
-    // 4 prime numbers
-    constexpr size_t Start = 1'000'000'000'000'000'001;
-    constexpr size_t End = Start + 100;
-}
-
 void test_event_loop_20()
 {
     Logger::log(std::cout, "Start");
 
     ScopedTimer clock{};
 
-    size_t foundPrimeNumbers{};
-
-    std::function<void(size_t)> primeTask{ [&] (size_t value) {
-
-            bool primeFound { isPrime(value) };
-
-            if (primeFound) {
-                Logger::log(std::cout, "> ", value, " IS prime.");
-
-                ++foundPrimeNumbers;
-            }
-        }
-    };
+    std::size_t foundPrimeNumbers{};
 
     EventLoop eventLoop;
 
-    Logger::log(std::cout, "Enqueuing tasks");
+    // eventLoop.start();
 
-    Logger::enableLogging(false);
+    Logger::log(std::cout, "Enqueuing tasks ...");
 
-    for (size_t i{ Globals::Start }; i < Globals::End; i += 2) {
-        eventLoop.enqueueTask(primeTask, i);
+    for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+
+        eventLoop.enqueueTask(
+            [&] (std::size_t value) {
+
+                bool primeFound{ PrimeNumbers::IsPrime(value) };
+
+                if (primeFound) {
+                    Logger::log(std::cout, "> ", value, " is prime.");
+
+                    ++foundPrimeNumbers;
+                }
+            },
+            i
+        );
     }
+
+    Logger::log(std::cout, "Enqueuing tasks done.");
 
     Logger::log(std::cout, "Starting Event Loop:");
 
@@ -230,52 +185,9 @@ void test_event_loop_20()
 
     eventLoop.stop();
 
-    Logger::enableLogging(true);
-
-    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
-
-    Logger::log(std::cout, "Done.");
-}
-
-void test_event_loop_21()
-{
-    Logger::log(std::cout, "Start");
-
-    size_t foundPrimeNumbers{};
-
-    std::function<void(size_t)> primeTask{ [&] (size_t value) {
-
-            bool primeFound { isPrime(value) };
-
-            if (primeFound) {
-                Logger::log(std::cout, "> ", value, " IS prime.");
-
-                ++foundPrimeNumbers;
-            }
-        }
-    };
-
-    ScopedTimer clock{};
-
-    EventLoop eventLoop;
-
-    Logger::log(std::cout, "Enqueuing tasks");
-
-    Logger::log(std::cout, "Starting Event Loop:");
-
-    // Logger::enableLogging(false);
-
-    eventLoop.start();
-
-    for (size_t i{ Globals::Start }; i < Globals::End; i += 2) {
-        eventLoop.enqueueTask(primeTask, i);
-    }
-
-    eventLoop.stop();
-
- //   Logger::enableLogging(true);
-
-    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
+    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
+        PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+    );
 
     Logger::log(std::cout, "Done.");
 }

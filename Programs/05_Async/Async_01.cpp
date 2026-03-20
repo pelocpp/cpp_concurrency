@@ -2,13 +2,13 @@
 // Async_01.cpp // std::async
 // ===========================================================================
 
-#include <thread>
+#include "../Logger/Logger.h"
+
 #include <chrono>
 #include <future>
 #include <iostream>
 #include <string>
-
-#include "../Logger/Logger.h"
+#include <thread>
 
 namespace SimpleAsync {
 

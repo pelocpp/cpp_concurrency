@@ -5,6 +5,9 @@
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
 
+#include "../Globals/GlobalPrimes.h"
+#include "../Globals/IsPrime.h"
+
 #include "ThreadPool.h"
 
 #include <vector>
@@ -169,65 +172,6 @@ static void test_concurrency_thread_pool05()
 // ===========================================================================
 // Primzahlenberechnung
 
-namespace Globals
-{
-    // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
- 
-    // 24 prime numbers
-    //constexpr std::size_t Start = 1;
-    //constexpr std::size_t End = Start + 100;
-
-    // 4 prime numbers
-    //constexpr std::size_t Start = 1000000000001;
-    //constexpr std::size_t End = Start + 100;
-
-    // 37 prime numbers
-    //constexpr std::size_t Start = 1000000000001;
-    //constexpr std::size_t End = Start + 1000;
-
-    // 3614 prime numbers
-    //constexpr std::size_t Start = 1000000000001;
-    //constexpr std::size_t End = Start + 100000;
-
-    // 23 prime numbers
-    //constexpr std::size_t Start = 1'000'000'000'000'000'001;
-    //constexpr std::size_t End = Start + 1'000;
-
-    // 4 prime numbers
-    //constexpr std::size_t Start = 1'000'000'000'000'000'001;
-    //constexpr std::size_t End = Start + 100;
-    
-    // 23 prime numbers
-    //constexpr std::size_t Start = 1'000'000'000'000'000'001;
-    //constexpr std::size_t End = Start + 1'000;
-
-    // 114 prime numbers
-    constexpr std::size_t Start = 1'000'000'000'000'000'001;
-    constexpr std::size_t End = Start + 5'000;
-}
-
-static bool isPrime(std::size_t number)
-{
-    if (number <= 2) {
-        return number == 2;
-    }
-
-    if (number % 2 == 0) {
-        return false;
-    }
-
-    // check odd divisors from 3 to the square root of the number
-    std::size_t end{ static_cast<std::size_t>(std::ceil(std::sqrt(number))) };
-    for (std::size_t i{ 3 }; i <= end; i += 2) {
-
-        if (number % i == 0) {
-            return false;  // number not prime
-        }
-    }
-
-    return true; // found prime number
-}
-
 static void test_concurrency_thread_pool10_PrimeNumbers()
 {
     Logger::log(std::cout, "Press any key to start ...");
@@ -250,9 +194,9 @@ static void test_concurrency_thread_pool10_PrimeNumbers()
 
     Logger::enableLogging(true);
 
-    for (std::size_t i{ Globals::Start }; i < Globals::End; i += 2) {
+    for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
-        std::future<bool> future{ pool.addTask(isPrime, i) };
+        std::future<bool> future{ pool.addTask(PrimeNumbers::IsPrime, i) };
 
         results.push(std::move(future));
     }
@@ -273,7 +217,9 @@ static void test_concurrency_thread_pool10_PrimeNumbers()
         results.pop();
     }
 
-    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
+    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", 
+        PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+    );
         
     pool.stop();
 
@@ -314,7 +260,7 @@ static void test_concurrency_thread_pool11_PrimeNumbers()
 
     auto primeLambda = [&](std::size_t value) {
 
-        bool primeFound{ isPrime(value) };
+        bool primeFound{ PrimeNumbers::IsPrime(value) };
 
         if (primeFound) {
             Logger::log(std::cout, "> ", value, " is prime.");
@@ -327,7 +273,7 @@ static void test_concurrency_thread_pool11_PrimeNumbers()
 
     Logger::enableLogging(false);
 
-    for (std::size_t i{ Globals::Start }; i < Globals::End; i += 2) {
+    for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         std::future<std::pair<bool, std::size_t>> future{
             pool.addTask(primeLambda, i)
@@ -351,7 +297,7 @@ static void test_concurrency_thread_pool11_PrimeNumbers()
         }
     }
 
-    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", Globals::Start, " and ", Globals::End, '.');
+    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.');
        
     pool.stop();
 

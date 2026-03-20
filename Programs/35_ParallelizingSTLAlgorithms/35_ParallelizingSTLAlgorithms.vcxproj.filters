@@ -21,9 +21,6 @@
     <ClCompile Include="Parallel_Transform.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Prime.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Logger\Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

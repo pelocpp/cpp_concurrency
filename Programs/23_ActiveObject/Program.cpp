@@ -14,7 +14,6 @@ int main()
     test_active_object_01();
     test_active_object_02();
     test_active_object_03();
-
     return 0;
 }
 

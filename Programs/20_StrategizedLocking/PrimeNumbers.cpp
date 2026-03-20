@@ -2,6 +2,8 @@
 // PrimeNumbers.cpp
 // ===========================================================================
 
+#include "../Globals/GlobalPrimes.h"
+
 #include "PrimeCalculator.h"
 #include "ThreadsafeStack.h"
 
@@ -19,15 +21,6 @@ static constexpr size_t MaxIterations = 10'000'000;     // debug
 #else
 static constexpr size_t MaxIterations = 10'000'000;     // release
 #endif
-
-namespace Globals
-{
-    // https://www.michael-holzapfel.de/themen/primzahlen/pz-anzahl.htm
-
-    constexpr size_t LowerLimit = 1;
-    constexpr size_t UpperLimit = 10'000'000;
-    // Found:  664.579 prime numbers
-}
 
 void test_strategized_locking_01()
 {
@@ -77,7 +70,7 @@ void test_strategized_locking_03()
     using namespace Concurrency_PrimeCalculator;
     using namespace Concurrency_StrategizedLock;
 
-    Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
+    Logger::log(std::cout, "Calcalating Prime Numbers from ", PrimeNumberLimits::LowerLimit, " up to ", PrimeNumberLimits::UpperLimit, ':');
 
     // compare these two Lock objects // which one should be used in this example
     NoLock lock;
@@ -85,7 +78,7 @@ void test_strategized_locking_03()
 
     ThreadsafeStack<size_t> primes{ lock };
 
-    PrimeCalculator<size_t> calc{ primes, Globals::LowerLimit, Globals::UpperLimit + 1 };
+    PrimeCalculator<size_t> calc{ primes, PrimeNumberLimits::LowerLimit, PrimeNumberLimits::UpperLimit + 1 };
 
     ScopedTimer watch{};
 
@@ -101,7 +94,7 @@ void test_strategized_locking_04()
     using namespace Concurrency_PrimeCalculator;
     using namespace Concurrency_StrategizedLock;
 
-    Logger::log(std::cout, "Calcalating Prime Numbers from ", Globals::LowerLimit, " up to ", Globals::UpperLimit, ':');
+    Logger::log(std::cout, "Calcalating Prime Numbers from ", PrimeNumberLimits::LowerLimit, " up to ", PrimeNumberLimits::UpperLimit, ':');
 
     // NoLock lock;   // crashes sporadically // Access Violation // 0xc0000005 
     ExclusiveLock lock;
@@ -114,8 +107,8 @@ void test_strategized_locking_04()
     std::vector<std::thread> threads;
     threads.reserve(NumThreads);
 
-    size_t range = (Globals::UpperLimit - Globals::LowerLimit) / NumThreads;
-    size_t start = Globals::LowerLimit;
+    size_t range = (PrimeNumberLimits::UpperLimit - PrimeNumberLimits::LowerLimit) / NumThreads;
+    size_t start = PrimeNumberLimits::LowerLimit;
     size_t end = start + range;
 
     ScopedTimer watch{};
@@ -131,7 +124,7 @@ void test_strategized_locking_04()
     }
 
     // setup last thread
-    end = Globals::UpperLimit;
+    end = PrimeNumberLimits::UpperLimit;
     PrimeCalculator<size_t> calc{ primes, start, end + 1 };
     threads.emplace_back(calc);
 

@@ -2,13 +2,14 @@
 // PackagedTask_02.cpp // Packaged Task
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
+#include <cstddef>
+#include <deque>
+#include <future>
 #include <iostream>
 #include <thread>
-#include <future>
-#include <deque>
 #include <utility>
-
-#include "../Logger/Logger.h"
 
 namespace PackagedTask {
 
@@ -57,14 +58,14 @@ namespace PackagedTask {
 
         Logger::log(std::cout, "Start: ");
 
-        constexpr size_t MaxTasks{ 4 };
+        constexpr std::size_t MaxTasks{ 4 };
 
         std::deque<std::packaged_task<int(int, int)>> tasks;
 
         std::deque<std::future<int>> futures;
 
         // define tasks, store corresponding futures
-        for (size_t i{}; i != MaxTasks; i++) {
+        for (std::size_t i{}; i != MaxTasks; i++) {
 
             std::packaged_task<int(int, int)> task{ calcSumRange };
 
@@ -80,7 +81,7 @@ namespace PackagedTask {
         int end{ begin + increment };
 
         // execute each task in a separate thread
-        for (size_t i = 0; i != MaxTasks; i++) {
+        for (std::size_t i = 0; i != MaxTasks; i++) {
 
             std::packaged_task<int(int, int)> task{ std::move(tasks.front()) };
             
@@ -101,7 +102,7 @@ namespace PackagedTask {
 
         // get the results
         int sum{};
-        for (size_t i = 0; i != MaxTasks; i++) {
+        for (std::size_t i = 0; i != MaxTasks; i++) {
 
             std::future<int> future{ std::move(futures.front()) };
             futures.pop_front();

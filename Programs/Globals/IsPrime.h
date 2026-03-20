@@ -1,16 +1,16 @@
 // ===========================================================================
-// Program.cpp // Lock-Free Programming
+// IsPrime.h
 // ===========================================================================
 
-extern void test_lock_free_programming();
-extern void test_lock_free_programming_increment_decrement();
+#pragma once
 
-int main()
+#include <cmath>
+
+class PrimeNumbers
 {
-    test_lock_free_programming();
-    test_lock_free_programming_increment_decrement();
-    return 0;
-}
+public:
+    static bool IsPrime(size_t number);
+};
 
 // ===========================================================================
 // End-of-File

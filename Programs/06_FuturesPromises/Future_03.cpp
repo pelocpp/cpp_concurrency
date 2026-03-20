@@ -4,8 +4,8 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
 #include <future>
+#include <iostream>
 
 namespace PromisesAndFutures03 {
 

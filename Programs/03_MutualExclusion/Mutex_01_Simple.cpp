@@ -2,17 +2,17 @@
 // Mutual Exclusion Demonstration // Mutex_01_Simple.cpp
 // ===========================================================================
 
-#include <iostream>
-#include <thread> 
-#include <mutex> 
 #include <chrono>
+#include <iostream>
+#include <mutex> 
+#include <thread> 
 
 namespace SimpleMutexDemo
 {
     class Counter
     {
     private:
-        const size_t NumIterations{ 100000 };
+        const std::size_t NumIterations{ 100000 };
 
         int m_id{};
 
@@ -28,7 +28,7 @@ namespace SimpleMutexDemo
 
         void run() const {
 
-            for (size_t i{}; i != NumIterations; ++i)
+            for (std::size_t i{}; i != NumIterations; ++i)
             {
                 {
                     // <== remove comment from next line to demonstrate scattered output

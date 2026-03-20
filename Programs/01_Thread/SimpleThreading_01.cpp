@@ -2,11 +2,12 @@
 // Simple Threading Demo (std::thread basics) // SimpleThreading_01.cpp
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
+#include <chrono>
+#include <cstddef>
 #include <iostream>
 #include <thread> 
-#include <chrono>
-
-#include "../Logger/Logger.h"
 
 namespace SimpleThreading01 {
 
@@ -14,14 +15,14 @@ namespace SimpleThreading01 {
      *  std::thread basics
      */
 
-    constexpr size_t NumIterations{ 5 };
+    constexpr std::size_t NumIterations{ 5 };
 
     static void function(int value) {
 
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "tid:  ", tid);
 
-        for (size_t i{}; i != NumIterations; ++i) {
+        for (std::size_t i{}; i != NumIterations; ++i) {
             Logger::log(std::cout, "in thread ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         }

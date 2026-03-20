@@ -2,10 +2,10 @@
 // Examples_LockingStrategies.cpp // `std::defer_lock` vs `std::adopt_lock`
 // ===========================================================================
 
+#include <algorithm>
 #include <iostream>
 #include <mutex>
 #include <thread>
-#include <algorithm>
 
 // https://medium.com/@back_to_basics/c-11-locking-strategy-adopt-lock-and-defer-lock-eeedf76a2689
 

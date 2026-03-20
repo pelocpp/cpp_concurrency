@@ -5,6 +5,8 @@
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
 
+#include "../Globals/IsPrime.h"
+
 #include <algorithm>
 #include <future>
 #include <numeric>
@@ -17,9 +19,7 @@
 extern const size_t Start;
 extern const size_t End;
 
-extern bool isPrime(size_t number);
-
-const size_t ChunkSize = 500;
+static const size_t ChunkSize = 500;
 
 // ===========================================================================
 
@@ -229,7 +229,7 @@ static auto setup_primes_calculation(size_t from, size_t to) {
     auto dst{ std::vector<bool>(src.size()) };
 
     auto transformFunction{
-        [](size_t number) -> bool { return isPrime(number); }
+        [](size_t number) -> bool { return PrimeNumbers::IsPrime(number); }
     };
 
     return std::tuple{ src, dst, transformFunction };

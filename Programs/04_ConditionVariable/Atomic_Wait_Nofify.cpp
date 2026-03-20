@@ -6,10 +6,10 @@
 
 #include <atomic>
 #include <future>
+#include <iostream> 
 #include <mutex> 
 #include <print>
 #include <thread> 
-#include <iostream> 
 
 std::atomic<bool> g_ready{ false };
 

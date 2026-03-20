@@ -2,13 +2,14 @@
 // Atomic Operations (std::atomic<> and std::mutex)
 // ===========================================================================
 
-#include <iostream>
-#include <thread> 
-#include <atomic>
-#include <mutex>
-
 #include "../Logger/Logger.h"
 #include "../Logger/ScopedTimer.h"
+
+#include <atomic>
+#include <cstddef>
+#include <iostream>
+#include <mutex>
+#include <thread> 
 
 namespace IncrementDecrement {
 
@@ -85,7 +86,7 @@ namespace IncrementDecrement {
         // private helper methods
         void incrementSimple() {
             Logger::log(std::cout, "> incrementSimple");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 ++m_counter;
             }
             Logger::log(std::cout, "< incrementSimple");
@@ -93,7 +94,7 @@ namespace IncrementDecrement {
 
         void decrementSimple() {
             Logger::log(std::cout, "> decrementSimple");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 --m_counter;
             }
             Logger::log(std::cout, "< decrementSimple");
@@ -101,7 +102,7 @@ namespace IncrementDecrement {
 
         void incrementAtomic() {
             Logger::log(std::cout, "> incrementAtomic");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 ++m_counterAtomic;
             }
             Logger::log(std::cout, "< incrementAtomic");
@@ -109,7 +110,7 @@ namespace IncrementDecrement {
 
         void decrementAtomic() {
             Logger::log(std::cout, "> decrementAtomic");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 --m_counterAtomic;
             }
             Logger::log(std::cout, "< decrementAtomic");
@@ -117,7 +118,7 @@ namespace IncrementDecrement {
 
         void incrementMutex() {
             Logger::log(std::cout, "> incrementMutex");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 m_mutex.lock();
                 ++m_counter;
                 m_mutex.unlock();
@@ -127,7 +128,7 @@ namespace IncrementDecrement {
 
         void decrementMutex() {
             Logger::log(std::cout, "> decrementMutex");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 m_mutex.lock();
                 --m_counter;
                 m_mutex.unlock();
@@ -137,7 +138,7 @@ namespace IncrementDecrement {
 
         void incrementMutexRAII() {
             Logger::log(std::cout, "> incrementMutexRAII");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 std::lock_guard<std::mutex> guard{ m_mutex };
                 ++m_counter;
             }
@@ -146,7 +147,7 @@ namespace IncrementDecrement {
 
         void decrementMutexRAII() {
             Logger::log(std::cout, "> decrementMutexRAII");
-            for (size_t n{}; n != NumIterations; ++n) {
+            for (std::size_t n{}; n != NumIterations; ++n) {
                 std::lock_guard<std::mutex> guard{ m_mutex };
                 --m_counter;
             }

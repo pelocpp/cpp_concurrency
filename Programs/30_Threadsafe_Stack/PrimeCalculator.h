@@ -5,6 +5,7 @@
 #pragma once
 
 #include "../Logger/Logger.h"
+#include "../Globals/IsPrime.h"
 
 #include "ThreadsafeStack.h"
 
@@ -34,33 +35,10 @@ namespace Concurrency_PrimeCalculator
 
             for (size_t i{ m_begin }; i != m_end; ++i) {
 
-                if (isPrime(i)) {
+                if (PrimeNumbers::IsPrime(i)) {
                     m_stack.push(i);
                 }
             }
-        }
-
-    public:
-        static bool isPrime(size_t number)
-        {
-            if (number <= 2) {
-                return number == 2;
-            }
-
-            if (number % 2 == 0) {
-                return false;
-            }
-
-            // check odd divisors from 3 to the square root of the number
-            size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
-            for (size_t i{ 3 }; i <= end; i += 2) {
-
-                if (number % i == 0) {
-                    return false;  // number not prime
-                }
-            }
-
-            return true; // found prime number
         }
     };
 }
