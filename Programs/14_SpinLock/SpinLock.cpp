@@ -40,11 +40,11 @@ namespace TestSpinLocksCommon
 {
 
 #ifdef _DEBUG
-    const size_t MaxIterations = 100'000;
-    const size_t NumWorkers = 10;
+    const std::size_t MaxIterations = 100'000;
+    const std::size_t NumWorkers = 10;
 #else
-    const size_t MaxIterations = 1'000'000;
-    const size_t NumWorkers = 10;
+    const std::size_t MaxIterations = 1'000'000;
+    const std::size_t NumWorkers = 10;
 #endif
 
     using ValueType = unsigned long;
@@ -67,7 +67,7 @@ namespace TestUsingSpinLocks
 
     Spinlock spinlock;
 
-    static void spinlockTask(size_t iterations)
+    static void spinlockTask(std::size_t iterations)
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
@@ -75,7 +75,7 @@ namespace TestUsingSpinLocks
         // signal that this task is waiting for working
         spinlocksDone.count_down();
 
-        for (size_t i{}; i != iterations; ++i)
+        for (std::size_t i{}; i != iterations; ++i)
         {
             spinlock.lock();
             value++;
@@ -88,7 +88,7 @@ namespace TestUsingAtomics
 {
     using namespace TestSpinLocksCommon;
 
-    static void atomicTask(size_t iterations)
+    static void atomicTask(std::size_t iterations)
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
@@ -96,7 +96,7 @@ namespace TestUsingAtomics
         // signal that this task is waiting for working
         atomicDone.count_down();
 
-        for (size_t i{}; i != iterations; ++i)
+        for (std::size_t i{}; i != iterations; ++i)
         {
             valueAtomic++;
         }
@@ -107,7 +107,7 @@ namespace TestUsingMutex
 {
     using namespace TestSpinLocksCommon;
 
-    static void mutexTask(size_t iterations)
+    static void mutexTask(std::size_t iterations)
     {
         std::thread::id tid{ std::this_thread::get_id() };
         Logger::log(std::cout, "Task ", tid, " started ...");
@@ -115,7 +115,7 @@ namespace TestUsingMutex
         // signal that this task is waiting for working
         mutexDone.count_down();
 
-        for (size_t i{}; i != iterations; ++i)
+        for (std::size_t i{}; i != iterations; ++i)
         {
             std::lock_guard<std::mutex> guard{ mutex };
             value++;
@@ -135,7 +135,7 @@ void test_using_spinlocks() {
     
     value = 0;
     
-    for (size_t i{}; i != NumWorkers; ++i) {
+    for (std::size_t i{}; i != NumWorkers; ++i) {
         std::thread thread{ spinlockTask, MaxIterations };
         threads.push_back(std::move(thread));
     }
@@ -175,7 +175,7 @@ void test_using_atomics() {
 
     valueAtomic = 0;
 
-    for (size_t i{}; i != NumWorkers; ++i) {
+    for (std::size_t i{}; i != NumWorkers; ++i) {
         std::thread thread{ atomicTask, MaxIterations };
         threads.push_back(std::move(thread));
     }
@@ -217,7 +217,7 @@ void test_using_mutex() {
 
     value = 0;
 
-    for (size_t i{}; i != NumWorkers; ++i) {
+    for (std::size_t i{}; i != NumWorkers; ++i) {
         std::thread thread{ mutexTask, MaxIterations };
         threads.push_back(std::move(thread));
     }

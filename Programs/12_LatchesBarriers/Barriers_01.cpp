@@ -4,6 +4,7 @@
 
 #include <barrier>
 #include <cmath>
+#include <cstddef>
 #include <format>
 #include <iomanip>
 #include <iostream>
@@ -17,7 +18,7 @@ namespace Concurrency_Barriers_01
     {
         std::cout << "Start:" << std::endl;
 
-        std::vector<size_t> values{ 1, 2, 3, 4, 5, 6 };
+        std::vector<std::size_t> values{ 1, 2, 3, 4, 5, 6 };
 
         auto printValues = [&values]() noexcept {
 
@@ -56,19 +57,19 @@ namespace Concurrency_Barriers_01
         // Note: Each thread deals with a column in the calculation / display
         std::vector<std::jthread> threads;
 
-        auto calculate = [&](size_t column) {
+        auto calculate = [&](std::size_t column) {
 
-            for (size_t i{}; i != 4; ++i) {
+            for (std::size_t i{}; i != 4; ++i) {
 
                 // compute powers of 2 );
-                values[column] = static_cast<size_t>(std::pow(values[column], 2));
+                values[column] = static_cast<std::size_t>(std::pow(values[column], 2));
 
                 // synchronize with other threads to print values
                 allDone.arrive_and_wait();
             }
         };
 
-        for (size_t index{}; index != values.size(); ++index) {
+        for (std::size_t index{}; index != values.size(); ++index) {
 
             std::jthread t{ calculate, index };
             threads.push_back(std::move(t));

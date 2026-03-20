@@ -4,11 +4,11 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
-#include <thread>
 #include <chrono>
-#include <semaphore>
+#include <iostream>
 #include <print>
+#include <semaphore>
+#include <thread>
 
 namespace ConcurrencyBinarySemaphore {
 

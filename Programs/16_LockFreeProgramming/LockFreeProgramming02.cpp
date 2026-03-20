@@ -6,12 +6,13 @@
 #include "../Logger/ScopedTimer.h"
 
 #include <atomic>
+#include <cstddef>
 #include <thread>
 
 #ifdef _DEBUG
-static constexpr size_t NumIterations = 10'000'000;     // debug
+static constexpr std::size_t NumIterations = 10'000'000;     // debug
 #else
-static constexpr size_t NumIterations = 10'000'000;     // release
+static constexpr std::size_t NumIterations = 10'000'000;     // release
 #endif
 
 namespace LockFreeProgrammingIncrementDecrement {
@@ -30,7 +31,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
     static void test_lock_free_programming_01()
     {
-        std::atomic<size_t> value{};
+        std::atomic<std::size_t> value{};
 
         Logger::log(std::cout, "std::atomic: before: ", value.load());
 
@@ -38,7 +39,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         std::jthread t1 {
             [&]() {
-                for (size_t n{}; n != NumIterations; ++n) {
+                for (std::size_t n{}; n != NumIterations; ++n) {
                     increment(value);
                 }
             }
@@ -46,7 +47,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         std::jthread t2 {
             [&]() {
-                for (size_t n{}; n != NumIterations; ++n) {
+                for (std::size_t n{}; n != NumIterations; ++n) {
                     decrement(value);
                 }
             }
@@ -90,7 +91,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
     static void test_lock_free_programming_02()
     {
-        std::atomic<size_t> value{};
+        std::atomic<std::size_t> value{};
 
         Logger::log(std::cout, "compare_exchange_weak: before: ", value.load());
 
@@ -98,7 +99,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         std::jthread t1{
             [&]() mutable {
-                for (size_t n{}; n != NumIterations; ++n) {
+                for (std::size_t n{}; n != NumIterations; ++n) {
                     incrementCAS(value);
                 }
             }
@@ -106,7 +107,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         std::jthread t2{
             [&]() mutable {
-                for (size_t n{}; n != NumIterations; ++n) {
+                for (std::size_t n{}; n != NumIterations; ++n) {
                     decrementCAS(value);
                 }
             }

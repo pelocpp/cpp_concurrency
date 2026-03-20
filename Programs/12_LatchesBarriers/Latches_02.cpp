@@ -4,14 +4,14 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
-#include <sstream>
-#include <future>
-#include <thread>
-#include <latch>
 #include <array>
-#include <random>
 #include <deque>
+#include <future>
+#include <iostream>
+#include <latch>
+#include <random>
+#include <sstream>
+#include <thread>
 
 namespace Latches_03 {
 

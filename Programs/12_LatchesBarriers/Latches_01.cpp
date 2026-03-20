@@ -4,13 +4,13 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
-#include <string>
-#include <sstream>
-#include <queue>
-#include <thread>
-#include <latch>
 #include <array>
+#include <iostream>
+#include <latch>
+#include <queue>
+#include <sstream>
+#include <string>
+#include <thread>
 #include <vector>
 
 namespace Latches_01 {

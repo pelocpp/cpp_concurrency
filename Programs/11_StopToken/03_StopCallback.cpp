@@ -2,15 +2,13 @@
 // StopCallback.cpp // std::stop_callback
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
 #include <iostream>
-//#include <queue>
 #include <thread>
 #include <future>
 #include <stop_token>
-//#include <mutex>
 #include <condition_variable>
-
-#include "../Logger/Logger.h"
 
 // =============================================================================
 // =============================================================================

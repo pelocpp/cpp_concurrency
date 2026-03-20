@@ -2,16 +2,17 @@
 // ReaderWriterLock02.cpp // Reader Writer Lock
 // ===========================================================================
 
+#include "../Logger/Logger.h"
+
+#include <array>
+#include <cstddef>
+#include <exception>
 #include <iostream>
+#include <mutex>
+#include <optional>
+#include <shared_mutex>
 #include <string>
 #include <thread>
-#include <mutex>
-#include <shared_mutex>
-#include <array>
-#include <optional>
-#include <exception>
-
-#include "../Logger/Logger.h"
 
 namespace Reader_Writer
 {
@@ -20,12 +21,12 @@ namespace Reader_Writer
         int m_data;
     };
 
-    template <size_t TSize = 64>
+    template <std::size_t TSize = 64>
     class Snapshots
     {
     private:
         std::array<Data, TSize>   m_buffer;
-        size_t                    m_offset;
+        std::size_t                    m_offset;
         mutable std::shared_mutex m_mutex;
 
     public:
@@ -39,7 +40,7 @@ namespace Reader_Writer
             ++m_offset;
         }
 
-        std::optional<Data> get(size_t index) const {
+        std::optional<Data> get(std::size_t index) const {
 
             // we only read, but need to prevent concurrent writes,
             // therefore we are using a shared_lock
@@ -70,7 +71,7 @@ namespace Reader_Writer
         using namespace Reader_Writer;
         using namespace std::chrono_literals;
 
-        constexpr size_t Size{ 64 };
+        constexpr std::size_t Size{ 64 };
 
         Snapshots<Size> snapshots{};
 
@@ -104,7 +105,7 @@ namespace Reader_Writer
 
             std::jthread reader1 { 
                 [&] () {
-                    for (size_t i{}; i != Size; i++) {
+                    for (std::size_t i{}; i != Size; i++) {
                         if (snapshots.get(i).has_value()) {
                             ++ counter1;
                         }
@@ -116,7 +117,7 @@ namespace Reader_Writer
 
             std::jthread reader2{
                 [&] () {
-                    for (size_t i{}; i != Size; i++) {
+                    for (std::size_t i{}; i != Size; i++) {
                         if (snapshots.get(i).has_value()) {
                             ++counter2;
                         }

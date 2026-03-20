@@ -4,14 +4,14 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
+#include <array>
+#include <chrono>
 #include <iomanip>
+#include <iostream>
+#include <random>
+#include <semaphore>
 #include <sstream>
 #include <thread>
-#include <chrono>
-#include <semaphore>
-#include <random>
-#include <array>
 
 namespace ConcurrencyBinarySemaphore
 {

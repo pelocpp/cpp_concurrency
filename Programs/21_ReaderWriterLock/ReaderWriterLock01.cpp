@@ -2,26 +2,27 @@
 // ReaderWriterLock01.cpp // Reader Writer Lock
 // ===========================================================================
 
+#include "../Logger/ScopedTimer.h"
+
+#include <cstddef>
 #include <iostream>
 #include <mutex>
 #include <shared_mutex>
 #include <thread>
 
-#include "../Logger/ScopedTimer.h"
+static constexpr int RegularLocking{ 1 };
+static constexpr int SharedLocking{ 2 };
 
-constexpr int RegularLocking{ 1 };
-constexpr int SharedLocking{ 2 };
+static constexpr int LockingMode{ SharedLocking };
 
-constexpr int LockingMode{ SharedLocking };
-
-constexpr size_t NumIterations{ 10'000'000 };
+static constexpr std::size_t NumIterations{ 10'000'000 };
 
 namespace Reader_Writer
 {
     class DataContainer
     {
     private:
-        size_t m_data;
+        std::size_t m_data;
 
         mutable std::mutex m_mutex;
         mutable std::shared_mutex m_shared_mutex;
@@ -29,13 +30,13 @@ namespace Reader_Writer
     public:
         DataContainer() : m_data{} {}
 
-        size_t getValue() const { return m_data; }
+        std::size_t getValue() const { return m_data; }
 
         void write() {
 
             Logger::log(std::cout, "Start Writing ...");
 
-            for (size_t i{}; i != NumIterations; ++i) {
+            for (std::size_t i{}; i != NumIterations; ++i) {
 
                 if constexpr (LockingMode == RegularLocking) {
 
@@ -57,7 +58,7 @@ namespace Reader_Writer
 
             Logger::log(std::cout, "Start Reading ...");
 
-            size_t copy{};
+            std::size_t copy{};
 
             while (copy < NumIterations) {
 

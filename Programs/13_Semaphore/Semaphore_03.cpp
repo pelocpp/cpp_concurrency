@@ -4,13 +4,13 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
-#include <queue>
 #include <chrono>
-#include <thread>
+#include <iostream>
 #include <mutex>
-#include <semaphore>
 #include <print>
+#include <queue>
+#include <semaphore>
+#include <thread>
 
 namespace ConcurrencyCountingSemaphore {
 
@@ -22,7 +22,7 @@ namespace ConcurrencyCountingSemaphore {
 
         std::queue<char> values{};
 
-        for (size_t i{}; i != 1000; ++i) {
+        for (std::size_t i{}; i != 1000; ++i) {
             char ch{ static_cast < char>('A' + (i % ('Z' - 'A'))) };
             values.push(ch);
         }

@@ -4,10 +4,10 @@
 
 #include "../Logger/Logger.h"
 
+#include <atomic>
+#include <chrono>
 #include <iostream>
 #include <thread>
-#include <chrono>
-#include <atomic>
 
 namespace JoinableThreadCooperativeInterruptibility {
 
