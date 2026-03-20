@@ -42,7 +42,7 @@
 *Kurz gefasst*:
 
 Eine Ereigniswarteschlange (engl. *Event Loop* ) kann man als Alternative zu einem
-Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf geschützte Objekte bzw. deren Methoden,
+Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf kritischen Abschnitte eines Programms,
 jedoch auf unterschiedliche Weise:
 
   * `std:mutex`-Objekte stellen einen Synchronisationsmechanismus dar, es sind zu diesem Zweck die kritischen Abschnitte
@@ -57,6 +57,12 @@ Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismen un
   * Möglicherweise wurden die Klassen von einem alten Teil eines Softwaresystems geerbt.
   * Sie entwerfen gerade neue Klassen, möchten diese aber nicht mit gleich mit
 Synchronisationsmechanismen wie `std:mutex`-Objekten überfrachten.
+
+Wir stellen in diesem Abschnitt die Realisierung einer Klasse `EventLoop`,
+die eine Ereigniswarteschlange darstellt. Es ist möglich, Funktionen ohne als auch mit Parametern 
+in dieser Warteschlange einzureihen. Konzeptionell beabsichtigt hingegen ist der Rückgabetyp `void` bei allen Funktion &ndash;
+Welchen Sinn sollte es ergeben, zu einem späteren Zeitpunkte einer Funktionsausführung zu erhalten?
+Meiner Meinung nach keinen, deshalb dieser Ansatz.
 
 Es folgen einige Hinweise zur Realisierung.
 
@@ -80,7 +86,6 @@ Was ist der Unterschied zwischen diesen beiden Klassen?
 *Tabelle* 1: Unterschiede zwischen `std::function<void()>` und `std::move_only_function<void()>`.
 
 Welche Situation liegt bei uns im Kontext der Realisierung einer Ereigniswarteschlange vor?
-
 Alle Ereignisse
 
   * werden einmalig ausgeführt. 
@@ -106,6 +111,8 @@ void enqueue(Event&& callable);
 void enqueue(const Event& callable);
 ```
 
+Dabei hatten wir den Datentyp `Event` als `std::move_only_function<void()>` definiert.
+
 Wir studieren die Möglichkeiten nun im Detail.
 
 #### Schnittstelle `void enqueue(Event& callable)`
@@ -113,10 +120,10 @@ Wir studieren die Möglichkeiten nun im Detail.
 Diese Methode erwartet eine nicht-konstante *LValue*-Referenz.
 
 *Problem*:<br />
-  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch gesehen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen
-  * Temporäre Werte (R-Werte) werden nicht akzeptiert.
+  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch gesehen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen.
+  * Temporäre Werte (*RValues*) werden nicht akzeptiert.
 
-Damit wären die naheliegendsten Verwendungszwecke nicht möglich, zum Beispiel
+Damit wären die naheliegendsten Verwendungszwecke nicht möglich, zum Beispiel Aufrufe der Gestalt
 
 
 ```cpp
@@ -137,9 +144,8 @@ Die Move-Semantik wird damit unterstützt.
 eventLoop.enqueue([] () { /* ... */ });  // Works !!!
 ```
 
-Nachteil:
-
-Es werden keine LValues akzeptiert, es sei denn, diese werden explizit verschoben:
+*Nachteil*:<br />
+Es werden keine *LValues* akzeptiert, es sei denn, diese werden explizit verschoben:
 
 
 ```cpp
@@ -149,7 +155,6 @@ eventLoop.enqueue(std::move(event));   // Works !!!
 ```
 
 Das ist zwar korrekt und sauber, aber etwas weniger ergonomisch.
-
 
 #### Zwei Methoden `void enqueue(Event& callable)` und `void enqueue(Event&& callable)`
 
@@ -161,22 +166,20 @@ void enqueue(Event&& callable);
 
 Das ist so nicht optimal.
 
-Warum?
+*Warum*?<br />
   * Was würde die `Event&`-Version tun? Kopieren? Bei `std::move_only_function<void()>`-Objekten geht das nicht!
-  * Vom L-Wert verschieben? Das ist überraschend und gefährlich.
+  * Einen *LValue* verschieben? Das ist überraschend und gefährlich.
 
 Dies führt zu verwirrender Semantik und sollte vermieden werden.
 
-#### Schnittstelle `void enqueue(const Event& )`
+#### Schnittstelle `void enqueue(const Event& callable)`
 
 Ein Move-Only Datentyp kann nicht mit `const` qualifiziert werden,
 da der Parameter `callable` sonst nicht verschiebbar ist.
 Also diese Variante kommt überhaupt nicht in Betracht.
 
 
-
-
-## Bewährte Vorgehensweise: *Pass-by-Value*
+## Bewährte Vorgehensweise: *Pass-by-Value* &ndash; `void enqueue(Event callable)`
 
 Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
 Die idiomatische Lösung in modernem C++ lautet:
@@ -188,29 +191,31 @@ void enqueue(Event callable);  // pass by value
 Was ist an dieser Lösung so gut?
 
 
-  * Funktioniert effizient mit R-Werten<br />
+  * Funktioniert effizient mit RValues:
+
 ```cpp
-eventLoop.enqueue([] () { /* ... */ });  // Works !!! Lamda wird erst in den Parameter,
-                                         // und dann in den std::vector verschoben!
+eventLoop.enqueue([] () { /* ... */ });  // Works ! Lambda is first moved into the parameter, 
+                                         // then into the std::vector
 ```
 
 
-  * Funktioniert mit LValues (allerdings ist explizites Verschieben erforderlich)<br />
+  * Funktioniert mit *LValues* (allerdings ist explizites Verschieben erforderlich)
+
 ```cpp
 Event event = [] { /* ... */ };
-eventLoop.enqueue(std::move(event));   // Works !!! Klare Absicht
+eventLoop.enqueue(std::move(event));   // Works ! Clear Intent
 ```
 
+*Zusammenfassung*:<br />
   * Einfache und sichere Schnittstelle
-    * Keine Überladungen
-    * Keine Überraschungen
-    * Entspricht modernen C++-Konventionen
+  * Keine Überladungen
+  * Keine Überraschungen
+  * Entspricht modernen C++-Konventionen
 
 
-*Hinweis*:
-
+*Hinweis*:<br />
 Wenn Sie beliebige aufrufbare Funktionen (nicht nur `Event`) zulassen möchten,
-können Sie ein Template verwenden:
+können Sie ein Funktionstemplate verwenden:
 
 ```cpp
 template <typename TFunc>
@@ -219,15 +224,16 @@ void enqueue(TFunc&& func) {
 }
 ```
 
-Dies ermöglicht Folgendes:
+Dies ermöglicht folgende Aufrufe:
 
 ```cpp
 eventLoop.enqueue([] { /* ... */ });      // Lambda => Template
-eventLoop.enqueue(std::move(eventObj));   // Event  => std::move_only_function<void()>;
+
+std::move_only_function<void()> event{ function };
+eventLoop.enqueue(std::move(event));      // Event  => std::move_only_function<void()>;
 ```
 
 Aber:<br />
-
   * Geringfügig komplexer
   * Kann unerwartete Typen akzeptieren (normalerweise unproblematisch)
 
@@ -237,7 +243,7 @@ Aber:<br />
 In der Realisierung der Abarbeitung der Nachrichten
 finden Sie eine Umsetzung der *Double Buffering Technik* vor.
 
-Es kommen zwei Objekte des Typs `std::vector<std::function<void()>>` zum Einsatz:
+Es kommen zwei Objekte des Typs `std::vector<std::move_only_function<void()>>` zum Einsatz:
 
   * Der erste Puffer dient ausschließlich zum Einreihen neuer Nachrichten.
   * Der zweite Puffer dient ausschließlich zum Entnehmen vorhandener Nachrichten.
@@ -252,49 +258,54 @@ Eine grobe Skizzierung der Realisierung der Verarbeitung der Nachrichten in der 
 &ndash; inklusive Doppelpuffertechnik &ndash; sieht so aus:
 
 ```cpp
-01: void event_loop_procedure()
+01: void event_loop()
 02: {
-03:     std::vector<Event> events;
+03:     std::vector<std::move_only_function<void()>> events;
 04: 
-05:     while (m_running)
+05:     while (true)
 06:     {
 07:         {
 08:             std::unique_lock<std::mutex> guard{ m_mutex };
 09: 
 10:             m_condition.wait(
 11:                 guard,
-12:                 [this] () -> bool { return ! m_events.empty(); }
+12:                 [this] () -> bool { return ! m_events.empty() || !m_running; }
 13:             );
 14: 
-15:             std::swap(events, m_events);
-16:         }
+15:             if (!m_running && m_events.empty())
+16:                 return;
 17: 
-18:         for (const Event& callable : events)
-19:         {
-20:             callable();
-21:         }
-22: 
-23:         events.clear();
-24:     }
-25: }
+18:             std::swap(events, m_events);
+19:         }
+20: 
+21:         for (auto& callable : events)
+22:         {
+23:             callable();
+24:         }
+25: 
+26:         events.clear();  // empty container for next loop
+27:     }
+28: 
+29: }
 ```
 
 In Zeile 10 finden wir einen Aufruf der `wait`-Methode an einem `m_condition`-Objekt vor.
 Hierzu muss es einen korrespondierenden `notify_one`- oder `notify_all`-Aufruf geben:
 
 ```cpp
-01: void enqueue (const std::function<void()>& callable)
+01: void enqueue(std::move_only_function<void()> callable)
 02: {
 03:     {
 04:         std::lock_guard<std::mutex> guard{ m_mutex };
-05:         m_events.emplace_back(callable);
+05:         m_events.push_back(std::move(callable));
 06:     }
 07: 
 08:     m_condition.notify_one();
 09: }
+
 ```
 
-Sinnigerweise ist dieser in der Methode `enqueue` vorhanden, wenn neue Nachrichten in der
+Sinnigerweise ist dieser Aufruf in der Methode `enqueue` vorhanden, wenn neue Nachrichten in der
 Warteschlange aufgenommen werden.
 
 
@@ -312,8 +323,8 @@ Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugre
 und diese mittels `[=]` in das Lambda-Objekt kopieren!
 
 Ab C++ 14 kann man sogar auf das unnötige Kopieren verzichten,
-mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; können die Parameter auch verschoben werden,
-also die Move-Semantik Anwendung finden!
+mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; Feature können die Parameter auch verschoben werden,
+also kann die Move-Semantik Anwendung finden!
 
 Der realisierende Quellcode mag nicht ganz einfach zu lesen zu sein, da er mit Hilfe *variadischer Templates*
 eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-Objekt aufnimmt:
@@ -325,7 +336,7 @@ eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-O
 03: {
 04:     Logger::log(std::cout, "enqueueTask ...");
 05: 
-06:     // using "generalized Lambda Capture" to preserve move semantics
+06:     // using "Generalized Lambda Capture" to preserve move semantics
 07:     auto callable{
 08:         [func = std::forward<TFunc>(func),
 09:         ... capturedArgs = std::forward<TArgs>(args)]() {
@@ -344,9 +355,9 @@ eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-O
 ```
 
 In Zeile 8 des Listings finden wir einen Lambda-Ausdruck vor:
-Der Aufruf der Nachricht `func` ist im Rumpf der Lambda-Funktion plaziert &ndash; mit `std::invoke`,
+Der Aufruf der Nachricht `func` ist im Rumpf der Lambda-Funktion platziert &ndash; mit `std::invoke`,
 das Funktionsobjekt selbst (`func`) wird via `[func = std::forward<TFunc>(func)]` in das Lambda-Objekt verschoben!
-Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch gesehen das so genannte *Variadic Capture* hinzu:
+Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch gesehen das so genannte *Variadic Capture* Sprachfeature hinzu:
 
 ```cpp
 [... args = std::forward<TArgs>(args)]
