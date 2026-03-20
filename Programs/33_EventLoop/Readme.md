@@ -107,8 +107,8 @@ Welche der folgenden Schnittstellen würden Sie bevorzugen &ndash; technisch gese
 ```cpp
 void enqueue(Event callable);
 void enqueue(Event& callable);
-void enqueue(Event&& callable);
 void enqueue(const Event& callable);
+void enqueue(Event&& callable);
 ```
 
 Dabei hatten wir den Datentyp `Event` als `std::move_only_function<void()>` definiert.
@@ -185,11 +185,10 @@ Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
 Die idiomatische Lösung in modernem C++ lautet:
 
 ```cpp
-void enqueue(Event callable);  // pass by value
+void enqueue(Event callable);  // Pass by Value
 ```
 
 Was ist an dieser Lösung so gut?
-
 
   * Funktioniert effizient mit RValues:
 
