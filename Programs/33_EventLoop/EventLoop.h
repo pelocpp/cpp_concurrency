@@ -39,12 +39,13 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
-    void enqueue(Event callable);
+    void enqueue(Event&& callable);
 
-    template <typename F>
-    void enqueue(F&& func) {
-        // I want to allow any callable (not just Event), so I template it
-        m_events.emplace_back(std::forward<F>(func));
+    template <typename TFunc>
+    void enqueue(TFunc&& func) {
+        // I want to allow any callable (not just 'Event'),
+        // therefore this templated variant
+        m_events.emplace_back(std::forward<TFunc>(func));
     }
 
     template<typename TFunc, typename ... TArgs>

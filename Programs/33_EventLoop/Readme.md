@@ -104,15 +104,21 @@ void enqueue(Event& callable);
 
 Diese Methode erwartet eine nicht-konstante *LValue*-Referenz.
 
-WEITER WEITER 
-
-
-Problem:
-
-  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch geshen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen
+*Problem*:<br />
+  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch gesehen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen
   * Temporäre Werte (R-Werte) werden nicht akzeptiert.
 
-Daher ist die naheliegendste Verwendung nicht möglich.
+Damit wären die naheliegendsten Verwendungszwecke nicht möglich, zum Beispiel
+
+
+```cpp
+m_events.enqueue([] () { /* ... */ });  // ERROR: initial value of reference to non-const must be an lvalue
+```
+
+
+
+
+
 
 
 
@@ -122,6 +128,42 @@ oder
 ```cpp
 void enqueue(Event&& callable);
 ```
+
+Funktioniert einwandfrei mit temporären Objekten! 
+Die Move-Semantik wird damit unterstützt.
+
+
+```cpp
+eventLoop.enqueue([] () { /* ... */ });  // Works !!!
+```
+
+Nachteil:
+
+Es werden keine LValues akzeptiert, es sei denn, diese werden explizit verschoben:
+
+
+```cpp
+Event event = [] { /* ... */ };
+eventLoop.enqueue(event);              // ERROR: an rvalue reference cannot be bound to an lvalue
+eventLoop.enqueue(std::move(event));   // Works !!!
+```
+
+Das ist zwar korrekt und sauber, aber etwas weniger ergonomisch.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 oder
 
@@ -130,12 +172,79 @@ void enqueue(Event& callable);
 void enqueue(Event&& callable);
 ```
 
+Das ist so nicht optimal.
+
+Warum?
+  * Was würde die `Event&`-Version tun? Kopieren? Bei `std::move_only_function<void()>`-Objekten geht das nicht!
+  * Vom L-Wert verschieben? Das ist überraschend und gefährlich.
+
+Dies führt zu verwirrender Semantik und sollte vermieden werden.
+
+
+
+
+
+
+Bewährte Vorgehensweise: *Pass-by-Value*
+
 Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
 Die idiomatische Lösung in modernem C++ lautet:
 
 ```cpp
 void enqueue(Event callable);  // pass by value
 ```
+
+Was ist an dieser Lösung so gut?
+
+
+  * Funktioniert effizient mit R-Werten
+
+```cpp
+eventLoop.enqueue([] () { /* ... */ });  // Works !!! Lamda wird erst in den Parameter,
+                                         // und dann in den std::vector verschoben!
+```
+
+
+
+
+  * Funktioniert mit LValues (allerdings ist explizites Verschieben erforderlich)
+
+
+```cpp
+Event event = [] { /* ... */ };
+eventLoop.enqueue(std::move(event));   // Works !!! Klare Absicht
+```
+
+  * Einfache und sichere Schnittstelle
+    * Keine Überladungen
+    * Keine Überraschungen
+    * Entspricht modernen C++-Konventionen
+
+
+
+*Hinweis*:
+
+Wenn Sie beliebige aufrufbare Funktionen (nicht nur `Event`) zulassen möchten,
+können Sie ein Template verwenden:
+
+```cpp
+template <typename TFunc>
+void enqueue(TFunc&& func) {
+    m_events.emplace_back(std::forward<TFunc>(func));
+}
+```
+
+Dies ermöglicht Folgendes:
+
+```cpp
+eventLoop.enqueue([] { /* ... */ });      // Lambda => Template
+eventLoop.enqueue(std::move(eventObj));   // Event  => std::move_only_function<void()>;
+```
+
+Aber:<br />
+
+  * Geringfügig komplexer
+  * Kann unerwartete Typen akzeptieren (normalerweise unproblematisch)
 
 
 

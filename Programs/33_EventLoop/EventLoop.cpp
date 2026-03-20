@@ -66,7 +66,7 @@ void EventLoop::threadProcedure()
     Logger::log(std::cout, "< Event Loop");
 }
 
-void EventLoop::enqueue(Event callable)
+void EventLoop::enqueue(Event&& callable)
 {
     {
         std::lock_guard<std::mutex> guard{ m_mutex };
