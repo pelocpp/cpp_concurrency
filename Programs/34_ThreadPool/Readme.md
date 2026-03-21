@@ -384,7 +384,7 @@ Man beachte, dass die `std::promise`-Variable des Typs `std::shared_ptr` in das 
 
 ---
 
-### Ein erstes Beispiel
+### Ein erstes Beispiel: Threadpool starten und herunterfahren
 
 Starten und Herunterfahren des Threadpools:
 
@@ -419,12 +419,11 @@ Ausgabe:
 [1]:    Done.
 ```
 
-
 ---
 
-### Ein zweites Beispiel
+### Ein zweites Beispiel: Fünf einfache Tasks ausführen
 
-Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
+Starten des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
 
 ```cpp
 01: void emptyTask()
@@ -519,18 +518,69 @@ Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools
 
 ---
 
-### Ein zweites Beispiel
+### Ein drittes Beispiel: Primzahlen berechnen
 
-Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
+Dieses Mal ist das Beispiel etwas umfangreicher, wir berechnen Primzahlen.
+Für den Nachweis der Primzahleigenschaft wird für jeden Primzahlenkandidaten ein separater Thread des Threadpools herangezogen,
+sprich eine entsprechende Task in den Pool eingereiht.
+
+Die Ausgabe weiter unten passt zum Zahlenbereich von 1'000'000'000'000'000'001 bis 1'000'000'000'000'030'001.
+Es werden folglich 30'000 Tasks in den Pool eingereiht.
+Die Laufzeit dieses Beispiels beträgt in etwas 2 Minuten.
+Damit ist es möglich, den Taskmanager bei voller Auslastung des Systems beobachten zu können,
+siehe auch *Abbildung* 1 weiter unten.
 
 
----
+Im einzelnen werden folgende Tätigkeiten ausgeführt:
 
-### Ein drittes Beispiel
+  * Starten des Threadpools.
+  * Einreihen von 30'000 Tasks.
+  * Abspeichern / Zwischenspeichern von 30'000 `std::future`-Objekten.
+  * Berechnen des Gesamtsumme aller gefundenen Primzahlen.
+  * Ausgabe des Ergebnisses (Anzahl der gefundenen Primzahlen).
+  * Herunterfahren des Threadpools.
 
-Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
 
-<img src="TaskManager_ThreadPool.png" width="750">
+*Programm*:
+
+```cpp
+01: void test()
+02: {
+03:     ScopedTimer clock{};
+04: 
+05:     std::size_t foundPrimeNumbers{};
+06:     std::queue<std::future<bool>> results;
+07:     ThreadPool pool{};
+08: 
+09:     Logger::log(std::cout, "Enqueuing tasks");
+10: 
+11:     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+12: 
+13:         std::future<bool> future{ pool.addTask(PrimeNumbers::IsPrime, i) };
+14:         results.push(std::move(future));
+15:     }
+16: 
+17:     Logger::log(std::cout, "Enqueuing tasks done.");
+18: 
+19:     pool.start();
+20: 
+21:     while (results.size() != 0)
+22:     {
+23:         auto found = results.front().get();
+24:         if (found) {
+25:             ++foundPrimeNumbers;
+26:         }
+27: 
+28:         results.pop();
+29:     }
+30: 
+31:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", 
+32:         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+33:     );
+34:         
+35:     pool.stop();
+36: }
+```
 
 *Ausgabe*:
 
@@ -584,15 +634,293 @@ Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools
 [1]:    Elapsed time: 121238 [milliseconds]
 ```
 
+Wir erkennen am Taskmanager, dass das System mit 99% ziemlich stark ausgelastet ist.
+
+<img src="TaskManager_ThreadPool.png" width="750">
+
+*Abbildung* 1: Task Manager während aktiver Thread Pool Anwendung.
+
+Wenn ich das Programm auf einem zweiten Rechner laufen lasse, dann sieht die Auslastung etwas anders aus:
+
+<img src="TaskManager_ThreadPool_Dell_Notebook.png" width="750">
+
+*Abbildung* 2: Task Manager während aktiver Thread Pool Anwendung auf einem zweiten Rechner.
 
 
 ---
 
+### Ein viertes Beispiel: Primzahlen berechnen und in der Konsole ausgeben
 
+Wir nehmen am letzten Programm einige kleine Änderungen vor:
 
+  * Jede gefundene Primzahl wird in der Konsole ausgegeben.
+  * Die Workerthreads des Pools transferieren keine Ergebnisse, d.h. der Rückgabetyp ist `std::future<void>`.
 
+Das Programm sieht nun so aus:
 
+```cpp
+01: void test()
+02: {
+03:     ScopedTimer clock{};
+04: 
+05:     std::size_t foundPrimeNumbers{};
+06:     std::queue<std::future<void>> results;
+07:     ThreadPool pool{};
+08: 
+09:     Logger::log(std::cout, "Enqueuing tasks");
+10: 
+11:     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+12: 
+13:         std::future<void> future{ pool.addTask(
+14:             [](std::size_t number) {
+15:                 bool found {PrimeNumbers::IsPrime(number)};
+16:                 if (found) {
+17:                     Logger::log(std::cout, "> ", number, " is prime.");
+18:                 }     
+19:             }, 
+20:             i
+21:         )};
+22: 
+23:         results.push(std::move(future));
+24:     }
+25: 
+26:     Logger::log(std::cout, "Enqueuing tasks done.");
+27: 
+28:     pool.start();
+29: 
+30:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
+31:         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+32:     );
+33: 
+34:     pool.stop();
+35: }
+```
 
+*Ausgabe*:
+
+```
+[1]: 	Press any key to start ...
+[1]: 	Start
+[1]: 	Enqueuing tasks
+[1]: 	Enqueuing tasks done.
+[1]: 	Number of available concurrent threads: 22
+[1]: 	Found 0 prime numbers between 1000000000000000001 and 1000000000000030001.
+[2]: 	Started worker [25540]
+[3]: 	Started worker [39428]
+[4]: 	Started worker [39072]
+[5]: 	Started worker [1584]
+[6]: 	Started worker [5276]
+[7]: 	Started worker [22496]
+[8]: 	Started worker [10204]
+[9]: 	Started worker [22128]
+[10]: 	Started worker [13452]
+[11]: 	Started worker [18780]
+[12]: 	Started worker [31064]
+[13]: 	Started worker [18332]
+[14]: 	Started worker [19944]
+[15]: 	Started worker [17056]
+[16]: 	Started worker [24196]
+[17]: 	Started worker [13752]
+[18]: 	Started worker [30328]
+[19]: 	Started worker [23348]
+[20]: 	Started worker [32972]
+[21]: 	Started worker [16704]
+[22]: 	Started worker [14020]
+[23]: 	Started worker [24496]
+[2]: 	> 1000000000000000003 is prime.
+[7]: 	> 1000000000000000079 is prime.
+[11]: 	> 1000000000000000183 is prime.
+[18]: 	> 1000000000000000507 is prime.
+[4]: 	> 1000000000000000009 is prime.
+[5]: 	> 1000000000000000031 is prime.
+[22]: 	> 1000000000000000603 is prime.
+[23]: 	> 1000000000000000583 is prime.
+[13]: 	> 1000000000000000621 is prime.
+[10]: 	> 1000000000000000177 is prime.
+[12]: 	> 1000000000000000283 is prime.
+[14]: 	> 1000000000000000201 is prime.
+[16]: 	> 1000000000000000381 is prime.
+[20]: 	> 1000000000000000523 is prime.
+[17]: 	> 1000000000000000387 is prime.
+[6]: 	> 1000000000000000799 is prime.
+[21]: 	> 1000000000000000841 is prime.
+........
+[11]: 	> 1000000000000028597 is prime.
+[23]: 	> 1000000000000028399 is prime.
+[13]: 	> 1000000000000028329 is prime.
+[6]: 	> 1000000000000028371 is prime.
+[9]: 	> 1000000000000028891 is prime.
+[3]: 	> 1000000000000028903 is prime.
+[19]: 	> 1000000000000028381 is prime.
+[21]: 	> 1000000000000028453 is prime.
+[5]: 	> 1000000000000028519 is prime.
+[8]: 	> 1000000000000028707 is prime.
+[18]: 	> 1000000000000029073 is prime.
+[16]: 	> 1000000000000028663 is prime.
+[7]: 	> 1000000000000029097 is prime.
+[11]: 	> 1000000000000029307 is prime.
+[15]: 	> 1000000000000028773 is prime.
+[2]: 	> 1000000000000029121 is prime.
+[4]: 	> 1000000000000028927 is prime.
+[23]: 	> 1000000000000029313 is prime.
+[9]: 	Worker Done [22128]
+[3]: 	> 1000000000000029643 is prime.
+[3]: 	Worker Done [39428]
+[12]: 	> 1000000000000029263 is prime.
+[12]: 	Worker Done [31064]
+[17]: 	> 1000000000000029143 is prime.
+[17]: 	Worker Done [13752]
+[20]: 	> 1000000000000029253 is prime.
+[20]: 	Worker Done [32972]
+[14]: 	> 1000000000000029233 is prime.
+[14]: 	Worker Done [19944]
+[13]: 	> 1000000000000029341 is prime.
+[13]: 	Worker Done [18332]
+[6]: 	> 1000000000000029461 is prime.
+[6]: 	Worker Done [5276]
+[8]: 	> 1000000000000029817 is prime.
+[8]: 	Worker Done [10204]
+[22]: 	> 1000000000000029529 is prime.
+[22]: 	Worker Done [14020]
+[21]: 	> 1000000000000029713 is prime.
+[21]: 	Worker Done [16704]
+[5]: 	> 1000000000000029781 is prime.
+[5]: 	Worker Done [1584]
+[19]: 	> 1000000000000029683 is prime.
+[19]: 	Worker Done [23348]
+[18]: 	> 1000000000000029841 is prime.
+[18]: 	Worker Done [30328]
+[2]: 	Worker Done [25540]
+[10]: 	> 1000000000000029823 is prime.
+[10]: 	Worker Done [13452]
+[11]: 	> 1000000000000029883 is prime.
+[11]: 	Worker Done [18780]
+[7]: 	> 1000000000000029877 is prime.
+[7]: 	Worker Done [22496]
+[23]: 	> 1000000000000029997 is prime.
+[23]: 	Worker Done [24496]
+[16]: 	> 1000000000000029857 is prime.
+[16]: 	Worker Done [24196]
+[15]: 	> 1000000000000029893 is prime.
+[15]: 	Worker Done [17056]
+[4]: 	> 1000000000000029961 is prime.
+[4]: 	Worker Done [39072]
+[1]: 	Done.
+[1]: 	Elapsed time: 119080 [milliseconds]
+```
+
+---
+
+### Ein fünftes Beispiel: Primzahlen berechnen mit Rückgabe von Ergebnissen
+
+```cpp
+01: void test()
+02: {
+03:     ScopedTimer clock{};
+04: 
+05:     std::vector<std::future<std::pair<bool, std::size_t>>> futures;
+06:     ThreadPool pool{ };
+07: 
+08:     Logger::log(std::cout, "Enqueuing tasks");
+09: 
+10:     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+11: 
+12:         std::future<std::pair<bool, std::size_t>> future{
+13:             pool.addTask([](std::size_t value) {
+14:                 bool found{ PrimeNumbers::IsPrime(value) };
+15:                 return std::make_pair(found, value);
+16:             }, 
+17:             i)
+18:         };
+19: 
+20:         futures.push_back(std::move(future));
+21:     }
+22: 
+23:     Logger::log(std::cout, "Enqueuing tasks done.");
+24: 
+25:     pool.start();
+26: 
+27:     std::size_t foundPrimeNumbers{};
+28:     for (auto& future : futures) {
+29: 
+30:         const auto& [found, value] = future.get();
+31: 
+32:         if (found) {
+33:             ++foundPrimeNumbers;
+34:             Logger::log(std::cout, "Found prime number ", value);
+35:         }
+36:     }
+37: 
+38:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ", PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.');
+39:        
+40:     pool.stop();
+41: }
+```
+
+*Ausgabe*:
+
+```
+[1]:    Start:
+[1]:    Enqueuing tasks
+[1]:    Enqueuing tasks done.
+[1]:    Number of available concurrent threads: 22
+[2]:    Started worker [13580]
+[3]:    Started worker [20004]
+[4]:    Started worker [7744]
+[5]:    Started worker [10740]
+[6]:    Started worker [10140]
+[7]:    Started worker [17668]
+[8]:    Started worker [7904]
+[9]:    Started worker [13620]
+[10]:   Started worker [11596]
+[11]:   Started worker [17484]
+[12]:   Started worker [6640]
+[13]:   Started worker [20788]
+[14]:   Started worker [14928]
+[15]:   Started worker [12100]
+[16]:   Started worker [7304]
+[17]:   Started worker [24808]
+[18]:   Started worker [12004]
+[19]:   Started worker [11716]
+[20]:   Started worker [21728]
+[21]:   Started worker [15272]
+[22]:   Started worker [12520]
+[23]:   Started worker [24272]
+[1]:    Found prime number 1000000000000000003
+[1]:    Found prime number 1000000000000000009
+[1]:    Found prime number 1000000000000000031
+........
+[1]:    Found prime number 1000000000000004879
+[1]:    Found prime number 1000000000000004981
+[1]:    Found prime number 1000000000000004989
+[1]:    Found 114 prime numbers between 1000000000000000001 and 1000000000000005001.
+[17]:   Worker Done [24808]
+[2]:    Worker Done [13580]
+[15]:   Worker Done [12100]
+[14]:   Worker Done [14928]
+[18]:   Worker Done [12004]
+[4]:    Worker Done [7744]
+[22]:   Worker Done [12520]
+[8]:    Worker Done [7904]
+[12]:   Worker Done [6640]
+[13]:   Worker Done [20788]
+[16]:   Worker Done [7304]
+[20]:   Worker Done [21728]
+[21]:   Worker Done [15272]
+[6]:    Worker Done [10140]
+[10]:   Worker Done [11596]
+[5]:    Worker Done [10740]
+[11]:   Worker Done [17484]
+[19]:   Worker Done [11716]
+[7]:    Worker Done [17668]
+[9]:    Worker Done [13620]
+[23]:   Worker Done [24272]
+[3]:    Worker Done [20004]
+[1]:    Done.
+[1]:    Elapsed time: 16086 [milliseconds]
+```
+
+---
 
 ## Literaturhinweise
 

@@ -48,12 +48,12 @@ namespace PrimeNumberLimits
     //static constexpr std::size_t End { Start + 10'000 };
 
     // 114 prime numbers
-    //static constexpr std::size_t Start{ 1'000'000'000'000'000'001 };
-    //static constexpr std::size_t End{ Start + 5'000 };
+    static constexpr std::size_t Start{ 1'000'000'000'000'000'001 };
+    static constexpr std::size_t End{ Start + 5'000 };
 
     // 724 prime numbers
-    static constexpr std::size_t Start{ 1'000'000'000'000'000'001 };
-    static constexpr std::size_t End{ Start + 30'000 };
+    //static constexpr std::size_t Start{ 1'000'000'000'000'000'001 };
+    //static constexpr std::size_t End{ Start + 30'000 };
 }
 
 // ===========================================================================

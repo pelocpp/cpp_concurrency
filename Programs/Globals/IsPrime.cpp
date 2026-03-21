@@ -2,10 +2,10 @@
 // IsPrime.cpp
 // ===========================================================================
 
+#include "IsPrime.h"
+
 #include <cmath>
 #include <cstddef>
-
-#include "IsPrime.h"
 
 bool PrimeNumbers::IsPrime(std::size_t number)
 {

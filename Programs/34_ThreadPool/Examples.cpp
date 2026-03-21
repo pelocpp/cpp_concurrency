@@ -182,8 +182,13 @@ void test_concurrency_thread_pool05()
 // ===========================================================================
 // Primzahlenberechnung
 
-void test_concurrency_thread_pool10_PrimeNumbers()
+void test_concurrency_thread_pool10()
 {
+    // -----------------------------------------------------------------------
+    // 1. Variant:
+    // Just computing prime numbers / using a free function;
+    // Result (true/false) is by a std::future<bool> object
+
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
     std::cin >> ch;
@@ -207,36 +212,6 @@ void test_concurrency_thread_pool10_PrimeNumbers()
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         std::future<bool> future{ pool.addTask(PrimeNumbers::IsPrime, i) };
-
-        //std::future<bool> future{ pool.addTask(
-        //    [](int number) {
-        //    
-        //        bool found {PrimeNumbers::IsPrime(number)};
-        //        if (found) {
-        //            Logger::log(std::cout, "> ", number, " is prime.");
-        //        }
-        //               
-        //    }, i
-        //)
-        //};
-
-        //std::future<bool> future2{ pool.addTask([](std::size_t number) { 
-
-        //    // WEITER: Einfach berechnen
-
-        //    // WEITER: MIt AUsgaben, die kommen von einem drüber gestülpten Lambda her -- der erste Lamda ist ohne Ausgaben !!!
-
-        //    // WEITER: Was ist das mit dem pair wieter unten ???????????????
-
-        //    // BILD VOM TASK MANAGER
-
-        //    // Es feht im Markdown: Links und Abschnitte
-
-        //    // Dieses Kapitel abschließen .........
-
-
-        //    return false; 
-        //    }, i) };
 
         results.push(std::move(future));
     }
@@ -268,8 +243,72 @@ void test_concurrency_thread_pool10_PrimeNumbers()
 
 // ===========================================================================
 
-void test_concurrency_thread_pool11_PrimeNumbers()
+void test_concurrency_thread_pool11()
 {
+    // -----------------------------------------------------------------------
+    // 2. Variant:
+    // Computing prime numbers / printing each found number to the console
+    // Using a lambda
+    // std::future has contained type 'void', no value is transferred
+
+    Logger::log(std::cout, "Press any key to start ...");
+    char ch;
+    std::cin >> ch;
+
+    Logger::log(std::cout, "Start");
+
+    ScopedTimer clock{};
+
+    std::size_t foundPrimeNumbers{};
+
+    std::queue<std::future<void>> results;
+
+    ThreadPool pool{};
+
+    Logger::log(std::cout, "Enqueuing tasks");
+
+    Logger::enableLogging(false);
+
+    for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+
+        std::future<void> future{ pool.addTask(
+            [](std::size_t number) {
+                bool found {PrimeNumbers::IsPrime(number)};
+                if (found) {
+                    Logger::log(std::cout, "> ", number, " is prime.");
+                }     
+            }, 
+            i
+        )};
+
+        results.push(std::move(future));
+    }
+
+    Logger::enableLogging(true);
+
+    Logger::log(std::cout, "Enqueuing tasks done.");
+
+    pool.start();
+
+    Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
+        PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+    );
+
+    pool.stop();
+    
+    Logger::log(std::cout, "Done.");
+}
+
+// ===========================================================================
+
+void test_concurrency_thread_pool12()
+{
+    // -----------------------------------------------------------------------
+    // 3. Variant:
+    // Computing prime numbers / returning results to the client of the thread pool
+    // Using a lambda
+    // std::future has contained type 'std::pair' with two values: bool and std::size_t
+
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
     std::cin >> ch;
@@ -278,45 +317,28 @@ void test_concurrency_thread_pool11_PrimeNumbers()
 
     ScopedTimer clock{};
 
-    std::atomic_uint64_t foundPrimeNumbers{ 0 };
-
     std::vector<std::future<std::pair<bool, std::size_t>>> futures;
 
     ThreadPool pool{ };
 
     Logger::log(std::cout, "Enqueuing tasks");
 
-    //std::function<std::pair<bool, std::size_t>(std::size_t)> primeTask {
-    //    
-    //    [&](std::size_t value) {
-    //        bool primeFound { isPrime(value) };
-    //        if (primeFound) {
-    //            Logger::log(std::cout, "> ", value, " is prime.");
-    //            ++foundPrimeNumbers;
-    //        }
-    //        return std::make_pair(primeFound, value);
-    //    }
+    //auto primeLambda = [&](std::size_t value) {
+
+    //    bool primeFound{ PrimeNumbers::IsPrime(value) };
+    //    return std::make_pair(primeFound, value);
     //};
-
-    auto primeLambda = [&](std::size_t value) {
-
-        bool primeFound{ PrimeNumbers::IsPrime(value) };
-
-        if (primeFound) {
-            Logger::log(std::cout, "> ", value, " is prime.");
-
-            ++foundPrimeNumbers;
-        }
-
-        return std::make_pair(primeFound, value);
-    };
 
     Logger::enableLogging(false);
 
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         std::future<std::pair<bool, std::size_t>> future{
-            pool.addTask(primeLambda, i)
+            pool.addTask([](std::size_t value) {
+                bool found{ PrimeNumbers::IsPrime(value) };
+                return std::make_pair(found, value);
+            }, 
+            i)
         };
 
         futures.push_back(std::move(future));
@@ -328,12 +350,14 @@ void test_concurrency_thread_pool11_PrimeNumbers()
 
     pool.start();
 
-    for (auto& future : futures) { 
+    std::size_t foundPrimeNumbers{};
+    for (auto& future : futures) {
 
         const auto& [found, value] = future.get();
 
         if (found) {
-            Logger::log(std::cout, "Found prime numer ", value);
+            ++foundPrimeNumbers;
+            Logger::log(std::cout, "Found prime number ", value);
         }
     }
 

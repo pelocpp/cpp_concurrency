@@ -4,12 +4,12 @@
 
 #pragma once
 
-#include <cmath>
+#include <cstddef>
 
 class PrimeNumbers
 {
 public:
-    static bool IsPrime(size_t number);
+    static bool IsPrime(std::size_t number);
 };
 
 // ===========================================================================

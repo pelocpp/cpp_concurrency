@@ -38,4 +38,12 @@
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="TaskManager_ThreadPool.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="TaskManager_ThreadPool_Dell_Notebook.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

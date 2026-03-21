@@ -142,6 +142,10 @@
   <ItemGroup>
     <ClInclude Include="ThreadPool.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="TaskManager_ThreadPool.png" />
+    <Image Include="TaskManager_ThreadPool_Dell_Notebook.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
