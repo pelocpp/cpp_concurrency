@@ -31,20 +31,20 @@ Ein *Thread Pool* ermöglicht es, Threads wiederzuverwenden.
 Auf diese Weise wird verhindert, dass zur Laufzeit neue Threads erstellt werden müssen.
 Das Erstellen neuer Threads ist zeit- und ressourcenintensiv. 
 
-In der einschlägigen Literatur oder im Netz findet man Realisierungen für Thread Pools vor:
+In der einschlägigen Literatur oder im Netz findet man mehrere Realisierungen für Thread Pools vor:
 
-  * Buch von Anthony Williams: &bdquo;Concurrency in Action &ndash; 2nd Edition&rdquo;,<br />Kapitel 9: &bdquo;Thread Pools&rdquo;.
+  * Buch von Anthony Williams: &bdquo;*Concurrency in Action* &ndash; *2nd Edition*&rdquo;,<br />Kapitel 9: &bdquo;Thread Pools&rdquo;.
 
-  * Buch von  Arthur O'Dwyer: &bdquo;Mastering the C++17 STL&rdquo;,<br />Kapitel 7: &bdquo;Building your own thread pool&rdquo;.
+  * Buch von  Arthur O'Dwyer: &bdquo;*Mastering the C++17 STL*&rdquo;,<br />Kapitel 7: &bdquo;Building your own thread pool&rdquo;.
   
-  * Zwei Artikel von Martin Vorbrodt: &bdquo;Vorbrodt's C++ Blog&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
+  * Zwei Artikel von Martin Vorbrodt: &bdquo;*Vorbrodt's C++ Blog*&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
 
 Wir stellen in diesem Projekt eine Überarbeitung einer Thread Pool Realisierung von Zen Sepiol vor,
 die in Youtube verfügbar ist:<br />
 [How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
 und
-[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s),<br />
-[Sources](https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp).
+[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s),
+[Sources siehe hier](https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp).
 
 ---
 
@@ -52,10 +52,10 @@ und
 
 In der vorliegenden Realisierung besteht der Thread Pool aus zwei Warteschlangen:
 
-  * Warteschlangen mit Worker Threads
-  * Warteschlangen mit *Tasks* bzw. *Callables* (auszuführenden Funktionen)
+  * eine Warteschlange für Worker Threads.
+  * eine Warteschlange für *Tasks* bzw. *Callables* (auszuführenden Funktionen).
 
-Für die Warteschlangen der Worker Threads greifen wir auf den STL-Container zurück:
+Für die Warteschlange der Worker Threads greifen wir auf den STL-Container `std::vector` zurück:
 
 ```cpp
 std::vector<std::thread> m_pool;
@@ -65,8 +65,8 @@ Typischerweise wird die Größe dieses Containers, also die Anzahl der zur Verfügu
 von der Funktion `std::thread::hardware_concurrency()` beeinflusst.
 
 
-Nun kommen wir auf die zweite Warteschlange mit den *Callables* (auszuführenden Funktionen) zu sprechen.
-Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es am Thread Pool eine Methode (hier: `addTask`),
+Nun kommen wir auf die zweite Warteschlange mit den *Callables* (auszuführende Funktionen) zu sprechen.
+Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es im Thread Pool eine Methode (hier: `addTask`),
 die die dazugehörige Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
 
 Wie legen wir den Datentyp für eine solche *Task* fest?
@@ -91,7 +91,7 @@ Damit sollten wir unsere Funktionen in Variablen des Typs
 std::move_only_function<void()> func;
 ```
 
-abspeichern. Die Warteschlenge für die *Tasks* könnte damit so definiert werden:
+abspeichern. Die Warteschlange für die *Tasks* könnte damit so definiert werden:
 
 ```cpp
 std::queue<std::move_only_function<void()>> m_queue;
@@ -155,7 +155,7 @@ beim Transport der Daten in das Lambda-Objekt Anwendung finden, zum Beispiel so:
 ```
 
 Der Ergebnistyp des Hüllenobjekts ließe sich vom Compiler mit *Automatic Type Deduction* herleiten,
-zu Demonstrationszwecken können wir ihn aber auch explizit hinschreiben:
+zu Demonstrationszwecken können wir ihn auch explizit hinschreiben:
 
 ```cpp
 std::invoke_result<TFunc, TArgs...>::type
@@ -287,12 +287,12 @@ Um es noch einmal zusammenzufassen: Für Funktionen, die wird als Threadprozedure
 benötigen wir zwei Hüllenobjekte, um diese in einem `std::queue`-Objekt ablegen zu können:
 
   * Ein erstes Lambda-Objekt, das die Funktion `func` und deren Parameter `args` kapselt.
-  * Ein zweites Lambda-Objekt, das das `std::packaged_task` kapselt.
+  * Ein zweites Lambda-Objekt, das das `std::packaged_task`-Objekt kapselt.
 
 
-Dies ist im Grunde das minimale Design, wenn wir ein `std::future`-Objekt zurückgeben wollen (Notwendigkeit eines `std::packaged_task`-Objekts).
+Dies ist im Grunde genommen das minimale Design, wenn wir ein `std::future`-Objekt zurückgeben wollen (Notwendigkeit eines `std::packaged_task`-Objekts).
 
-Das zweite Lambda-Objekt ist auch aus einem zweiten Grund unumgänglich:
+Das zweite Lambda-Objekt ist auch aus einem anderen Grund unumgänglich:
 Da unsere Warteschlange für *Tasks* die Definition
 
 ```cpp
@@ -303,16 +303,15 @@ besitzt, müssen wir Funktionen mit einer anderen Schnittstellen adäquat umschlie
 `std::packaged_task<ReturnType(...TArgs)>`-Objekte sind nicht implizit in `std::packaged_task<void()>`-Objekte konvertierbar.
 
 Dennoch gibt es einen anderen modernen Ansatz für Thread-Pools, der ohne `std::packaged_task`-Objekt auskommt
-trotzdem `std::future`-Objekte zurückgibt.
-
-Der Trick ist simpel, aber wirkungsvoll, siehe dazu den nächsten Abschnitt.
+trotzdem `std::future`-Objekte zurückgibt. Für diesen Ansatz schreiben wir eine zweite Methode `addTaskEx`.
 
 ---
 
 ### Ein zweiter Ansatz in der Realisierung der `addTask`-Methode
 
 
-In diesem Ansatz tauschen wir den Datentyp `std::packaged_task` durch den Datentyp `std::promise` aus.
+In diesem Ansatz tauschen wir den Datentyp `std::packaged_task` durch den Datentyp `std::promise` aus,
+ein simpler, aber wirkungsvoller Trick.
 Auf Grund der bisherigen Vorbereitungen können wir den Quellcode der überarbeiteten `addTask`-Methode gleich direkt anschauen:
 
 ```cpp
@@ -357,7 +356,7 @@ Auf Grund der bisherigen Vorbereitungen können wir den Quellcode der überarbeite
 39: }
 ```
 
-Ja, in der Tat haben nun nur noch ein Lambda-Objekt (siehe Zeile 14 ff.).
+Ja, in der Tat haben wir nun nur noch ein Lambda-Objekt (siehe Zeile 14 ff.).
 Die Version ist außerdem &bdquo;Exception-safe&rdquo;,
 es werden Ausnahmen korrekt weitergeleitet:
 
@@ -367,7 +366,7 @@ promise->set_exception(std::current_exception());
 
 *Bemerkung*:
 Die &bdquo;Exception-Safety&rdquo; hat aber für die ursprüngliche Version mit der Klasse `std::packaged_task` ebenfalls gegolten,
-da `std::future`-Objekte ebenfalls Ausnahmen werfen, wenn diese eintreten.
+da `std::future`-Objekte ebenfalls Ausnahmen transportieren bzw. werfen, wenn diese eintreten.
 
 
 Wenn es der Beobachtung einer Einschränkung bedarf, dann wäre es die Zeilen
@@ -378,9 +377,10 @@ std::shared_ptr<std::promise<ReturnType>> promise{
 };
 ```
 
-Wir legen das `std::promise<ReturnType>>`-Objekt auf dem Heap an.
-Warum? Die in der Warteschlange gespeicherte Lambda-Funktion müssen sicher kopierbar/verschiebbar sein muss und wir wollen keine Lebensdauerprobleme haben.
-Man beachte, dass die `promise`-Variable in das Lambda-Objekt kopiert wird.
+gewesen. Wir legen das `std::promise<ReturnType>>`-Objekt auf dem Heap an.
+Warum? Die in der Warteschlange gespeicherten Lambda-Funktionen müssen sicher kopierbar/verschiebbar sein
+und wir wollen keine Lebensdauerprobleme haben.
+Man beachte, dass die `std::promise`-Variable in das Lambda-Objekt kopiert wird.
 
 ---
 

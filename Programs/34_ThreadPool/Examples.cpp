@@ -14,7 +14,7 @@
 
 // ===========================================================================
 
-static void test_concurrency_thread_pool01()
+void test_concurrency_thread_pool01()
 {
     Logger::log(std::cout, "Start");
 
@@ -38,7 +38,7 @@ static void emptyTask()
     Logger::log(std::cout, "Doing nothing :)");
 }
 
-static void test_concurrency_thread_pool02()
+void test_concurrency_thread_pool02()
 {
     ThreadPool pool{};
 
@@ -84,7 +84,7 @@ static void calcChecksumRef(std::size_t num, std::atomic<std::size_t>& checksum)
 
 static constexpr std::size_t NumThreads{ 2'000 };
 
-static void test_concurrency_thread_pool03()
+void test_concurrency_thread_pool03()
 {
     // Testing threads accessing thread-global variable / not atomar
     // Note: error occurs sporadically
@@ -113,7 +113,7 @@ static void test_concurrency_thread_pool03()
     Logger::log(std::cout, "Done.");
 }
 
-static void test_concurrency_thread_pool04()
+void test_concurrency_thread_pool04()
 {
     // Testing threads accessing thread-global variable / atomar
 
@@ -141,7 +141,7 @@ static void test_concurrency_thread_pool04()
     Logger::log(std::cout, "Done.");
 }
 
-static void test_concurrency_thread_pool05()
+void test_concurrency_thread_pool05()
 {
     // Testing threads accessing thread-global variable / atomar
 
@@ -172,7 +172,7 @@ static void test_concurrency_thread_pool05()
 // ===========================================================================
 // Primzahlenberechnung
 
-static void test_concurrency_thread_pool10_PrimeNumbers()
+void test_concurrency_thread_pool10_PrimeNumbers()
 {
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
@@ -228,7 +228,7 @@ static void test_concurrency_thread_pool10_PrimeNumbers()
 
 // ===========================================================================
 
-static void test_concurrency_thread_pool11_PrimeNumbers()
+void test_concurrency_thread_pool11_PrimeNumbers()
 {
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
@@ -302,19 +302,6 @@ static void test_concurrency_thread_pool11_PrimeNumbers()
     pool.stop();
 
     Logger::log(std::cout, "Done.");
-}
-
-void test_concurrency_thread_pool()
-{
-    // test_concurrency_thread_pool01();     // just launching ... and stopping the thread pool
-    // test_concurrency_thread_pool02();     // launching 5 almost empty tasks
-    
-    test_concurrency_thread_pool03();  // launching many tasks ... and working on the same global variable (by address)
-    test_concurrency_thread_pool04();  // launching many tasks ... and working on an atomic variable (by address)
-    test_concurrency_thread_pool05();  // launching many tasks ... and working on an atomic variable (by reference)
-
-   // test_concurrency_thread_pool10_PrimeNumbers();      // computing prime numbers, using free function
-    //test_concurrency_thread_pool11_PrimeNumbers();    // computing prime numbers, using lambda
 }
 
 // ===========================================================================

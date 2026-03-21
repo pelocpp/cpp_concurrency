@@ -133,6 +133,7 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Globals\IsPrime.cpp" />
     <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Examples.cpp" />
     <ClCompile Include="Program.cpp" />

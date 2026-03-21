@@ -13,6 +13,9 @@
     <ClCompile Include="ThreadPool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Globals\IsPrime.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ThreadPool.h">

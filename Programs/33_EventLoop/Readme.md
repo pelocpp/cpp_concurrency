@@ -13,7 +13,8 @@
   * [Doppelpuffertechnik (*Double Buffering*)](#link5)
   * [Funktionen mit Parametern in der Ereigniswarteschlange](#link6)
   * [Beendigung der Ausführung](#link7)
-  * [Literaturhinweise](#link8)
+  * [Ein Beispiel: Berechnung von Primzahlen](#link8)
+  * [Literaturhinweise](#link9)
 
 ---
 
@@ -47,7 +48,7 @@ jedoch auf unterschiedliche Weise:
 
   * `std:mutex`-Objekte stellen einen Synchronisationsmechanismus dar, es sind zu diesem Zweck die kritischen Abschnitte
   zu identifizieren und mit entsprechenden `lock` bzw. `unlock`-Aufrufen zu schützen.<br />
-  *Bemerkung*: In der Praxis kommen hier entsprechende Hüllen-Objekte wie z.B. `std::lock_guard` zum Zuge.
+  *Bemerkung*: In der Praxis kommen hier entsprechende Hüllenobjekte wie z.B. `std::lock_guard` zum Zuge.
   * Reiht man die kritischen Abschnitte in eine Ereigniswarteschlange ein, kann man auf `std:mutex`-Objekte verzichten.
   Die kritischen Abschnitte müssen zu diesem Zweck aber Funktions-(Methoden-)grenzen haben,
   um sie in eine Ereigniswarteschlange einschleusen zu können.
@@ -55,7 +56,7 @@ jedoch auf unterschiedliche Weise:
 Generell können die Gründe für den Einsatz dieser Synchronisationsmechanismen unterschiedlicher Natur sein:
 
   * Möglicherweise wurden die Klassen von einem alten Teil eines Softwaresystems geerbt.
-  * Sie entwerfen gerade neue Klassen, möchten diese aber nicht mit gleich mit
+  * Sie entwerfen gerade neue Klassen, möchten diese aber nicht gleich mit
 Synchronisationsmechanismen wie `std:mutex`-Objekten überfrachten.
 
 Wir stellen in diesem Abschnitt die Realisierung einer Klasse `EventLoop`,
@@ -111,7 +112,7 @@ void enqueue(const Event& callable);
 void enqueue(Event&& callable);
 ```
 
-Dabei hatten wir den Datentyp `Event` als `std::move_only_function<void()>` definiert.
+Dabei haben wir den Datentyp `Event` als `std::move_only_function<void()>` definiert.
 
 Wir studieren die Möglichkeiten nun im Detail.
 
@@ -174,7 +175,7 @@ Dies führt zu verwirrender Semantik und sollte vermieden werden.
 
 #### Schnittstelle `void enqueue(const Event& callable)`
 
-Ein Move-Only Datentyp kann nicht mit `const` qualifiziert werden,
+Ein Move-Only-Datentyp kann nicht mit `const` qualifiziert werden,
 da der Parameter `callable` sonst nicht verschiebbar ist.
 Also diese Variante kommt überhaupt nicht in Betracht.
 
@@ -317,8 +318,8 @@ ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen
 Wie könnte dieser Trick aussehen?<br />
 Und wie werden die Parameter zwischengespeichert?
 
-Wir greifen auf das C++ Sprachfeature von Lambda-Objekten zurück.
-Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen,
+Wir greifen auf das C++&ndash;Sprachfeature von Lambda-Objekten zurück.
+Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen
 und diese mittels `[=]` in das Lambda-Objekt kopieren!
 
 Ab C++ 14 kann man sogar auf das unnötige Kopieren verzichten,
@@ -376,7 +377,111 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-## Literaturhinweise <a name="link8"></a>
+## Ein Beispiel: Berechnung von Primzahlen <a name="link8"></a>
+
+Ein Beispiel zur sequentiellen Berechnung von Primzahlen könnte so aussehen:
+
+```cpp
+01: void test_event_loop_20()
+02: {
+03:     Logger::log(std::cout, "Start");
+04: 
+05:     std::size_t foundPrimeNumbers{};
+06: 
+07:     EventLoop eventLoop;
+08: 
+09:     Logger::log(std::cout, "Enqueuing tasks ...");
+10: 
+11:     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
+12: 
+13:         eventLoop.enqueueTask(
+14:             [&] (std::size_t value) {
+15: 
+16:                 bool primeFound{ PrimeNumbers::IsPrime(value) };
+17: 
+18:                 if (primeFound) {
+19:                     Logger::log(std::cout, "> ", value, " is prime.");
+20: 
+21:                     ++foundPrimeNumbers;
+22:                 }
+23:             },
+24:             i
+25:         );
+26:     }
+27: 
+28:     Logger::log(std::cout, "Enqueuing tasks done.");
+29:     Logger::log(std::cout, "Starting Event Loop:");
+30: 
+31:     eventLoop.start();
+32:     eventLoop.stop();
+33: 
+34:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
+35:         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+36:     );
+37: }
+```
+
+*Ausgabe*:
+
+```
+[1]:    Start
+[1]:    Enqueuing tasks ...
+[1]:    enqueueTask ...
+............
+[1]:    enqueueTask ...
+[1]:    enqueueTask ...
+[1]:    Enqueuing tasks done.
+[1]:    Starting Event Loop:
+[2]:    > Event Loop
+[2]:    swapped 51 event(s) ...
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    > 1000000000000000003 is prime.
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    > 1000000000000000009 is prime.
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+............
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    > 1000000000000000031 is prime.
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+............
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    > 1000000000000000079 is prime.
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+............
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    ! invoking next event
+[2]:    < Event Loop
+[1]:    Found 4 prime numbers between 1000000000000000001 and 1000000000000000101.
+[1]:    Done.
+[1]:    Elapsed time: 4642 [milliseconds]
+```
+
+Der Blick auf den Task Manager lässt erkennen, dass ein Kern sehr stark
+und ein zweiter Kern etwas weniger an der Ausführung des Programms beteiligt ist:
+
+<img src="TaskManager_EventQueue.png" width="750">
+
+---
+
+## Literaturhinweise <a name="link9"></a>
 
 Die Anregungen zur Klasse `EventLoop` stammen im Wesentlichen aus dem Artikel
 
