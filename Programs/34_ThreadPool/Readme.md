@@ -459,7 +459,7 @@ Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools
 30: }
 ```
 
-Ausgabe:
+*Ausgabe*:
 
 ```
 [1]:    Start
@@ -525,6 +525,71 @@ Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools
 
 
 ---
+
+### Ein drittes Beispiel
+
+Start des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
+
+<img src="TaskManager_ThreadPool.png" width="750">
+
+*Ausgabe*:
+
+```
+[1]:    Start
+[1]:    Enqueuing tasks
+[1]:    Enqueuing tasks done.
+[1]:    Number of available concurrent threads: 20
+[2]:    Started worker [24304]
+[3]:    Started worker [19068]
+[4]:    Started worker [25344]
+[5]:    Started worker [15260]
+[6]:    Started worker [4856]
+[7]:    Started worker [18460]
+[8]:    Started worker [3616]
+[9]:    Started worker [5184]
+[10]:   Started worker [6608]
+[11]:   Started worker [29624]
+[12]:   Started worker [13084]
+[13]:   Started worker [296]
+[14]:   Started worker [21084]
+[15]:   Started worker [16960]
+[16]:   Started worker [16224]
+[17]:   Started worker [13756]
+[18]:   Started worker [25248]
+[19]:   Started worker [19296]
+[20]:   Started worker [21800]
+[21]:   Started worker [22132]
+[1]:    Found 724 prime numbers between 1000000000000000001 and 1000000000000030001.
+[6]:    Worker Done [4856]
+[13]:   Worker Done [296]
+[16]:   Worker Done [16224]
+[5]:    Worker Done [15260]
+[12]:   Worker Done [13084]
+[4]:    Worker Done [25344]
+[11]:   Worker Done [29624]
+[14]:   Worker Done [21084]
+[8]:    Worker Done [3616]
+[17]:   Worker Done [13756]
+[19]:   Worker Done [19296]
+[7]:    Worker Done [18460]
+[2]:    Worker Done [24304]
+[15]:   Worker Done [16960]
+[9]:    Worker Done [5184]
+[3]:    Worker Done [19068]
+[20]:   Worker Done [21800]
+[18]:   Worker Done [25248]
+[21]:   Worker Done [22132]
+[10]:   Worker Done [6608]
+[1]:    Done.
+[1]:    Elapsed time: 121238 [milliseconds]
+```
+
+
+
+---
+
+
+
 
 
 

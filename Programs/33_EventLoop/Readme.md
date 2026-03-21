@@ -475,7 +475,7 @@ Ein Beispiel zur sequentiellen Berechnung von Primzahlen könnte so aussehen:
 ```
 
 Der Blick auf den Task Manager lässt erkennen, dass ein Kern sehr stark
-und ein zweiter Kern etwas weniger an der Ausführung des Programms beteiligt ist:
+und ein zweiter Kern etwas weniger an der Ausführung des Programms beteiligt sind:
 
 <img src="TaskManager_EventQueue.png" width="750">
 

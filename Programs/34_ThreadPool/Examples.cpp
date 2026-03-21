@@ -220,23 +220,23 @@ void test_concurrency_thread_pool10_PrimeNumbers()
         //)
         //};
 
-        std::future<bool> future2{ pool.addTask([](std::size_t number) { 
+        //std::future<bool> future2{ pool.addTask([](std::size_t number) { 
 
-            // WEITER: Einfach berechnen
+        //    // WEITER: Einfach berechnen
 
-            // WEITER: MIt AUsgaben, die kommen von einem drüber gestülpten Lambda her -- der erste Lamda ist ohne Ausgaben !!!
+        //    // WEITER: MIt AUsgaben, die kommen von einem drüber gestülpten Lambda her -- der erste Lamda ist ohne Ausgaben !!!
 
-            // WEITER: Was ist das mit dem pair wieter unten ???????????????
+        //    // WEITER: Was ist das mit dem pair wieter unten ???????????????
 
-            // BILD VOM TASK MANAGER
+        //    // BILD VOM TASK MANAGER
 
-            // Es feht im Markdown: Links und Abschnitte
+        //    // Es feht im Markdown: Links und Abschnitte
 
-            // Dieses Kapitel abschließen .........
+        //    // Dieses Kapitel abschließen .........
 
 
-            return false; 
-            }, i) };
+        //    return false; 
+        //    }, i) };
 
         results.push(std::move(future));
     }
