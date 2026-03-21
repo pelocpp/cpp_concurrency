@@ -3,10 +3,11 @@
 // ===========================================================================
 
 #include <cmath>
+#include <cstddef>
 
 #include "IsPrime.h"
 
-bool PrimeNumbers::IsPrime(size_t number)
+bool PrimeNumbers::IsPrime(std::size_t number)
 {
     if (number == 0 || number == 1) {
         return false;
@@ -17,8 +18,8 @@ bool PrimeNumbers::IsPrime(size_t number)
     }
 
     // check odd divisors from 3 to the square root of the number
-    size_t end{ static_cast<size_t>(std::ceil(std::sqrt(number))) };
-    for (size_t i{ 3 }; i <= end; i += 2) {
+    std::size_t end{ static_cast<std::size_t>(std::ceil(std::sqrt(number))) };
+    for (std::size_t i{ 3 }; i <= end; i += 2) {
 
         if (number % i == 0) {
             return false; // number not prime

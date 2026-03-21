@@ -23,8 +23,8 @@ private:
     std::condition_variable         m_condition;
     std::vector<std::thread>        m_pool;
     std::queue<ThreadPoolFunction>  m_queue;
-    size_t                          m_threads_count;
-    size_t                          m_busy_threads;
+    std::size_t                     m_threads_count;
+    std::size_t                     m_busy_threads;
     bool                            m_shutdown_requested;
 
 public:
@@ -119,13 +119,11 @@ public:
         );
 
         return future;
-
-
     }
 
     // getter
     bool empty() const;
-    size_t size() const;
+    std::size_t size() const;
 
 private:
     void worker();

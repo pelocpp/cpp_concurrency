@@ -156,8 +156,7 @@ void test_event_loop_20()
 
     EventLoop eventLoop;
 
-    // works too
-    // eventLoop.start();
+    // eventLoop.start(); // <=== add/remove comment
 
     Logger::log(std::cout, "Enqueuing tasks ...");
 
@@ -182,8 +181,7 @@ void test_event_loop_20()
 
     Logger::log(std::cout, "Starting Event Loop:");
 
-    // late start
-    eventLoop.start();
+    eventLoop.start();   // <=== add/remove comment
 
     eventLoop.stop();
 

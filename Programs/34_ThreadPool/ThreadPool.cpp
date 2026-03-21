@@ -15,17 +15,19 @@ ThreadPool::~ThreadPool()
 
 void ThreadPool::start()
 {
-    size_t size{ std::thread::hardware_concurrency() };
+    std::size_t numThreads{ std::thread::hardware_concurrency() };
 
-    m_pool.resize(size);
+    Logger::log(std::cout, "Number of available concurrent threads: ", numThreads);
 
-    for (size_t i{}; i != size; ++i)
+    m_pool.resize(numThreads);
+
+    for (std::size_t i{}; i != numThreads; ++i)
     {
         m_pool[i] = std::thread(&ThreadPool::worker, this);
     }
 
-    m_threads_count = size;
-    m_busy_threads = size;
+    m_threads_count = numThreads;
+    m_busy_threads = numThreads;
 }
 
 void ThreadPool::stop()
@@ -39,7 +41,7 @@ void ThreadPool::stop()
 
     m_condition.notify_all();
 
-    for (size_t i{}; i != m_pool.size(); ++i)
+    for (std::size_t i{}; i != m_pool.size(); ++i)
     {
         if (m_pool[i].joinable())
         {
@@ -88,7 +90,7 @@ bool ThreadPool::empty() const
     return m_queue.empty();
 }
 
-size_t ThreadPool::size() const
+std::size_t ThreadPool::size() const
 {
     std::lock_guard<std::mutex> guard{ m_mutex };
     return m_queue.size();

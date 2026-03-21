@@ -10,6 +10,8 @@
 
 #include "ThreadPool.h"
 
+#include <iostream>
+#include <print>
 #include <vector>
 
 // ===========================================================================
@@ -40,6 +42,8 @@ static void emptyTask()
 
 void test_concurrency_thread_pool02()
 {
+    Logger::log(std::cout, "Start");
+
     ThreadPool pool{};
 
     std::queue<std::future<void>> results{};
@@ -86,6 +90,8 @@ static constexpr std::size_t NumThreads{ 2'000 };
 
 void test_concurrency_thread_pool03()
 {
+    Logger::log(std::cout, "Start");
+
     // Testing threads accessing thread-global variable / not atomar
     // Note: error occurs sporadically
 
@@ -115,6 +121,8 @@ void test_concurrency_thread_pool03()
 
 void test_concurrency_thread_pool04()
 {
+    Logger::log(std::cout, "Start");
+
     // Testing threads accessing thread-global variable / atomar
 
     ThreadPool pool{};
@@ -143,6 +151,8 @@ void test_concurrency_thread_pool04()
 
 void test_concurrency_thread_pool05()
 {
+    Logger::log(std::cout, "Start");
+
     // Testing threads accessing thread-global variable / atomar
 
     ThreadPool pool{};
@@ -188,15 +198,45 @@ void test_concurrency_thread_pool10_PrimeNumbers()
 
     ThreadPool pool{};
 
-    pool.start();         // <=== add/remove comment
+    // pool.start();         // <=== add/remove comment
 
     Logger::log(std::cout, "Enqueuing tasks");
 
-    Logger::enableLogging(true);
+    Logger::enableLogging(false);
 
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         std::future<bool> future{ pool.addTask(PrimeNumbers::IsPrime, i) };
+
+        //std::future<bool> future{ pool.addTask(
+        //    [](int number) {
+        //    
+        //        bool found {PrimeNumbers::IsPrime(number)};
+        //        if (found) {
+        //            Logger::log(std::cout, "> ", number, " is prime.");
+        //        }
+        //               
+        //    }, i
+        //)
+        //};
+
+        std::future<bool> future2{ pool.addTask([](std::size_t number) { 
+
+            // WEITER: Einfach berechnen
+
+            // WEITER: MIt AUsgaben, die kommen von einem drüber gestülpten Lambda her -- der erste Lamda ist ohne Ausgaben !!!
+
+            // WEITER: Was ist das mit dem pair wieter unten ???????????????
+
+            // BILD VOM TASK MANAGER
+
+            // Es feht im Markdown: Links und Abschnitte
+
+            // Dieses Kapitel abschließen .........
+
+
+            return false; 
+            }, i) };
 
         results.push(std::move(future));
     }
@@ -205,7 +245,7 @@ void test_concurrency_thread_pool10_PrimeNumbers()
 
     Logger::log(std::cout, "Enqueuing tasks done.");
 
-    // pool.start();            // <=== add/remove comment
+    pool.start();            // <=== add/remove comment
 
     while (results.size() != 0)
     {
