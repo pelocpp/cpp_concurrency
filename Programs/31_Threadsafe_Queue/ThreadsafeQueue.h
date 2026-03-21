@@ -115,7 +115,7 @@ namespace Concurrency_ThreadsafeQueue
             return m_data.empty();
         }
 
-        size_t size() const
+        std::size_t size() const
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             return m_data.size();

@@ -26,7 +26,7 @@ namespace Reader_Writer
     {
     private:
         std::array<Data, TSize>   m_buffer;
-        std::size_t                    m_offset;
+        std::size_t               m_offset;
         mutable std::shared_mutex m_mutex;
 
     public:

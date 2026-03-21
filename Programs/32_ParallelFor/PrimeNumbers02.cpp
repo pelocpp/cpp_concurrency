@@ -17,16 +17,11 @@ constexpr bool Verbose{ false };
 
 // ===========================================================================
 
-Concurrency_ThreadsafeStack::ThreadsafeStack<size_t> g_primes{};
+Concurrency_ThreadsafeStack::ThreadsafeStack<std::size_t> g_primes{};
 
-static void calcPrimesRange(size_t start, size_t end)
+static void calcPrimesRange(std::size_t start, std::size_t end)
 {
-    for (size_t i{ start }; i != end; ++i) {
-
-        //if (Concurrency_PrimeCalculator::PrimeCalculator<size_t>::isPrime(i)) {
-        //    g_primes.push(i);
-        //}
-
+    for (std::size_t i{ start }; i != end; ++i) {
 
         if (PrimeNumbers::IsPrime(i)) {
             g_primes.push(i);
@@ -34,7 +29,7 @@ static void calcPrimesRange(size_t start, size_t end)
     }
 }
 
-static void test_parallel_for_01(size_t from, size_t to, bool useThreads)
+static void test_parallel_for_01(std::size_t from, std::size_t to, bool useThreads)
 {
     using namespace Concurrency_ParallelFor_Legacy;
 
@@ -48,7 +43,7 @@ static void test_parallel_for_01(size_t from, size_t to, bool useThreads)
         parallel_for(
             from,
             to,
-            [] (size_t start, size_t end) {
+            [] (std::size_t start, std::size_t end) {
                 calcPrimesRange(start, end);
             },
             useThreads
@@ -61,7 +56,7 @@ static void test_parallel_for_01(size_t from, size_t to, bool useThreads)
 
 // ===========================================================================
 
-static void test_parallel_for_02(size_t from, size_t to, bool useThreads)
+static void test_parallel_for_02(std::size_t from, std::size_t to, bool useThreads)
 {
     using namespace Concurrency_ThreadsafeStack;
     using namespace Concurrency_PrimeCalculator;
@@ -71,11 +66,11 @@ static void test_parallel_for_02(size_t from, size_t to, bool useThreads)
         "Calcalating Prime Numbers from ", from,
         " up to ", to, ':');
 
-    ThreadsafeStack<size_t> primes{};
+    ThreadsafeStack<std::size_t> primes{};
 
-    auto calcPrimesRange = [&] (size_t start, size_t end) {
+    auto calcPrimesRange = [&] (std::size_t start, std::size_t end) {
 
-        PrimeCalculator<size_t> calc{ primes, start, end };
+        PrimeCalculator<std::size_t> calc{ primes, start, end };
         calc();
     };
 
@@ -85,7 +80,7 @@ static void test_parallel_for_02(size_t from, size_t to, bool useThreads)
         parallel_for(
             from,
             to,
-            [&](size_t start, size_t end) {
+            [&](std::size_t start, std::size_t end) {
                 calcPrimesRange(start, end);
             },
             useThreads

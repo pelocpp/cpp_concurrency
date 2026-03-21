@@ -29,15 +29,15 @@ void test_thread_safe_queue_01()
     std::cout << value << std::endl;
 }
 
-static constexpr size_t NumConsumers{ 4 };
-static constexpr size_t NumToConsume{ 3 };
-static constexpr size_t NumToProduce{ NumToConsume * NumConsumers };
+static constexpr std::size_t NumConsumers{ 4 };
+static constexpr std::size_t NumToConsume{ 3 };
+static constexpr std::size_t NumToProduce{ NumToConsume * NumConsumers };
 
 void test_thread_safe_queue_02()
 {
     using namespace Concurrency_ThreadsafeQueue;
 
-    ThreadsafeQueue<size_t> queue;
+    ThreadsafeQueue<std::size_t> queue;
 
     auto produce = [&] () {
         for (int i{ 1 }; i <= NumToProduce; ++i) {
@@ -46,9 +46,9 @@ void test_thread_safe_queue_02()
         }
     };
 
-    auto consume = [&](size_t id) {
-        for (size_t i{}; i != NumToConsume; ++i) {
-            size_t value{};
+    auto consume = [&](std::size_t id) {
+        for (std::size_t i{}; i != NumToConsume; ++i) {
+            std::size_t value{};
             queue.waitAndPop(value);
             Logger::log(std::cout, "        ", value, " <== Consumer [", id, ']');
         }
@@ -58,7 +58,7 @@ void test_thread_safe_queue_02()
 
     std::vector<std::thread> consumers;
 
-    for (size_t i{}; i != NumConsumers; ++i) {
+    for (std::size_t i{}; i != NumConsumers; ++i) {
 
         std::thread consumer{ consume, i + 1 };
         consumers.push_back(std::move(consumer));

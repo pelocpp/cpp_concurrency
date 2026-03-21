@@ -8,10 +8,10 @@
 
 namespace Concurrency_ParallelFor_Legacy
 {
-    using Callable = std::function<void(size_t start, size_t end)>;
+    using Callable = std::function<void(std::size_t start, std::size_t end)>;
 
-    extern void callableWrapper(Callable callable, size_t start, size_t end);
-    extern void parallel_for(size_t from, size_t to, Callable callable, bool useThreads);
+    extern void callableWrapper(Callable callable, std::size_t start, std::size_t end);
+    extern void parallel_for(std::size_t from, std::size_t to, Callable callable, bool useThreads);
 }
 
 // ===========================================================================

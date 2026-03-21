@@ -6,12 +6,12 @@
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
 #include <condition_variable>
 #include <functional>
 #include <future>
-#include <thread>
+#include <iostream>
 #include <mutex>
+#include <thread>
 
 class EventLoop
 {

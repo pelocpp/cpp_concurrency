@@ -2,7 +2,6 @@
 // ProducerConsumerProblem.cpp
 // ===========================================================================
 
-
 #include "BlockingQueue.h"
 // #include "BlockingQueueEx.h"
 
@@ -18,14 +17,14 @@ void test_thread_safe_blocking_queue_01()
     using namespace ProducerConsumerQueue;
 
     {
-        constexpr int QueueSize{ 1 };
+        constexpr std::size_t QueueSize{ 1 };
         BlockingQueue<int, QueueSize> queue{};
         queue.push(101);
         queue.push(102);    // should block
     }
 
     {
-        constexpr int QueueSize{ 1 };
+        constexpr std::size_t QueueSize{ 1 };
         BlockingQueue<int, QueueSize> queue{};
         int value;
         queue.pop(value);   // should block
@@ -38,7 +37,7 @@ void test_thread_safe_blocking_queue_02()
 {
     using namespace ProducerConsumerQueue;
 
-    constexpr int QueueSize{ 5 };
+    constexpr std::size_t QueueSize{ 5 };
 
     BlockingQueue<int, QueueSize> queue{};
 
@@ -76,7 +75,7 @@ void test_thread_safe_blocking_queue_02()
 
 // ===========================================================================
 
-template<typename T, size_t QueueSize = 10>
+template<typename T, std::size_t QueueSize = 10>
 class Consumer
 {
 private:
@@ -104,7 +103,7 @@ public:
     }
 };
 
-template<typename T, size_t QueueSize = 10>
+template<typename T, std::size_t QueueSize = 10>
 class Producer
 {
 private:

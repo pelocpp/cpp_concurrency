@@ -18,11 +18,11 @@ namespace Concurrency_PrimeCalculator
     {
     private:
         ThreadsafeStack<T>&  m_stack;
-        size_t               m_begin;
-        size_t               m_end;
+        std::size_t          m_begin;
+        std::size_t          m_end;
 
     public:
-        PrimeCalculator(ThreadsafeStack<T>& stack, size_t begin, size_t end)
+        PrimeCalculator(ThreadsafeStack<T>& stack, std::size_t begin, std::size_t end)
             : m_stack{ stack }, m_begin{ begin }, m_end{ end }
         {
             Logger::log(std::cout, "PrimeCalculator: ", m_begin, " => ", m_end);
@@ -33,7 +33,7 @@ namespace Concurrency_PrimeCalculator
             std::thread::id tid{ std::this_thread::get_id() };
             Logger::log(std::cout, "TID: ", tid);
 
-            for (size_t i{ m_begin }; i != m_end; ++i) {
+            for (std::size_t i{ m_begin }; i != m_end; ++i) {
 
                 if (PrimeNumbers::IsPrime(i)) {
                     m_stack.push(i);

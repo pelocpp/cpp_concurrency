@@ -2,8 +2,6 @@
 // ActiveObject_02.cpp // Active Object Pattern
 // ===========================================================================
 
-// #include <iostream>
-
 #include "../Logger/Logger.h"
 
 #include <algorithm>
@@ -29,18 +27,18 @@ namespace ActivatorObject02
     class SumRange {
 
     private:
-        size_t m_a;
-        size_t m_b;
+        std::size_t m_a;
+        std::size_t m_b;
 
     public:
-        SumRange(size_t a, size_t b) : m_a{ a }, m_b{ b } {}
+        SumRange(std::size_t a, std::size_t b) : m_a{ a }, m_b{ b } {}
 
-        std::tuple<size_t, size_t, size_t> operator() () {
+        std::tuple<std::size_t, std::size_t, std::size_t> operator() () {
 
             Logger::log(std::cout, "   calculating range [ ", m_a, ",", m_b, "]");
 
-            size_t sum{};
-            for (size_t i{ m_a }; i != m_b; ++i) {
+            std::size_t sum{};
+            for (std::size_t i{ m_a }; i != m_b; ++i) {
                 sum += i;
             }
             return std::make_tuple(m_a, m_b, sum);
@@ -50,19 +48,19 @@ namespace ActivatorObject02
     class ActiveObject {
 
     private:
-        std::deque<std::packaged_task<std::tuple<size_t, size_t, size_t>()>> m_activationList;
+        std::deque<std::packaged_task<std::tuple<std::size_t, std::size_t, std::size_t>()>> m_activationList;
 
         std::mutex m_mutex;
 
     public:
 
-        std::future<std::tuple<size_t, size_t, size_t>> enqueueTask(size_t a, size_t b) {
+        std::future<std::tuple<std::size_t, std::size_t, std::size_t>> enqueueTask(std::size_t a, std::size_t b) {
 
             SumRange range{ a, b };
 
-            std::packaged_task<std::tuple<size_t, size_t, size_t>()> task{ range };
+            std::packaged_task<std::tuple<std::size_t, std::size_t, std::size_t>()> task{ range };
 
-            std::future<std::tuple<size_t, size_t, size_t>> future{ task.get_future() };
+            std::future<std::tuple<std::size_t, std::size_t, std::size_t>> future{ task.get_future() };
 
             Logger::log(std::cout, "   queueing task [", a, ",", b, "]");
 
@@ -108,14 +106,14 @@ namespace ActivatorObject02
         }
     };
 
-    static std::vector<std::future<std::tuple<size_t, size_t, size_t>>>
-    enqueueTasksSynchronously(ActiveObject& activeObject, size_t start, size_t length, size_t count) {
+    static std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>>
+    enqueueTasksSynchronously(ActiveObject& activeObject, std::size_t start, std::size_t length, std::size_t count) {
 
-        std::vector<std::future<std::tuple<size_t, size_t, size_t>>> futures{};
+        std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>> futures{};
 
-        for (size_t i{}; i != count; ++i) {
+        for (std::size_t i{}; i != count; ++i) {
 
-            std::future<std::tuple<size_t, size_t, size_t>> future {
+            std::future<std::tuple<std::size_t, std::size_t, std::size_t>> future {
                 activeObject.enqueueTask(start, start + length) 
             };
 
@@ -140,7 +138,7 @@ void test_active_object_02()
     Logger::log(std::cout, "Enqueue tasks synchronously ...");
 
     // range from 1 to 3000
-    std::vector<std::future<std::tuple<size_t, size_t, size_t>>> futures {
+    std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>> futures {
         enqueueTasksSynchronously(activeObject, 1, 100, 30)  
     };
 
@@ -149,7 +147,7 @@ void test_active_object_02()
     activeObject.run();
 
     // get the results from the futures
-    std::vector<std::tuple<size_t, size_t, size_t>> results;
+    std::vector<std::tuple<std::size_t, std::size_t, std::size_t>> results;
     results.reserve(futures.size());
 
     for (auto& future : futures) { 
@@ -157,7 +155,7 @@ void test_active_object_02()
     }
 
     // calculate final sum result
-    size_t totalSum{};
+    std::size_t totalSum{};
 
     std::for_each(
         results.begin(),

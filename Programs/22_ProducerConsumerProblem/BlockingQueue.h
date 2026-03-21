@@ -14,15 +14,15 @@
 
 namespace ProducerConsumerQueue
 {
-    template<typename T, size_t QueueSize = 10>
+    template<typename T, std::size_t QueueSize = 10>
     class BlockingQueue
     {
     private:
         std::array<T, QueueSize> m_data;  // array - considered as a queue
 
-        size_t m_pushIndex;
-        size_t m_popIndex;
-        size_t m_size;
+        std::size_t m_pushIndex;
+        std::size_t m_popIndex;
+        std::size_t m_size;
 
         std::mutex mutable m_mutex;
 
@@ -139,7 +139,7 @@ namespace ProducerConsumerQueue
             return m_size == 0;
         }
 
-        size_t size() const
+        std::size_t size() const
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             return m_size;

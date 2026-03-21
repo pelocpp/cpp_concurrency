@@ -17,7 +17,7 @@ namespace Concurrency_ParallelFor_Legacy
 {
     constexpr bool Verbose{ false };
 
-    void callableWrapper(Callable callable, size_t start, size_t end) {
+    void callableWrapper(Callable callable, std::size_t start, std::size_t end) {
 
         if (Verbose) {
             Logger::log(std::cout, "TID: ", std::this_thread::get_id());
@@ -27,17 +27,17 @@ namespace Concurrency_ParallelFor_Legacy
     }
 
     void parallel_for(
-        size_t from,
-        size_t to,
+        std::size_t from,
+        std::size_t to,
         Callable callable,
         bool useThreads)
     {
         // calculate number of threads to use
-        size_t numThreadsHint{ std::thread::hardware_concurrency() };
-        size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
-        size_t numElements{ to - from + 1 };
-        size_t batchSize{ numElements / numThreads };
-        size_t batchRemainder{ numElements % numThreads };
+        std::size_t numThreadsHint{ std::thread::hardware_concurrency() };
+        std::size_t numThreads{ (numThreadsHint == 0) ? 8 : numThreadsHint };
+        std::size_t numElements{ to - from + 1 };
+        std::size_t batchSize{ numElements / numThreads };
+        std::size_t batchRemainder{ numElements % numThreads };
 
         // allocate vector of uninitialized thread objects
         std::vector<std::thread> threads;
@@ -46,9 +46,9 @@ namespace Concurrency_ParallelFor_Legacy
         if (useThreads) {
 
             // prepare multi-threaded execution
-            for (size_t i{}; i != numThreads - 1; ++i) {
+            for (std::size_t i{}; i != numThreads - 1; ++i) {
 
-                size_t start{ from + i * batchSize };
+                std::size_t start{ from + i * batchSize };
                 
                 std::thread t{ callableWrapper, callable, start, start + batchSize };
                 threads.push_back(std::move (t));
@@ -57,9 +57,9 @@ namespace Concurrency_ParallelFor_Legacy
         else {
 
             // prepare single-threaded execution (for easy debugging)
-            for (size_t i{}; i != numThreads - 1; ++i) {
+            for (std::size_t i{}; i != numThreads - 1; ++i) {
 
-                size_t start{ from + i * batchSize };
+                std::size_t start{ from + i * batchSize };
                 
                 // callable(start, start + batchSize);
                 callableWrapper(callable, start, start + batchSize);
@@ -67,7 +67,7 @@ namespace Concurrency_ParallelFor_Legacy
         }
 
         // take care of last element - calling 'callable' synchronously 
-        size_t start{ from + (numThreads - 1) * batchSize };
+        std::size_t start{ from + (numThreads - 1) * batchSize };
         callable(start, to);
 
         // wait for the other thread to finish their task

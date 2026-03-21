@@ -2,13 +2,12 @@
 // ConceptualExample.cpp // Active Object Pattern
 // ===========================================================================
 
-// #include <iostream>
-#include <functional>
-#include <thread>
-#include <queue>
-#include <mutex>
-
 #include "../Logger/Logger.h"
+
+#include <functional>
+#include <mutex>
+#include <queue>
+#include <thread>
 
 // ---------------------------------------------------------------------------
 // OriginalClass is a regular class,
@@ -69,7 +68,7 @@ public:
         return op;
     }
 
-    size_t size()
+    std::size_t size()
     {
         std::lock_guard<std::mutex> guard{ m_mutex };
         return m_queue.size();
