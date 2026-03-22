@@ -10,6 +10,7 @@
 
 #include "ThreadPool.h"
 
+#include <atomic>
 #include <iostream>
 #include <print>
 #include <vector>
@@ -186,8 +187,8 @@ void test_concurrency_thread_pool10()
 {
     // -----------------------------------------------------------------------
     // 1. Variant:
-    // Just computing prime numbers / using a free function;
-    // Result (true/false) is by a std::future<bool> object
+    // Just computing prime numbers / using a free function.
+    // Result (true/false) is committed by a std::future<bool> object.
 
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
@@ -247,9 +248,9 @@ void test_concurrency_thread_pool11()
 {
     // -----------------------------------------------------------------------
     // 2. Variant:
-    // Computing prime numbers / printing each found number to the console
-    // Using a lambda
-    // std::future has contained type 'void', no value is transferred
+    // Computing prime numbers / printing each found number to the console.
+    // Using a lambda.
+    // std::future has contained type 'void', no value is transferred.
 
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
@@ -259,7 +260,7 @@ void test_concurrency_thread_pool11()
 
     ScopedTimer clock{};
 
-    std::size_t foundPrimeNumbers{};
+    std::atomic<std::size_t> foundPrimeNumbers{};
 
     std::queue<std::future<void>> results;
 
@@ -272,10 +273,11 @@ void test_concurrency_thread_pool11()
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         std::future<void> future{ pool.addTask(
-            [](std::size_t number) {
+            [&](std::size_t number) {
                 bool found {PrimeNumbers::IsPrime(number)};
                 if (found) {
                     Logger::log(std::cout, "> ", number, " is prime.");
+                    ++foundPrimeNumbers;
                 }     
             }, 
             i
@@ -290,11 +292,11 @@ void test_concurrency_thread_pool11()
 
     pool.start();
 
+    pool.stop();
+
     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
     );
-
-    pool.stop();
     
     Logger::log(std::cout, "Done.");
 }
@@ -305,9 +307,9 @@ void test_concurrency_thread_pool12()
 {
     // -----------------------------------------------------------------------
     // 3. Variant:
-    // Computing prime numbers / returning results to the client of the thread pool
-    // Using a lambda
-    // std::future has contained type 'std::pair' with two values: bool and std::size_t
+    // Computing prime numbers / returning results to the client of the thread pool.
+    // Using a lambda.
+    // std::future has contained type 'std::pair' with two values: bool and std::size_t.
 
     Logger::log(std::cout, "Press any key to start ...");
     char ch;
@@ -322,12 +324,6 @@ void test_concurrency_thread_pool12()
     ThreadPool pool{ };
 
     Logger::log(std::cout, "Enqueuing tasks");
-
-    //auto primeLambda = [&](std::size_t value) {
-
-    //    bool primeFound{ PrimeNumbers::IsPrime(value) };
-    //    return std::make_pair(primeFound, value);
-    //};
 
     Logger::enableLogging(false);
 

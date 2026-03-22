@@ -4,7 +4,22 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [Einige Details zur Thread Pool Realisierung](#link3)
+  * [Ein zweiter Ansatz in der Realisierung der `addTask`-Methode](#link4)
+  * [Ein erstes Beispiel: Threadpool starten und herunterfahren](#link5)
+  * [Ein zweites Beispiel: Fünf einfache Tasks ausführen](#link6)
+  * [Ein drittes Beispiel: Primzahlen berechnen](#link7)
+  * [Ein viertes Beispiel: Primzahlen berechnen und in der Konsole ausgeben](#link8)
+  * [Ein fünftes Beispiel: Primzahlen berechnen mit Rückgabe von Ergebnissen](#link9)
+  * [Literaturhinweise](#link10)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -18,42 +33,26 @@
   * Klasse `std::queue`
   * Klasse `std::move_only_function`
 
-
 <ins>Funktionen</ins>:
 
   * Funktion `std::thread::hardware_concurrency`
 
 ---
 
-## Allgemeines
+## Allgemeines <a name="link2"></a>
 
 Ein *Thread Pool* ermöglicht es, Threads wiederzuverwenden.
 Auf diese Weise wird verhindert, dass zur Laufzeit neue Threads erstellt werden müssen.
 Das Erstellen neuer Threads ist zeit- und ressourcenintensiv. 
 
-In der einschlägigen Literatur oder im Netz findet man mehrere Realisierungen für Thread Pools vor:
-
-  * Buch von Anthony Williams: &bdquo;*Concurrency in Action* &ndash; *2nd Edition*&rdquo;,<br />Kapitel 9: &bdquo;Thread Pools&rdquo;.
-
-  * Buch von  Arthur O'Dwyer: &bdquo;*Mastering the C++17 STL*&rdquo;,<br />Kapitel 7: &bdquo;Building your own thread pool&rdquo;.
-  
-  * Zwei Artikel von Martin Vorbrodt: &bdquo;*Vorbrodt's C++ Blog*&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
-
-Wir stellen in diesem Projekt eine Überarbeitung einer Thread Pool Realisierung von Zen Sepiol vor,
-die in Youtube verfügbar ist:<br />
-[How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
-und
-[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s),
-[Sources siehe hier](https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp).
-
 ---
 
-## Einige Details in der Thread Pool Realisierung
+## Einige Details zur Thread Pool Realisierung <a name="link3"></a>
 
 In der vorliegenden Realisierung besteht der Thread Pool aus zwei Warteschlangen:
 
-  * eine Warteschlange für Worker Threads.
-  * eine Warteschlange für *Tasks* bzw. *Callables* (auszuführenden Funktionen).
+  * Eine Warteschlange für Worker Threads.
+  * Eine Warteschlange für *Tasks* bzw. *Callables* (auszuführende Funktionen).
 
 Für die Warteschlange der Worker Threads greifen wir auf den STL-Container `std::vector` zurück:
 
@@ -62,15 +61,15 @@ std::vector<std::thread> m_pool;
 ```
 
 Typischerweise wird die Größe dieses Containers, also die Anzahl der zur Verfügung stehenden Worker-Threads,
-von der Funktion `std::thread::hardware_concurrency()` beeinflusst.
-
+von der Funktion `std::thread::hardware_concurrency()` beeinflusst. Wir verwenden das Resultat dieser Funktion,
+um eine entsprechende Anzahl von Threads im Pool bereitzustellen.
 
 Nun kommen wir auf die zweite Warteschlange mit den *Callables* (auszuführende Funktionen) zu sprechen.
 Steht eine Aufgabe (*Task*) zur Ausführung an, gibt es im Thread Pool eine Methode (hier: `addTask`),
 die die dazugehörige Funktion (*Callable*) in die Warteschlange aller noch ausstehenden Tasks am Ende hinzufügt.
 
 Wie legen wir den Datentyp für eine solche *Task* fest?
-Ein sehr einfacher Ansatz würde hierzu *Callables* mit einer festen Signatur festlegen,
+Ein sehr einfacher Ansatz würde hierzu *Callables* mit einer festen Signatur vorsehen,
 zum Beispiel Funktionen ohne Parameter und mit Rückgabetyp `void`. Derartige Funktionen könnte man dann
 mit der *Universal Function* Wrapperklasse `std::function` als Variablen in einem Programm hantieren:
 
@@ -99,7 +98,7 @@ std::queue<std::move_only_function<void()>> m_queue;
 
 Unser Anspruch an *Tasks* besteht allerdings darin, Funktionen mit beliebigen Signaturen als Threadprozeduren verwalten zu können.
 Dazu müssen wir zunächst einmal eine &bdquo;flexible&rdquo; `addTask`-Methode definieren.
-Die Flexibilität gewinnen wir mit variadischen Parametern:
+Die Flexibilität gewinnen wir mit variadischen Templates (variable Anzahl von Parametern):
 
 ```cpp
 template <typename TFunc, typename... TArgs>
@@ -110,8 +109,8 @@ auto addTask(TFunc&& func, TArgs&&... args)
 }
 ```
 
-Der Parameter `func` nimmt ein *Callable* entgegen, die Parameter zum Aufruf dieses  *Callables* wiederum
-folgen in einer variablen Anzahl von Parametern, die als *Parameter Pack* `args` beschrieben werden. 
+Der erste Parameter `func` nimmt ein *Callable* entgegen, die Parameter zum Aufruf dieses  *Callables* wiederum
+folgen in einer variablen Anzahl von Parametern, sie werden als *Parameter Pack* `args` beschrieben.
 
 Wie lassen sich die Werte dieser Parameter in einem Hüllenobjekt zwischenspeichern?
 Dazu bietet sich ein Lambda-Objekt an, das die Parameter über den *Closure* in das Lambda-Objekt kopiert.
@@ -146,8 +145,8 @@ auto addTask(TFunc&& func, TArgs&&... args)
 }
 ```
 
-Mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; kann die Move-Semantik
-beim Transport der Daten in das Lambda-Objekt Anwendung finden, zum Beispiel so:
+Mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; findet die Move-Semantik
+beim Transport der Daten in das Lambda-Objekt Anwendung, zum Beispiel so:
 
 ```cpp
 [func = std::forward<TFunc>(func),
@@ -201,7 +200,7 @@ auto wrapper{ [task = std::move(task)] () mutable -> void { task(); } };
 ```
 
 Ja, Sie haben es richtig gesehen: Mit dem Lambda aus dem letzten Code-Snippet definieren wir ein *Callable*,
-dass die Signatur `void()` hat! 
+das die Signatur `void()` hat! 
 Dieses Hüllenobjekt können wir nun in unsere Warteschlange für Threadprozeduren einreihen:
 
 ```cpp
@@ -210,7 +209,7 @@ m_queue.push(std::move(wrapper));
 
 Damit haben wir die zentralen Stellen der Methode `addTask` der `ThreadPool`Klasse betrachtet,
 ein zugegebenermaßen nicht ganz leichtes Unterfangen.
-Die Methode im Ganzen sieht so aus:
+Die Methode `addTask` sieht im Ganzen betrachtet so aus:
 
 ```cpp
 01: template <typename TFunc, typename... TArgs>
@@ -283,14 +282,14 @@ da der Quellcode nicht so komplex geraten ist:
 27: }
 ```
 
-Um es noch einmal zusammenzufassen: Für Funktionen, die wird als Threadprozeduren verwenden wollen,
+Um es noch einmal zusammenzufassen: Für Funktionen, die wir als Threadprozeduren verwenden wollen,
 benötigen wir zwei Hüllenobjekte, um diese in einem `std::queue`-Objekt ablegen zu können:
 
   * Ein erstes Lambda-Objekt, das die Funktion `func` und deren Parameter `args` kapselt.
-  * Ein zweites Lambda-Objekt, das das `std::packaged_task`-Objekt kapselt.
+  * Ein zweites Lambda-Objekt, das das `std::packaged_task`-Objekt kapselt (Rückgabe eines `std::future`-Objekts).
 
-
-Dies ist im Grunde genommen das minimale Design, wenn wir ein `std::future`-Objekt zurückgeben wollen (Notwendigkeit eines `std::packaged_task`-Objekts).
+Dies ist im Grunde genommen das minimale Design,
+wenn wir ein `std::future`-Objekt zurückgeben wollen (Notwendigkeit eines `std::packaged_task`-Objekts).
 
 Das zweite Lambda-Objekt ist auch aus einem anderen Grund unumgänglich:
 Da unsere Warteschlange für *Tasks* die Definition
@@ -302,13 +301,12 @@ std::queue<std::move_only_function<void()>> m_queue;
 besitzt, müssen wir Funktionen mit einer anderen Schnittstellen adäquat umschließen.
 `std::packaged_task<ReturnType(...TArgs)>`-Objekte sind nicht implizit in `std::packaged_task<void()>`-Objekte konvertierbar.
 
-Dennoch gibt es einen anderen modernen Ansatz für Thread-Pools, der ohne `std::packaged_task`-Objekt auskommt
+Dennoch gibt es einen anderen, ebenfalls modernen Ansatz für Thread-Pools, der ohne `std::packaged_task`-Objekte auskommt und
 trotzdem `std::future`-Objekte zurückgibt. Für diesen Ansatz schreiben wir eine zweite Methode `addTaskEx`.
 
 ---
 
-### Ein zweiter Ansatz in der Realisierung der `addTask`-Methode
-
+## Ein zweiter Ansatz in der Realisierung der `addTask`-Methode <a name="link4"></a>
 
 In diesem Ansatz tauschen wir den Datentyp `std::packaged_task` durch den Datentyp `std::promise` aus,
 ein simpler, aber wirkungsvoller Trick.
@@ -366,8 +364,7 @@ promise->set_exception(std::current_exception());
 
 *Bemerkung*:
 Die &bdquo;Exception-Safety&rdquo; hat aber für die ursprüngliche Version mit der Klasse `std::packaged_task` ebenfalls gegolten,
-da `std::future`-Objekte ebenfalls Ausnahmen transportieren bzw. werfen, wenn diese eintreten.
-
+da `std::future`-Objekte ebenfalls Ausnahmen transportieren bzw. durch ihre `get`-Methode werfen, wenn diese eintreten.
 
 Wenn es der Beobachtung einer Einschränkung bedarf, dann wäre es die Zeilen
 
@@ -379,12 +376,12 @@ std::shared_ptr<std::promise<ReturnType>> promise{
 
 gewesen. Wir legen das `std::promise<ReturnType>>`-Objekt auf dem Heap an.
 Warum? Die in der Warteschlange gespeicherten Lambda-Funktionen müssen sicher kopierbar/verschiebbar sein
-und wir wollen keine Lebensdauerprobleme haben.
+und wir wollen keine Lebensdauerprobleme haben. Dadurch, dass die Daten auf dem Heap liegen, sind diese solange verfügbar, wie sie gebraucht werden.
 Man beachte, dass die `std::promise`-Variable des Typs `std::shared_ptr` in das Lambda-Objekt kopiert wird.
 
 ---
 
-### Ein erstes Beispiel: Threadpool starten und herunterfahren
+## Ein erstes Beispiel: Threadpool starten und herunterfahren <a name="link5"></a>
 
 Starten und Herunterfahren des Threadpools:
 
@@ -421,7 +418,7 @@ Ausgabe:
 
 ---
 
-### Ein zweites Beispiel: Fünf einfache Tasks ausführen
+## Ein zweites Beispiel: Fünf einfache Tasks ausführen <a name="link6"></a>
 
 Starten des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpools:
 
@@ -518,7 +515,7 @@ Starten des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpoo
 
 ---
 
-### Ein drittes Beispiel: Primzahlen berechnen
+## Ein drittes Beispiel: Primzahlen berechnen <a name="link7"></a>
 
 Dieses Mal ist das Beispiel etwas umfangreicher, wir berechnen Primzahlen.
 Für den Nachweis der Primzahleigenschaft wird für jeden Primzahlenkandidaten ein separater Thread des Threadpools herangezogen,
@@ -528,7 +525,7 @@ Die Ausgabe weiter unten passt zum Zahlenbereich von 1'000'000'000'000'000'001 b
 Es werden folglich 30'000 Tasks in den Pool eingereiht.
 Die Laufzeit dieses Beispiels beträgt in etwas 2 Minuten.
 Damit ist es möglich, den Taskmanager bei voller Auslastung des Systems beobachten zu können,
-siehe auch *Abbildung* 1 weiter unten.
+siehe dazu auch *Abbildung* 1 weiter unten.
 
 
 Im einzelnen werden folgende Tätigkeiten ausgeführt:
@@ -536,7 +533,7 @@ Im einzelnen werden folgende Tätigkeiten ausgeführt:
   * Starten des Threadpools.
   * Einreihen von 30'000 Tasks.
   * Abspeichern / Zwischenspeichern von 30'000 `std::future`-Objekten.
-  * Berechnen des Gesamtsumme aller gefundenen Primzahlen.
+  * Berechnen der Gesamtsumme aller gefundenen Primzahlen.
   * Ausgabe des Ergebnisses (Anzahl der gefundenen Primzahlen).
   * Herunterfahren des Threadpools.
 
@@ -640,21 +637,29 @@ Wir erkennen am Taskmanager, dass das System mit 99% ziemlich stark ausgelastet 
 
 *Abbildung* 1: Task Manager während aktiver Thread Pool Anwendung.
 
-Wenn ich das Programm auf einem zweiten Rechner laufen lasse, dann sieht die Auslastung etwas anders aus:
+Wenn ich das Programm auf einem zweiten Rechner laufen lasse, dann sieht die Auslastung geringfügig anders aus.
+In *Abbildung* 2 erkennen wir, dass der Rechner 22 logische Prozessoren unterstützt,
+der laufenden Threadpool-Anwendung werden aber nur 20 Prozessoren zugeteilt.
 
 <img src="TaskManager_ThreadPool_Dell_Notebook.png" width="750">
 
 *Abbildung* 2: Task Manager während aktiver Thread Pool Anwendung auf einem zweiten Rechner.
 
-
 ---
 
-### Ein viertes Beispiel: Primzahlen berechnen und in der Konsole ausgeben
+## Ein viertes Beispiel: Primzahlen berechnen und in der Konsole ausgeben <a name="link8"></a>
 
 Wir nehmen am letzten Programm einige kleine Änderungen vor:
 
   * Jede gefundene Primzahl wird in der Konsole ausgegeben.
   * Die Workerthreads des Pools transferieren keine Ergebnisse, d.h. der Rückgabetyp ist `std::future<void>`.
+
+Allerdings berechnen wir die Summe aller gefundenen Primzahlen. Hier müssen wir das Regelwerk des atomaren Zugriffs beachten,
+d. h. eine Variable der Gestalt `std::size_t foundPrimeNumbers` muss durch eine atomare Hüllenklasse geschützt bzw. geschrieben werden:
+
+```cpp
+std::atomic<std::size_t> foundPrimeNumbers{};
+```
 
 Das Programm sieht nun so aus:
 
@@ -663,7 +668,7 @@ Das Programm sieht nun so aus:
 02: {
 03:     ScopedTimer clock{};
 04: 
-05:     std::size_t foundPrimeNumbers{};
+05:     std::atomic<std::size_t> foundPrimeNumbers{};
 06:     std::queue<std::future<void>> results;
 07:     ThreadPool pool{};
 08: 
@@ -672,146 +677,117 @@ Das Programm sieht nun so aus:
 11:     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 12: 
 13:         std::future<void> future{ pool.addTask(
-14:             [](std::size_t number) {
+14:             [&](std::size_t number) {
 15:                 bool found {PrimeNumbers::IsPrime(number)};
 16:                 if (found) {
 17:                     Logger::log(std::cout, "> ", number, " is prime.");
-18:                 }     
-19:             }, 
-20:             i
-21:         )};
-22: 
-23:         results.push(std::move(future));
-24:     }
-25: 
-26:     Logger::log(std::cout, "Enqueuing tasks done.");
-27: 
-28:     pool.start();
-29: 
-30:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
-31:         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
-32:     );
-33: 
-34:     pool.stop();
-35: }
+18:                     ++foundPrimeNumbers;
+19:                 }     
+20:             }, 
+21:             i
+22:         )};
+23: 
+24:         results.push(std::move(future));
+25:     }
+26: 
+27:     Logger::log(std::cout, "Enqueuing tasks done.");
+28: 
+29:     pool.start();
+30: 
+31:     pool.stop();
+32: 
+33:     Logger::log(std::cout, "Found ", foundPrimeNumbers, " prime numbers between ",
+34:         PrimeNumberLimits::Start, " and ", PrimeNumberLimits::End, '.'
+35:     );
+36: }
 ```
 
 *Ausgabe*:
 
 ```
-[1]: 	Press any key to start ...
 [1]: 	Start
 [1]: 	Enqueuing tasks
 [1]: 	Enqueuing tasks done.
 [1]: 	Number of available concurrent threads: 22
-[1]: 	Found 0 prime numbers between 1000000000000000001 and 1000000000000030001.
-[2]: 	Started worker [25540]
-[3]: 	Started worker [39428]
-[4]: 	Started worker [39072]
-[5]: 	Started worker [1584]
-[6]: 	Started worker [5276]
-[7]: 	Started worker [22496]
-[8]: 	Started worker [10204]
-[9]: 	Started worker [22128]
-[10]: 	Started worker [13452]
-[11]: 	Started worker [18780]
-[12]: 	Started worker [31064]
-[13]: 	Started worker [18332]
-[14]: 	Started worker [19944]
-[15]: 	Started worker [17056]
-[16]: 	Started worker [24196]
-[17]: 	Started worker [13752]
-[18]: 	Started worker [30328]
-[19]: 	Started worker [23348]
-[20]: 	Started worker [32972]
-[21]: 	Started worker [16704]
-[22]: 	Started worker [14020]
-[23]: 	Started worker [24496]
+[2]: 	Started worker [5680]
+[3]: 	Started worker [20940]
+[4]: 	Started worker [13848]
+[5]: 	Started worker [15792]
+[6]: 	Started worker [23624]
+[7]: 	Started worker [21600]
+[8]: 	Started worker [20628]
+[9]: 	Started worker [27004]
+[10]: 	Started worker [16892]
+[11]: 	Started worker [10904]
+[12]: 	Started worker [16512]
+[13]: 	Started worker [6192]
+[14]: 	Started worker [9116]
+[15]: 	Started worker [28352]
+[16]: 	Started worker [14328]
+[17]: 	Started worker [12964]
+[18]: 	Started worker [11952]
+[19]: 	Started worker [16312]
+[20]: 	Started worker [25788]
+[21]: 	Started worker [21832]
+[22]: 	Started worker [21292]
+[23]: 	Started worker [18316]
+[15]: 	> 1000000000000000283 is prime.
+[12]: 	> 1000000000000000183 is prime.
 [2]: 	> 1000000000000000003 is prime.
-[7]: 	> 1000000000000000079 is prime.
-[11]: 	> 1000000000000000183 is prime.
-[18]: 	> 1000000000000000507 is prime.
-[4]: 	> 1000000000000000009 is prime.
-[5]: 	> 1000000000000000031 is prime.
-[22]: 	> 1000000000000000603 is prime.
-[23]: 	> 1000000000000000583 is prime.
-[13]: 	> 1000000000000000621 is prime.
-[10]: 	> 1000000000000000177 is prime.
-[12]: 	> 1000000000000000283 is prime.
-[14]: 	> 1000000000000000201 is prime.
-[16]: 	> 1000000000000000381 is prime.
-[20]: 	> 1000000000000000523 is prime.
-[17]: 	> 1000000000000000387 is prime.
-[6]: 	> 1000000000000000799 is prime.
-[21]: 	> 1000000000000000841 is prime.
 ........
-[11]: 	> 1000000000000028597 is prime.
-[23]: 	> 1000000000000028399 is prime.
-[13]: 	> 1000000000000028329 is prime.
-[6]: 	> 1000000000000028371 is prime.
-[9]: 	> 1000000000000028891 is prime.
-[3]: 	> 1000000000000028903 is prime.
-[19]: 	> 1000000000000028381 is prime.
-[21]: 	> 1000000000000028453 is prime.
-[5]: 	> 1000000000000028519 is prime.
-[8]: 	> 1000000000000028707 is prime.
-[18]: 	> 1000000000000029073 is prime.
-[16]: 	> 1000000000000028663 is prime.
-[7]: 	> 1000000000000029097 is prime.
-[11]: 	> 1000000000000029307 is prime.
-[15]: 	> 1000000000000028773 is prime.
-[2]: 	> 1000000000000029121 is prime.
-[4]: 	> 1000000000000028927 is prime.
-[23]: 	> 1000000000000029313 is prime.
-[9]: 	Worker Done [22128]
-[3]: 	> 1000000000000029643 is prime.
-[3]: 	Worker Done [39428]
-[12]: 	> 1000000000000029263 is prime.
-[12]: 	Worker Done [31064]
-[17]: 	> 1000000000000029143 is prime.
-[17]: 	Worker Done [13752]
-[20]: 	> 1000000000000029253 is prime.
-[20]: 	Worker Done [32972]
-[14]: 	> 1000000000000029233 is prime.
-[14]: 	Worker Done [19944]
-[13]: 	> 1000000000000029341 is prime.
-[13]: 	Worker Done [18332]
-[6]: 	> 1000000000000029461 is prime.
-[6]: 	Worker Done [5276]
-[8]: 	> 1000000000000029817 is prime.
-[8]: 	Worker Done [10204]
-[22]: 	> 1000000000000029529 is prime.
-[22]: 	Worker Done [14020]
-[21]: 	> 1000000000000029713 is prime.
-[21]: 	Worker Done [16704]
-[5]: 	> 1000000000000029781 is prime.
-[5]: 	Worker Done [1584]
-[19]: 	> 1000000000000029683 is prime.
-[19]: 	Worker Done [23348]
-[18]: 	> 1000000000000029841 is prime.
-[18]: 	Worker Done [30328]
-[2]: 	Worker Done [25540]
-[10]: 	> 1000000000000029823 is prime.
-[10]: 	Worker Done [13452]
-[11]: 	> 1000000000000029883 is prime.
-[11]: 	Worker Done [18780]
-[7]: 	> 1000000000000029877 is prime.
-[7]: 	Worker Done [22496]
-[23]: 	> 1000000000000029997 is prime.
-[23]: 	Worker Done [24496]
-[16]: 	> 1000000000000029857 is prime.
-[16]: 	Worker Done [24196]
-[15]: 	> 1000000000000029893 is prime.
-[15]: 	Worker Done [17056]
-[4]: 	> 1000000000000029961 is prime.
-[4]: 	Worker Done [39072]
+[20]: 	> 1000000000000004137 is prime.
+[6]: 	> 1000000000000004209 is prime.
+[18]: 	> 1000000000000004317 is prime.
+[7]: 	> 1000000000000004447 is prime.
+[7]: 	Worker Done [21600]
+[17]: 	Worker Done [12964]
+[4]: 	> 1000000000000004231 is prime.
+[4]: 	Worker Done [13848]
+[2]: 	> 1000000000000004467 is prime.
+[2]: 	Worker Done [5680]
+[20]: 	Worker Done [25788]
+[23]: 	> 1000000000000004561 is prime.
+[23]: 	Worker Done [18316]
+[12]: 	> 1000000000000004551 is prime.
+[12]: 	Worker Done [16512]
+[9]: 	> 1000000000000004413 is prime.
+[9]: 	Worker Done [27004]
+[16]: 	> 1000000000000004449 is prime.
+[16]: 	Worker Done [14328]
+[22]: 	Worker Done [21292]
+[8]: 	> 1000000000000004671 is prime.
+[8]: 	Worker Done [20628]
+[15]: 	> 1000000000000004599 is prime.
+[15]: 	Worker Done [28352]
+[5]: 	> 1000000000000004477 is prime.
+[5]: 	Worker Done [15792]
+[11]: 	> 1000000000000004503 is prime.
+[11]: 	Worker Done [10904]
+[3]: 	> 1000000000000004573 is prime.
+[3]: 	Worker Done [20940]
+[19]: 	Worker Done [16312]
+[14]: 	Worker Done [9116]
+[10]: 	> 1000000000000004803 is prime.
+[10]: 	Worker Done [16892]
+[21]: 	> 1000000000000004879 is prime.
+[21]: 	Worker Done [21832]
+[13]: 	> 1000000000000004777 is prime.
+[13]: 	Worker Done [6192]
+[6]: 	> 1000000000000004981 is prime.
+[6]: 	Worker Done [23624]
+[18]: 	> 1000000000000004989 is prime.
+[18]: 	Worker Done [11952]
+[1]: 	Found 114 prime numbers between 1000000000000000001 and 1000000000000005001.
 [1]: 	Done.
-[1]: 	Elapsed time: 119080 [milliseconds]
+[1]: 	Elapsed time: 15219 [milliseconds]
 ```
 
 ---
 
-### Ein fünftes Beispiel: Primzahlen berechnen mit Rückgabe von Ergebnissen
+## Ein fünftes Beispiel: Primzahlen berechnen mit Rückgabe von Ergebnissen <a name="link9"></a>
+
+In diesem Beispiel kann man gut ablesen, dass die jeweiligen Thead-Prozeduren ein Objekt eines beliebigen
+Typs zurückliefern können. Wir haben es im Beispiel mit `std::pair<bool, std::size_t>`-Objekten zu tun:
 
 ```cpp
 01: void test()
@@ -922,10 +898,22 @@ Das Programm sieht nun so aus:
 
 ---
 
-## Literaturhinweise
+## Literaturhinweise <a name="link10"></a>
 
-Das erste Beispiel ist aus dem Buch &bdquo;Concurrency in Action - 2nd Edition&rdquo; von
-Anthony Williams, Kapitel 9.1, entnommen.
+In der einschlägigen Literatur oder im Netz findet man mehrere Realisierungen für Thread Pools vor:
+
+  * Buch von Anthony Williams: &bdquo;*Concurrency in Action* &ndash; *2nd Edition*&rdquo;,<br />Kapitel 9: &bdquo;*Thread Pools*&rdquo;.
+
+  * Buch von  Arthur O'Dwyer: &bdquo;*Mastering the C++17 STL*&rdquo;,<br />Kapitel 7: &bdquo;*Building your own thread pool*&rdquo;.
+  
+  * Zwei Artikel von Martin Vorbrodt: &bdquo;*Vorbrodt's C++ Blog*&rdquo; &ndash;<br />&bdquo;[Simple thread pool](https://vorbrodt.blog/2019/02/27/advanced-thread-pool/)&rdquo; und &bdquo;[Advanced thread pool](https://vorbrodt.blog/2019/02/12/simple-thread-pool/)&rdquo;.
+
+Die aktuell betrachtete Implementierung ist eine Überarbeitung einer Thread Pool Realisierung von Zen Sepiol,
+die in Youtube verfügbar ist:<br />
+[How to write Thread Pools in C++](https://www.youtube.com/watch?v=6re5U82KwbY)
+und
+[How C++23 made my Thread Pool twice as fast](https://www.youtube.com/watch?v=meiGRnyRBXM&t=1s)
+([Sources](https://github.com/ZenSepiol/Dear-ImGui-App-Framework/blob/main/src/lib/thread_pool/thread_pool_test.cpp)).
 
 ---
 
