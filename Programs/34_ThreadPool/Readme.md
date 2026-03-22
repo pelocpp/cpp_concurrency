@@ -90,7 +90,7 @@ Damit sollten wir unsere Funktionen in Variablen des Typs
 std::move_only_function<void()> func;
 ```
 
-abspeichern. Die Warteschlange für die *Tasks* könnte damit so definiert werden:
+speichern. Die Warteschlange für die *Tasks* könnte damit so definiert werden:
 
 ```cpp
 std::queue<std::move_only_function<void()>> m_queue;
@@ -533,7 +533,7 @@ Im einzelnen werden folgende Tätigkeiten ausgeführt:
   * Starten des Threadpools.
   * Einreihen von 30'000 Tasks.
   * Abspeichern / Zwischenspeichern von 30'000 `std::future`-Objekten.
-  * Berechnen der Gesamtsumme aller gefundenen Primzahlen.
+  * Berechnung der Gesamtsumme aller gefundenen Primzahlen.
   * Ausgabe des Ergebnisses (Anzahl der gefundenen Primzahlen).
   * Herunterfahren des Threadpools.
 
