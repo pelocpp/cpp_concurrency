@@ -1,5 +1,5 @@
 // ===========================================================================
-// TestEventLoop.cpp
+// EventLoop_Examples.cpp
 // ===========================================================================
 
 #include "../Logger/Logger.h"
@@ -11,12 +11,13 @@
 #include "EventLoop.h"
 
 // ===========================================================================
+// just starting and stopping event loop
 
 void test_event_loop_01()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     eventLoop.start();
     eventLoop.stop();
@@ -25,12 +26,13 @@ void test_event_loop_01()
 }
 
 // ===========================================================================
+// demonstrating event loop with one event
 
 void test_event_loop_02()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     std::move_only_function<void()> event{
         []() {
@@ -48,6 +50,7 @@ void test_event_loop_02()
 }
 
 // ===========================================================================
+// demonstrating event loop with five events
 
 static void function ()
 {
@@ -61,7 +64,7 @@ void test_event_loop_03()
 {
     Logger::log(std::cout, "Main");
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     for (std::size_t i{}; i != 5; ++i) {
 
@@ -77,12 +80,13 @@ void test_event_loop_03()
 }
 
 // ===========================================================================
+// demonstrating event loop with five lambdas
 
 void test_event_loop_04()
 {
     Logger::log(std::cout, "Main");
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     eventLoop.start();
 
@@ -104,23 +108,24 @@ void test_event_loop_04()
 }
 
 // ===========================================================================
+// demonstrating enqueuing events with parameters
 
 void test_event_loop_10()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     eventLoop.enqueueTask(
-        [] (int value) { 
-            Logger::log(std::cout, "Value: ", value); 
+        [](int value) {
+            Logger::log(std::cout, "Value: ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
-        }, 
+        },
         123
     );
 
     eventLoop.enqueueTask(
-        [](int value) { 
+        [](int value) {
             Logger::log(std::cout, "Value: ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         },
@@ -128,7 +133,7 @@ void test_event_loop_10()
     );
 
     eventLoop.enqueueTask(
-        [](int value) { 
+        [](int value) {
             Logger::log(std::cout, "Value: ", value);
             std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         },
@@ -145,6 +150,61 @@ void test_event_loop_10()
 }
 
 // ===========================================================================
+// demonstrating enqueuing events with several functions with different signatures
+
+static void firstFunction(int value)
+{
+    std::thread::id tid{ std::this_thread::get_id() };
+    Logger::log(std::cout, "firstFunction starting: TID: ", tid);
+    Logger::log(std::cout, "Paramters(s): ", value);
+    std::this_thread::sleep_for(std::chrono::milliseconds{ 1500 });
+    Logger::log(std::cout, "firstFunction done.");
+}
+
+static void secondFunction(double d1, double d2)
+{
+    std::thread::id tid{ std::this_thread::get_id() };
+    Logger::log(std::cout, "secondFunction starting: TID: ", tid);
+    Logger::log(std::cout, "Paramters(s): ", d1, " - ", d2);
+    std::this_thread::sleep_for(std::chrono::milliseconds{ 1500 });
+    Logger::log(std::cout, "secondFunction done.");
+}
+
+static void thirdFunction(const std::string& s)
+{
+    std::thread::id tid{ std::this_thread::get_id() };
+    Logger::log(std::cout, "thirdFunction starting: TID: ", tid);
+    Logger::log(std::cout, "Paramters(s): ", s);
+    std::this_thread::sleep_for(std::chrono::milliseconds{ 1500 });
+    Logger::log(std::cout, "thirdFunction done.");
+}
+
+void test_event_loop_11()
+{
+    Logger::log(std::cout, "Main");
+
+    EventLoop eventLoop{};
+
+    eventLoop.start();
+
+    eventLoop.enqueueTask(std::move(firstFunction), 123);
+
+    eventLoop.enqueueTask(std::move(secondFunction), 123.0, 456.0);
+
+    std::string s{ "Hello" };
+    eventLoop.enqueueTask(std::move(thirdFunction), s);
+
+    eventLoop.enqueueTask(std::move(thirdFunction), std::string { "Temporary Hello" });
+
+    Logger::log(std::cout, "All enqueue's done");
+
+    eventLoop.stop();
+
+    Logger::log(std::cout, "Done.");
+}
+
+// ===========================================================================
+// searching prime numbers: first enqueuing events, than starting calculations
 
 void test_event_loop_20()
 {
@@ -154,7 +214,7 @@ void test_event_loop_20()
 
     std::size_t foundPrimeNumbers{};
 
-    EventLoop eventLoop;
+    EventLoop eventLoop{};
 
     // eventLoop.start(); // <=== add/remove comment
 

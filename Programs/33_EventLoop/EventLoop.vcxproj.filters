@@ -13,7 +13,7 @@
     <ClCompile Include="Reste.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestEventLoop.cpp">
+    <ClCompile Include="EventLoop_Examples.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Globals\IsPrime.cpp">
