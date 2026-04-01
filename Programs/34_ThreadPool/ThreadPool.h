@@ -52,7 +52,7 @@ public:
 
         auto task = std::packaged_task<ReturnType()>{
             [func = std::forward<TFunc>(func),
-            ... args = std::forward<TArgs>(args)]() mutable -> ReturnType
+            ... args = std::forward<TArgs>(args)] () mutable -> ReturnType
             {
                 return std::invoke(std::move(func), std::move(args) ...);
             }
@@ -92,7 +92,7 @@ public:
         m_queue.push(
             [promise,
             func = std::forward<TFunc>(func),
-            ... args = std::forward<TArgs>(args)] () mutable
+            ... args = std::forward<TArgs>(args)] () mutable -> void
             {
                 try
                 {

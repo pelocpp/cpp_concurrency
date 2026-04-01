@@ -54,7 +54,7 @@ public:
         // using "Generalized Lambda Capture" to preserve move semantics
         auto callable {
             [func = std::forward<TFunc>(func),
-            ... capturedArgs = std::forward<TArgs>(args)] () {
+            ... capturedArgs = std::forward<TArgs>(args)] () -> void {
                 std::invoke(std::move(func), std::move(capturedArgs) ...);
             } 
         };
