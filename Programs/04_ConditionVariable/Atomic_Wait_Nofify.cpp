@@ -1,5 +1,5 @@
 // ===========================================================================
-// Atomic_Wait_Nofify.cpp // Atomic Variable
+// Atomic_Wait_Nofify.cpp - Atomic Variable
 // ===========================================================================
 
 #include "../Logger/Logger.h"

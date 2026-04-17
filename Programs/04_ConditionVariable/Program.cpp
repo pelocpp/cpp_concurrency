@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Wait and Notify // std::condition_variable
+// Program.cpp // Wait and Notify - std::condition_variable
 // ===========================================================================
 
 extern void test_simple_condition_variable_01();

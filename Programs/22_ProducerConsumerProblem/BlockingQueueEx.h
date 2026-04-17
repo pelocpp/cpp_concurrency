@@ -5,12 +5,13 @@
 #pragma once
 
 #include "../Logger/Logger.h"
-
-#include <chrono>
-#include <iostream>
-#include <mutex>
-#include <semaphore>
-#include <thread>
+ 
+#include <mutex>     // for std::mutex
+#include <semaphore> // for std::counting_semaphore
+#include <cstdlib>   // for std::malloc / std::free
+#include <new>       // for placement new
+#include <utility>   // for std::move
+#include <cstddef>   // for std::size_t
 
 namespace ProducerConsumerQueue
 {
@@ -27,7 +28,7 @@ namespace ProducerConsumerQueue
         std::counting_semaphore<QueueSize> m_emptySlots;
         std::counting_semaphore<QueueSize> m_fullSlots;
 
-        std::mutex mutable m_mutex;
+        mutable std::mutex m_mutex;
 
     public:
         // default c'tor

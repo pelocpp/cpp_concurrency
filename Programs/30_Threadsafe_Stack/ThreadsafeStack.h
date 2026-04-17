@@ -4,10 +4,12 @@
 
 #pragma once
 
-#include <exception>
-#include <stack>
-#include <mutex>
-#include <optional>
+#include <cstddef>             // for std::size_t
+#include <exception>           // for std::out_of_range
+#include <mutex>               // for std::mutex
+#include <optional>            // for std::optional
+#include <stack>               // for std::stack
+#include <utility>             // for std::move, std::forward
 
 namespace Concurrency_ThreadsafeStack
 {
@@ -84,7 +86,7 @@ namespace Concurrency_ThreadsafeStack
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) {
-                return std::optional<T>(std::nullopt);
+                return std::nullopt;
             }
             else {
                 std::optional<T> result{ std::move(m_data.top()) };
@@ -97,10 +99,10 @@ namespace Concurrency_ThreadsafeStack
         {
             std::lock_guard<std::mutex> guard{ m_mutex };
             if (m_data.empty()) {
-                return std::optional<T>(std::nullopt);
+                return std::nullopt;
             }
             else {
-                std::optional<T> result(m_data.top());
+                std::optional<T> result{ m_data.top() };
                 return result;
             }
         }
@@ -119,7 +121,7 @@ namespace Concurrency_ThreadsafeStack
     };
 }
 
-// ===========================================================================
+ // ===========================================================================
 // End-of-File
 // ===========================================================================
 
