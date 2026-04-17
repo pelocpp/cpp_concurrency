@@ -1,16 +1,16 @@
 // ===========================================================================
-// ConditionVariableAny.cpp // std::stop_token, std::stop_source und request_stop
+// ConditionVariableAny.cpp - std::stop_token, std::stop_source und request_stop
 // ===========================================================================
 
 #include "../Logger/Logger.h"
 
-#include <condition_variable>
-#include <future>
-#include <iostream>
-#include <mutex>
-#include <queue>
-#include <stop_token>
-#include <thread>
+#include <condition_variable>  // std::condition_variable_any
+#include <iostream>            // std::cout
+#include <mutex>               // std::mutex, std::unique_lock, std::lock_guard
+#include <queue>               // std::queue
+#include <stop_token>          // std::stop_token
+#include <thread>              // std::jthread
+#include <string>              // std::string
 
 namespace Stop_Tokens_and_Condition_Variables
 {
@@ -29,23 +29,22 @@ namespace Stop_Tokens_and_Condition_Variables
                 Logger::log(std::cout, "Waiting  ...");
 
                 {
-                    std::unique_lock lock{ m_mutex };
+                    std::unique_lock<std::mutex> lock{ m_mutex };
 
                     // wait for the next message
-                    bool stopRequested {
+                    bool waitResult {
                         m_condition_variable.wait(
                             lock,
                             token,
-                                [&]() {
-                                bool b { !m_messages.empty()};
+                            [&]() {
+                                bool b{ !m_messages.empty() };
                                 Logger::log(std::cout, "Wait: Queue is empty: ", b ? "false" : "true");
                                 return b;
                             }
-
                         )
                     };
 
-                    if (!stopRequested) {
+                    if (!waitResult) {
                         Logger::log(std::cout, "Stop has been requested!");
                         break;
                     }
@@ -67,7 +66,7 @@ namespace Stop_Tokens_and_Condition_Variables
         // store three messages
         for (const auto& s : { "Tic" , "Tac", "Toe" }) {
 
-            std::lock_guard guard{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             m_messages.push(s);
         }
 
@@ -79,7 +78,7 @@ namespace Stop_Tokens_and_Condition_Variables
 
         {
             // after some time, store another message
-            std::lock_guard guard{ m_mutex };
+            std::lock_guard<std::mutex> guard{ m_mutex };
             m_messages.push("Tic-Tac-Toe Done");
         }
 

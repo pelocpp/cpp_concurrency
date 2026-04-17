@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Event Loop
+// Program.cpp - Event Loop
 // ===========================================================================
 
 extern void test_event_loop_01();  // just starting and stopping event loop

@@ -7,10 +7,10 @@
     <ClCompile Include="Exercise_02_CarParking.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Logger\Logger.cpp">
+    <ClCompile Include="Program.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Program.cpp">
+    <ClCompile Include="Exercise_03_ThreadPool_NumberOfThreads.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

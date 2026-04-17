@@ -33,9 +33,6 @@
     <ClCompile Include="Thread_Safe_Blocking_Queue_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Logger\Logger.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Thread_Safe_Blocking_Stack_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

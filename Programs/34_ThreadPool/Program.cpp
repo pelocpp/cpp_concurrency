@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Thread Pool
+// Program.cpp - Thread Pool
 // ===========================================================================
 
 extern void test_concurrency_thread_pool01();   // just launching ... and stopping the thread pool

@@ -143,7 +143,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Example_LockingStrategies.cpp" />
     <ClCompile Include="Example_RecursiveMutex.cpp" />
     <ClCompile Include="Example_ScopedLock.cpp" />

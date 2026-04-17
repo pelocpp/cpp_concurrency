@@ -144,7 +144,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>

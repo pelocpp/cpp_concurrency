@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Reader Writer Lock
+// Program.cpp - Reader Writer Lock
 // ===========================================================================
 
 extern void test_reader_writer_lock_01();

@@ -125,7 +125,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="LockFreeProgramming01.cpp" />
     <ClCompile Include="LockFreeProgramming02.cpp" />
     <ClCompile Include="Program.cpp" />

@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Strategized Locking
+// Program.cpp - Strategized Locking
 // ===========================================================================
 
 extern void test_strategized_locking_01();

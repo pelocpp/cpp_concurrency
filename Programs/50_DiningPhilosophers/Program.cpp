@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Dining Philosophers Program
+// Program.cpp - Dining Philosophers Program
 // ===========================================================================
 
 #include <random>

@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Mutual Exclusion // Locking Mechanisms
+// Program.cpp - Mutual Exclusion // Locking Mechanisms
 // ===========================================================================
 
 extern void test_simple_mutex();

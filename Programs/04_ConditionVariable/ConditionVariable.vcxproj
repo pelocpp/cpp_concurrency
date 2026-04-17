@@ -133,7 +133,6 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Atomic_Wait_Nofify.cpp" />
     <ClCompile Include="Condition_Variable_01_Simple.cpp" />
     <ClCompile Include="Condition_Variable_02_Simple.cpp" />

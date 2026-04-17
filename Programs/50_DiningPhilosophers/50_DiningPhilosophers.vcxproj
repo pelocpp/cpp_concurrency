@@ -142,7 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Philosopher.cpp" />
     <ClCompile Include="Table.cpp" />

@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Simple Threading Demo (std::thread basics)
+// Program.cpp - Simple Threading Demo (std::thread basics)
 // ===========================================================================
 
 #include <iostream>

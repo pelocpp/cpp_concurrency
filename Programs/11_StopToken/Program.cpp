@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // std::condition_variable_any // request_stop
+// Program.cpp - std::condition_variable_any / request_stop
 // ===========================================================================
 
 extern void test_joinable_thread_cooperative_interruptibility();

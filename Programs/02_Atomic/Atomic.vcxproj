@@ -144,7 +144,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="IncrementDecrement.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>

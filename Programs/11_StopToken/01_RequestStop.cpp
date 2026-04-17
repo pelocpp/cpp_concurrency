@@ -1,5 +1,5 @@
 // ===========================================================================
-// RequestStop.cpp // JThread is cooperatively interruptible
+// RequestStop.cpp - JThread is cooperatively interruptible
 // ===========================================================================
 
 #include "../Logger/Logger.h"
@@ -7,6 +7,7 @@
 #include <atomic>
 #include <chrono>
 #include <iostream>
+#include <stop_token>
 #include <thread>
 
 namespace JoinableThreadCooperativeInterruptibility {

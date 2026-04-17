@@ -130,7 +130,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="TestThreadSafeQueue.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>

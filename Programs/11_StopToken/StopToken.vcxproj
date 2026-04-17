@@ -130,7 +130,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Logger\Logger.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="02_ConditionVariableAny.cpp" />
     <ClCompile Include="01_RequestStop.cpp" />

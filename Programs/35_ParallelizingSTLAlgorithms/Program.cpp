@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Parallelizing STL Algorithms
+// Program.cpp - Parallelizing STL Algorithms
 // ===========================================================================
 
 extern void test_transform();

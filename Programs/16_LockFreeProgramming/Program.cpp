@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Lock-Free Programming
+// Program.cpp - Lock-Free Programming
 // ===========================================================================
 
 extern void test_lock_free_programming();

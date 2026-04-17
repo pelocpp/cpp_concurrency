@@ -1,5 +1,5 @@
 // ===========================================================================
-// Program.cpp // Miscellaneous
+// Program.cpp - Miscellaneous
 // ===========================================================================
 
 extern void test_concurrency_parallel_accumulate();

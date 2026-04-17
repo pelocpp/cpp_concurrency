@@ -1,14 +1,14 @@
 // ===========================================================================
-// StopCallback.cpp // std::stop_callback
+// StopCallback.cpp - std::stop_callback
 // ===========================================================================
 
 #include "../Logger/Logger.h"
 
-#include <iostream>
-#include <thread>
-#include <future>
-#include <stop_token>
 #include <condition_variable>
+#include <future>
+#include <iostream>
+#include <stop_token>
+#include <thread>
 
 // =============================================================================
 // =============================================================================
