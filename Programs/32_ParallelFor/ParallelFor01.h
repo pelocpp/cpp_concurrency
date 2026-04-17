@@ -4,12 +4,13 @@
 
 #pragma once
 
-#include <algorithm>
-#include <concepts>
-#include <execution>
-#include <ranges>
-#include <thread>
-#include <vector>
+#include <algorithm>   // std::for_each
+#include <concepts>    // std::integral
+#include <execution>   // std::execution::par
+#include <ranges>      // std::views::iota
+// #include <thread>      //
+#include <vector>      // std::vector
+#include <numeric>     // std::iota
 
 namespace Concurrency_ParallelFor
 {

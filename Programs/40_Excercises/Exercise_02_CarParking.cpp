@@ -15,23 +15,27 @@
 
 #include "../Logger/Logger.h"
 
-#include <chrono>
-#include <functional>
-#include <iostream>
-#include <mutex>
-#include <random>
-#include <semaphore>
-#include <thread>
-#include <vector>
+#include <chrono>              // for std::chrono::milliseconds 
+#include <condition_variable>  // for std::condition_variable
+#include <iostream>            // for std::cout
+#include <memory>              // for std::unique_lock
+#include <mutex>               // for std::mutex
+#include <random>              // for std::random_device
+#include <semaphore>           // for std::counting_semaphore
+#include <stop_token>          // for std::stop_token
+#include <thread>              // for std::jthread, std::thread::id
+#include <vector>              // for std::vector
 
 // ===========================================================================
 
-constexpr size_t NumParkingLots = 3;
+constexpr std::size_t NumParkingLots = 3;
 
 namespace Car_Parking {
 
     struct ParkingArea
     {
+        virtual ~ParkingArea() = default;
+
         virtual void enter() = 0;
         virtual void leave() = 0;
     };
@@ -43,7 +47,7 @@ namespace Car_Parking {
 
     public:
         FirstParkingArea()
-            : m_emptyLots{ NumParkingLots } 
+            : m_emptyLots{ NumParkingLots }
         {
             Logger::log(std::cout, "FirstParkingArea has ", NumParkingLots, " empty lots.");
         }
@@ -62,10 +66,10 @@ namespace Car_Parking {
     private:
         std::mutex              m_mutex;
         std::condition_variable m_condition;
-        int                     m_emptyLots;
+        std::size_t             m_emptyLots;
 
     public:
-        AnotherParkingArea() 
+        AnotherParkingArea()
             : m_emptyLots{ NumParkingLots }
         {
             Logger::log(std::cout, "AnotherParkingArea has ", NumParkingLots, " empty lots.");
@@ -79,7 +83,7 @@ namespace Car_Parking {
                 m_condition.wait(
                     guard,
                     [this]() {
-                        return m_emptyLots > 0;
+                        return m_emptyLots != 0;
                     }
                 );
 
@@ -104,10 +108,10 @@ namespace Car_Parking {
         std::random_device& m_device;
         std::thread::id     m_tid;
         ParkingArea&        m_parkingArea;
-        size_t              m_id;
+        std::size_t         m_id;
 
     public:
-        Car(std::random_device& device, ParkingArea& parkingArea, size_t id)
+        Car(std::random_device& device, ParkingArea& parkingArea, std::size_t id)
             : m_device{ device }, m_parkingArea{ parkingArea }, m_id{ id }
         {
         }
@@ -136,7 +140,7 @@ namespace Car_Parking {
 
                 m_parkingArea.leave();
 
-                Logger::log(std::cout, "Car", m_id, " has left parking area");
+                Logger::log(std::cout, "Car ", m_id, " has left parking area");
             }
 
             Logger::log(std::cout, "Car ", m_id, " finished driving!");
@@ -150,7 +154,7 @@ namespace Car_Parking {
         std::vector<std::jthread>          m_threads;
         std::vector<std::unique_ptr<Car>>  m_cars;
         std::random_device                 m_device;
-        static size_t                      s_nextId;
+        static std::size_t                 s_nextId;
 
     public:
         TrafficSimulation(ParkingArea& parkingArea)
@@ -160,13 +164,17 @@ namespace Car_Parking {
         void addCar() {
 
             s_nextId++;
-            std::unique_ptr<Car> car{ std::make_unique<Car>(m_device, m_parkingArea, s_nextId) };
+            auto car{ std::make_unique<Car>(m_device, m_parkingArea, s_nextId) };
+            Car* carPtr = car.get();
 
-            // https://stackoverflow.com/questions/65700593/stdjthread-runs-a-member-function-from-another-member-function
-            std::jthread jt{ std::bind_front(&Car::driving, *car) };
-
+            // store car first so ownership and storage are stable
             m_cars.push_back(std::move(car));
-            m_threads.push_back(std::move(jt));
+
+            // Create a jthread that calls the car's driving method.
+            // Note: Capture raw pointer (stable while car is owned by m_cars).
+            m_threads.emplace_back([carPtr](std::stop_token st) {
+                carPtr->driving(st);
+            });
         }
 
         void startSimulation() {
@@ -182,13 +190,15 @@ namespace Car_Parking {
             }
 
             for (auto& thread : m_threads) {
-                thread.join();
+                if (thread.joinable()) {
+                    thread.join();
+                }
             }
             Logger::log(std::cout, "Stopped Simulation.");
         }
     };
 
-    size_t TrafficSimulation::s_nextId{};
+    std::size_t TrafficSimulation::s_nextId{};
 }
 
 
@@ -200,7 +210,9 @@ static void carParking() {
 
     FirstParkingArea m_parkingArea;
     TrafficSimulation simulation{ m_parkingArea };
+
     simulation.startSimulation();
+
     simulation.addCar();
     simulation.addCar();
     simulation.addCar();
@@ -221,7 +233,9 @@ static void anotherCarParking() {
 
     AnotherParkingArea m_parkingArea;
     TrafficSimulation simulation{ m_parkingArea };
+
     simulation.startSimulation();
+
     simulation.addCar();
     simulation.addCar();
     simulation.addCar();
@@ -234,8 +248,8 @@ static void anotherCarParking() {
     simulation.stopSimulation();
 }
 
-void exercise_car_parking() {
-
+void exercise_car_parking()
+{
     carParking();
     anotherCarParking();
 }

@@ -8,6 +8,7 @@
 
   * [Aufgabe 1: Zeitvergleich `std::thread` und `std::async`](#link1)
   * [Aufgabe 2: Mehrere Autos und ein Parkplatz](#link2)
+  * [Aufgabe 3: `std::thread` und `std::async`: Anzahl der beteiligten Threads](#link3)
 
 ---
 
@@ -23,7 +24,6 @@
 ---
 
 #### Aufgabe 1: Zeitvergleich `std::thread` und `std::async` <a name="link1"></a>
-
 
 Erzeugen Sie 100.000 Threads mit `std::thread` und `std::async`.
 In beiden Fällen sollen die Threads einen Wert berechnen und auf eine Variable
@@ -121,10 +121,31 @@ Eine mögliche Ausgabe des Programms könnte so aussehen:
 
 ---
 
+#### Aufgabe 3: `std::thread` und `std::async`: Anzahl der beteiligten Threads <a name="link1"></a>
+
+Sowohl mit der Klasse `std::thread` als auch der freien STL Funktion `std::async` lassen sich Threads erzeugen.
+Im einem Fall sind es Objekte des Kernels, im anderen Fall stammen die Threads aus einem Thread Pool.
+
+Schreiben Sie ein Programm, dass auf beide Weisen viele Threads erzeugt.
+Untersuchen Sie mit der STL Funktion `std::this_thread::get_id()`,
+wieviele Threads in beiden Fällen explizit verwendet werden.
+
+Auf meinem Rechner sieht eine mögliche Ausgabe des Programms so aus:
+
+```
+[1]:    Start:
+[1]:    Number of Threads in OS Thread Pool: 97
+[1]:    Number of Threads acquired from OS:  3000
+[1]:    Done.
+```
+
+---
+
 #### Lösungen
 
 [*Exercise_01_Thread_Comparison.cpp*](Exercise_01_Thread_Comparison.cpp)<br />
 [*Exercise_02_CarParking.cpp*](Exercise_02_CarParking.cpp)
+[*Exercise_03_ThreadPool_NumberOfThreads.cpp*](Exercise_03_ThreadPool_NumberOfThreads.cpp)
 
 ---
 

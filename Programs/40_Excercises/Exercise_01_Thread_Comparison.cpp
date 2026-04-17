@@ -18,7 +18,7 @@ static constexpr std::size_t NumThreads{ 50'000 };     // release
 
 namespace Thread_Comparison {
 
-    static void compare_std_thread() {
+    static void compareStdThread() {
 
         Logger::log(std::cout, "Start [std::thread]");
 
@@ -47,7 +47,7 @@ namespace Thread_Comparison {
         Logger::log(std::cout, "Done [", result, ']');
     }
 
-    static void compare_std_async() {
+    static void compareStdAsync() {
 
         Logger::log(std::cout, "Start [std::async]");
 
@@ -84,8 +84,8 @@ void exercise_thread_comparison()
     using namespace Thread_Comparison;
 
     Logger::log(std::cout, "Start:");
-    compare_std_thread();
-    compare_std_async();
+    compareStdThread();
+    compareStdAsync();
     Logger::log(std::cout, "Done.");
 }
 

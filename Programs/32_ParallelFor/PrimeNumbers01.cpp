@@ -10,16 +10,10 @@
 
 #include "ParallelFor01.h"
 
-#include <algorithm>
-#include <cmath>
-#include <execution>
-#include <numeric>
-#include <ranges>
-#include <set>
-#include <string>
-#include <thread>
-#include <unordered_map>
-#include <vector>
+#include <mutex>          // std::mutex, std::lock_guard
+#include <unordered_set>  // std::unordered_set
+#include <thread>         // std::thread::id
+#include <vector>         // std::vector
 
 // ===========================================================================
 
@@ -31,7 +25,7 @@ static void test_parallel_for()
     std::mutex tids_mutex;
     std::mutex primes_mutex;
 
-    std::set<std::thread::id> tids;
+    std::unordered_set<std::thread::id> tids;
     std::vector<std::size_t> primes;
 
     auto checkPrime = [&](std::size_t i) {
@@ -39,13 +33,13 @@ static void test_parallel_for()
         std::thread::id tid{ std::this_thread::get_id() };
 
         {
-            std::lock_guard tids_guard{ tids_mutex };
+            std::lock_guard<std::mutex> tids_guard{ tids_mutex };
             tids.insert(tid);
         }
 
         if (PrimeNumbers::IsPrime(i)) {
 
-            std::lock_guard primes_guard{ primes_mutex };
+            std::lock_guard<std::mutex> primes_guard{ primes_mutex };
             primes.push_back(i);
         }
     };

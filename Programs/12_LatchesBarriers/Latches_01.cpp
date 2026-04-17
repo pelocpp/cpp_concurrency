@@ -4,20 +4,18 @@
 
 #include "../Logger/Logger.h"
 
-#include <array>
-#include <iostream>
-#include <latch>
-#include <queue>
-#include <sstream>
-#include <string>
-#include <thread>
-#include <vector>
+#include <chrono>    // std::chrono::milliseconds
+#include <cstddef>   // std::size_t
+#include <iostream>  // std::cout
+#include <latch>     // std::latch 
+#include <thread>    // std::jthread, std::this_thread
+#include <vector>    // std::vector
 
 namespace Latches_01 {
 
-    static void loop(char ch, size_t count) {
+    static void loop(char ch, std::size_t count) {
 
-        for (int j{}; j != count; ++j)
+        for (std::size_t j{}; j != count; ++j)
         {
             // loop printing the char ch
             std::cout.put(ch);
@@ -61,16 +59,16 @@ namespace Latches_01 {
     {
         Logger::log(std::cout, "Start:");
 
-        std::ptrdiff_t numThreads{ 10 };
+        std::size_t numThreads{ 10 };
 
         // initialize latch to start the threads
         // when all of them have been initialized
-        std::latch allReady{ numThreads };
+        std::latch allReady{ static_cast<ptrdiff_t>(numThreads) };
 
         // start numThreads threads:
         std::vector<std::jthread> threads;
 
-        for (int i{}; i != numThreads; ++i) {
+        for (std::size_t i{}; i != numThreads; ++i) {
 
             std::jthread t{
 

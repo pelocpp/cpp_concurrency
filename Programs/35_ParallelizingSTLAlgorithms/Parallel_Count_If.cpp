@@ -6,10 +6,10 @@
 #include "../Logger/ScopedTimer.h"
 
 #include <algorithm>
+#include <chrono>
 #include <future>
 #include <numeric>
 #include <vector>
-#include <chrono>
 
 // ===========================================================================
 

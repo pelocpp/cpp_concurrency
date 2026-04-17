@@ -8,11 +8,11 @@
 #include "../Globals/IsPrime.h"
 
 #include <algorithm>
+#include <chrono>
 #include <future>
 #include <numeric>
 #include <print>
 #include <vector>
-#include <chrono>
 
 // ===========================================================================
 

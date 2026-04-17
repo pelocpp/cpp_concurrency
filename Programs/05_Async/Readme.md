@@ -57,6 +57,10 @@ Laut MSDN verwendet die `task`-Klasse den Windows ThreadPool als Scheduler!
 Weitere Details finden sich in einem Artikel *[Implementations of std::async](https://ddanilov.me/std-async-implementations/)*
 von Dmitry Danilov.
 
+In den Übungen zu diesem Repository finden Sie in der dritten Aufgabe einen Vergleich
+zwischen dem Arbeiten mit &bdquo;normalen&bdquo; Threads und solchen Threads,
+die aus einem Thread Pool stammen.
+
 ---
 
 ## *Launch Policies*: `launch::async` versus `launch::deferred`

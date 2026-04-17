@@ -36,8 +36,7 @@ namespace Latches_03 {
 
         std::random_device device{};
 
-        auto worker {
-            [&] (size_t index, size_t msecs, int first, int last) {
+        auto worker = [&] (size_t index, size_t msecs, int first, int last) {
 
                 Logger::log(std::cout, "Calculating from ", first, " up to ", last, "...");
 
@@ -51,8 +50,7 @@ namespace Latches_03 {
                 Logger::log(std::cout, "Done");
 
                 done.count_down();
-            } 
-        };
+            };
 
         int begin{ 1 };
         int increment{ 100 };
