@@ -13,6 +13,10 @@
 
 // ===========================================================================
 
+// Stammt alles aus dem Buch von Andrist / Seher
+
+// ===========================================================================
+
 template <typename It, typename Pred>
 auto par_count_if(It first, It last, Pred pred, size_t chunk_sz) {
 

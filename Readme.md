@@ -70,12 +70,13 @@
 
 ### [2. Aufgabe: Simulation eines Parkplatzes (`std::counting_semaphore`)](Programs/40_Excercises/Readme.md)
 
+### [3. Aufgabe: `std::async`: Anzahl der beteiligten Threads](Programs/40_Excercises/Readme.md)
+
 ---
 
 ## Literatur
 
 ### [Einige Literaturhinweise](./Resources/Literature.md)
-
 
 ---
 

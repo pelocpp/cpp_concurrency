@@ -118,17 +118,18 @@ Eine mögliche Ausgabe des Programms könnte so aussehen:
 [3]:    Car 2 finished driving!
 [1]:    Stopped Simulation.
 ```
-
 ---
 
-#### Aufgabe 3: `std::thread` und `std::async`: Anzahl der beteiligten Threads <a name="link1"></a>
+#### Aufgabe 3: `std::async`: Anzahl der beteiligten Threads <a name="link1"></a>
 
 Sowohl mit der Klasse `std::thread` als auch der freien STL Funktion `std::async` lassen sich Threads erzeugen.
 Im einem Fall sind es Objekte des Kernels, im anderen Fall stammen die Threads aus einem Thread Pool.
 
-Schreiben Sie ein Programm, dass auf beide Weisen viele Threads erzeugt.
+Schreiben Sie ein Programm, das auf beide Weisen viele Threads erzeugt.
 Untersuchen Sie mit der STL Funktion `std::this_thread::get_id()`,
 wieviele Threads in beiden Fällen explizit verwendet werden.
+Versuchen Sie zu analysieren, wieviele Threads bei Verwendung von `std::async`
+auf einem Thread Pool verwendet werden.
 
 Auf meinem Rechner sieht eine mögliche Ausgabe des Programms so aus:
 
@@ -149,13 +150,6 @@ Auf meinem Rechner sieht eine mögliche Ausgabe des Programms so aus:
 
 ---
 
-
 [Zurück](../../Readme.md)
 
 ---
-
-
-
-
-
-
