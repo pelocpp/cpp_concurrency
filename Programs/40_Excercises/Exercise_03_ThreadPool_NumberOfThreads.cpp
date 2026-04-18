@@ -46,7 +46,7 @@ static void countThreadsOfPool()
         try {
             future.get();
         }
-        catch (const std::exception &ex) {
+        catch (const std::exception& ex) {
             Logger::log(std::cerr, "Async task threw: ", ex.what());
         }
         catch (...) {

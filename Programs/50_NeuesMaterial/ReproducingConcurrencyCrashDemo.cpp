@@ -160,7 +160,7 @@ namespace Concurrency {
                 try {
                     std::rethrow_exception(m_ep);
                 }
-                catch (const std::exception & ex)
+                catch (const std::exception& ex)
                 {
                     std::cerr << "Thread exited with exception: " << ex.what() << "\n";
                 }

@@ -82,7 +82,7 @@ namespace ExceptionHandling
             try {
                 std::rethrow_exception(g_ep);
             }
-            catch (const std::exception & ex)
+            catch (const std::exception& ex)
             {
                 Logger::log(std::cout, "Thread exited with exception: [", ex.what(), "]");
             }
