@@ -17,15 +17,24 @@ namespace SpinLocks {
     class Spinlock
     {
     private:
-        std::atomic_flag m_atomic_flag;    // = ATOMIC_FLAG_INIT;
+        // Ensure atomic_flag is properly initialized on all supported standards.
+        // Use the macro-style initializer which is compatible pre-C++20.
+        std::atomic_flag m_atomic_flag = ATOMIC_FLAG_INIT;
 
     public:
-        Spinlock() : m_atomic_flag{} {}    // ATOMIC_FLAG_INIT
+        Spinlock() noexcept = default; // default ctor is fine now
+
+        // Prevent accidental copying (avoid undefined behavior from copying a lock object)
+        Spinlock(const Spinlock&) = delete;
+        Spinlock& operator=(const Spinlock&) = delete;
 
         void lock() noexcept
         {
+            // Busy-wait, but yield the remainder of this thread's timeslice
+            // to avoid starving other threads / burning 100% CPU.
             while (m_atomic_flag.test_and_set(std::memory_order_acquire))
             {
+                std::this_thread::yield();
             }
         }
 
@@ -49,7 +58,7 @@ namespace TestSpinLocksCommon
 
     using ValueType = unsigned long;
 
-    volatile ValueType value{};
+    ValueType value{};
 
     std::atomic<ValueType> valueAtomic;
 
