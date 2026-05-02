@@ -4,7 +4,17 @@
 
 ---
 
-## Verwendete Werkzeuge
+## Inhalt
+
+  * [Verwendete Werkzeuge](#link1)
+  * [Allgemeines](#link2)
+  * [`std::async` und Thread-Pool](#link3)
+  * [*Launch Policies*: `launch::async` versus `launch::deferred`](#link4)
+  * [4 Szenarien mit `std::async`](#link5)
+
+---
+
+## Verwendete Werkzeuge <a name="link1"></a>
 
 <ins>Klassen</ins>:
 
@@ -20,7 +30,15 @@
 
 ---
 
-## Allgemeines
+#### Quellcode
+
+[*Async_01.cpp*](Async_01.cpp)<br/>
+[*Async_02.cpp*](Async_02.cpp)<br/>
+[*Async_03.cpp*](Async_03.cpp)
+
+---
+
+## Allgemeines <a name="link2"></a>
 
 Das Zusammenspiel zwischen der Methode `std::async` und Objekten
 des Typs `std::future` wird gezeigt.
@@ -31,15 +49,9 @@ Die `std::async`-Methode besitzt im Wesentlichen drei Überladungen:
   * `std::async` mit aufrufbarem Objekt.
   * `std::async` mit Lambda-Objekt.
 
-#### Quellcode
-
-[*Async_01.cpp*](Async_01.cpp)<br/>
-[*Async_02.cpp*](Async_02.cpp)<br/>
-[*Async_03.cpp*](Async_03.cpp)
-
 ---
 
-## `std::async` und Thread-Pool
+## `std::async` und Thread-Pool <a name="link3"></a>
 
 In Bezug auf `std::async` können wir die allgemeine Aussage treffen,
 dass die Funktion eine Funktion in einem separaten Thread startet,
@@ -63,7 +75,7 @@ die aus einem Thread Pool stammen.
 
 ---
 
-## *Launch Policies*: `launch::async` versus `launch::deferred`
+## *Launch Policies*: `launch::async` versus `launch::deferred` <a name="link4"></a>
 
 Es werden zwei Threads mit `std::async` gestartet, die beide einen Zeitstempel zurückliefern.
 
@@ -84,14 +96,9 @@ launch::deferred thread done!
 asyncLazy evaluated after : 4.00645 seconds.
 asyncEager evaluated after: 0.0006665 seconds.
 ```
-
-#### Quellcode
-
-[*Async_02.cpp*](Async_02.cpp).
-
 ---
 
-## 4 Szenarien mit `std::async`
+## 4 Szenarien mit `std::async` <a name="link5"></a>
 
 Es werden vier Vertiefungen der Funktionsschablone `std::async` studiert:
 

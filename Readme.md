@@ -28,11 +28,13 @@
 
 ### [13. Semaphore: Klassen `std::binary_semaphore` und `std::counting_semaphore`](Programs/13_Semaphore/Readme.md)
 
-### [14. Spinlocks](Programs/14_SpinLock/Readme.md)
+### [14. Thread Local Storage](Programs/15_Thread_Local_Storage/Readme.md)
 
-### [15. Thread Local Storage](Programs/15_Thread_Local_Storage/Readme.md)
+### [15. Speicherbarrieren (Memory Barriers)](Programs/17_MemoryBarriers/Readme.md)
 
-### [16. Lock-Free Programming](Programs/16_LockFreeProgramming/Readme.md)
+### [16. Spinlocks](Programs/14_SpinLock/Readme.md)
+
+### [17. Lock-Free Programming](Programs/16_LockFreeProgramming/Readme.md)
 
 ---
 
