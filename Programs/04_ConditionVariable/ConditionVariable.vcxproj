@@ -133,9 +133,10 @@
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Atomic_Wait_Nofify.cpp" />
-    <ClCompile Include="Condition_Variable_01_Simple.cpp" />
-    <ClCompile Include="Condition_Variable_02_Simple.cpp" />
+    <ClCompile Include="Atomic_Wait_Nofify_01.cpp" />
+    <ClCompile Include="Atomic_Wait_Nofify_02.cpp" />
+    <ClCompile Include="Condition_Variable_01.cpp" />
+    <ClCompile Include="Condition_Variable_02.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

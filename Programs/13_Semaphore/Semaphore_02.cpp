@@ -1,12 +1,11 @@
 // ===========================================================================
-// Semaphore // Semaphore_02.cpp
+// Semaphore_02.cpp - Semaphore
 // ===========================================================================
 
 #include "../Logger/Logger.h"
 
 #include <array>
 #include <chrono>
-#include <iomanip>
 #include <iostream>
 #include <random>
 #include <semaphore>
@@ -26,9 +25,9 @@ namespace ConcurrencyBinarySemaphore
     class PrinterQueue
     {
     private:
-        std::binary_semaphore                  m_semaphore;
-        std::random_device                     m_device;
-        std::uniform_int_distribution<size_t>  m_distribution;
+        std::binary_semaphore                       m_semaphore;
+        std::random_device                          m_device;
+        std::uniform_int_distribution<std::size_t>  m_distribution;
 
     public:
         PrinterQueue() : m_semaphore{ 1 }, m_distribution{ 500, 2000 } {}
@@ -38,7 +37,7 @@ namespace ConcurrencyBinarySemaphore
         {
             m_semaphore.acquire();
 
-            size_t duration{ m_distribution(m_device) };
+            std::size_t duration{ m_distribution(m_device) };
             std::string msecs{ std::to_string(duration) };
             Logger::log(std::cout, "PrinterQueue: Printing a Job during ", msecs, " millseconds.");
 
@@ -68,20 +67,22 @@ void test_binary_semaphore_02()
 {
     using namespace ConcurrencyBinarySemaphore;
 
-    constexpr size_t NumJobs{ 8 };
+    Logger::log(std::cout, "Start:");
+
+    constexpr std::size_t NumJobs{ 8 };
 
     PrinterQueue printerQueue{};
 
     std::array<std::thread, NumJobs> threads;
 
-    for (size_t i{}; i != NumJobs; i++) {
+    for (std::size_t i{}; i != NumJobs; i++) {
 
         std::thread t{ PrintingJob{ printerQueue } };
 
         threads.at(i) = std::move(t);
     }
 
-    for (size_t i{}; i != NumJobs; i++) {
+    for (std::size_t i{}; i != NumJobs; i++) {
         threads[i].join();
     }
 }

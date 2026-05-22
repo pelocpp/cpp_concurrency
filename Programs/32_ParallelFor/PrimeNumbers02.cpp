@@ -95,7 +95,6 @@ void test_parallel_for_02()
 {
     test_parallel_for_01(2, PrimeNumberLimits::UpperLimit, true);
     test_parallel_for_02(2, PrimeNumberLimits::UpperLimit, true);
-    //test_parallel_for_02(2, 50, false);
 }
 
 // ===========================================================================

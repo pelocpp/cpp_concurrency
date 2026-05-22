@@ -1,12 +1,11 @@
 // ===========================================================================
-// Semaphore // Semaphore_01.cpp
+// Semaphore_01.cpp - Semaphore
 // ===========================================================================
 
 #include "../Logger/Logger.h"
 
 #include <chrono>
 #include <iostream>
-#include <print>
 #include <semaphore>
 #include <thread>
 
@@ -49,6 +48,8 @@ namespace ConcurrencyBinarySemaphore {
 void test_binary_semaphore_01() {
 
     using namespace ConcurrencyBinarySemaphore;
+
+    Logger::log(std::cout, "Start:");
 
     Worker worker{};
 

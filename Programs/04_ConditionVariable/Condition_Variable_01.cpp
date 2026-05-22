@@ -1,5 +1,5 @@
 // ===========================================================================
-// Condition_Variable_01_Simple.cpp - Condition Variable
+// Condition_Variable_01.cpp - Condition Variable
 // ===========================================================================
 
 #include <chrono>
@@ -10,7 +10,7 @@
 
 #include "../Logger/Logger.h"
 
-namespace SimpleConditionVariableDemo01
+namespace SimpleConditionVariableDemo
 {
     static std::mutex mutex{};
 
@@ -73,9 +73,9 @@ namespace SimpleConditionVariableDemo01
     }
 }
 
-void test_simple_condition_variable_01()
+void test_condition_variable_01()
 {
-    using namespace SimpleConditionVariableDemo01;
+    using namespace SimpleConditionVariableDemo;
     test();
 }
 

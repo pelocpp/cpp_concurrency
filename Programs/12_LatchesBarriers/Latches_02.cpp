@@ -28,6 +28,8 @@ namespace Latches_03 {
 
     static void example_latches_03()
     {
+        Logger::log(std::cout, "Start:");
+
         std::latch done{ ThreadCount };
 
         std::array<int, ThreadCount> results{};
@@ -110,7 +112,8 @@ namespace Latches_04 {
 
     std::random_device device;
 
-    auto slave = [] (std::string name) {
+    auto slave = [] (std::string name)
+{
         Logger::log(std::cout, name, ": Started working.");
 
         // simulating still some calculation time ...

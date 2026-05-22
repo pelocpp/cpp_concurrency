@@ -1,5 +1,5 @@
 // ===========================================================================
-// Semaphore // Semaphore_03.cpp
+// Semaphore_03.cpp - Semaphore
 // ===========================================================================
 
 #include "../Logger/Logger.h"
@@ -16,6 +16,8 @@ namespace ConcurrencyCountingSemaphore {
 
     static void test_counting_semaphore_01()
     {
+        Logger::log(std::cout, "Start:");
+
         std::mutex mutex{};
 
         // initialize a queue with multiple sequences from ’A’ to ’Z’
@@ -27,14 +29,14 @@ namespace ConcurrencyCountingSemaphore {
             values.push(ch);
         }
 
-        constexpr int numThreads{ 8 };
+        constexpr std::size_t numThreads{ 8 };
 
         std::counting_semaphore<numThreads> enabled{ 0 };
 
         // create a thread pool
         std::vector<std::jthread> pool{};
 
-        auto procedure = [&](std::stop_token token, int n) {
+        auto procedure = [&](std::stop_token token, std::size_t n) {
 
             std::thread::id tid{ std::this_thread::get_id() };
             Logger::log(std::cout, "> tid:  ", tid);
@@ -54,7 +56,7 @@ namespace ConcurrencyCountingSemaphore {
                 }
 
                 // print the value 10 times
-                for (int i{}; i != 10; ++i) {
+                for (std::size_t i{}; i != 10; ++i) {
 
                     if (token.stop_requested()) {
                         break;
@@ -74,7 +76,7 @@ namespace ConcurrencyCountingSemaphore {
         };
 
         // create and start all threads of the pool
-        for (int i{}; i != numThreads; ++i) {
+        for (std::size_t i{}; i != numThreads; ++i) {
 
             std::jthread t{ procedure, i };
             pool.push_back(std::move(t));

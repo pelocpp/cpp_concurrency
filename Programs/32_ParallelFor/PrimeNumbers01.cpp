@@ -28,6 +28,8 @@ static void test_parallel_for()
     std::unordered_set<std::thread::id> tids;
     std::vector<std::size_t> primes;
 
+    Logger::log(std::cout, "Start: ", from, " => ", to);
+
     auto checkPrime = [&](std::size_t i) {
 
         std::thread::id tid{ std::this_thread::get_id() };
@@ -43,8 +45,6 @@ static void test_parallel_for()
             primes.push_back(i);
         }
     };
-
-    Logger::log(std::cout, "Start: ", from, " => ", to);
 
     {
         ScopedTimer watch{};

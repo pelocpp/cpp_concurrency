@@ -7,10 +7,9 @@
 #include <algorithm>   // std::for_each
 #include <concepts>    // std::integral
 #include <execution>   // std::execution::par
-#include <ranges>      // std::views::iota
-// #include <thread>      //
-#include <vector>      // std::vector
 #include <numeric>     // std::iota
+#include <ranges>      // std::views::iota
+#include <vector>      // std::vector
 
 namespace Concurrency_ParallelFor
 {

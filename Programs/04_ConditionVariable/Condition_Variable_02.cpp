@@ -1,6 +1,8 @@
 // ===========================================================================
-// Condition_Variable_02_Simple.cpp - Condition Variable
+// Condition_Variable_02.cpp - Condition Variable
 // ===========================================================================
+
+#include "../Logger/Logger.h"
 
 #include <chrono>
 #include <condition_variable>
@@ -8,9 +10,7 @@
 #include <mutex> 
 #include <thread> 
 
-#include "../Logger/Logger.h"
-
-namespace SimpleConditionVariableDemo02
+namespace ConditionVariableDemo
 {
     static constexpr long NumIterations{ 5 };
 
@@ -52,9 +52,9 @@ namespace SimpleConditionVariableDemo02
     }
 }
 
-void test_simple_condition_variable_02()
+void test_condition_variable_02()
 {
-    using namespace SimpleConditionVariableDemo02;
+    using namespace ConditionVariableDemo;
     test();
 }
 

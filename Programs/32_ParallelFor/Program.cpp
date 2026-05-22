@@ -8,7 +8,7 @@ extern void test_parallel_for_02();
 int main()
 {
     test_parallel_for_01();
-   // test_parallel_for_02();
+    test_parallel_for_02();
 
     return 0;
 }
