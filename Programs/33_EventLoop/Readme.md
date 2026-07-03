@@ -102,88 +102,7 @@ using Event = std::move_only_function<void()>;
 
 ## Konzeption einer `enqueue`-Methode an der Klasse `EventLoop` <a name="link4"></a>
 
-Wie sieht es mit der Definition der Schnittstelle einer `enqueue`-Methode aus?
-Welche der folgenden Schnittstellen würden Sie bevorzugen &ndash; technisch gesehen sind sie alle realisierbar:
-
-```cpp
-void enqueue(Event callable);
-void enqueue(Event& callable);
-void enqueue(const Event& callable);
-void enqueue(Event&& callable);
-```
-
-Dabei haben wir den Datentyp `Event` als `std::move_only_function<void()>` definiert.
-
-Wir studieren die Möglichkeiten nun im Detail.
-
-#### Schnittstelle `void enqueue(Event& callable)`
-
-Diese Methode erwartet eine nicht-konstante *LValue*-Referenz.
-
-*Problem*:<br />
-  * Die Verschiebe-Semantik geht nicht &ndash; sie ist technisch gesehen möglich, aber es würde auf der Seite des Aufrufers zu Überraschungen kommen.
-  * Temporäre Werte (*RValues*) werden nicht akzeptiert.
-
-Damit wären die naheliegendsten Verwendungszwecke nicht möglich, zum Beispiel Aufrufe der Gestalt
-
-
-```cpp
-m_events.enqueue([] () { /* ... */ });  // ERROR: initial value of reference to non-const must be an lvalue
-```
-
-#### Schnittstelle `void enqueue(Event&& callable)`
-
-```cpp
-void enqueue(Event&& callable);
-```
-
-Funktioniert einwandfrei mit temporären Objekten! 
-Die Move-Semantik wird damit unterstützt.
-
-
-```cpp
-eventLoop.enqueue([] () { /* ... */ });  // Works !!!
-```
-
-*Nachteil*:<br />
-Es werden keine *LValues* akzeptiert, es sei denn, diese werden explizit verschoben:
-
-
-```cpp
-Event event = [] { /* ... */ };
-eventLoop.enqueue(event);              // ERROR: an rvalue reference cannot be bound to an lvalue
-eventLoop.enqueue(std::move(event));   // Works !!!
-```
-
-Das ist zwar korrekt und sauber, aber etwas weniger ergonomisch.
-
-#### Zwei Methoden `void enqueue(Event& callable)` und `void enqueue(Event&& callable)`
-
-
-```cpp
-void enqueue(Event& callable);
-void enqueue(Event&& callable);
-```
-
-Das ist so nicht optimal.
-
-*Warum*?<br />
-  * Was würde die `Event&`-Version tun? Kopieren? Bei `std::move_only_function<void()>`-Objekten geht das nicht!
-  * Einen *LValue* verschieben? Das ist überraschend und gefährlich.
-
-Dies führt zu verwirrender Semantik und sollte vermieden werden.
-
-#### Schnittstelle `void enqueue(const Event& callable)`
-
-Ein Move-Only-Datentyp kann nicht mit `const` qualifiziert werden,
-da der Parameter `callable` sonst nicht verschiebbar ist.
-Also diese Variante kommt überhaupt nicht in Betracht.
-
-
-## Bewährte Vorgehensweise: *Pass-by-Value* &ndash; `void enqueue(Event callable)`
-
-Langer Rede, kurzer Sinn: All diese Varianten sind nicht empfehlenswert.
-Die idiomatische Lösung in modernem C++ lautet:
+Die bewährte, idiomatische Vorgehensweise in Modern C++ lautet: *Pass-by-Value*.
 
 ```cpp
 void enqueue(Event callable);  // Pass by Value
@@ -206,6 +125,22 @@ Event event = [] { /* ... */ };
 eventLoop.enqueue(std::move(event));   // Works ! Clear Intent
 ```
 
+Da `std::move_only_function`-Objekte nicht kopiert werden können,
+müssen Benutzer beim Übergeben eines vorhandenen Objekts an diese Funktion explizit `std::move()` aufrufen.
+
+Wie sieht es aus, wenn an die Ereignisfunktion Parameter übergeben werden sollen?
+
+```
+template<typename TFunc, typename ... TArgs>
+void enqueueTask(...);
+```
+
+Dies ist äußerst praktisch, da es dem Benutzer erspart,
+beim Binden von Argumenten an eine Funktion Lambda-Ausdrücke mit Standard-Boilerplate-Code schreiben zu müssen.
+Dieser Boilerplate-Code ist innerhalb der `enqueueTask`-Methode vorhanden.
+
+
+
 *Zusammenfassung*:<br />
   * Einfache und sichere Schnittstelle
   * Keine Überladungen
@@ -213,29 +148,7 @@ eventLoop.enqueue(std::move(event));   // Works ! Clear Intent
   * Entspricht modernen C++-Konventionen
 
 
-*Hinweis*:<br />
-Wenn Sie beliebige aufrufbare Funktionen (nicht nur `Event`) zulassen möchten,
-können Sie ein Funktionstemplate verwenden:
 
-```cpp
-template <typename TFunc>
-void enqueue(TFunc&& func) {
-    m_events.emplace_back(std::forward<TFunc>(func));
-}
-```
-
-Dies ermöglicht folgende Aufrufe:
-
-```cpp
-eventLoop.enqueue([] { /* ... */ });      // Lambda => Template
-
-std::move_only_function<void()> event{ function };
-eventLoop.enqueue(std::move(event));      // Event  => std::move_only_function<void()>;
-```
-
-Aber:<br />
-  * Geringfügig komplexer
-  * Kann unerwartete Typen akzeptieren (normalerweise unproblematisch)
 
 
 ## Doppelpuffertechnik (*Double Buffering*) <a name="link5"></a>

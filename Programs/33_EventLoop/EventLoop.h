@@ -39,13 +39,10 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
+    // handles both existing Event objects and raw lambdas/callables
     void enqueue(Event callable);
 
-    template <typename TFunc>
-    void enqueue(TFunc&& func) {
-        m_events.emplace_back(std::forward<TFunc>(func));
-    }
-
+    // convenience method to bind arguments automatically
     template<typename TFunc, typename ... TArgs>
     void enqueueTask(TFunc&& func, TArgs&& ...args)
     {
