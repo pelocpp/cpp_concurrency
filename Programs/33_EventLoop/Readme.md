@@ -276,7 +276,7 @@ Ein Beispiel:
 03:     void doSomeWork (int x) { Logger::log(std::cout, "... doing some work ..."); }
 04: };
 05: 
-06: void test_event_loop_15()
+06: void test()
 07: {
 08:     EventLoop loop{};
 09: 
@@ -380,7 +380,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 Ein Beispiel zur sequentiellen Berechnung von Primzahlen könnte so aussehen:
 
 ```cpp
-01: void test_event_loop_20()
+01: void test()
 02: {
 03:     Logger::log(std::cout, "Start");
 04: 
