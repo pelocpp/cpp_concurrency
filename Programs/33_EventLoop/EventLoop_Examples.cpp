@@ -203,6 +203,31 @@ void test_event_loop_11()
     Logger::log(std::cout, "Done.");
 }
 
+
+// ===========================================================================
+// Using std::invoke or not?
+
+struct MyClass
+{
+    void doSomeWork (int x) { Logger::log(std::cout, "... doing some work ..."); }
+};
+
+void test_event_loop_15()
+{
+
+    Logger::log(std::cout, "Start");
+
+    EventLoop loop{};
+
+    MyClass obj;
+    loop.enqueueTask(&MyClass::doSomeWork, &obj, 123);
+
+    loop.start();
+    loop.stop();
+
+    Logger::log(std::cout, "Done.");
+}
+
 // ===========================================================================
 // searching prime numbers: first enqueuing events, than starting calculations
 
@@ -222,7 +247,7 @@ void test_event_loop_20()
 
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
-        eventLoop.enqueueTask(
+        eventLoop.enqueueTaskEx(
             [&] (std::size_t value) {
 
                 bool primeFound{ PrimeNumbers::IsPrime(value) };

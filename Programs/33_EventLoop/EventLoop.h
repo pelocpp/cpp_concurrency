@@ -12,6 +12,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <vector>
 
 class EventLoop
 {
@@ -39,8 +40,7 @@ public:
     EventLoop& operator= (EventLoop&&) noexcept = delete;
 
     // public interface
-    // handles both existing Event objects and raw lambdas/callables
-    void enqueue(Event callable);
+    void enqueue(Event callable);  // handles both existing Event objects and raw lambdas/callables
 
     // convenience method to bind arguments automatically
     template<typename TFunc, typename ... TArgs>
@@ -51,8 +51,11 @@ public:
         // using "Generalized Lambda Capture" to preserve move semantics
         auto callable {
             [func = std::forward<TFunc>(func),
-            ... capturedArgs = std::forward<TArgs>(args)] () -> void {
-                std::invoke(std::move(func), std::move(capturedArgs) ...);
+            ... capturedArgs = std::forward<TArgs>(args)] () mutable -> void {
+               std::invoke(std::move(func), std::move(capturedArgs) ...);    // more flexibel
+               // std::move(func) (std::move(capturedArgs) ...);             // less flexibel
+               // func(std::move(capturedArgs) ...);                         // less flexibel
+
             } 
         };
 
@@ -63,6 +66,24 @@ public:
         }
 
         m_condition.notify_one();
+    }
+
+    // same method, avoiding code duplication of the mutex locking and notification logic,
+    // leaving enqueue() as the single place responsible for inserting events into the queue.
+    template<typename TFunc, typename ... TArgs>
+    void enqueueTaskEx(TFunc&& func, TArgs&& ...args)
+    {
+        Logger::log(std::cout, "enqueueTaskEx ...");
+
+        auto callable{
+            [func = std::forward<TFunc>(func),
+            ... capturedArgs = std::forward<TArgs>(args)]() mutable -> void {
+                std::invoke(std::move(func), std::move(capturedArgs) ...);
+            }
+        };
+
+        // using the central, thread-safe enqueue method.
+        enqueue(std::move(callable));
     }
 
     void start();

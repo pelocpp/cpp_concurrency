@@ -10,11 +10,13 @@
   * [Allgemeines](#link2)
   * [Klasse `std::function` oder `std::move_only_function`](#link3)
   * [Konzeption einer `enqueue`-Methode an der Klasse `EventLoop`](#link4)
-  * [Doppelpuffertechnik (*Double Buffering*)](#link5)
+  * [Funktionen ohne Parameter in der Ereigniswarteschlange](#link5)
   * [Funktionen mit Parametern in der Ereigniswarteschlange](#link6)
-  * [Beendigung der Ausführung](#link7)
-  * [Ein Beispiel: Berechnung von Primzahlen](#link8)
-  * [Literaturhinweise](#link9)
+  * [`std::invoke` verwenden oder nicht?](#link7)
+  * [Doppelpuffertechnik (*Double Buffering*)](#link8)
+  * [Beendigung der Ausführung](#link9)
+  * [Ein Beispiel: Berechnung von Primzahlen](#link10)
+  * [Literaturhinweise](#link11)
 
 ---
 
@@ -43,7 +45,7 @@
 *Kurz gefasst*:
 
 Eine Ereigniswarteschlange (engl. *Event Loop* ) kann man als Alternative zu einem
-Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf kritischen Abschnitte eines Programms,
+Mutex-Objekt betrachten. Beide serialisieren Zugriffe auf kritische Abschnitte eines Programms,
 jedoch auf unterschiedliche Weise:
 
   * `std:mutex`-Objekte stellen einen Synchronisationsmechanismus dar, es sind zu diesem Zweck die kritischen Abschnitte
@@ -61,8 +63,8 @@ Synchronisationsmechanismen wie `std:mutex`-Objekten überfrachten.
 
 Wir stellen in diesem Abschnitt die Realisierung einer Klasse `EventLoop`,
 die eine Ereigniswarteschlange darstellt. Es ist möglich, Funktionen ohne als auch mit Parametern 
-in dieser Warteschlange einzureihen. Konzeptionell beabsichtigt hingegen ist der Rückgabetyp `void` bei allen Funktion &ndash;
-Welchen Sinn sollte es ergeben, zu einem späteren Zeitpunkte einer Funktionsausführung zu erhalten?
+in dieser Warteschlange einzureihen. Konzeptionell beabsichtigt hingegen ist der Rückgabetyp `void` bei allen Funktionen.
+Welchen Sinn sollte es ergeben, zu einem späteren Zeitpunkte einer Funktionsausführung ein Ergebnis zu erhalten?
 Meiner Meinung nach keinen, deshalb dieser Ansatz.
 
 Es folgen einige Hinweise zur Realisierung.
@@ -71,7 +73,7 @@ Es folgen einige Hinweise zur Realisierung.
 ## Klasse `std::function` oder `std::move_only_function` <a name="link3"></a>
 
 Um eine Ereigniswarteschlange zu realisieren, benötigt man die Möglichkeit,
-&bdquo;Methodenaufrufe&rdquo; zwischenzuspeichern. Gewisse Ähnlichkeiten zum *Command Pattern*
+&bdquo;Methodenaufrufe&rdquo; zwischenspeichern zu können. Gewisse Ähnlichkeiten zum *Command Pattern*
 aus dem Umfeld der *Design Pattern* sind hier vorhanden.
 
 Hier kommen zwei Klassen ins Spiel: `std::function` oder `std::move_only_function`.
@@ -139,19 +141,158 @@ Dies ist äußerst praktisch, da es dem Benutzer erspart,
 beim Binden von Argumenten an eine Funktion Lambda-Ausdrücke mit Standard-Boilerplate-Code schreiben zu müssen.
 Dieser Boilerplate-Code ist innerhalb der `enqueueTask`-Methode vorhanden.
 
-
-
 *Zusammenfassung*:<br />
   * Einfache und sichere Schnittstelle
   * Keine Überladungen
-  * Keine Überraschungen
   * Entspricht modernen C++-Konventionen
 
 
+## Funktionen ohne Parameter in der Ereigniswarteschlange <a name="link5"></a>
+
+Eine Realisierung der `enqueue`-Methode sieht so aus:
+
+```cpp
+01: void EventLoop::enqueue(Event callable)
+02: {
+03:     {
+04:         std::lock_guard<std::mutex> guard{ m_mutex };
+05: 
+06:         m_events.push_back(std::move(callable));
+07:     }
+08: 
+09:     m_condition.notify_one();
+10: }
+```
+
+In der Realisierung wird RAII für das Thread-Sicherheits-Locking eingesetzt
+und das Callable effizient in den Vektor verschoben,
+bevor die Methode den wartenden Worker-Thread benachrichtigt.
 
 
+## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link6"></a>
 
-## Doppelpuffertechnik (*Double Buffering*) <a name="link5"></a>
+Welche Funktionen (Rückgabetyp, Parameter) lassen sich in der Ereigniswarteschlange einreihen?
+Es sind dies Funktionen mit beliebig vielen Parametern und auch einem beliebigen Rückgabetyp &ndash; und dies sogar,
+ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
+
+Wie könnte dieser Trick aussehen?<br />
+Und wie werden die Parameter zwischengespeichert?
+
+Wir greifen auf das C++&ndash;Sprachfeature von Lambda-Objekten zurück.
+Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen
+und diese mittels `[=]` in das Lambda-Objekt kopieren!
+
+Ab C++ 14 kann man sogar auf das unnötige Kopieren der Parameter verzichten,
+mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; Feature können die Parameter auch verschoben werden,
+also kann die Move-Semantik Anwendung finden!
+
+Der realisierende Quellcode mag nicht ganz einfach zu lesen zu sein, da er mit Hilfe *variadischer Templates*
+eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-Objekt aufnimmt:
+
+```cpp
+01: template<typename TFunc, typename ... TArgs>
+02: void enqueueTask(TFunc&& func, TArgs&& ...args)
+03: {
+04:     Logger::log(std::cout, "enqueueTask ...");
+05: 
+06:     // using "Generalized Lambda Capture" to preserve move semantics
+07:     auto callable{
+08:         [func = std::forward<TFunc>(func),
+09:         ... capturedArgs = std::forward<TArgs>(args)]() mutable -> void {
+10:             std::invoke(std::move(func), std::move(capturedArgs)...);
+11:         } 
+12:     };
+13: 
+14:     {
+15:         // RAII guard
+16:         std::lock_guard<std::mutex> guard{ m_mutex };
+17:         m_events.push_back(std::move(callable));
+18:     }
+19: 
+20:     m_condition.notify_one();
+21: }
+```
+
+In Zeile 8 des Listings finden wir einen Lambda-Ausdruck vor:
+Der Aufruf der Nachricht `func` ist im Rumpf der Lambda-Funktion platziert &ndash; mit `std::invoke`,
+das Funktionsobjekt selbst (`func`) wird via `[func = std::forward<TFunc>(func)]` in das Lambda-Objekt verschoben!
+Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch gesehen das so genannte *Variadic Capture* Sprachfeature hinzu:
+
+```cpp
+[... args = std::forward<TArgs>(args)]
+```
+
+Eine weitere *Subtilität*:<br />
+Warum ist die Lambda-Funktion mit dem Schlüsselwort `mutable` ausgezeichnet?
+
+Wird die Lambda-Funktion nicht als `mutable` markiert, wird der dazugehörige Aufrufoperator zu
+
+```cpp
+void operator() () const;
+```
+
+übersetzt, was bedeutet, dass `func` innerhalb des Rumpfes effektiv `const` ist.
+Dies verhindert üblicherweise das Verschieben von Funktionen.
+
+Erst durch den Gebrauch von `mutable` werden Verschiebungen wirksam.
+
+
+## `std::invoke` verwenden oder nicht? <a name="link7"></a> 
+
+Man könnte die Zeile 10 aus dem letzten Listing
+
+```cpp
+std::invoke(std::move(func), std::move(capturedArgs) ...);
+```
+
+auch kürzer so schreiben:
+
+```cpp
+func(std::move(capturedArgs) ...);
+```
+
+oder, wenn man `func` verschieben möchte:
+
+```cpp
+std::move(func) (std::move(capturedArgs) ...);
+```
+
+Dennoch sind diese beiden Varianten nicht ganz identisch!
+Die Verwendung von `std::invoke` bietet hier einen Vorteil bezüglich der Flexibilität der Nachrichtenwarteschlange,
+wenn man Methoden von Objekten einreihen möchte.
+
+Der direkte Aufruf `func(...)` funktioniert nur bei &bdquo;echten&rdquo; Funktionen.
+Dazu zählen reguläre (&bdquo;freie&rdquo;) Funktionen, Funktionszeiger, Lambdas und aufrufbare Objekte
+(Klassen, die den `operator()` überladen).
+
+Der Gebrauch von `std::invoke()` akzeptiert zusätzlich zu den oben genannten Typen auch Zeiger auf Elementfunktionen (Member-Funktionen)
+und Zeiger auf Datenelemente von Klassen.
+
+Ein Beispiel:
+
+```cpp
+01: struct MyClass
+02: {
+03:     void doSomeWork (int x) { Logger::log(std::cout, "... doing some work ..."); }
+04: };
+05: 
+06: void test_event_loop_15()
+07: {
+08:     EventLoop loop{};
+09: 
+10:     MyClass obj;
+11:     loop.enqueueTask(&MyClass::doSomeWork, &obj, 123);
+12: 
+13:     loop.start();
+14:     loop.stop();
+15: }
+```
+
+Dieses Beispiel ist übersetzungs- und lauffähig, wenn man in der `enqueueTask`-Methode die `std::invoke`-Funktion verwendet.
+Im anderen Fall kommt es zu einem Übersetzungsfehler.
+
+
+## Doppelpuffertechnik (*Double Buffering*) <a name="link8"></a>
 
 In der Realisierung der Abarbeitung der Nachrichten
 finden Sie eine Umsetzung der *Double Buffering Technik* vor.
@@ -198,8 +339,7 @@ Eine grobe Skizzierung der Realisierung der Verarbeitung der Nachrichten in der 
 25: 
 26:         events.clear();  // empty container for next loop
 27:     }
-28: 
-29: }
+28: }
 ```
 
 In Zeile 10 finden wir einen Aufruf der `wait`-Methode an einem `m_condition`-Objekt vor.
@@ -221,62 +361,7 @@ Hierzu muss es einen korrespondierenden `notify_one`- oder `notify_all`-Aufruf g
 Sinnigerweise ist dieser Aufruf in der Methode `enqueue` vorhanden, wenn neue Nachrichten in der
 Warteschlange aufgenommen werden.
 
-
-## Funktionen mit Parametern in der Ereigniswarteschlange <a name="link6"></a>
-
-Welche Funktionen (Rückgabetyp, Parameter) lassen sich in der Ereigniswarteschlange einreihen?
-Es sind dies Funktionen mit beliebig vielen Parametern und auch einem beliebigen Rückgabetyp &ndash; und dies sogar,
-ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
-
-Wie könnte dieser Trick aussehen?<br />
-Und wie werden die Parameter zwischengespeichert?
-
-Wir greifen auf das C++&ndash;Sprachfeature von Lambda-Objekten zurück.
-Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen
-und diese mittels `[=]` in das Lambda-Objekt kopieren!
-
-Ab C++ 14 kann man sogar auf das unnötige Kopieren verzichten,
-mit dem so genannten &bdquo;*Generalized Lambda Capture*&rdquo; Feature können die Parameter auch verschoben werden,
-also kann die Move-Semantik Anwendung finden!
-
-Der realisierende Quellcode mag nicht ganz einfach zu lesen zu sein, da er mit Hilfe *variadischer Templates*
-eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-Objekt aufnimmt:
-
-
-```cpp
-01: template<typename TFunc, typename ... TArgs>
-02: void enqueueTask(TFunc&& func, TArgs&& ...args)
-03: {
-04:     Logger::log(std::cout, "enqueueTask ...");
-05: 
-06:     // using "Generalized Lambda Capture" to preserve move semantics
-07:     auto callable{
-08:         [func = std::forward<TFunc>(func),
-09:         ... capturedArgs = std::forward<TArgs>(args)]() {
-10:             std::invoke(std::move(func), std::move(capturedArgs)...);
-11:         } 
-12:     };
-13: 
-14:     {
-15:         // RAII guard
-16:         std::lock_guard<std::mutex> guard{ m_mutex };
-17:         m_events.push_back(std::move(callable));
-18:     }
-19: 
-20:     m_condition.notify_one();
-21: }
-```
-
-In Zeile 8 des Listings finden wir einen Lambda-Ausdruck vor:
-Der Aufruf der Nachricht `func` ist im Rumpf der Lambda-Funktion platziert &ndash; mit `std::invoke`,
-das Funktionsobjekt selbst (`func`) wird via `[func = std::forward<TFunc>(func)]` in das Lambda-Objekt verschoben!
-Dies gilt genauso für die Parameter der Funktion, nur kommt hier syntaktisch gesehen das so genannte *Variadic Capture* Sprachfeature hinzu:
-
-```cpp
-[... args = std::forward<TArgs>(args)]
-```
-
-## Beendigung der Ausführung <a name="link7"></a>
+## Beendigung der Ausführung <a name="link9"></a>
 
 Wenn die Abarbeitung der Nachrichten beendet werden soll,
 wird dies dadurch erreicht, dass eine spezielle Nachricht in die Warteschlange am Ende eingefügt wird:
@@ -290,7 +375,7 @@ und so die Ausführung der Verarbeitungsprozedur verlassen.
 
 ---
 
-## Ein Beispiel: Berechnung von Primzahlen <a name="link8"></a>
+## Ein Beispiel: Berechnung von Primzahlen <a name="link10"></a>
 
 Ein Beispiel zur sequentiellen Berechnung von Primzahlen könnte so aussehen:
 
@@ -394,7 +479,7 @@ und ein zweiter Kern etwas weniger an der Ausführung des Programms beteiligt sin
 
 ---
 
-## Literaturhinweise <a name="link9"></a>
+## Literaturhinweise <a name="link11"></a>
 
 Die Anregungen zur Klasse `EventLoop` stammen im Wesentlichen aus dem Artikel
 
