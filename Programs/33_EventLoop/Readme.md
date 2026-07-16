@@ -102,6 +102,28 @@ Damit sollten wir in der Realisierung auf die `std::move_only_function<void()>`-
 using Event = std::move_only_function<void()>;
 ```
 
+Betrachten Sie ein Beispiel zur Klasse `std::move_only_function<>`.
+Gehen Sie das Beispiel Schritt für Schritt im Debugger durch.
+Beobachten Sie dabei, wie das `std::unique_ptr<int>`-Objekt Anweisung für Anweisung
+im Programm verschoben wird:
+
+```cpp
+01: void test()
+02: {
+03:     std::unique_ptr<int> ptr{ std::make_unique<int>(123) };
+04: 
+05:     auto moveOnlyLambda{ [capturedPtr = std::move(ptr)] () -> void {
+06:             std::println("Value inside Lambda: {}", *capturedPtr);
+07:         }
+08:     };
+09: 
+10:     // moveOnlyLambda is a callable that can only be moved
+11:     std::move_only_function<void()> func{ std::move(moveOnlyLambda) };
+12: 
+13:     func(); // prints "Value inside Lambda: 123"
+14: }
+```
+
 ## Konzeption einer `enqueue`-Methode an der Klasse `EventLoop` <a name="link4"></a>
 
 Die bewährte, idiomatische Vorgehensweise in Modern C++ lautet: *Pass-by-Value*.
@@ -175,8 +197,8 @@ Welche Funktionen (Rückgabetyp, Parameter) lassen sich in der Ereigniswarteschla
 Es sind dies Funktionen mit beliebig vielen Parametern und auch einem beliebigen Rückgabetyp &ndash; und dies sogar,
 ohne an der vorhandenen Realisierung der Klasse `EventLoop` Änderungen vornehmen zu müssen.
 
-Wie könnte dieser Trick aussehen?<br />
-Und wie werden die Parameter zwischengespeichert?
+  * Wie könnte dieser Trick aussehen?
+  * Wie werden die Parameter zwischengespeichert?
 
 Wir greifen auf das C++&ndash;Sprachfeature von Lambda-Objekten zurück.
 Lambda-Objekte können über die *Capture Clause* auf Variablen der Umgebung zugreifen

@@ -10,6 +10,35 @@
 
 #include "EventLoop.h"
 
+#include <memory>
+#include <print>
+
+// ===========================================================================
+// demonstration of std::move_only_function
+
+void test_event_loop_00()
+{
+    std::unique_ptr<int> ptr{ std::make_unique<int>(123) };
+
+    auto moveOnlyLambda{ [capturedPtr = std::move(ptr)] () -> void {
+            std::println("Value inside Lambda: {}", *capturedPtr);
+        }
+    };
+
+    // --- CASE 1: std::function ---
+    // This will NOT compile! 
+    // Error: std::function requires a copy constructor for the callable.
+    // std::function<void()> func1{ std::move(moveOnlyLambda) }; // COMPILER ERROR!
+
+
+    // --- CASE 2: std::move_only_function ---
+    // This works perfectly!
+    // It accepts callables that can only be moved.
+    std::move_only_function<void()> func2{ std::move(moveOnlyLambda) };
+
+    func2(); // prints "Value inside Lambda: 123"
+}
+
 // ===========================================================================
 // just starting and stopping event loop
 
@@ -205,7 +234,7 @@ void test_event_loop_11()
 
 
 // ===========================================================================
-// Using std::invoke or not?
+// using std::invoke or not?
 
 struct MyClass
 {
@@ -248,6 +277,7 @@ void test_event_loop_20()
     for (std::size_t i{ PrimeNumberLimits::Start }; i < PrimeNumberLimits::End; i += 2) {
 
         eventLoop.enqueueTaskEx(
+
             [&] (std::size_t value) {
 
                 bool primeFound{ PrimeNumbers::IsPrime(value) };
