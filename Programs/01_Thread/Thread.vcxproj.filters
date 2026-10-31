@@ -10,9 +10,6 @@
     <ClCompile Include="SimpleThreading_02.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SimpleThreading_03.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Resource Files">
