@@ -74,6 +74,7 @@ namespace SimpleAsync {
 
         auto lambda =
             [] () {
+                Logger::log(std::cout, "Starting thread ...");
                 std::this_thread::sleep_for(std::chrono::seconds{ 5 });
                 return 123;
         };
