@@ -243,7 +243,6 @@ struct MyClass
 
 void test_event_loop_15()
 {
-
     Logger::log(std::cout, "Start");
 
     EventLoop loop{};

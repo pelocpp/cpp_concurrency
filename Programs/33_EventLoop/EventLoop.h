@@ -52,10 +52,8 @@ public:
         auto callable {
             [func = std::forward<TFunc>(func),
             ... capturedArgs = std::forward<TArgs>(args)] () mutable -> void {
-               std::invoke(std::move(func), std::move(capturedArgs) ...);    // more flexibel
-               // std::move(func) (std::move(capturedArgs) ...);             // less flexibel
-               // func(std::move(capturedArgs) ...);                         // less flexibel
-
+                std::invoke(func, std::move(capturedArgs) ...);   // more flexibel
+                // func(std::move(capturedArgs) ...);             // less flexibel
             } 
         };
 
@@ -77,7 +75,7 @@ public:
 
         auto callable{
             [func = std::forward<TFunc>(func),
-            ... capturedArgs = std::forward<TArgs>(args)]() mutable -> void {
+            ... capturedArgs = std::forward<TArgs>(args)] () mutable -> void {
                 std::invoke(std::move(func), std::move(capturedArgs) ...);
             }
         };

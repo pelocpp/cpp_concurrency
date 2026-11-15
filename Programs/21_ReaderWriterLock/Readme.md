@@ -29,7 +29,7 @@
 ## Allgemeines <a name="link2"></a>
 
 Das *Reader-Writer Lock*&ndash;Entwurfsmuster dient der
-Synchronisation mehrerer Threads auf eine gemeinsam genutzte Ressource.
+Synchronisation mehrerer Threads beim Zugriff auf eine gemeinsam genutzte Ressource.
 
 Eine Besonderheit dieses Patterns besteht darin,
 dass das Pattern entweder den Zugriff einem einzelnen Schreiber
@@ -71,7 +71,7 @@ Das Beispiel kann in zwei Modi ausgeführt werden:
 01: class DataContainer
 02: {
 03: private:
-04:     size_t m_data;
+04:     std::size_t m_data;
 05: 
 06:     mutable std::mutex m_mutex;
 07:     mutable std::shared_mutex m_shared_mutex;
@@ -79,13 +79,13 @@ Das Beispiel kann in zwei Modi ausgeführt werden:
 09: public:
 10:     DataContainer() : m_data{} {}
 11: 
-12:     size_t getValue() const { return m_data; }
+12:     std::size_t getValue() const { return m_data; }
 13: 
 14:     void write() {
 15: 
 16:         Logger::log(std::cout, "Start Writing ...");
 17: 
-18:         for (size_t i{}; i != NumIterations; ++i) {
+18:         for (std::size_t i{}; i != NumIterations; ++i) {
 19: 
 20:             if constexpr (LockingMode == RegularLocking) {
 21: 
@@ -107,7 +107,7 @@ Das Beispiel kann in zwei Modi ausgeführt werden:
 37: 
 38:         Logger::log(std::cout, "Start Reading ...");
 39: 
-40:         size_t copy{};
+40:         std::size_t copy{};
 41: 
 42:         while (copy < NumIterations) {
 43: 
@@ -186,12 +186,12 @@ Der kritische Bereich wird durch eine Klasse `Snapshots` gekapselt:
 03:     int m_data;
 04: };
 05: 
-06: template <size_t TSize = 64>
+06: template <std::size_t TSize = 64>
 07: class Snapshots
 08: {
 09: private:
 10:     std::array<Data, TSize>   m_buffer;
-11:     size_t                    m_offset;
+11:     std::size_t               m_offset;
 12:     mutable std::shared_mutex m_mutex;
 13: 
 14: public:
@@ -205,7 +205,7 @@ Der kritische Bereich wird durch eine Klasse `Snapshots` gekapselt:
 22:         ++m_offset;
 23:     }
 24: 
-25:     std::optional<Data> get(size_t index) const {
+25:     std::optional<Data> get(std::size_t index) const {
 26: 
 27:         // we only read, but need to prevent concurrent writes,
 28:         // therefore we are using a shared_lock
@@ -237,7 +237,7 @@ und lesen gleichzeitig Daten aus dem Feld aus:
 ```cpp
 01: static void test_reader_writer_lock_01()
 02: {
-03:     constexpr size_t Size{ 64 };
+03:     constexpr std::size_t Size{ 64 };
 04: 
 05:     Snapshots<Size> snapshots{};
 06: 
@@ -271,7 +271,7 @@ und lesen gleichzeitig Daten aus dem Feld aus:
 34: 
 35:         std::jthread reader1 { 
 36:             [&] () {
-37:                 for (size_t i{}; i != Size; i++) {
+37:                 for (std::size_t i{}; i != Size; i++) {
 38:                     if (snapshots.get(i).has_value()) {
 39:                         ++ counter1;
 40:                     }
@@ -281,7 +281,7 @@ und lesen gleichzeitig Daten aus dem Feld aus:
 44: 
 45:         std::jthread reader2{
 46:             [&] () {
-47:                 for (size_t i{}; i != Size; i++) {
+47:                 for (std::size_t i{}; i != Size; i++) {
 48:                     if (snapshots.get(i).has_value()) {
 49:                         ++counter2;
 50:                     }

@@ -13,7 +13,7 @@
 static constexpr int RegularLocking{ 1 };
 static constexpr int SharedLocking{ 2 };
 
-static constexpr int LockingMode{ SharedLocking };
+static constexpr int LockingMode{ RegularLocking };
 
 static constexpr std::size_t NumIterations{ 10'000'000 };
 
@@ -40,13 +40,13 @@ namespace Reader_Writer
 
                 if constexpr (LockingMode == RegularLocking) {
 
-                    std::lock_guard guard{ m_mutex };
+                    std::lock_guard<std::mutex> guard{ m_mutex };
                     ++m_data;
                 }
 
                 if constexpr (LockingMode == SharedLocking) {
 
-                    std::unique_lock guard{ m_shared_mutex };
+                    std::unique_lock<std::shared_mutex> guard{ m_shared_mutex };
                     ++m_data;
                 }
             }
@@ -64,7 +64,7 @@ namespace Reader_Writer
 
                 if constexpr (LockingMode == RegularLocking) {
 
-                    std::lock_guard guard{ m_mutex };
+                    std::lock_guard<std::mutex> guard{ m_mutex };
                     copy = m_data;
                 }
 
@@ -80,7 +80,7 @@ namespace Reader_Writer
     };
 }
 
-static void test_reader_writer_lock_0xx()
+void test_reader_writer_lock_01()
 {
     using namespace Reader_Writer;
 
@@ -105,12 +105,6 @@ static void test_reader_writer_lock_0xx()
     Logger::log(std::cout, "Value: ", container.getValue());
 
     Logger::log(std::cout, "Done.");
-}
-
-void test_reader_writer_lock_01()
-{
-
-    test_reader_writer_lock_0xx();
 }
 // ===========================================================================
 // End-of-File

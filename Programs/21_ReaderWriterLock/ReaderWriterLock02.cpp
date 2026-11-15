@@ -6,7 +6,6 @@
 
 #include <array>
 #include <cstddef>
-#include <exception>
 #include <iostream>
 #include <mutex>
 #include <optional>
@@ -18,7 +17,7 @@ namespace Reader_Writer
 {
     struct Data
     {
-        int m_data;
+        std::size_t m_data;
     };
 
     template <std::size_t TSize = 64>
@@ -66,90 +65,83 @@ namespace Reader_Writer
     };
 }
 
-    static void test_reader_writer_lock_01()
-    {
-        using namespace Reader_Writer;
-        using namespace std::chrono_literals;
-
-        constexpr std::size_t Size{ 64 };
-
-        Snapshots<Size> snapshots{};
-
-        std::jthread thread { 
-            [&] (std::stop_token stop) {
-                int count{};
-                while (!stop.stop_requested()) {
-                    std::this_thread::sleep_for(100ms);
-                    ++count;
-                    Logger::log(std::cout, "Writer:    pushing ", count);
-                    snapshots.push(Data{ count });
-                }
-            }
-        };
-
-        // run next while loop for two seconds
-        std::chrono::system_clock::time_point deadline{
-            std::chrono::system_clock::now() + 4s 
-        };
-
-        std::chrono::system_clock::duration pause{ 15ms };
-
-        while (true) {
-
-            if (std::chrono::system_clock::now() > deadline)
-                break;
-
-            // start two readers reading concurrently snapshots
-            int counter1{};
-            int counter2{};
-
-            std::jthread reader1 { 
-                [&] () {
-                    for (std::size_t i{}; i != Size; i++) {
-                        if (snapshots.get(i).has_value()) {
-                            ++ counter1;
-                        }
-                    }
-
-                  // Logger::log(std::cout, "1. reader: counted ", counter1, " snapshots");
-                } 
-            };
-
-            std::jthread reader2{
-                [&] () {
-                    for (std::size_t i{}; i != Size; i++) {
-                        if (snapshots.get(i).has_value()) {
-                            ++counter2;
-                        }
-                    }
-
-                  // Logger::log(std::cout, "2. reader: counted ", counter2, " snapshots");
-                }
-            };
-
-            reader1.join();
-            reader2.join();
-
-            // Note:
-            // join() introduces a synchronization point, meaning that
-            // the main thread can now safely read counter1 and counter2
-            // despite these variables not being atomic.
-
-            Logger::log(std::cout, "1. Reader: ", counter1, " snapshots");
-            Logger::log(std::cout, "2. Reader: ", counter2, " snapshots");
-
-            std::this_thread::sleep_for(pause);
-        }
-
-        // stop the writer thread
-        thread.request_stop();
-    }
-
 void test_reader_writer_lock_02()
 {
     using namespace Reader_Writer;
+    using namespace std::chrono_literals;
 
-    test_reader_writer_lock_01();
+    constexpr std::size_t Size{ 64 };
+
+    Snapshots<Size> snapshots{};
+
+    std::jthread thread { 
+        [&] (std::stop_token stop) {
+            std::size_t count{};
+            while (!stop.stop_requested()) {
+                std::this_thread::sleep_for(100ms);
+                ++count;
+                Logger::log(std::cout, "Writer:    pushing ", count);
+                snapshots.push(Data{ count });
+            }
+        }
+    };
+
+    // run next while loop for two seconds
+    std::chrono::system_clock::time_point deadline{
+        std::chrono::system_clock::now() + 4s 
+    };
+
+    std::chrono::system_clock::duration pause{ 15ms };
+
+    while (true) {
+
+        if (std::chrono::system_clock::now() > deadline)
+            break;
+
+        // start two readers reading concurrently snapshots
+        std::size_t counter1{};
+        std::size_t counter2{};
+
+        std::jthread reader1 { 
+            [&] () {
+                for (std::size_t i{}; i != Size; i++) {
+                    if (snapshots.get(i).has_value()) {
+                        ++ counter1;
+                    }
+                }
+
+                // Logger::log(std::cout, "1. reader: counted ", counter1, " snapshots");
+            } 
+        };
+
+        std::jthread reader2{
+            [&] () {
+                for (std::size_t i{}; i != Size; i++) {
+                    if (snapshots.get(i).has_value()) {
+                        ++counter2;
+                    }
+                }
+
+                // Logger::log(std::cout, "2. reader: counted ", counter2, " snapshots");
+            }
+        };
+
+        reader1.join();
+        reader2.join();
+
+        // Note:
+        // join() introduces a synchronization point, meaning that
+        // the main thread can now safely read counter1 and counter2
+        // despite these variables not being atomic.
+
+        Logger::log(std::cout, "1. Reader: ", counter1, " snapshots");
+        Logger::log(std::cout, "2. Reader: ", counter2, " snapshots");
+
+        std::this_thread::sleep_for(pause);
+    }
+
+    // stop the writer thread
+    thread.request_stop();
 }
 
 // ===========================================================================

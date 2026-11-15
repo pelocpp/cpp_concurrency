@@ -221,7 +221,7 @@ eine beliebige Anzahl von Parametern unterschiedlichen Datentyps in das Lambda-O
 07:     auto callable{
 08:         [func = std::forward<TFunc>(func),
 09:         ... capturedArgs = std::forward<TArgs>(args)]() mutable -> void {
-10:             std::invoke(std::move(func), std::move(capturedArgs)...);
+10:             std::invoke(func, std::move(capturedArgs)...);
 11:         } 
 12:     };
 13: 
