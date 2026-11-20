@@ -11,16 +11,16 @@
 
 // choose 'Release' mode to demonstrate difference
 #ifdef _DEBUG
-static constexpr std::size_t NumThreads{ 5'000 };       // debug
+static constexpr std::size_t NumThreads{ 5'000 };      // debug
 #else
 static constexpr std::size_t NumThreads{ 50'000 };     // release
 #endif
 
-namespace Thread_Comparison {
+namespace {
 
-    static void compareStdThread() {
+    void compareStdThread() {
 
-        Logger::log(std::cout, "Start [std::thread]");
+        Logger::log(std::cout, "Start [std::thread][", NumThreads, " threads]");
 
         ScopedTimer watch;
 
@@ -47,9 +47,9 @@ namespace Thread_Comparison {
         Logger::log(std::cout, "Done [", result, ']');
     }
 
-    static void compareStdAsync() {
+    void compareStdAsync() {
 
-        Logger::log(std::cout, "Start [std::async]");
+        Logger::log(std::cout, "Start [std::async][", NumThreads, " threads]");
 
         ScopedTimer watch;
 
@@ -79,10 +79,8 @@ namespace Thread_Comparison {
 
 // ===========================================================================
 
-void exercise_thread_comparison()
+void exercise_01_thread_comparison()
 {
-    using namespace Thread_Comparison;
-
     Logger::log(std::cout, "Start:");
     compareStdThread();
     compareStdAsync();

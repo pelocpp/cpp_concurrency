@@ -13,89 +13,97 @@
 #include <unordered_set>    // for std::unordered_set
 #include <vector>           // for std::vector
 
-// prevent thread procedure from being too fast:
-// choose sleep time of 50, 100 or 150
-static constexpr std::size_t NumThreads{ 3'000 };
-static constexpr std::size_t MilliSeconds{ 150 };
+namespace {
 
-static void countThreadsOfPool()
-{
-    std::unordered_set<std::thread::id> ids;
-    std::mutex                          idsMutex;
+    // prevent thread procedure from being too fast:
+    // choose sleep time of 0, 50, 100 or 150
+    constexpr std::size_t NumThreads{ 3'000 };
+    constexpr std::size_t MilliSeconds{ 150 };
 
-    std::vector<std::future<void>>      futures;
-    futures.reserve(NumThreads);
+    void countThreadsOfPool()
+    {
+        Logger::log(std::cout, "Testing OS Thread Pool ... [", NumThreads, " std::async]");
 
-    auto threadProc = [&ids, &idsMutex]() -> void {
-        std::this_thread::sleep_for(std::chrono::milliseconds{ MilliSeconds });
-        std::thread::id currentThreadId{ std::this_thread::get_id() };
-        {
-            std::lock_guard lock{ idsMutex };
-            ids.insert(currentThreadId);
+        std::unordered_set<std::thread::id> thread_ids;
+        std::mutex                          mutex;
+
+        std::vector<std::future<void>>      futures;
+        futures.reserve(NumThreads);
+
+        auto threadProc = [&thread_ids, &mutex]() -> void {
+            std::this_thread::sleep_for(std::chrono::milliseconds{ MilliSeconds });
+            std::thread::id currentThreadId{ std::this_thread::get_id() };
+            {
+                std::lock_guard lock{ mutex };
+                thread_ids.insert(currentThreadId);
+            }
+        };
+
+        // use explicit launch policy to force asynchronous execution and avoid deferred tasks
+        for (std::size_t i{}; i != NumThreads; ++i) {
+            std::future<void> fut{ std::async(std::launch::async, threadProc) };
+            futures.emplace_back(std::move(fut));
         }
-    };
 
-    // use explicit launch policy to force asynchronous execution and avoid deferred tasks.
-    for (std::size_t i{}; i != NumThreads; ++i) {
-        std::future<void> fut{ std::async(std::launch::async, threadProc) };
-        futures.emplace_back(std::move(fut));
+        // wait for all tasks, log any exceptions
+        for (auto& future : futures) {
+            try {
+                future.get();
+            }
+            catch (const std::exception& ex) {
+                Logger::log(std::cerr, "Async task threw: ", ex.what());
+            }
+            catch (...) {
+                Logger::log(std::cerr, "Async task threw unknown exception");
+            }
+        }
+
+        Logger::log(std::cout, "Number of Threads in OS Thread Pool: ", thread_ids.size());
     }
 
-    // wait for all tasks, log any exceptions
-    for (auto &future : futures) {
-        try {
-            future.get();
+    void countThreadsWithoutPool()
+    {
+        Logger::log(std::cout, "Testing Threads acquired from OS ... [", NumThreads, " std::thread]");
+
+        std::unordered_set<std::thread::id> thread_ids;
+        std::mutex                          mutex;
+
+        std::vector<std::thread>            threads;
+        threads.reserve(NumThreads);
+
+        auto threadProc = [&thread_ids, &mutex]() -> void {
+            std::this_thread::sleep_for(std::chrono::milliseconds{ MilliSeconds });
+            std::thread::id currentThreadId{ std::this_thread::get_id() };
+            {
+                std::lock_guard lock{ mutex };
+                thread_ids.insert(currentThreadId);
+            }
+        };
+
+        // create threads
+        for (std::size_t i{}; i != NumThreads; ++i) {
+            std::thread t{ threadProc };
+            threads.emplace_back(std::move(t));
         }
-        catch (const std::exception& ex) {
-            Logger::log(std::cerr, "Async task threw: ", ex.what());
+
+        // join all threads (no exceptions expected from join)
+        for (auto& t : threads) {
+            if (t.joinable()) {
+                t.join();
+            }
         }
-        catch (...) {
-            Logger::log(std::cerr, "Async task threw unknown exception");
-        }
+
+        Logger::log(std::cout, "Number of Threads acquired from OS:  ", thread_ids.size());
     }
-
-    Logger::log(std::cout, "Number of Threads in OS Thread Pool: ", ids.size());
-}
-
-static void countThreadsWithoutPool()
-{
-    std::unordered_set<std::thread::id> ids;
-    std::mutex                          idsMutex;
-
-    std::vector<std::thread>            threads;
-    threads.reserve(NumThreads);
-
-    auto threadProc = [&ids, &idsMutex] () -> void {
-        std::this_thread::sleep_for(std::chrono::milliseconds{ MilliSeconds });
-        std::thread::id currentThreadId{ std::this_thread::get_id() };
-        {
-            std::lock_guard lock{ idsMutex };
-            ids.insert(currentThreadId);
-        }
-    };
-
-    // create threads
-    for (std::size_t i{}; i != NumThreads; ++i) {
-        std::thread t{ threadProc };
-        threads.emplace_back(std::move(t));
-    }
-
-    // join all threads (no exceptions expected from join)
-    for (auto &t : threads) {
-        if (t.joinable()) {
-            t.join();
-        }
-    }
-
-    Logger::log(std::cout, "Number of Threads acquired from OS:  ", ids.size());
 }
 
 // ===========================================================================
 
-void exercise_thread_pool()
+void exercise_03_thread_pool()
 {
     Logger::log(std::cout, "Start:");
     countThreadsOfPool();
+    Logger::log(std::cout);
     countThreadsWithoutPool();
     Logger::log(std::cout, "Done.");
 }

@@ -113,8 +113,7 @@ namespace Car_Parking {
     public:
         Car(std::random_device& device, ParkingArea& parkingArea, std::size_t id)
             : m_device{ device }, m_parkingArea{ parkingArea }, m_id{ id }
-        {
-        }
+        {}
 
         void driving(std::stop_token token) {
 
@@ -248,7 +247,7 @@ static void anotherCarParking() {
     simulation.stopSimulation();
 }
 
-void exercise_car_parking()
+void exercise_02_car_parking()
 {
     carParking();
     anotherCarParking();
