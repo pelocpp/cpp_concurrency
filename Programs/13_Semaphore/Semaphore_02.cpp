@@ -71,7 +71,7 @@ void test_binary_semaphore_02()
 
     constexpr std::size_t NumJobs{ 8 };
 
-    PrinterQueue printerQueue{};
+    PrinterQueue printerQueue;
 
     std::array<std::thread, NumJobs> threads;
 

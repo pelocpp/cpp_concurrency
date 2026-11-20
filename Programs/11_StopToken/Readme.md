@@ -127,7 +127,7 @@ können durch die Wertübergabe Probleme mit der Lebensdauer vermieden werden.
 08: 
 09:         while (!token.stop_requested()) {
 10: 
-11:             std::string msg{};
+11:             std::string msg;
 12: 
 13:             Logger::log(std::cout, "Waiting  ...");
 14: 

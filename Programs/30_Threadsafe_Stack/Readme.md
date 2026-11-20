@@ -306,7 +306,7 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 20:         callable();
 21:     };
 22: 
-23:     ThreadsafeStack<size_t> primes{};
+23:     ThreadsafeStack<size_t> primes;
 24: 
 25:     std::vector<std::thread> threads;
 26:     threads.reserve(Globals::NumThreads);
@@ -316,7 +316,7 @@ Zu dieser Ausgabe gehört das folgende Beispielprogramm:
 30:     size_t end = start + range;
 31: 
 32:     {
-33:         ScopedTimer timer{};
+33:         ScopedTimer timer;
 34: 
 35:         // setup threads
 36:         for (size_t i{}; i != Globals::NumThreads - 1; ++i) {

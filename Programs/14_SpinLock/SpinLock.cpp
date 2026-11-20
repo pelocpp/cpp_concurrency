@@ -153,7 +153,7 @@ void test_using_spinlocks() {
     spinlocksDone.wait();
 
     {
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         for (auto& thread : threads) {
             thread.join();
@@ -193,7 +193,7 @@ void test_using_atomics() {
     atomicDone.wait();
 
     {
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         for (auto& thread : threads) {
             thread.join();
@@ -235,7 +235,7 @@ void test_using_mutex() {
     mutexDone.wait();
 
     {
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         for (auto& thread : threads) {
             thread.join();

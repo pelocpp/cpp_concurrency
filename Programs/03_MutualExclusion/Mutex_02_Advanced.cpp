@@ -10,7 +10,7 @@
 namespace Mutex_And_Locking_Examples {
 
     // std::mutex object to be used by *all* code below
-    static std::mutex g_mutex{};
+    static std::mutex g_mutex;
 
     // -------------------------------------
     // std::mutex
@@ -127,9 +127,9 @@ namespace Mutex_And_Locking_Examples {
     // -------------------------------------
     // std::scoped_lock
 
-    static std::mutex g_mutex1{};
-    static std::mutex g_mutex2{};
-    static std::mutex g_mutex3{};
+    static std::mutex g_mutex1;
+    static std::mutex g_mutex2;
+    static std::mutex g_mutex3;
 
     static void example_04_01() {
 

@@ -17,7 +17,7 @@ constexpr bool Verbose{ false };
 
 // ===========================================================================
 
-Concurrency_ThreadsafeStack::ThreadsafeStack<std::size_t> g_primes{};
+Concurrency_ThreadsafeStack::ThreadsafeStack<std::size_t> g_primes;
 
 static void calcPrimesRange(std::size_t start, std::size_t end)
 {
@@ -38,7 +38,7 @@ static void test_parallel_for_01(std::size_t from, std::size_t to, bool useThrea
         " up to ", to, ':');
 
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
 
         parallel_for(
             from,
@@ -66,7 +66,7 @@ static void test_parallel_for_02(std::size_t from, std::size_t to, bool useThrea
         "Calcalating Prime Numbers from ", from,
         " up to ", to, ':');
 
-    ThreadsafeStack<std::size_t> primes{};
+    ThreadsafeStack<std::size_t> primes;
 
     auto calcPrimesRange = [&] (std::size_t start, std::size_t end) {
 
@@ -75,7 +75,7 @@ static void test_parallel_for_02(std::size_t from, std::size_t to, bool useThrea
     };
 
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
 
         parallel_for(
             from,

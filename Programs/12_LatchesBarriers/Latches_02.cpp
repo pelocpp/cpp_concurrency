@@ -36,7 +36,7 @@ namespace Latches_03 {
 
         std::vector<std::future<void>> tasks;
 
-        std::random_device device{};
+        std::random_device device;
 
         auto worker = [&] (size_t index, size_t msecs, int first, int last) {
 

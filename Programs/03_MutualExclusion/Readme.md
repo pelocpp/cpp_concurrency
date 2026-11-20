@@ -345,9 +345,9 @@ Studieren Sie den Quellcode des Beispiels genau.
 065: 
 066: void example_scoped_lock()
 067: {
-068:     std::random_device device{};
+068:     std::random_device device;
 069: 
-070:     std::vector<std::unique_ptr<Player>> players{};
+070:     std::vector<std::unique_ptr<Player>> players;
 071: 
 072:     std::initializer_list<std::string_view> names =
 073:     {

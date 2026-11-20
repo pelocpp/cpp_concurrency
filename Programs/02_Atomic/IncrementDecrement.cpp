@@ -161,7 +161,7 @@ void test_01()
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
         IncDec inc_dec;
         inc_dec.run();
     }
@@ -173,7 +173,7 @@ void test_02()
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
         IncDec inc_dec;
         inc_dec.runAtomic();
     }
@@ -185,7 +185,7 @@ void test_03()
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
         IncDec inc_dec;
         inc_dec.runMutex();
     }
@@ -197,7 +197,7 @@ void test_04()
     using namespace IncrementDecrement;
     Logger::log(std::cout, "Begin");
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
         IncDec inc_dec;
         inc_dec.runMutexRAII();
     }

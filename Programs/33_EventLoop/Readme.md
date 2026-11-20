@@ -300,7 +300,7 @@ Ein Beispiel:
 05: 
 06: void test()
 07: {
-08:     EventLoop loop{};
+08:     EventLoop loop;
 09: 
 10:     MyClass obj;
 11:     loop.enqueueTask(&MyClass::doSomeWork, &obj, 123);

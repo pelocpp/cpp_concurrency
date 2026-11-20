@@ -35,7 +35,7 @@ void test_strategized_locking_01()
 
     Logger::log(std::cout, "Calling push ", MaxIterations, " times:");
 
-    ScopedTimer watch{};
+    ScopedTimer watch;
 
     for (std::size_t i = 0; i != MaxIterations; ++i) {
         stack.push(i);
@@ -81,7 +81,7 @@ void test_strategized_locking_03()
 
     PrimeCalculator<std::size_t> calc{ primes, PrimeNumberLimits::LowerLimit, PrimeNumberLimits::UpperLimit + 1 };
 
-    ScopedTimer watch{};
+    ScopedTimer watch;
 
     std::thread calculator{ calc };
     calculator.join();
@@ -112,7 +112,7 @@ void test_strategized_locking_04()
     std::size_t start = PrimeNumberLimits::LowerLimit;
     std::size_t end = start + range;
 
-    ScopedTimer watch{};
+    ScopedTimer watch;
 
     // setup threads
     for (std::size_t i{}; i != NumThreads - 1; ++i) {

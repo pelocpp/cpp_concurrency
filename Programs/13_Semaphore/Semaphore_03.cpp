@@ -18,11 +18,11 @@ namespace ConcurrencyCountingSemaphore {
     {
         Logger::log(std::cout, "Start:");
 
-        std::mutex mutex{};
+        std::mutex mutex;
 
         // initialize a queue with multiple sequences from ’A’ to ’Z’
 
-        std::queue<char> values{};
+        std::queue<char> values;
 
         for (std::size_t i{}; i != 1000; ++i) {
             char ch{ static_cast < char>('A' + (i % ('Z' - 'A'))) };
@@ -34,7 +34,7 @@ namespace ConcurrencyCountingSemaphore {
         std::counting_semaphore<numThreads> enabled{ 0 };
 
         // create a thread pool
-        std::vector<std::jthread> pool{};
+        std::vector<std::jthread> pool;
 
         auto procedure = [&](std::stop_token token, std::size_t n) {
 

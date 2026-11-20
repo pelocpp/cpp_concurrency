@@ -389,7 +389,7 @@ Starten und Herunterfahren des Threadpools:
 01: void test()
 02: {
 03:     Logger::log(std::cout, "Start");
-04:     ThreadPool pool{};
+04:     ThreadPool pool;
 05:     std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 06:     pool.start();
 07:     std::this_thread::sleep_for(std::chrono::seconds{ 2 });
@@ -430,9 +430,9 @@ Starten des Threadpools, Hinzufügen von fünf Tasks, Herunterfahren des Threadpoo
 05: 
 06: void test()
 07: {
-08:     ThreadPool pool{};
+08:     ThreadPool pool;
 09: 
-10:     std::queue<std::future<void>> results{};
+10:     std::queue<std::future<void>> results;
 11: 
 12:     for (std::size_t n{}; n != 5; ++n)
 13:     {
@@ -543,11 +543,11 @@ Im einzelnen werden folgende Tätigkeiten ausgeführt:
 ```cpp
 01: void test()
 02: {
-03:     ScopedTimer clock{};
+03:     ScopedTimer clock;
 04: 
 05:     std::size_t foundPrimeNumbers{};
 06:     std::queue<std::future<bool>> results;
-07:     ThreadPool pool{};
+07:     ThreadPool pool;
 08: 
 09:     Logger::log(std::cout, "Enqueuing tasks");
 10: 
@@ -658,7 +658,7 @@ Allerdings berechnen wir die Summe aller gefundenen Primzahlen. Hier müssen wir 
 d. h. eine Variable der Gestalt `std::size_t foundPrimeNumbers` muss durch eine atomare Hüllenklasse geschützt bzw. geschrieben werden:
 
 ```cpp
-std::atomic<std::size_t> foundPrimeNumbers{};
+std::atomic<std::size_t> foundPrimeNumbers;
 ```
 
 Das Programm sieht nun so aus:
@@ -666,11 +666,11 @@ Das Programm sieht nun so aus:
 ```cpp
 01: void test()
 02: {
-03:     ScopedTimer clock{};
+03:     ScopedTimer clock;
 04: 
-05:     std::atomic<std::size_t> foundPrimeNumbers{};
+05:     std::atomic<std::size_t> foundPrimeNumbers;
 06:     std::queue<std::future<void>> results;
-07:     ThreadPool pool{};
+07:     ThreadPool pool;
 08: 
 09:     Logger::log(std::cout, "Enqueuing tasks");
 10: 
@@ -792,7 +792,7 @@ Typs zurückliefern können. Wir haben es im Beispiel mit `std::pair<bool, std::si
 ```cpp
 01: void test()
 02: {
-03:     ScopedTimer clock{};
+03:     ScopedTimer clock;
 04: 
 05:     std::vector<std::future<std::pair<bool, std::size_t>>> futures;
 06:     ThreadPool pool{ };

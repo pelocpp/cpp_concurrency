@@ -138,7 +138,7 @@ void example_recursive_mutex()
 {
     using namespace Recursive_Mutex_Example;
 
-    NonRecursive non{};
+    NonRecursive non;
     for (std::size_t i{}; i != 18; i++) {
         non.push_back(i+1);
     }
@@ -146,7 +146,7 @@ void example_recursive_mutex()
     non.reserve(2);
     non.print();
  
-    Recursive rec{};
+    Recursive rec;
     for (std::size_t i{}; i != 18; i++) {
         rec.push_back(100 + i+1);
     }

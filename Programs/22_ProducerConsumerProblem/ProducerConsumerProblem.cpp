@@ -18,14 +18,14 @@ void test_thread_safe_blocking_queue_01()
 
     {
         constexpr std::size_t QueueSize{ 1 };
-        BlockingQueue<int, QueueSize> queue{};
+        BlockingQueue<int, QueueSize> queue;
         queue.push(101);
         queue.push(102);    // should block
     }
 
     {
         constexpr std::size_t QueueSize{ 1 };
-        BlockingQueue<int, QueueSize> queue{};
+        BlockingQueue<int, QueueSize> queue;
         int value;
         queue.pop(value);   // should block
     }
@@ -39,7 +39,7 @@ void test_thread_safe_blocking_queue_02()
 
     constexpr std::size_t QueueSize{ 5 };
 
-    BlockingQueue<int, QueueSize> queue{};
+    BlockingQueue<int, QueueSize> queue;
 
     std::thread producer([&]() {
 

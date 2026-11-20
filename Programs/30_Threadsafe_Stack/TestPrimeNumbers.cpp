@@ -21,7 +21,7 @@ void test_thread_safe_stack_01()
 {
     using namespace Concurrency_ThreadsafeStack;
 
-    ThreadsafeStack<int> stack{};
+    ThreadsafeStack<int> stack;
 
     stack.push(1);
     stack.push(2);
@@ -52,12 +52,12 @@ void test_thread_safe_stack_02()
         "Calcalating Prime Numbers from ", 2,
         " up to ", PrimeNumberLimits::UpperLimit, ':');
 
-    ThreadsafeStack<size_t> primes{};
+    ThreadsafeStack<size_t> primes;
 
     PrimeCalculator<size_t> calc{ primes, 2, PrimeNumberLimits::UpperLimit };
 
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
 
         std::thread calculator(calc);
         calculator.join();
@@ -76,7 +76,7 @@ void test_thread_safe_stack_03()
         "Calcalating Prime Numbers from ", 2, " up to ",
         PrimeNumberLimits::UpperLimit, " [", NumThreads, " threads]:");
 
-    ThreadsafeStack<size_t> primes{};
+    ThreadsafeStack<size_t> primes;
 
     std::vector<std::thread> threads;
     threads.reserve(NumThreads);
@@ -86,7 +86,7 @@ void test_thread_safe_stack_03()
     size_t end = start + range;
 
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
 
         // setup threads
         for (size_t i{}; i != NumThreads - 1; ++i) {
@@ -138,7 +138,7 @@ void test_thread_safe_stack_04()
         }
     };
 
-    ThreadsafeStack<size_t> primes{};
+    ThreadsafeStack<size_t> primes;
 
     std::vector<std::thread> threads;
     threads.reserve(NumThreads);
@@ -148,7 +148,7 @@ void test_thread_safe_stack_04()
     size_t end = start + range;
 
     {
-        ScopedTimer timer{};
+        ScopedTimer timer;
 
         // setup threads
         for (size_t i{}; i != NumThreads - 1; ++i) {

@@ -72,7 +72,7 @@ void test_reader_writer_lock_02()
 
     constexpr std::size_t Size{ 64 };
 
-    Snapshots<Size> snapshots{};
+    Snapshots<Size> snapshots;
 
     std::jthread thread { 
         [&] (std::stop_token stop) {

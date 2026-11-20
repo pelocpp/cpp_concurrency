@@ -88,7 +88,7 @@ void test_reader_writer_lock_01()
 
     DataContainer container;
 
-    ScopedTimer watch{};
+    ScopedTimer watch;
 
     std::jthread t0{ [&] { container.write(); } };
     std::jthread t1{ [&] { container.read(); } };

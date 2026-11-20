@@ -21,7 +21,7 @@ void test_concurrency_thread_pool01()
 {
     Logger::log(std::cout, "Start");
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     std::this_thread::sleep_for(std::chrono::seconds{ 1 });
 
@@ -45,9 +45,9 @@ void test_concurrency_thread_pool02()
 {
     Logger::log(std::cout, "Start");
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
-    std::queue<std::future<void>> results{};
+    std::queue<std::future<void>> results;
 
     for (std::size_t n{}; n != 5; ++n)
     {
@@ -96,7 +96,7 @@ void test_concurrency_thread_pool03()
     // Testing threads accessing thread-global variable / not atomar
     // Note: error occurs sporadically
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     std::vector<std::future<void>> results;
     std::size_t checksum{ 0 };
@@ -126,7 +126,7 @@ void test_concurrency_thread_pool04()
 
     // Testing threads accessing thread-global variable / atomar
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     std::vector<std::future<void>> results;
     std::atomic<std::size_t> atomicChecksum{ 0 };
@@ -156,7 +156,7 @@ void test_concurrency_thread_pool05()
 
     // Testing threads accessing thread-global variable / atomar
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     std::vector<std::future<void>> results;
     std::atomic<std::size_t> atomicChecksum{ 0 };
@@ -196,13 +196,13 @@ void test_concurrency_thread_pool10()
 
     Logger::log(std::cout, "Start");
 
-    ScopedTimer clock{};
+    ScopedTimer clock;
 
     std::size_t foundPrimeNumbers{};
 
     std::queue<std::future<bool>> results;
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     // pool.start();         // <=== add/remove comment
 
@@ -258,13 +258,13 @@ void test_concurrency_thread_pool11()
 
     Logger::log(std::cout, "Start");
 
-    ScopedTimer clock{};
+    ScopedTimer clock;
 
-    std::atomic<std::size_t> foundPrimeNumbers{};
+    std::atomic<std::size_t> foundPrimeNumbers;
 
     std::queue<std::future<void>> results;
 
-    ThreadPool pool{};
+    ThreadPool pool;
 
     Logger::log(std::cout, "Enqueuing tasks");
 
@@ -317,11 +317,11 @@ void test_concurrency_thread_pool12()
 
     Logger::log(std::cout, "Start:");
 
-    ScopedTimer clock{};
+    ScopedTimer clock;
 
     std::vector<std::future<std::pair<bool, std::size_t>>> futures;
 
-    ThreadPool pool{ };
+    ThreadPool pool;
 
     Logger::log(std::cout, "Enqueuing tasks");
 

@@ -90,7 +90,7 @@ private:
     // Inline static definitions to avoid missing-symbol linker errors
     // when this header is included in multiple translation units
     // Requires C++17 (inline variables).
-    inline static std::chrono::steady_clock::time_point s_begin{};
+    inline static std::chrono::steady_clock::time_point s_begin;
     inline static bool s_loggingEnabled{ true };
     inline static std::mutex s_mutexIds;
     inline static std::map<std::thread::id, std::size_t> s_mapIds;

@@ -35,7 +35,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         Logger::log(std::cout, "std::atomic: before: ", value.load());
 
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         std::jthread t1 {
             [&]() {
@@ -95,7 +95,7 @@ namespace LockFreeProgrammingIncrementDecrement {
 
         Logger::log(std::cout, "compare_exchange_weak: before: ", value.load());
 
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         std::jthread t1{
             [&]() mutable {

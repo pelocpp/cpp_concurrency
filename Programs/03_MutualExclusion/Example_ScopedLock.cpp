@@ -91,9 +91,9 @@ void example_scoped_lock()
 {
     using namespace Scoped_Lock_Example;
 
-    std::random_device device{};
+    std::random_device device;
 
-    std::vector<std::unique_ptr<Player>> players{};
+    std::vector<std::unique_ptr<Player>> players;
 
     std::initializer_list<std::string_view> names =
     {

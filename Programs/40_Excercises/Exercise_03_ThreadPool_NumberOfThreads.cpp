@@ -20,10 +20,10 @@ static constexpr std::size_t MilliSeconds{ 150 };
 
 static void countThreadsOfPool()
 {
-    std::unordered_set<std::thread::id> ids{};
-    std::mutex                          idsMutex{};
+    std::unordered_set<std::thread::id> ids;
+    std::mutex                          idsMutex;
 
-    std::vector<std::future<void>>      futures{};
+    std::vector<std::future<void>>      futures;
     futures.reserve(NumThreads);
 
     auto threadProc = [&ids, &idsMutex]() -> void {
@@ -59,10 +59,10 @@ static void countThreadsOfPool()
 
 static void countThreadsWithoutPool()
 {
-    std::unordered_set<std::thread::id> ids{};
-    std::mutex                          idsMutex{};
+    std::unordered_set<std::thread::id> ids;
+    std::mutex                          idsMutex;
 
-    std::vector<std::thread>            threads{};
+    std::vector<std::thread>            threads;
     threads.reserve(NumThreads);
 
     auto threadProc = [&ids, &idsMutex] () -> void {

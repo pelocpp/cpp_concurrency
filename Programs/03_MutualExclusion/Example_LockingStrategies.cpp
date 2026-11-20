@@ -11,8 +11,8 @@
 
 namespace Locking_Strategies
 {
-    std::mutex g_mutex1{};
-    std::mutex g_mutex2{};
+    std::mutex g_mutex1;
+    std::mutex g_mutex2;
 
     static void example01() {
 

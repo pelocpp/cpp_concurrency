@@ -24,7 +24,7 @@ namespace Stop_Tokens_and_Condition_Variables
 
             while (!token.stop_requested()) {
 
-                std::string msg{};
+                std::string msg;
 
                 Logger::log(std::cout, "Waiting  ...");
 

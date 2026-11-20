@@ -51,7 +51,7 @@ void test_binary_semaphore_01() {
 
     Logger::log(std::cout, "Start:");
 
-    Worker worker{};
+    Worker worker;
 
     std::jthread t1{ &Worker::scheduleJob, &worker };
 

@@ -48,7 +48,7 @@ namespace SimpleAsync {
         };
 
         // std::async with callable object
-        Hello helloObject{};
+        Hello helloObject;
         std::future<std::string> futureFunctionObject {
             std::async(helloObject, "callable object")
         };

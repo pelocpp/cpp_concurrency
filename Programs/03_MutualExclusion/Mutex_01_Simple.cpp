@@ -44,7 +44,7 @@ namespace SimpleMutexDemo
         }
     };
 
-    std::mutex Counter::s_mutex{};
+    std::mutex Counter::s_mutex;
 }
 
 void test()

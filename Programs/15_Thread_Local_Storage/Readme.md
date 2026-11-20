@@ -64,7 +64,7 @@ Threadlokale Daten werden bei der Thread-Erstellung erstellt und nach Beendigung
 ## Beispiel <a name="link2"></a>
 
 ```cpp
-01: std::mutex mutex{};
+01: std::mutex mutex;
 02: 
 03: thread_local int x{};
 04: 

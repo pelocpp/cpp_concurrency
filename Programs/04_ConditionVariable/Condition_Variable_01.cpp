@@ -12,9 +12,9 @@
 
 namespace SimpleConditionVariableDemo
 {
-    static std::mutex mutex{};
+    static std::mutex mutex;
 
-    static std::condition_variable condition{};
+    static std::condition_variable condition;
 
     static bool data{ false };
 

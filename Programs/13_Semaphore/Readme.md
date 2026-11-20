@@ -116,7 +116,7 @@ Damit wartet der Empfänger auf die Benachrichtigung des Senders:
 *Beispiel*:
 
 ```cpp
-01: Worker worker{};
+01: Worker worker;
 02: std::jthread t1{ &Worker::scheduleJob, &worker };
 03: std::jthread t2{ &Worker::executeJob, &worker };
 ```

@@ -22,11 +22,11 @@ namespace Thread_Comparison {
 
         Logger::log(std::cout, "Start [std::thread]");
 
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         std::atomic<size_t> result;
 
-        std::vector<std::thread> threads{};
+        std::vector<std::thread> threads;
 
         auto threadProc = [&](size_t value) {
             result += value;
@@ -51,11 +51,11 @@ namespace Thread_Comparison {
 
         Logger::log(std::cout, "Start [std::async]");
 
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         std::atomic<size_t> result;
 
-        std::vector<std::future<void>> futures{};
+        std::vector<std::future<void>> futures;
 
         auto threadProc = [&](size_t value) {
             result += value;

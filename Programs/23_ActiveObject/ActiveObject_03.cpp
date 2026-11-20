@@ -135,7 +135,7 @@ void test_active_object_03()
 
     Logger::log(std::cout, "Active Object Demo (Asynchron)");
 
-    ActiveObject activeObject{};
+    ActiveObject activeObject;
 
     // enqueue work concurrently
     Logger::log(std::cout, "Enqueue tasks asynchronously ...");

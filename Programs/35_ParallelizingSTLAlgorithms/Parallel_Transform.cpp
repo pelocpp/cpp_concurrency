@@ -259,7 +259,7 @@ static void test_transform_primes_parallel(size_t from, size_t to) {
 
     auto [src, dst, func] = setup_primes_calculation(from, to);
 
-    ScopedTimer timer{};
+    ScopedTimer timer;
 
     parallel_transform(
         src.begin(),
@@ -281,7 +281,7 @@ static void test_transform_primes_parallel_div_con(size_t from, size_t to, size_
 
     auto [src, dst, func] = setup_primes_calculation(from, to);
 
-    ScopedTimer timer{};
+    ScopedTimer timer;
 
     Logger::log(std::cout, "Start ... ", chunkSize);
 

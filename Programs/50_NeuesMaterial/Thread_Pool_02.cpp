@@ -258,8 +258,8 @@ namespace Concurrency_ThreadPool_02
         {
             while (!m_done)
             {
-                //std::function<void()> task{};
-                function_wrapper task{};
+                //std::function<void()> task;
+                function_wrapper task;
 
                 if (m_workQueue.try_pop(task))
                 {

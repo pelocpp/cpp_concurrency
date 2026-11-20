@@ -47,7 +47,7 @@ static void test_parallel_for()
     };
 
     {
-        ScopedTimer watch{};
+        ScopedTimer watch;
 
         Concurrency_ParallelFor::parallel_for_stl(
             from,

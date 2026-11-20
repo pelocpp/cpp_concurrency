@@ -109,7 +109,7 @@ namespace ActivatorObject02
     static std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>>
     enqueueTasksSynchronously(ActiveObject& activeObject, std::size_t start, std::size_t length, std::size_t count) {
 
-        std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>> futures{};
+        std::vector<std::future<std::tuple<std::size_t, std::size_t, std::size_t>>> futures;
 
         for (std::size_t i{}; i != count; ++i) {
 
@@ -132,7 +132,7 @@ void test_active_object_02()
 
     Logger::log(std::cout, "Active Object Demo (Synchron)");
 
-    ActiveObject activeObject{};
+    ActiveObject activeObject;
 
     // enqueue work concurrently
     Logger::log(std::cout, "Enqueue tasks synchronously ...");

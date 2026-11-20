@@ -157,7 +157,7 @@ static void test_thread_safe_blocking_queue_01()
 
     constexpr int QueueSize{ 5 };
 
-    BlockingQueue<int, QueueSize> queue{};
+    BlockingQueue<int, QueueSize> queue;
 
     queue.push(1);
     queue.push(2);
@@ -173,7 +173,7 @@ static void test_thread_safe_blocking_queue_02()
 
     constexpr int QueueSize{ 5 };
 
-    BlockingQueue<int, QueueSize> queue{};
+    BlockingQueue<int, QueueSize> queue;
 
     std::thread producer([&] () {
 

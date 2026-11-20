@@ -239,7 +239,7 @@ und lesen gleichzeitig Daten aus dem Feld aus:
 02: {
 03:     constexpr std::size_t Size{ 64 };
 04: 
-05:     Snapshots<Size> snapshots{};
+05:     Snapshots<Size> snapshots;
 06: 
 07:     std::jthread thread { 
 08:         [&] (std::stop_token stop) {

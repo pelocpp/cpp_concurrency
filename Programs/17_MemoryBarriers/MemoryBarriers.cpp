@@ -111,7 +111,7 @@ namespace MemoryBarriers_RealWorldExample_Relaxed {
     {
         Logger::log(std::cout, "Begin");
 
-        ScopedTimer guard{};
+        ScopedTimer guard;
 
         std::vector<std::thread> threads;
         threads.reserve(NumRequests);

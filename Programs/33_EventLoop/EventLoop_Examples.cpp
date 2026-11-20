@@ -46,7 +46,7 @@ void test_event_loop_01()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     eventLoop.start();
     eventLoop.stop();
@@ -61,7 +61,7 @@ void test_event_loop_02()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     std::move_only_function<void()> event{
         []() {
@@ -93,7 +93,7 @@ void test_event_loop_03()
 {
     Logger::log(std::cout, "Main");
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     for (std::size_t i{}; i != 5; ++i) {
 
@@ -143,7 +143,7 @@ void test_event_loop_10()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     eventLoop.enqueueTask(
         [](int value) {
@@ -212,7 +212,7 @@ void test_event_loop_11()
 {
     Logger::log(std::cout, "Main");
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     eventLoop.start();
 
@@ -245,7 +245,7 @@ void test_event_loop_15()
 {
     Logger::log(std::cout, "Start");
 
-    EventLoop loop{};
+    EventLoop loop;
 
     MyClass obj;
     loop.enqueueTask(&MyClass::doSomeWork, &obj, 123);
@@ -263,11 +263,11 @@ void test_event_loop_20()
 {
     Logger::log(std::cout, "Start");
 
-    ScopedTimer clock{};
+    ScopedTimer clock;
 
     std::size_t foundPrimeNumbers{};
 
-    EventLoop eventLoop{};
+    EventLoop eventLoop;
 
     // eventLoop.start(); // <=== add/remove comment
 

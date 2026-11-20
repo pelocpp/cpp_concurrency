@@ -22,7 +22,7 @@ bool& Table::operator[] (size_t index)
 
 void Table::demandForks(size_t seat)
 {
-    std::string forksDisplay{};
+    std::string forksDisplay;
 
     Logger::log(std::cout, "demand forks at seat ", seat);
     {
@@ -50,7 +50,7 @@ void Table::demandForks(size_t seat)
 
 void Table::releaseForks(size_t seat)
 {
-    std::string forksDisplay{};
+    std::string forksDisplay;
 
     Logger::log(std::cout, "release forks at seat ", seat);
     {

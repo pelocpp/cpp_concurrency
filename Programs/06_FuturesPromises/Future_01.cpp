@@ -23,7 +23,7 @@ namespace PromisesAndFutures01 {
 
     static void testVersion01() {
 
-        std::promise<int> promiseObj{};
+        std::promise<int> promiseObj;
 
         std::future<int> futureObj{ promiseObj.get_future() };
 
@@ -48,7 +48,7 @@ namespace PromisesAndFutures01 {
 
     static void testVersion02() {
 
-        std::promise<int> promiseObj{};
+        std::promise<int> promiseObj;
 
         std::future<int> futureObj{ promiseObj.get_future() };
 

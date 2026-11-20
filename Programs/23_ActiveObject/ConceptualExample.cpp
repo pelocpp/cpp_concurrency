@@ -155,7 +155,7 @@ static void test_conceptual_example_02()
 {
     Logger::log(std::cout, "Active Object");
 
-    ActiveObject activeObject{};
+    ActiveObject activeObject;
     activeObject.doSomething();
     activeObject.doSomethingElse();
 

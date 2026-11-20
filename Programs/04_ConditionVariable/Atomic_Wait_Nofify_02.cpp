@@ -15,7 +15,7 @@ static void test_atomic_variable()
     constexpr std::size_t MaxTasks{ 10 };
 
     std::atomic<bool>         allTasksCompleted{ false };
-    std::atomic<std::size_t>  completion_count{};
+    std::atomic<std::size_t>  completion_count;
     std::future<void>         taskFutures[MaxTasks]{};
     std::atomic<std::size_t>  outstandingTaskCount{ MaxTasks };
 
