@@ -10,15 +10,15 @@
 #include <shared_mutex>
 #include <thread>
 
-static constexpr int RegularLocking{ 1 };
-static constexpr int SharedLocking{ 2 };
-
-static constexpr int LockingMode{ RegularLocking };
-
-static constexpr std::size_t NumIterations{ 10'000'000 };
-
-namespace Reader_Writer
+namespace
 {
+    constexpr int RegularLocking{ 1 };
+    constexpr int SharedLocking{ 2 };
+
+    constexpr int LockingMode{ RegularLocking };
+
+    constexpr std::size_t NumIterations{ 10'000'000 };
+
     class DataContainer
     {
     private:
@@ -54,7 +54,7 @@ namespace Reader_Writer
             Logger::log(std::cout, "Writing Done.");
         }
 
-        void read() {
+        void read() const {
 
             Logger::log(std::cout, "Start Reading ...");
 
@@ -82,8 +82,6 @@ namespace Reader_Writer
 
 void test_reader_writer_lock_01()
 {
-    using namespace Reader_Writer;
-
     Logger::log(std::cout, "Start");
 
     DataContainer container;
@@ -91,6 +89,7 @@ void test_reader_writer_lock_01()
     ScopedTimer watch;
 
     std::jthread t0{ [&] { container.write(); } };
+
     std::jthread t1{ [&] { container.read(); } };
     std::jthread t2{ [&] { container.read(); } };
     std::jthread t3{ [&] { container.read(); } };
@@ -103,9 +102,9 @@ void test_reader_writer_lock_01()
     t4.join();
 
     Logger::log(std::cout, "Value: ", container.getValue());
-
     Logger::log(std::cout, "Done.");
 }
+
 // ===========================================================================
 // End-of-File
 // ===========================================================================

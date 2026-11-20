@@ -4,7 +4,11 @@
 
 #include "../Logger/Logger.h"
 
+#include <atomic>
+#include <condition_variable>
 #include <functional>
+#include <iostream>
+#include <memory>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -25,11 +29,13 @@ public:
 
     void doSomething() {
         Logger::log(std::cout, "doSomething");
+        std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         m_value = 1.0;
     }
 
     void doSomethingElse() {
         Logger::log(std::cout, "doSomethingElse");
+        std::this_thread::sleep_for(std::chrono::seconds{ 1 });
         m_value = 2.0;
     }
 };
@@ -41,34 +47,36 @@ using Operation = std::function<void()>;
 
 class DispatchQueue {
 
-    std::mutex              m_mutex;
+    mutable std::mutex      m_mutex;
     std::condition_variable m_empty;
     std::queue<Operation>   m_queue;
 
 public:
     void put(Operation op)
     {
-        std::lock_guard<std::mutex> guard{ m_mutex };
+        {
+            std::lock_guard<std::mutex> guard{ m_mutex };
+            m_queue.push(std::move(op));
+        }
 
-        m_queue.push(op);
         m_empty.notify_one();
     }
 
     Operation take()
     {
-        Operation op;
+        std::unique_lock<std::mutex> guard{ m_mutex };
 
-        {
-            std::unique_lock<std::mutex> guard{ m_mutex };
-            m_empty.wait(guard, [&] { return !m_queue.empty(); });
-            op = m_queue.front();
-            m_queue.pop();
-        }
+        m_empty.wait(
+            guard,
+            [&] { return !m_queue.empty(); }
+        );
 
+        Operation op = std::move(m_queue.front());
+        m_queue.pop();
         return op;
     }
 
-    std::size_t size()
+    std::size_t size() const
     {
         std::lock_guard<std::mutex> guard{ m_mutex };
         return m_queue.size();
@@ -79,64 +87,78 @@ class ActiveObject
 {
 private:
     DispatchQueue                m_dispatchQueue;
-    std::atomic<bool>            m_done;
-    std::unique_ptr<std::thread> m_runnable;
+    bool                         m_done;
     double                       m_value;
+    std::thread                  m_worker; // Keep last so other members initialize first!
 
 public:
     // c'tors/ d'tor
-    ActiveObject() : m_value{}, m_done{}
-    {
-        // Start the thread that this object will "occupy".
-        // The public methods of this object will run in the 
-        // context of this new thread
-        m_runnable = std::make_unique<std::thread>(&ActiveObject::run, this);
-    }
+    ActiveObject() 
+        : m_value{}, m_done{}, m_worker{ &ActiveObject::run, this }
+    {}
 
     ~ActiveObject() { 
-        m_runnable->join();
+        // enqueue a "poison pill" to stop the loop after all pending tasks have finished
+        m_dispatchQueue.put(
+            [this]() { m_done = true; }
+        );
+        
+        if (m_worker.joinable()) {
+            m_worker.join();
+        }
     }
 
-    // public interface
+    // no copy/move operations since a running thread holds 'this'
+    ActiveObject(const ActiveObject&) = delete;
+    ActiveObject& operator=(const ActiveObject&) = delete;
+    ActiveObject(ActiveObject&&) noexcept = delete;
+    ActiveObject& operator=(ActiveObject&&) noexcept = delete;
+
+private:
     void run()
     {
-        Logger::log(std::cout, "> run");
+        Logger::log(std::cout, "> Worker thread started");
 
         while (! m_done) 
         {
-            Operation operation = m_dispatchQueue.take();
-
-            m_done = m_dispatchQueue.size() == 0;
-
-            operation();
+            Operation op = m_dispatchQueue.take();
+            op();
         }
 
-        Logger::log(std::cout, "< run");
+        Logger::log(std::cout, "< Worker thread stopped");
     }
-
+    
+public:
     // This is part of the public interface of this class.
     // Each method is composed of the actual code we want to execute,
     // and adorn code which queues our code.
+
     void doSomething()
     {
-        Logger::log(std::cout, "preparing doSomething");
+        Logger::log(std::cout, "Client: queuing  doSomething");
 
         // Actual code to be executed is stored in a lambda
         // and pushed to the 'activation list' queue
-        m_dispatchQueue.put({ [this]() {
-            Logger::log(std::cout, "doSomething");
-            m_value = 1.0; }
-        });
+        m_dispatchQueue.put(
+            [this] () {
+                Logger::log(std::cout, "Worker: executing doSomething");
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                m_value = 1.0;
+            }
+        );
     }
 
     void doSomethingElse()
     {
-        Logger::log(std::cout, "preparing doSomethingElse");
+        Logger::log(std::cout, "Client: queuing  doSomethingElse");
 
-        m_dispatchQueue.put( { [this] () {
-            Logger::log(std::cout, "doSomethingElse");
-            m_value = 2.0; }
-        });
+        m_dispatchQueue.put(
+            [this] () {
+                Logger::log(std::cout, "Worker: executing doSomethingElse");
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                m_value = 2.0; 
+            }
+        );
     }
 };
 
@@ -164,8 +186,12 @@ static void test_conceptual_example_02()
 
 void test_conceptual_example()
 {
+    Logger::log(std::cout, "Start");
+
     test_conceptual_example_01();
     test_conceptual_example_02();
+
+    Logger::log(std::cout, "Done.");
 }
 
 // ===========================================================================

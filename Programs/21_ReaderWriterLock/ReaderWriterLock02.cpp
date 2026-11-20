@@ -13,8 +13,8 @@
 #include <string>
 #include <thread>
 
-namespace Reader_Writer
-{
+namespace {
+
     struct Data
     {
         std::size_t m_data;
@@ -67,7 +67,6 @@ namespace Reader_Writer
 
 void test_reader_writer_lock_02()
 {
-    using namespace Reader_Writer;
     using namespace std::chrono_literals;
 
     constexpr std::size_t Size{ 64 };

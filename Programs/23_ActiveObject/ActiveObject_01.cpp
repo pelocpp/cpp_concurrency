@@ -31,6 +31,8 @@ namespace ActivatorObject01
 
             Logger::log(std::cout, "adding ", m_a, " and ", m_b, " ... ");
 
+            std::this_thread::sleep_for(std::chrono::seconds{ 1 });
+
             auto result{ std::make_tuple(m_a, m_b, m_a + m_b) };
 
             return result;
@@ -43,18 +45,21 @@ namespace ActivatorObject01
 
     class ActiveObject 
     {
-    private:
-        std::packaged_task<std::tuple<int, int, int>()> m_activationElement;
+        using Result = std::tuple<int, int, int>;
 
-        std::mutex m_mutex;
+    private:
+        std::packaged_task<Result()> m_activationElement;
+        mutable std::mutex           m_mutex;
+        std::jthread                 m_thread;
+        // declared last: destroyed (joined) first
 
     public:
 
-        std::future<std::tuple<int, int, int>> enqueueTask(int a, int b) {
+        std::future<Result> enqueueTask(int a, int b) {
 
             AddOperation operation{ a, b };
 
-            std::packaged_task<std::tuple<int, int, int>()> task{ operation };
+            std::packaged_task<Result()> task{ operation };
 
             auto future = task.get_future();
 
@@ -69,18 +74,21 @@ namespace ActivatorObject01
 
         void run() {
 
-            std::jthread jt { [this] () { runSingleTask(); } };
+            m_thread = std::jthread { [this] () { runSingleTask(); } };
         }
 
     private:
 
         void runSingleTask() {
 
-            std::lock_guard<std::mutex> guard(m_mutex);
+            std::packaged_task<Result()> task;
+            {
+                std::lock_guard<std::mutex> guard{ m_mutex };
+                task = std::move(m_activationElement);
+            }
 
-            if (m_activationElement.valid()) {
-
-                m_activationElement();
+            if (task.valid()) {
+                task();   // executed without holding the lock
             }
         }
     };
@@ -100,6 +108,7 @@ void test_active_object_01()
     activeObject.run();
 
     // continue working in the client thread
+    Logger::log(std::cout, "Continue working in the client thread.");
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
     // get the result from the future

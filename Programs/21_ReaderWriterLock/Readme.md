@@ -103,7 +103,7 @@ Das Beispiel kann in zwei Modi ausgeführt werden:
 33:         Logger::log(std::cout, "Writing Done.");
 34:     }
 35: 
-36:     void read() {
+36:     void read() const {
 37: 
 38:         Logger::log(std::cout, "Start Reading ...");
 39: 
